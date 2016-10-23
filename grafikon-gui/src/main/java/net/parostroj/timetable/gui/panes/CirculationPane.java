@@ -10,11 +10,11 @@ import java.awt.event.ItemEvent;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
+import net.parostroj.timetable.gui.dialogs.EditLocalizedStringOkCancelDialog;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -48,7 +48,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void initComponents() {
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
-        typesComboBox = new javax.swing.JComboBox<Wrapper<TrainsCycleType>>(new CPModel());
+        typesComboBox = new javax.swing.JComboBox<>(new CPModel());
         newNameTextField = new javax.swing.JTextField();
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -125,11 +125,13 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     }
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, type.getName().getDefaultString());
-        name = ObjectsUtil.checkAndTrim(name);
+        EditLocalizedStringOkCancelDialog dialog = new EditLocalizedStringOkCancelDialog(GuiComponentUtils.getWindow(this));
+        dialog.setLocationRelativeTo(this);
+        LocalizedString name = dialog.edit(type.getName(), diagram.getLocales());
+
         if (name != null) {
-            type.setName(LocalizedString.newBuilder(type.getName()).setDefaultString(name).build());
-            type.setKey(name);
+            type.setName(name);
+            type.setKey(name.getDefaultString());
             ((CPModel) typesComboBox.getModel()).refreshSelected();
         }
     }
@@ -200,11 +202,11 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             @Override
             public void processTrainDiagramEvent(Event event) {
                 if (event.getType() == Event.Type.ADDED && event.getObject() instanceof TrainsCycleType) {
-                    Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>((TrainsCycleType) event.getObject());
+                    Wrapper<TrainsCycleType> wrapper = new Wrapper<>((TrainsCycleType) event.getObject());
                     typesComboBox.addItem(wrapper);
                     typesComboBox.setSelectedItem(wrapper);
                 } else if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof TrainsCycleType) {
-                    typesComboBox.removeItem(new Wrapper<TrainsCycleType>((TrainsCycleType) event.getObject()));
+                    typesComboBox.removeItem(new Wrapper<>((TrainsCycleType) event.getObject()));
                 }
             }
         });
@@ -215,7 +217,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (diagram != null) {
             for (TrainsCycleType t : diagram.getCycleTypes()) {
                 if (!TrainsCycleType.isDefaultType(t)) {
-                    typesComboBox.addItem(new Wrapper<TrainsCycleType>(t));
+                    typesComboBox.addItem(new Wrapper<>(t));
                 }
             }
         }
