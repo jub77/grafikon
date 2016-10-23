@@ -17,6 +17,11 @@ import com.google.common.collect.ImmutableList;
  */
 public interface LocalizedString extends TranslatedString {
 
+    @Override
+    default LocalizedString getNullIfEmpty() {
+        return isDefaultStringEmpty() ? null : this;
+    }
+
     /**
      * @return collection of text and locale pairs
      */

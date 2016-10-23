@@ -15,6 +15,18 @@ public interface TranslatedString {
     String getDefaultString();
 
     /**
+     * @return if the default string is empty
+     */
+    default boolean isDefaultStringEmpty() {
+        String defaultString = getDefaultString();
+        return defaultString == null || defaultString.equals("");
+    }
+
+    default TranslatedString getNullIfEmpty() {
+        return isDefaultStringEmpty() ? null : this;
+    }
+
+    /**
      * Optional operation - can return null if the information is not available
      *
      * @return collection of locales of this string
