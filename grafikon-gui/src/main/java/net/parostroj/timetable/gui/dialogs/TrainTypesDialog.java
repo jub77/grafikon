@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.components.LocalizedStringField;
-import net.parostroj.timetable.gui.pm.LocalizedStringDefaultPM;
+import net.parostroj.timetable.gui.pm.LocalizedStringPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -118,8 +118,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-        LocalizedStringDefaultPM abbrModel = abbrTextField.getPresentationModel();
-        LocalizedStringDefaultPM descModel = descTextField.getPresentationModel();
+        LocalizedStringPM abbrModel = abbrTextField.getPresentationModel();
+        LocalizedStringPM descModel = descTextField.getPresentationModel();
         String abbr = abbrModel != null ? abbrModel.getDefaultString().trim() : "";
         String desc = descModel != null ? descModel.getDefaultString().trim() : "";
         boolean enabledValues = !(abbr.equals("") || desc.equals(""));
@@ -131,15 +131,15 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         PropertyChangeListener propListener = evt -> {
             setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
         };
-        abbrTextField = new LocalizedStringField();
-        LocalizedStringDefaultPM abbrPm = new LocalizedStringDefaultPM();
+        abbrTextField = new LocalizedStringField<>();
+        LocalizedStringPM abbrPm = new LocalizedStringPM();
         abbrPm.init(LocalizedString.fromString(""));
         abbrTextField.setPresentationModel(abbrPm);
         abbrPm.getDefault().addPropertyChangeListener("text", propListener);
         brakeComboBox = new javax.swing.JComboBox<>();
         editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        descTextField = new LocalizedStringField();
-        LocalizedStringDefaultPM descPm = new LocalizedStringDefaultPM();
+        descTextField = new LocalizedStringField<>();
+        LocalizedStringPM descPm = new LocalizedStringPM();
         descPm.init(LocalizedString.fromString(""));
         descTextField.setPresentationModel(descPm);
         descPm.getDefault().addPropertyChangeListener("text", propListener);
@@ -623,14 +623,14 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, ResourceLoader.getString(key), ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 
-    private LocalizedStringField abbrTextField;
+    private LocalizedStringField<LocalizedStringPM> abbrTextField;
     private javax.swing.JComboBox<Wrapper<TrainTypeCategory>> brakeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
     private javax.swing.JLabel colorLabel;
     private javax.swing.JCheckBox completeNameTemplateCheckBox;
     private javax.swing.JCheckBox platformNeededCheckBox;
     private javax.swing.JButton deleteButton;
-    private LocalizedStringField descTextField;
+    private LocalizedStringField<LocalizedStringPM> descTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editColorButton;
     private javax.swing.JCheckBox nameTemplateCheckBox;

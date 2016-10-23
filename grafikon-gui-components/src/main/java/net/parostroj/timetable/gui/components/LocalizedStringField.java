@@ -15,23 +15,29 @@ import org.beanfabrics.swing.BnTextField;
 
 import net.parostroj.timetable.gui.dialogs.EditLocalizedStringDialog;
 import net.parostroj.timetable.gui.pm.LocalizedStringDefaultPM;
+import net.parostroj.timetable.gui.pm.LocalizedStringPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 
-public class LocalizedStringField extends JPanel implements View<LocalizedStringDefaultPM>, ModelSubscriber {
+public class LocalizedStringField<T extends LocalizedStringPM> extends JPanel implements View<T>, ModelSubscriber {
 
-    private ModelProvider localProvider = new ModelProvider();
-    private Link link = new Link(this);
-    private BnTextField textField;
+    private final ModelProvider localProvider = new ModelProvider();
+    private final Link link = new Link(this);
+    private final BnTextField textField;
+    private final boolean doNotUseCurrent;
     private EditLocalizedStringDialog editDialog;
 
     public LocalizedStringField() {
+        this(false);
+    }
 
+    public LocalizedStringField(boolean doNotUseCurrent) {
+        this.doNotUseCurrent = doNotUseCurrent;
         textField = new BnTextField();
         textField.setColumns(10);
 
         textField.setModelProvider(localProvider);
-        textField.setPath(new Path("current"));
+        textField.setPath(new Path("string"));
 
         JButton editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         GroupLayout groupLayout = new GroupLayout(this);
@@ -87,12 +93,17 @@ public class LocalizedStringField extends JPanel implements View<LocalizedString
     }
 
     @Override
-    public LocalizedStringDefaultPM getPresentationModel() {
+    public T getPresentationModel() {
         return localProvider.getPresentationModel();
     }
 
     @Override
-    public void setPresentationModel(LocalizedStringDefaultPM pModel) {
+    public void setPresentationModel(T pModel) {
         localProvider.setPresentationModel(pModel);
+        if (pModel instanceof LocalizedStringDefaultPM && !doNotUseCurrent) {
+            textField.setPath(new Path("current"));
+        } else {
+            textField.setPath(new Path("string"));
+        }
     }
 }
