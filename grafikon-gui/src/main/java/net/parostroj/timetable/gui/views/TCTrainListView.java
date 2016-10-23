@@ -74,8 +74,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     public TCTrainListView() {
         initComponents();
-        allTrains = new WrapperListModel<Train>(true);
-        cTrains = new WrapperListModel<TrainsCycleItem>(false);
+        allTrains = new WrapperListModel<>(true);
+        cTrains = new WrapperListModel<>(false);
         allTrainsList.setModel(allTrains);
         cTrainsList.setModel(cTrains);
     }
@@ -127,7 +127,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allTrains.clear();
         if (delegate.getTrainDiagram() != null) {
             // get all trains (sort)
-            List<Train> trainsList = new ArrayList<Train>();
+            List<Train> trainsList = new ArrayList<>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
                     if (filter == null || filter.apply(train))
@@ -219,9 +219,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         overlappingCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         filterbuttonGroup = new javax.swing.ButtonGroup();
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        allTrainsList = new javax.swing.JList<Wrapper<Train>>();
+        allTrainsList = new javax.swing.JList<>();
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
-        cTrainsList = new javax.swing.JList<Wrapper<TrainsCycleItem>>();
+        cTrainsList = new javax.swing.JList<>();
         addButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, BUTTON_MARGIN);
         removeButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, BUTTON_MARGIN);
         javax.swing.JScrollPane errorsScrollPane = new javax.swing.JScrollPane();
@@ -449,11 +449,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             if (!changeDialog.showDialog(this, item))
                 return;
             // check if the comment changed ...
-            String commentText = ObjectsUtil.checkAndTrim(changeDialog.getComment());
-            LocalizedString lComment = null;
-            if (commentText != null) {
-                lComment = LocalizedString.newBuilder(item.getComment()).setDefaultString(commentText).build();
-            }
+            LocalizedString lComment = changeDialog.getComment();
             item.setRemoveAttribute(TrainsCycleItem.ATTR_COMMENT, lComment);
             Integer setupTime = changeDialog.getSetupTime();
             boolean setupTimeChanged = !ObjectsUtil.compareWithNull(setupTime, item.getSetupTime());
@@ -581,7 +577,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         this.updateListAllTrains();
     }
 
-    private Set<TrainType> selectedTypes = new HashSet<TrainType>();
+    private Set<TrainType> selectedTypes = new HashSet<>();
 
     private javax.swing.JButton addButton;
     private javax.swing.JList<Wrapper<Train>> allTrainsList;

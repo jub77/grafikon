@@ -18,6 +18,9 @@ import javax.swing.border.EmptyBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.parostroj.timetable.gui.components.LocalizedStringField;
+import net.parostroj.timetable.gui.pm.LocalizedStringPM;
+import net.parostroj.timetable.gui.pm.LolizationEditResult;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TimeInterval;
@@ -37,7 +40,7 @@ public class TCItemChangeDialog extends JDialog {
     private final javax.swing.JComboBox<Wrapper<TimeInterval>> fromComboBox;
     private final javax.swing.JComboBox<Wrapper<TimeInterval>> toComboBox;
     private boolean ok;
-    private final JTextField commentTextField;
+    private final LocalizedStringField<LocalizedStringPM> commentTextField;
     private JTextField setupTimeTextField;
 
     public TCItemChangeDialog(boolean setupTime) {
@@ -73,7 +76,7 @@ public class TCItemChangeDialog extends JDialog {
         gbc_fromLabel.anchor = GridBagConstraints.WEST;
         panel.add(fromLabel, gbc_fromLabel);
 
-        fromComboBox = new javax.swing.JComboBox<Wrapper<TimeInterval>>();
+        fromComboBox = new javax.swing.JComboBox<>();
         fromComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
 
         GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
@@ -90,7 +93,7 @@ public class TCItemChangeDialog extends JDialog {
         gbc_toLabel.insets = new Insets(0, 0, 5, 5);
         gbc_toLabel.anchor = GridBagConstraints.WEST;
         panel.add(toLabel, gbc_toLabel);
-        toComboBox = new javax.swing.JComboBox<Wrapper<TimeInterval>>();
+        toComboBox = new javax.swing.JComboBox<>();
         toComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
         GridBagConstraints gbc_toComboBox = new GridBagConstraints();
         gbc_toComboBox.gridx = 3;
@@ -107,7 +110,8 @@ public class TCItemChangeDialog extends JDialog {
         gbc_noteLabel.gridy = 1;
         panel.add(noteLabel, gbc_noteLabel);
 
-        commentTextField = new JTextField();
+        commentTextField = new LocalizedStringField<>();
+        commentTextField.setPresentationModel(new LocalizedStringPM());
         GridBagConstraints gbc_noteTextField = new GridBagConstraints();
         gbc_noteTextField.insets = new Insets(0, 0, 5, 0);
         gbc_noteTextField.weightx = 1.0;
@@ -153,7 +157,8 @@ public class TCItemChangeDialog extends JDialog {
     private void updateValues(TrainsCycleItem item) {
         this.updateFromTo(item.getTrain().getTimeIntervalList(), item.getFromInterval(), item.getToInterval());
         LocalizedString lComment = item.getComment();
-        commentTextField.setText(lComment == null ? null : lComment.getDefaultString());
+        commentTextField.getPresentationModel().init(lComment == null ? LocalizedString.fromString("") : lComment,
+                item.getCycle().getDiagram().getLocales());
         Integer setupTime = item.getSetupTime();
         if (setupTimeTextField != null) {
             setupTimeTextField.setText(setupTime == null ? null : Integer.toString(setupTime / TimeInterval.MINUTE));
@@ -165,13 +170,13 @@ public class TCItemChangeDialog extends JDialog {
         toComboBox.removeAllItems();
         for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner()) {
-                Wrapper<TimeInterval> w = new Wrapper<TimeInterval>(interval);
+                Wrapper<TimeInterval> w = new Wrapper<>(interval);
                 fromComboBox.addItem(w);
                 toComboBox.addItem(w);
             }
         }
-        fromComboBox.setSelectedItem(new Wrapper<TimeInterval>(from));
-        toComboBox.setSelectedItem(new Wrapper<TimeInterval>(to));
+        fromComboBox.setSelectedItem(new Wrapper<>(from));
+        toComboBox.setSelectedItem(new Wrapper<>(to));
     }
 
     public TimeInterval getFrom() {
@@ -182,8 +187,9 @@ public class TCItemChangeDialog extends JDialog {
         return (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
     }
 
-    public String getComment() {
-        return commentTextField.getText();
+    public LocalizedString getComment() {
+        LolizationEditResult edit = commentTextField.getPresentationModel().getCurrentEdit();
+        return edit != null ? edit.get().getNullIfEmpty() : null;
     }
 
     public Integer getSetupTime() {
