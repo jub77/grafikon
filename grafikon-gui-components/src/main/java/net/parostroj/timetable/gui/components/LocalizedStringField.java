@@ -39,7 +39,7 @@ public class LocalizedStringField<T extends LocalizedStringPM> extends JPanel im
         textField.setModelProvider(localProvider);
         textField.setPath(new Path("string"));
 
-        JButton editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        JButton editButton = GuiComponentUtils.createButton(GuiIcon.LOCALIZATION, 2);
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)

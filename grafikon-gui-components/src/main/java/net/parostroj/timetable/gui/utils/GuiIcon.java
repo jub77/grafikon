@@ -8,7 +8,7 @@ public enum GuiIcon {
     GO_DOWN("icons/go_down.png"), ARROW_LEFT("icons/arrow_left.png"), ARROW_RIGHT("icons/arrow_right.png"),
     ARROW_UP("icons/arrow_up.png"), ARROW_DOWN("icons/arrow_down.png"), DARROW_LEFT("icons/arrow_left_double.png"),
     DARROW_RIGHT("icons/arrow_right_double.png"), VIEW_SORT("icons/view_sort.png"), COPY("icons/copy.png"),
-    PLUS("icons/plus.png"), MINUS("icons/minus.png");
+    PLUS("icons/plus.png"), MINUS("icons/minus.png"), LOCALIZATION("icons/localization.png");
 
     private final String path;
 
