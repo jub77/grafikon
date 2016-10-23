@@ -27,6 +27,8 @@ import org.beanfabrics.swing.BnTextField;
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.AttributesPanel;
+import net.parostroj.timetable.gui.components.LocalizedStringField;
+import net.parostroj.timetable.gui.pm.LocalizedStringPM;
 import net.parostroj.timetable.gui.pm.OutputPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -62,22 +64,16 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_lblNameLabel.gridy = 0;
         contentPanel.add(nameLabel, gbc_lblNameLabel);
 
-        BnTextField nameTextField = new BnTextField();
+        LocalizedStringField<LocalizedStringPM> nameTextField = new LocalizedStringField<>();
         GridBagConstraints gbc_nameTextField = new GridBagConstraints();
+        gbc_nameTextField.gridwidth = 2;
         gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_nameTextField.weightx = 1.0;
-        gbc_nameTextField.insets = new Insets(5, 0, 5, 0);
+        gbc_nameTextField.insets = new Insets(5, 0, 5, 5);
         gbc_nameTextField.gridx = 1;
         gbc_nameTextField.gridy = 0;
         contentPanel.add(nameTextField, gbc_nameTextField);
         nameTextField.setColumns(10);
-
-        JButton editNameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        GridBagConstraints gbc_editNameButton = new GridBagConstraints();
-        gbc_editNameButton.insets = new Insets(5, 0, 5, 5);
-        gbc_editNameButton.gridx = 2;
-        gbc_editNameButton.gridy = 0;
-        contentPanel.add(editNameButton, gbc_editNameButton);
 
         JLabel lblLocaleLabel = new JLabel(ResourceLoader.getString("output.locale"));
         GridBagConstraints gbc_lblLocaleLabel = new GridBagConstraints();
@@ -150,7 +146,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         cancelButton.addActionListener(closeListener);
 
         nameTextField.setModelProvider(provider);
-        nameTextField.setPath(new Path("name.current"));
+        nameTextField.setPath(new Path("name"));
 
         attributesPanel.setModelProvider(provider);
         attributesPanel.setPath(new Path("attributes"));
@@ -176,15 +172,6 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         panel.add(selectionButton, BorderLayout.EAST);
         selectionButton.setModelProvider(provider);
         selectionButton.setPath(new Path("editSelection"));
-
-        editNameButton.addActionListener(evt -> {
-            EditLocalizedStringDialog editNameDialog = new EditLocalizedStringDialog(window, true);
-            editNameDialog.setLocationRelativeTo(EditOutputDialog.this);
-            editNameDialog.setModelProvider(provider);
-            editNameDialog.setPath(new Path("name"));
-            editNameDialog.pack();
-            editNameDialog.setVisible(true);
-        });
 
         pack();
     }
