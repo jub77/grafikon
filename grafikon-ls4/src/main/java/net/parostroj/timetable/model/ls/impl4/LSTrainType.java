@@ -133,7 +133,7 @@ public class LSTrainType {
             Function<String, TrainTypeCategory> categoryMapping) throws LSException {
         TrainType type = partFactory.createTrainType(id);
         if (abbr != null) {
-            type.setLocalizedAbbr(LocalizedString.fromString(abbr));
+            type.setAbbr(LocalizedString.fromString(abbr));
         }
         type.setColor(Conversions.convertTextToColor(color));
         if (desc != null) {

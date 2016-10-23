@@ -49,7 +49,7 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(TrainType type) {
-        name = type.getAbbr() + " - " + type.getDesc();
+        name = type.getDefaultAbbr() + " - " + type.getDesc();
     }
 
     @Override

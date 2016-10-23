@@ -21,7 +21,7 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
             return ((TrainsCycle) element).getName();
         } else if (element instanceof TrainType) {
             LocalizedString desc = ((TrainType) element).getDesc();
-            return desc != null ? desc.translate() : ((TrainType) element).getAbbr();
+            return desc != null ? desc.translate() : ((TrainType) element).getDefaultAbbr();
         } else if (element instanceof TrainTypeCategory) {
             return ((TrainTypeCategory) element).getName().translate();
         } else if (element instanceof TimeInterval) {

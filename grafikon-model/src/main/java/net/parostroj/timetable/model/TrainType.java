@@ -63,22 +63,23 @@ public class TrainType
     /**
      * @return the abbreviation (default string of localized abbreviation - backward compatibility)
      */
-    public String getAbbr() {
-        return attributes.get(ATTR_ABBR, LocalizedString.class).getDefaultString();
+    public String getDefaultAbbr() {
+        LocalizedString abbr = attributes.get(ATTR_ABBR, LocalizedString.class);
+        return abbr != null ? abbr.getDefaultString() : null;
     }
 
 
     /**
      * @return localized abbreviation
      */
-    public LocalizedString getLocalizedAbbr() {
+    public LocalizedString getAbbr() {
         return attributes.get(ATTR_ABBR, LocalizedString.class);
     }
 
     /**
      * @param abbr localized abbreviation to be set
      */
-    public void setLocalizedAbbr(LocalizedString abbr) {
+    public void setAbbr(LocalizedString abbr) {
         attributes.setRemove(ATTR_ABBR, abbr);
     }
 
@@ -229,7 +230,7 @@ public class TrainType
     @Override
     public String toString() {
         LocalizedString desc = getDesc();
-        return getAbbr() + " - " + (desc == null ? "<none>" : desc.getDefaultString());
+        return getDefaultAbbr() + " - " + (desc == null ? "<none>" : desc.getDefaultString());
     }
 
     /**

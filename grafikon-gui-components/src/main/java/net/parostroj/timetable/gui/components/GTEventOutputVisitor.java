@@ -231,7 +231,7 @@ public class GTEventOutputVisitor implements EventVisitor {
         try {
             TrainType traintType = (TrainType) event.getSource();
             str.append("TrainTypeEvent[");
-            str.append(traintType.getAbbr());
+            str.append(traintType.getDefaultAbbr());
             str.append(']');
             if (full) {
                 str.append('\n');

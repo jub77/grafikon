@@ -48,7 +48,7 @@ public class TrainTypeImport extends Import {
 
         // create new type
         TrainType type = getDiagram().getPartFactory().createTrainType(this.getId(importedType));
-        type.setLocalizedAbbr(importedType.getLocalizedAbbr());
+        type.setAbbr(importedType.getAbbr());
         type.setColor(importedType.getColor());
         type.setDesc(importedType.getDesc());
         type.setPlatform(importedType.isPlatform());

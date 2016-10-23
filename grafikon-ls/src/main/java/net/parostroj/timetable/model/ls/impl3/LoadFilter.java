@@ -48,6 +48,17 @@ public class LoadFilter {
         }
         // localized strings
         this.convertToLocalizedStrings(diagram);
+
+        // convert train name templates (common)
+        diagram.getTrainsData()
+                .setTrainNameTemplate(convertForAbbreviation(diagram.getTrainsData().getTrainNameTemplate()));
+        diagram.getTrainsData().setTrainCompleteNameTemplate(
+                convertForAbbreviation(diagram.getTrainsData().getTrainCompleteNameTemplate()));
+        // in train types
+        for (TrainType type : diagram.getTrainTypes()) {
+            type.setTrainNameTemplate(convertForAbbreviation(type.getTrainNameTemplate()));
+            type.setTrainCompleteNameTemplate(convertForAbbreviation(type.getTrainCompleteNameTemplate()));
+        }
     }
 
     private TextTemplate convert(String routeInfo) throws GrafikonException {
@@ -99,5 +110,16 @@ public class LoadFilter {
                 ot.setAttribute(OutputTemplate.ATTR_DESCRIPTION, LocalizedString.fromString(desc));
             }
         }
+    }
+
+    private TextTemplate convertForAbbreviation(TextTemplate template) {
+        if (template != null && template.getTemplate().contains(".abbr")) {
+            try {
+                template = TextTemplate.createTextTemplate(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
+            } catch (GrafikonException e) {
+                log.warn("Problem replacing abbreviation in template: {}", template.getTemplate());
+            }
+        }
+        return template;
     }
 }

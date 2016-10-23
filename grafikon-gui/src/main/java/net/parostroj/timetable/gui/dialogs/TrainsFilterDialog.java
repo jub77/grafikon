@@ -41,7 +41,7 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
         typesPanel.setLayout(new GridLayout((diagram.getTrainTypes().size() - 1) / COLUMNS + 1, COLUMNS));
         typesList = new LinkedList<Pair<TrainType, JCheckBox>>();
         for (TrainType type : diagram.getTrainTypes()) {
-            JCheckBox checkBox = new JCheckBox(type.getAbbr() + " (" + type.getDesc() + ")");
+            JCheckBox checkBox = new JCheckBox(type.getDefaultAbbr() + " (" + type.getDesc() + ")");
             typesList.add(new Pair<TrainType, JCheckBox>(type, checkBox));
             checkBox.setSelected(types.contains(type));
             typesPanel.add(checkBox);

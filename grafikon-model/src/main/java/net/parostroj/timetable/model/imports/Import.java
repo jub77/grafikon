@@ -94,7 +94,7 @@ public abstract class Import {
             return diagram.getTrainTypes().getById(origType.getId());
         } else {
             return diagram.getTrainTypes().find(
-                    type -> type.getAbbr().equals(origType.getAbbr()) && type.getDesc().equals(origType.getDesc()));
+                    type -> type.getDefaultAbbr().equals(origType.getDefaultAbbr()) && type.getDesc().equals(origType.getDesc()));
         }
     }
 
