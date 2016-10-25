@@ -44,7 +44,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 if (event.getObject() instanceof Train)
-                    str.append("    Train: ").append(((Train)event.getObject()).getName()).append('\n');
+                    str.append("    Train: ").append(((Train)event.getObject()).getDefaultName()).append('\n');
                 if (event.getObject() instanceof Route)
                     str.append("    Route: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof TrainType)
@@ -116,8 +116,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getObject() instanceof FNConnection) {
                     FNConnection connection = (FNConnection) event.getObject();
-                    String from = connection.getFrom().getTrain().getName();
-                    String to = connection.getTo().getTrain().getName();
+                    String from = connection.getFrom().getTrain().getDefaultName();
+                    String to = connection.getTo().getTrain().getDefaultName();
                     String text = String.format("%s - %s (%s)", from, to, connection.getFrom().getOwnerAsNode().getAbbr());
                     str.append("    Connection: ").append(text).append('\n');
                 }
@@ -144,7 +144,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getObject() instanceof TimeInterval) {
                     TimeInterval interval = (TimeInterval) event.getObject();
-                    str.append("    Train: ").append(interval.getTrain().getName()).append('\n');
+                    str.append("    Train: ").append(interval.getTrain().getDefaultName()).append('\n');
                     str.append("    Track: ").append(interval.getTrack().getNumber()).append('\n');
                     str.append("    Time:  ").append(c.convertIntToText(interval.getStart()));
                     str.append("-").append(c.convertIntToText(interval.getEnd()));
@@ -177,7 +177,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getObject() instanceof TimeInterval) {
                     TimeInterval interval = (TimeInterval) event.getObject();
-                    str.append("    Train: ").append(interval.getTrain().getName()).append('\n');
+                    str.append("    Train: ").append(interval.getTrain().getDefaultName()).append('\n');
                     str.append("    Track: ").append(interval.getTrack().getNumber()).append('\n');
                     str.append("    Time:  ").append(c.convertIntToText(interval.getStart()));
                     str.append("-").append(c.convertIntToText(interval.getEnd()));
@@ -201,11 +201,11 @@ public class GTEventOutputVisitor implements EventVisitor {
         try {
             Train train = (Train) event.getSource();
             str.append("TrainEvent[");
-            str.append(train.getName());
+            str.append(train.getDefaultName());
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Name: ").append(train.getCompleteName()).append('\n');
+                str.append("  Name: ").append(train.getDefaultCompleteName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
@@ -262,7 +262,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     TrainsCycleItem item = (TrainsCycleItem) event.getObject();
                     str.append("    Cycle item: ").append(item.getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(item.getToInterval().getOwnerAsNode().getAbbr()).append('\n');
-                    str.append("    Train: ").append(item.getTrain().getName()).append('\n');
+                    str.append("    Train: ").append(item.getTrain().getDefaultName()).append('\n');
                 }
                 if (event.getData() != null) {
                     str.append("    Special: ").append(event.getData().toString());

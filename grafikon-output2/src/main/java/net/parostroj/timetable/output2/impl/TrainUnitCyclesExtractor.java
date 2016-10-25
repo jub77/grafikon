@@ -72,7 +72,7 @@ public class TrainUnitCyclesExtractor {
     private TrainUnitCycleRow createRow(TrainsCycleItem item) {
     	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         TrainUnitCycleRow row = new TrainUnitCycleRow();
-        row.setTrainName(item.getTrain().getName());
+        row.setTrainName(item.getTrain().getDefaultName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());

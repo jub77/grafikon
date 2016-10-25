@@ -158,7 +158,7 @@ class TrainTableModel extends AbstractTableModel {
                     if (builder.length() != 0) {
                         builder.append(", ");
                     }
-                    builder.append(overlap.getTrain().getName());
+                    builder.append(overlap.getTrain().getDefaultName());
                 }
                 retValue = builder.toString();
                 break;
@@ -227,7 +227,7 @@ class TrainTableModel extends AbstractTableModel {
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                         List<FreightDst> mList = entry.getValue();
                         result.append('(').append(diagram.getFreightNet().freightDstListToString(mList));
-                        result.append(" > ").append(entry.getKey().getName()).append(')');
+                        result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
                         List<FreightDst> cargoDst = freightNet.getFreightToNodes(interval);

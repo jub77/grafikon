@@ -513,7 +513,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setTransform(newTransform);
         // length of the text
         Train train = interval.getTrain();
-        String trainName = train.getName();
+        String trainName = train.getDefaultName();
         Rectangle rr = this.getStringBounds(trainName, g);
         Shape nameShape = null;
 
@@ -720,7 +720,7 @@ abstract public class GTDrawBase implements GTDraw {
                 switch (event.getType()) {
                 case REMOVED:
                     if (event.getObject() instanceof Train) {
-                        stringBounds.remove(((Train) event.getObject()).getName());
+                        stringBounds.remove(((Train) event.getObject()).getDefaultName());
                         setRefresh(Refresh.REPAINT);
                     }
                     break;
@@ -748,7 +748,7 @@ abstract public class GTDrawBase implements GTDraw {
                     break;
                 case ATTRIBUTE:
                     if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                        stringBounds.remove(((Train) event.getSource()).getName());
+                        stringBounds.remove(((Train) event.getSource()).getDefaultName());
                         setRefresh(Refresh.REPAINT);
                     } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL, Train.ATTR_TECHNOLOGICAL_AFTER,
                             Train.ATTR_TECHNOLOGICAL_BEFORE)) {

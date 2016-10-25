@@ -29,7 +29,7 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsC
 
     public String toStringItem(TrainsCycleItem item) {
         TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
-        String str = String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
+        String str = String.format("%s (%s[%s],%s[%s])", item.getTrain().getDefaultName(),
                         item.getFromInterval().getOwnerAsNode().getName(),
                         this.getStartTime(c, item),
                         item.getToInterval().getOwnerAsNode().getName(),

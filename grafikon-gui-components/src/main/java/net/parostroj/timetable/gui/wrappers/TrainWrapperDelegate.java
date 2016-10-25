@@ -41,23 +41,23 @@ public class TrainWrapperDelegate implements WrapperDelegate<Train> {
     private String toStringTrain(Train train) {
         switch (type) {
             case NAME:
-                return train.getName();
+                return train.getDefaultName();
             case NAME_AND_END_NODES:
                 return String.format("%s (%s,%s)",
-                        train.getName(),
+                        train.getDefaultName(),
                         train.getStartNode(),
                         train.getEndNode());
             case NAME_AND_END_NODES_WITH_TIME: case NAME_AND_END_NODES_WITH_TIME_TWO_LINES:
                 String format = type == Type.NAME_AND_END_NODES_WITH_TIME ?
                         "%s (%s[%s],%s[%s])" : "%s%n%s[%s]-%s[%s]";
                 return String.format(format,
-                        train.getName(),
+                        train.getDefaultName(),
                         train.getStartNode().getName(),
                         train.getDiagram().getTimeConverter().convertIntToText(train.getStartTime()),
                         train.getEndNode().getName(),
                         train.getDiagram().getTimeConverter().convertIntToText(train.getEndTime()));
             default:
-                return train.getName();
+                return train.getDefaultName();
         }
     }
 }

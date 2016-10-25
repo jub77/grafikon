@@ -100,13 +100,13 @@ public class LocalizationTypeFactory {
     private static String getCirculationItemDesc(Reference<LocalizedString> ref) {
         TrainsCycleItem circulationItem = (TrainsCycleItem) ((AttributeReference<?>) ref).getHolder();
         String circDesc = circulationItem.getCycle().getDisplayDescription();
-        String trainDesc = circulationItem.getTrain().getName();
+        String trainDesc = circulationItem.getTrain().getDefaultName();
         return String.format("%s (%s: %s)", trainDesc, circulationItem.getCycle().getName(), circDesc);
     }
 
     private static String getTimeIntervalDesc(Reference<LocalizedString> ref) {
         TimeInterval interval = (TimeInterval) ((AttributeReference<?>) ref).getHolder();
-        String trainDesc = interval.getTrain().getName();
+        String trainDesc = interval.getTrain().getDefaultName();
         String nodeDesc = interval.getOwnerAsNode().getName();
         return String.format("%s (%s)", trainDesc, nodeDesc);
     }

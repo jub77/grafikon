@@ -146,15 +146,23 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * @return name of the train depending on the pattern
      */
-    public String getName() {
+    public String getDefaultName() {
         return nameDelegate.getName();
     }
 
     /**
      * @return complete name of the train depending on the pattern
      */
-    public String getCompleteName() {
+    public String getDefaultCompleteName() {
         return nameDelegate.getCompleteName();
+    }
+
+    public TranslatedString getName() {
+        return this.getName(NameType.NORMAL);
+    }
+
+    public TranslatedString getCompleteName() {
+        return this.getName(NameType.COMPLETE);
     }
 
     /**
@@ -213,7 +221,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
 
     @Override
     public String toString() {
-        return getName();
+        return getDefaultName();
     }
 
     /**

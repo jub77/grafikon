@@ -169,7 +169,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             speedTextField.setEnabled(false);
         } else {
             // train type
-            String name = train.getCompleteName();
+            String name = train.getDefaultCompleteName();
             TextTemplate routeTemplate = train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class);
             if (routeTemplate != null)
                 name = String.format("%s (%s)", name, routeTemplate.evaluate(TextTemplate.getBinding(train)));
@@ -206,7 +206,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             if (builder.length() != 0) {
                 builder.append(", ");
             }
-            builder.append(overlap.getTrain().getName());
+            builder.append(overlap.getTrain().getDefaultName());
         }
         return builder.toString();
     }

@@ -37,7 +37,7 @@ public class NodeTimetableWriter {
         for (TimeInterval item : list) {
             @SuppressWarnings("resource")
             Formatter f = new Formatter(str);
-            f.format("%1$-20s", item.getTrain().getCompleteName());
+            f.format("%1$-20s", item.getTrain().getDefaultCompleteName());
             str.append(c.convertIntToText(item.getStart(), true));
             str.append(" ");
             str.append(c.convertIntToText(item.getEnd(), true));

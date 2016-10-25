@@ -265,9 +265,9 @@ public class CirculationDraw {
         g.fillRect(x, y, width, height);
         g.setColor(layout.colors.getColor(COLOR_OUTLINE, item));
         g.drawRect(x, y, width, height);
-        int w = DrawUtils.getStringWidth(g, item.getTrain().getName());
+        int w = DrawUtils.getStringWidth(g, item.getTrain().getDefaultName());
         if (x + w <= this.getX(layout.toTime)) {
-            g.drawString(item.getTrain().getName(), x, partY);
+            g.drawString(item.getTrain().getDefaultName(), x, partY);
         }
     }
 

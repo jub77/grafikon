@@ -192,7 +192,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     }
 
     private String createText(FNConnection conn) {
-        return String.format("%s > %s", conn.getFrom().getTrain().getName(), conn.getTo().getTrain().getName());
+        return String.format("%s > %s", conn.getFrom().getTrain().getDefaultName(), conn.getTo().getTrain().getDefaultName());
     }
 
     private Point getLocation(TimeInterval interval, Line2D line, int dir, boolean from) {

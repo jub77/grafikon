@@ -68,7 +68,7 @@ public class PositionsExtractor {
             String startTrack = interval.getTrack().getNumber();
             String startTime = diagram.getTimeConverter().convertIntToXml(interval.getEnd());
             result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName,
-                    startTrack, startTime, start.getTrain().getName(),
+                    startTrack, startTime, start.getTrain().getDefaultName(),
                     ae.extract(cycle.getAttributes())));
         }
         return result;
@@ -86,7 +86,7 @@ public class PositionsExtractor {
                 String endTrack = end.getToInterval().getTrack().getNumber();
                 String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());
                 result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), endName,
-                        endTrack, endTime, end.getTrain().getName(),
+                        endTrack, endTime, end.getTrain().getDefaultName(),
                         ae.extract(cycle.getAttributes())));
             }
         }

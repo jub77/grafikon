@@ -82,8 +82,8 @@ public class TrainTimetablesExtractor {
 
     private TrainTimetable createTimetable(Train train) {
         TrainTimetable timetable = new TrainTimetable();
-        timetable.setName(train.getName());
-        timetable.setCompleteName(train.getCompleteName());
+        timetable.setName(train.getDefaultName());
+        timetable.setCompleteName(train.getDefaultCompleteName());
         this.extractRouteInfo(train, timetable);
         this.extractDieselElectric(train, timetable);
         if (train.getType() != null && train.getType().getCategory() != null) {
@@ -294,7 +294,7 @@ public class TrainTimetablesExtractor {
             tTrains = s.sort(tTrains);
             List<String> result = new LinkedList<>();
             for (Train t : tTrains) {
-                result.add(t.getName());
+                result.add(t.getDefaultName());
             }
             return new Pair<>(!first, result);
         }

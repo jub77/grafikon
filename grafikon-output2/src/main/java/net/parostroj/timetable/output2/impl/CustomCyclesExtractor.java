@@ -79,7 +79,7 @@ public class CustomCyclesExtractor {
     private CustomCycleRow createRow(TrainsCycleItem current, TrainsCycleItem previous) {
     	TimeConverter c = current.getTrain().getDiagram().getTimeConverter();
         CustomCycleRow row = new CustomCycleRow();
-        row.setTrainName(current.getTrain().getName());
+        row.setTrainName(current.getTrain().getDefaultName());
         row.setFromTime(c.convertIntToXml(current.getStartTime()));
         row.setToTime(c.convertIntToXml(current.getEndTime()));
         row.setFromAbbr(current.getFromInterval().getOwnerAsNode().getAbbr());

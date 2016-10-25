@@ -189,7 +189,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         Object oid = error.getObject();
         String oidStr = null;
         if (oid instanceof Train) {
-            oidStr = ((Train) oid).getName();
+            oidStr = ((Train) oid).getDefaultName();
         } else if (oid instanceof Node) {
             oidStr = ((Node) oid).getName();
         } else if (oid instanceof TrainType) {

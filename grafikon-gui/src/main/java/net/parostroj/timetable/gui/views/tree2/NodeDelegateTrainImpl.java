@@ -11,7 +11,7 @@ public class NodeDelegateTrainImpl implements NodeDelegate {
 
     @Override
     public String getNodeText(TrainTreeNode trainTreeNode) {
-        return ((Train) trainTreeNode.getUserObject()).getName();
+        return ((Train) trainTreeNode.getUserObject()).getDefaultName();
     }
 
     @Override

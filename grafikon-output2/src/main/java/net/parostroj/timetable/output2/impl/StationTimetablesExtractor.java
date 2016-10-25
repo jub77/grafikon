@@ -88,7 +88,7 @@ public class StationTimetablesExtractor {
 
         String fromTime = (from == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getStart());
         String toTime = (to == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getEnd());
-        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
+        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getDefaultName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         row.setStop(interval.getLength());
         this.addOtherData(interval, row);
         return row;
@@ -131,7 +131,7 @@ public class StationTimetablesExtractor {
                 List<FreightToTrain> fttl = new ArrayList<FreightToTrain>();
                 for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
-                    ftt.setTrain(entry.getKey().getName());
+                    ftt.setTrain(entry.getKey().getDefaultName());
                     List<FreightDst> mList = entry.getValue();
                     List<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(mList.size());
                     for (FreightDst dst : mList) {
@@ -147,7 +147,7 @@ public class StationTimetablesExtractor {
         if (!trainsFrom.isEmpty()) {
             ArrayList<String> nt = new ArrayList<String>(trainsFrom.size());
             for (FNConnection conn : trainsFrom) {
-                nt.add(conn.getFrom().getTrain().getName());
+                nt.add(conn.getFrom().getTrain().getDefaultName());
             }
             row.setFreightFromTrain(nt);
         }
@@ -166,7 +166,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemNext = nextItemF.apply(cycle, item);
                 CycleWithTypeFromTo cycleFromTo = new CycleWithTypeFromTo(false, false, cycle.getName(),
                         cycle.getDescription(),
-                        itemNext != null ? itemNext.getTrain().getName() : null,
+                        itemNext != null ? itemNext.getTrain().getDefaultName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null);
                 cycleFromTo.setTypeKey(type.getKey());
                 cycleFromTo.setTypeName(type.getName());
@@ -179,7 +179,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemPrev = previousItemF.apply(cycle, item);
                 CycleWithTypeFromTo cycleFromTo = new CycleWithTypeFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDescription(),
-                        itemPrev != null ? itemPrev.getTrain().getName() : null,
+                        itemPrev != null ? itemPrev.getTrain().getDefaultName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
                 cycleFromTo.setTypeKey(type.getKey());
                 cycleFromTo.setTypeName(type.getName());
@@ -201,7 +201,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemNext = nextItemF.apply(cycle, item);
                 cycleFromTo = new CycleFromTo(false, false, cycle.getName(),
                         cycle.getDisplayDescription(),
-                        itemNext != null ? itemNext.getTrain().getName() : null,
+                        itemNext != null ? itemNext.getTrain().getDefaultName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null);
                 this.updateAdjacent(cycleFromTo, item, itemNext);
             }
@@ -211,7 +211,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemPrev = previousItemF.apply(cycle, item);
                 cycleFromTo = new CycleFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDisplayDescription(),
-                        itemPrev != null ? itemPrev.getTrain().getName() : null,
+                        itemPrev != null ? itemPrev.getTrain().getDefaultName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
                 this.updateAdjacent(cycleFromTo, item, itemPrev);
             }

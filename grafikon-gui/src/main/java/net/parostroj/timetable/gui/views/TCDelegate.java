@@ -181,10 +181,10 @@ public abstract class TCDelegate implements ApplicationModelListener {
 
     protected String formatItems(TrainsCycleItem from, TrainsCycleItem to, TimeConverter c) {
         String text = String.format("%s (%s[%s]), %s (%s[%s])",
-                from.getTrain().getName(),
+                from.getTrain().getDefaultName(),
                 from.getToInterval().getOwnerAsNode().getName(),
                 c.convertIntToText(from.getEndTime()),
-                to.getTrain().getName(),
+                to.getTrain().getDefaultName(),
                 to.getFromInterval().getOwnerAsNode().getName(),
                 c.convertIntToText(to.getStartTime())
             );

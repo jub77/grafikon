@@ -25,7 +25,7 @@ public class TrainTimetableWriter {
     	TimeConverter c = train.getDiagram().getTimeConverter();
 
         str.append("Train: ");
-        str.append(train.getCompleteName()).append('\n');
+        str.append(train.getDefaultCompleteName()).append('\n');
         for (TimeInterval time : train.getNodeIntervals()) {
             Node node = time.getOwnerAsNode();
             @SuppressWarnings("resource")

@@ -98,7 +98,7 @@ public class TransformVisitor implements EventVisitor {
     public void visitTrainEvent(Event event) {
         Train train = (Train) event.getSource();
         change = new DiagramChange(DiagramChange.Type.TRAIN, train.getId());
-        change.setObject(train.getName());
+        change.setObject(train.getDefaultName());
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
         switch (event.getType()) {

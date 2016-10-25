@@ -315,7 +315,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private String getIntervalInfo(TimeInterval interval, boolean first) {
         TimeConverter converter = model.getDiagram().getTimeConverter();
-        return String.format("%s [%s]", interval.getTrain().getName(),
+        return String.format("%s [%s]", interval.getTrain().getDefaultName(),
                 converter.convertIntToText(first ? interval.getStart() : interval.getEnd()));
     }
 
