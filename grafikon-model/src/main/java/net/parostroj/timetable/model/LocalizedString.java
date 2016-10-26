@@ -46,10 +46,12 @@ public interface LocalizedString extends TranslatedString {
      * @return string with locale or <code>null</code> if the locale is not present
      */
     default StringWithLocale getLocalizedStringWithLocale(final Locale locale) {
-        Locale languageLocale = getOnlyLanguageLocale(locale);
-        for (StringWithLocale localizedString : getLocalizedStrings()) {
-            if (languageLocale.equals(localizedString.getLocale())) {
-                return localizedString;
+        if (locale != null) {
+            Locale languageLocale = getOnlyLanguageLocale(locale);
+            for (StringWithLocale localizedString : getLocalizedStrings()) {
+                if (languageLocale.equals(localizedString.getLocale())) {
+                    return localizedString;
+                }
             }
         }
         return null;

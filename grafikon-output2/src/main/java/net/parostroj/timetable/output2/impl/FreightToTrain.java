@@ -2,7 +2,6 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -13,7 +12,7 @@ import net.parostroj.timetable.model.TranslatedString;
  *
  * @author jub
  */
-@XmlType(propOrder = {"freightTo"})
+@XmlType(propOrder = {"train", "freightTo"})
 public class FreightToTrain {
 
     private TranslatedString train;
@@ -35,7 +34,6 @@ public class FreightToTrain {
         return train;
     }
 
-    @XmlAttribute
     public void setTrain(TranslatedString train) {
         this.train = train;
     }
