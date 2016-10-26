@@ -1,6 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Engine cycle row.
@@ -10,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "toTime", "toAbbr", "wait", "helper"})
 public class EngineCycleRow {
 
-    private String trainName;
+    private TranslatedString trainName;
     private String fromTime;
     private String fromAbbr;
     private String toTime;
@@ -42,11 +45,12 @@ public class EngineCycleRow {
         this.toAbbr = toAbbr;
     }
 
-    public String getTrainName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 
