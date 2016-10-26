@@ -46,7 +46,7 @@ public class PositionsExtractor {
     }
 
     private List<Cycles> getPositionsCustom(BiFunction<Collection<TrainsCycle>, Integer, List<Position>> function, Integer startingTime) {
-        List<Cycles> cyclesList = new ArrayList<Cycles>();
+        List<Cycles> cyclesList = new ArrayList<>();
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!type.isDefaultType()) {
                 Cycles cycles = new Cycles();
@@ -59,7 +59,7 @@ public class PositionsExtractor {
     }
 
     public List<Position> getStartPositions(Collection<TrainsCycle> cycles, Integer startingTime) {
-        List<Position> result = new LinkedList<Position>();
+        List<Position> result = new LinkedList<>();
         for (Pair<TrainsCycleItem, TimeInterval> cycleItem : this.getItemStarts(cycles, startingTime)) {
             TrainsCycleItem start = cycleItem.first;
             TrainsCycle cycle = start.getCycle();
@@ -68,7 +68,7 @@ public class PositionsExtractor {
             String startTrack = interval.getTrack().getNumber();
             String startTime = diagram.getTimeConverter().convertIntToXml(interval.getEnd());
             result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName,
-                    startTrack, startTime, start.getTrain().getDefaultName(),
+                    startTrack, startTime, start.getTrain().getName(),
                     ae.extract(cycle.getAttributes())));
         }
         return result;
@@ -78,7 +78,7 @@ public class PositionsExtractor {
      * Does not support starting time.
      */
     public List<Position> getEndPositions(Collection<TrainsCycle> cycles, Integer startingTime) {
-        List<Position> result = new LinkedList<Position>();
+        List<Position> result = new LinkedList<>();
         for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
             if (!cycle.isEmpty()) {
                 TrainsCycleItem end = cycle.getItems().get(cycle.getItems().size() - 1);
@@ -86,7 +86,7 @@ public class PositionsExtractor {
                 String endTrack = end.getToInterval().getTrack().getNumber();
                 String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());
                 result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), endName,
-                        endTrack, endTime, end.getTrain().getDefaultName(),
+                        endTrack, endTime, end.getTrain().getName(),
                         ae.extract(cycle.getAttributes())));
             }
         }

@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Start/End positions information.
@@ -16,7 +19,7 @@ public class Position {
     private String cycleName;
     private String cycleDescription;
     private String stationName;
-    private String trainName;
+    private TranslatedString trainName;
     private String track;
     private String time;
     private List<Attribute> attributes;
@@ -24,7 +27,7 @@ public class Position {
     public Position() {
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, String trainName) {
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, TranslatedString trainName) {
         this.cycleName = cycleName;
         this.cycleDescription = cycleDescription;
         this.stationName = stationName;
@@ -33,7 +36,7 @@ public class Position {
         this.time = time;
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, String trainName, List<Attribute> attributes) {
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, TranslatedString trainName, List<Attribute> attributes) {
         this(cycleName, cycleDescription, stationName, track, time, trainName);
         this.attributes = attributes;
     }
@@ -62,11 +65,12 @@ public class Position {
         this.stationName = stationName;
     }
 
-    public String getTrainName() {
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 
