@@ -131,7 +131,7 @@ public class StationTimetablesExtractor {
                 List<FreightToTrain> fttl = new ArrayList<>();
                 for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
-                    ftt.setTrain(entry.getKey().getDefaultName());
+                    ftt.setTrain(entry.getKey().getName());
                     List<FreightDst> mList = entry.getValue();
                     List<FreightDstInfo> fl = new ArrayList<>(mList.size());
                     for (FreightDst dst : mList) {
@@ -145,9 +145,9 @@ public class StationTimetablesExtractor {
         }
         List<FNConnection> trainsFrom = diagram.getFreightNet().getTrainsTo(interval);
         if (!trainsFrom.isEmpty()) {
-            ArrayList<String> nt = new ArrayList<>(trainsFrom.size());
+            ArrayList<TranslatedString> nt = new ArrayList<>(trainsFrom.size());
             for (FNConnection conn : trainsFrom) {
-                nt.add(conn.getFrom().getTrain().getDefaultName());
+                nt.add(conn.getFrom().getTrain().getName());
             }
             row.setFreightFromTrain(nt);
         }

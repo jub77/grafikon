@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Freight passed to train (station timetables).
@@ -13,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = {"freightTo"})
 public class FreightToTrain {
 
-    private String train;
+    private TranslatedString train;
     private List<FreightDstInfo> freightTo;
 
     public FreightToTrain() {
@@ -27,12 +30,13 @@ public class FreightToTrain {
         this.freightTo = freightTo;
     }
 
-    public String getTrain() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrain() {
         return train;
     }
 
     @XmlAttribute
-    public void setTrain(String train) {
+    public void setTrain(TranslatedString train) {
         this.train = train;
     }
 }

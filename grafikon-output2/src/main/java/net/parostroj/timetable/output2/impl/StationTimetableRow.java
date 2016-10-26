@@ -29,7 +29,7 @@ public class StationTimetableRow {
     private boolean occupied;
     private LocalizedString comment;
     private List<FreightDstInfo> freightTo;
-    private List<String> freightFromTrain;
+    private List<TranslatedString> freightFromTrain;
     private List<FreightToTrain> freightToTrain;
     private List<CycleFromTo> engine;
     private List<CycleFromTo> trainUnit;
@@ -148,7 +148,7 @@ public class StationTimetableRow {
         this.freightTo = freightTo;
     }
 
-    public void setFreightFromTrain(List<String> freightFromTrain) {
+    public void setFreightFromTrain(List<TranslatedString> freightFromTrain) {
         this.freightFromTrain = freightFromTrain;
     }
 
@@ -156,7 +156,8 @@ public class StationTimetableRow {
         this.freightToTrain = freightToTrain;
     }
 
-    public List<String> getFreightFromTrain() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public List<TranslatedString> getFreightFromTrain() {
         return freightFromTrain;
     }
 
