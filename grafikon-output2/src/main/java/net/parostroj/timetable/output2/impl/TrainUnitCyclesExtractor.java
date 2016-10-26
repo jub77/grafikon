@@ -25,7 +25,7 @@ public class TrainUnitCyclesExtractor {
 
     public List<TrainUnitCycle> getTrainUnitCycles() {
         counter = 0;
-        List<TrainUnitCycle> outputCycles = new LinkedList<TrainUnitCycle>();
+        List<TrainUnitCycle> outputCycles = new LinkedList<>();
         BiMap<TrainsCycle, TrainUnitCycle> map = HashBiMap.create();
         for (TrainsCycle cycle : cycles) {
             outputCycles.add(this.getCycle(cycle, map));
@@ -72,7 +72,7 @@ public class TrainUnitCyclesExtractor {
     private TrainUnitCycleRow createRow(TrainsCycleItem item) {
     	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         TrainUnitCycleRow row = new TrainUnitCycleRow();
-        row.setTrainName(item.getTrain().getDefaultName());
+        row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());

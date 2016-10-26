@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Train unit cycle row.
@@ -16,7 +17,7 @@ import net.parostroj.timetable.model.LocalizedString;
 @XmlType(propOrder={"trainName", "fromTime", "toTime", "fromAbbr", "toAbbr", "comment", "cycle"})
 public class TrainUnitCycleRow {
 
-    private String trainName;
+    private TranslatedString trainName;
     private String fromTime;
     private String fromAbbr;
     private String toTime;
@@ -57,11 +58,12 @@ public class TrainUnitCycleRow {
         this.toAbbr = toAbbr;
     }
 
-    public String getTrainName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 
@@ -75,7 +77,7 @@ public class TrainUnitCycleRow {
 
     public List<TrainUnitCustomCycle> getCycle() {
         if (cycle == null)
-            cycle = new LinkedList<TrainUnitCustomCycle>();
+            cycle = new LinkedList<>();
         return cycle;
     }
 
