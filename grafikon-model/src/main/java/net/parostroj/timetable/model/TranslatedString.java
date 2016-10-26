@@ -52,7 +52,7 @@ public interface TranslatedString {
      * @param languageTag locale (tag)
      * @return text for given locale of default text if the locale is not present
      */
-    default String translate(String languageTag) {
-        return translate(Locale.forLanguageTag(languageTag));
+    default String translateForTag(String languageTag) {
+        return translate(languageTag == null ? null : Locale.forLanguageTag(languageTag));
     }
 }
