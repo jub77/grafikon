@@ -103,7 +103,9 @@ class TrainNameDelegate {
             _cachedBinding.put("stations", new Stations());
         }
         _cachedBinding.put("type", train.getType());
-        _cachedBinding.put("locale", locale != null ? LocalizedString.getOnlyLanguageLocale(locale).toLanguageTag() : null);
+        Locale onlyLanguageLocale = locale != null ? LocalizedString.getOnlyLanguageLocale(locale) : null;
+        _cachedBinding.put("locale", onlyLanguageLocale);
+        _cachedBinding.put("localeTag", locale != null ? onlyLanguageLocale.toLanguageTag() : null);
         return _cachedBinding;
     }
 
