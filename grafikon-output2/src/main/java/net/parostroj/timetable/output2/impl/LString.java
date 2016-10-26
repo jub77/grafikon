@@ -28,9 +28,13 @@ public class LString {
     }
 
     public LString(TranslatedString ts) {
-        this.setDefaultString(ts.getDefaultString());
+        String dString = ts.getDefaultString();
+        this.setDefaultString(dString);
         for (Locale locale : ts.getLocales()) {
-            this.getLocalizedStrings().add(new LStringLang(locale.toLanguageTag(), ts.translate(locale)));
+            String tString = ts.translate(locale);
+            if (!dString.equals(tString)) {
+                this.getLocalizedStrings().add(new LStringLang(locale.toLanguageTag(), tString));
+            }
         }
     }
 
