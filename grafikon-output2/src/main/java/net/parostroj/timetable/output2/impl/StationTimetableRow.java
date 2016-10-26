@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Row for station timetable.
@@ -16,7 +17,7 @@ import net.parostroj.timetable.model.LocalizedString;
     "engine", "trainUnit", "cycle", "length", "freightTo", "freightFromTrain", "freightToTrain"})
 public class StationTimetableRow {
 
-    private String trainName;
+    private TranslatedString trainName;
     private String from;
     private String arrival;
     private String to;
@@ -39,7 +40,7 @@ public class StationTimetableRow {
     public StationTimetableRow() {
     }
 
-    public StationTimetableRow(String trainName, String from, String fromTime, String to, String toTime, String end, String track) {
+    public StationTimetableRow(TranslatedString trainName, String from, String fromTime, String to, String toTime, String end, String track) {
         this.trainName = trainName;
         this.from = from;
         this.arrival = fromTime;
@@ -105,11 +106,12 @@ public class StationTimetableRow {
         this.track = track;
     }
 
-    public String getTrainName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 
@@ -164,7 +166,7 @@ public class StationTimetableRow {
 
     public List<CycleFromTo> getEngine() {
         if (engine == null) {
-            engine = new LinkedList<CycleFromTo>();
+            engine = new LinkedList<>();
         }
         return engine;
     }
@@ -175,7 +177,7 @@ public class StationTimetableRow {
 
     public List<CycleFromTo> getTrainUnit() {
         if (trainUnit == null) {
-            trainUnit = new LinkedList<CycleFromTo>();
+            trainUnit = new LinkedList<>();
         }
         return trainUnit;
     }
@@ -186,7 +188,7 @@ public class StationTimetableRow {
 
     public List<CycleWithTypeFromTo> getCycle() {
         if (cycle == null)
-            cycle = new LinkedList<CycleWithTypeFromTo>();
+            cycle = new LinkedList<>();
         return cycle;
     }
 

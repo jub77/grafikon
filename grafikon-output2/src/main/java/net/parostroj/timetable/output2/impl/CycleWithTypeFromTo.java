@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TranslatedString;
 
 public class CycleWithTypeFromTo extends CycleFromTo {
 
@@ -12,7 +13,7 @@ public class CycleWithTypeFromTo extends CycleFromTo {
     public CycleWithTypeFromTo() {
     }
 
-    public CycleWithTypeFromTo(boolean start, boolean in, String name, String desc, String trainName, String time) {
+    public CycleWithTypeFromTo(boolean start, boolean in, String name, String desc, TranslatedString trainName, String time) {
         super(start, in, name, desc, trainName, time);
     }
 

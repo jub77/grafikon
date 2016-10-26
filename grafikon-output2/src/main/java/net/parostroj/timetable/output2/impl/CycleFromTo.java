@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import net.parostroj.timetable.model.TranslatedString;
+
 /**
  * @author jub
  */
@@ -14,7 +16,7 @@ public class CycleFromTo {
     private boolean start;
     private String name;
     private String desc;
-    private String trainName;
+    private TranslatedString trainName;
     private String time;
     private Boolean helper;
     private String adjacent;
@@ -22,7 +24,7 @@ public class CycleFromTo {
     public CycleFromTo() {
     }
 
-    public CycleFromTo(boolean start, boolean in, String name, String desc, String trainName, String time) {
+    public CycleFromTo(boolean start, boolean in, String name, String desc, TranslatedString trainName, String time) {
         this.start = start;
         this.in = in;
         this.name = name;
@@ -47,11 +49,12 @@ public class CycleFromTo {
         this.desc = desc;
     }
 
-    public String getTrainName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 
