@@ -90,7 +90,7 @@ class TrainNameDelegate {
      * @return binding for template
      */
     Map<String,Object> createTemplateBinding() {
-        return this.createTemplateBinding(Locale.getDefault());
+        return this.createTemplateBinding(null);
     }
 
     /**
