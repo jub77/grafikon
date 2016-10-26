@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Driver cycle row.
@@ -14,7 +15,7 @@ import net.parostroj.timetable.model.LocalizedString;
         "technologicalTime" })
 public class DriverCycleRow {
 
-    private String trainName;
+    private TranslatedString trainName;
     private String fromTime;
     private String fromAbbr;
     private String from;
@@ -49,11 +50,12 @@ public class DriverCycleRow {
         this.toAbbr = toAbbr;
     }
 
-    public String getTrainName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getTrainName() {
         return trainName;
     }
 
-    public void setTrainName(String trainName) {
+    public void setTrainName(TranslatedString trainName) {
         this.trainName = trainName;
     }
 

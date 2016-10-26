@@ -4,6 +4,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * Train timetable information.
@@ -14,8 +17,8 @@ import javax.xml.bind.annotation.XmlType;
     "engineDescription", "controlled", "weightData", "lengthData", "rows"})
 public class TrainTimetable {
 
-    private String name;
-    private String completeName;
+    private TranslatedString name;
+    private TranslatedString completeName;
     private Boolean diesel;
     private Boolean electric;
     private String categoryKey;
@@ -28,23 +31,25 @@ public class TrainTimetable {
 
     public TrainTimetable() {}
 
-    public TrainTimetable(String name) {
+    public TrainTimetable(TranslatedString name) {
         this.name = name;
     }
 
-    public String getName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(TranslatedString name) {
         this.name = name;
     }
 
-    public String getCompleteName() {
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public TranslatedString getCompleteName() {
         return completeName;
     }
 
-    public void setCompleteName(String completeName) {
+    public void setCompleteName(TranslatedString completeName) {
         this.completeName = completeName;
     }
 

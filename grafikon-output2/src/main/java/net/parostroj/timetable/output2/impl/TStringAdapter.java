@@ -15,5 +15,4 @@ public class TStringAdapter extends XmlAdapter<LString, TranslatedString> {
     public LString marshal(TranslatedString v) throws Exception {
         return v == null ? null : new LString(v);
     }
-
 }

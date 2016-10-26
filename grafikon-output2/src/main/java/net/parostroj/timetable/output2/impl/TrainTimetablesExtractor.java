@@ -82,8 +82,8 @@ public class TrainTimetablesExtractor {
 
     private TrainTimetable createTimetable(Train train) {
         TrainTimetable timetable = new TrainTimetable();
-        timetable.setName(train.getDefaultName());
-        timetable.setCompleteName(train.getDefaultCompleteName());
+        timetable.setName(train.getName());
+        timetable.setCompleteName(train.getCompleteName());
         this.extractRouteInfo(train, timetable);
         this.extractDieselElectric(train, timetable);
         if (train.getType() != null && train.getType().getCategory() != null) {
@@ -201,10 +201,10 @@ public class TrainTimetablesExtractor {
             if (lastLineI != null && lastLineI.getToStraightTrack() != null)
                 row.setStraight(lastLineI.getToStraightTrack() == nodeI.getTrack());
             if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN)) {
-                Pair<Boolean, List<String>> trapezoidTrains = this.getTrapezoidTrains(nodeI);
-                if (trapezoidTrains != null) {
-                    row.setTrapezoidTrains(trapezoidTrains.second);
-                    row.setTrapezoid(trapezoidTrains.first);
+                Pair<Boolean, List<TranslatedString>> concurrentTrains = this.getConcurrentTrains(nodeI);
+                if (concurrentTrains != null) {
+                    row.setConcurrentTrains(concurrentTrains.second);
+                    row.setFirstConcurrent(concurrentTrains.first);
                 }
             }
 
@@ -255,7 +255,7 @@ public class TrainTimetablesExtractor {
         return check;
     }
 
-    private Pair<Boolean, List<String>> getTrapezoidTrains(TimeInterval interval) {
+    private Pair<Boolean, List<TranslatedString>> getConcurrentTrains(TimeInterval interval) {
         TrainComparator comparator = diagram.getTrainsData().getTrainComparator();
         Node node = interval.getOwnerAsNode();
         TimeInterval toBeChecked = interval;
@@ -292,11 +292,11 @@ public class TrainTimetablesExtractor {
             ElementSort<Train> s = new ElementSort<>(new TrainComparator(
                     node.getDiagram().getTrainsData().getTrainSortPattern()));
             tTrains = s.sort(tTrains);
-            List<String> result = new LinkedList<>();
+            List<TranslatedString> result = new LinkedList<>();
             for (Train t : tTrains) {
-                result.add(t.getDefaultName());
+                result.add(t.getName());
             }
-            return new Pair<>(!first, result);
+            return new Pair<>(first, result);
         }
     }
 

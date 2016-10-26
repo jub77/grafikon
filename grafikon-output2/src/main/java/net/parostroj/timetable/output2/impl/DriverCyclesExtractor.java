@@ -26,7 +26,7 @@ public class DriverCyclesExtractor {
     }
 
     public DriverCycles getDriverCycles() {
-        List<DriverCycle> outputCyclesList = new LinkedList<DriverCycle>();
+        List<DriverCycle> outputCyclesList = new LinkedList<>();
         for (TrainsCycle cycle : cycles) {
             outputCyclesList.add(createCycle(cycle));
         }
@@ -64,7 +64,7 @@ public class DriverCyclesExtractor {
     private DriverCycleRow createRow(TrainsCycleItem item) {
     	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         DriverCycleRow row = new DriverCycleRow();
-        row.setTrainName(item.getTrain().getDefaultName());
+        row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());

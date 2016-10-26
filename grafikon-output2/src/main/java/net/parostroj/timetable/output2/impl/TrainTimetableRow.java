@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TranslatedString;
 
 /**
  * One row of train timetable.
@@ -15,7 +16,7 @@ import net.parostroj.timetable.model.LocalizedString;
  */
 @XmlType(propOrder={"station", "stationAbbr", "stationType", "track", "straight", "arrival", "departure",
     "speed", "setSpeed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
-    "onControlled", "trapezoid", "trapezoidTrains", "lineClass", "routePosition", "routePositionOut",
+    "onControlled", "firstConcurrent", "concurrentTrains", "lineClass", "routePosition", "routePositionOut",
     "lineTracks", "freightDest"
 })
 public class TrainTimetableRow {
@@ -36,8 +37,8 @@ public class TrainTimetableRow {
     private Boolean lineEnd;
     private Boolean lightSignals;
     private Boolean onControlled;
-    private Boolean trapezoid;
-    private List<String> trapezoidTrains;
+    private Boolean firstConcurrent;
+    private List<TranslatedString> concurrentTrains;
     private String lineClass;
     private Double routePosition;
     private Double routePositionOut;
@@ -174,13 +175,14 @@ public class TrainTimetableRow {
     }
 
     @XmlElement(name="train")
-    @XmlElementWrapper(name="trapezoidTrains")
-    public List<String> getTrapezoidTrains() {
-        return trapezoidTrains;
+    @XmlElementWrapper(name="concurrentTrains")
+    @XmlJavaTypeAdapter(TStringAdapter.class)
+    public List<TranslatedString> getConcurrentTrains() {
+        return concurrentTrains;
     }
 
-    public void setTrapezoidTrains(List<String> trapezoidTrains) {
-        this.trapezoidTrains = trapezoidTrains;
+    public void setConcurrentTrains(List<TranslatedString> concurrentTrains) {
+        this.concurrentTrains = concurrentTrains;
     }
 
     public String getLineClass() {
@@ -191,12 +193,12 @@ public class TrainTimetableRow {
         this.lineClass = lineClass;
     }
 
-    public Boolean getTrapezoid() {
-        return trapezoid;
+    public Boolean getFirstConcurrent() {
+        return firstConcurrent;
     }
 
-    public void setTrapezoid(Boolean trapezoid) {
-        this.trapezoid = trapezoid;
+    public void setFirstConcurrent(Boolean firstConcurrent) {
+        this.firstConcurrent = firstConcurrent;
     }
 
     public Double getRoutePosition() {
