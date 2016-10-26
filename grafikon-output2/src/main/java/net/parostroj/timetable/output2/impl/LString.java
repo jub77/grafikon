@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -9,6 +10,7 @@ import com.google.common.collect.FluentIterable;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
+import net.parostroj.timetable.model.TranslatedString;
 
 public class LString {
 
@@ -22,6 +24,13 @@ public class LString {
         this.setDefaultString(ls.getDefaultString());
         for (StringWithLocale swl : ls.getLocalizedStrings()) {
             this.getLocalizedStrings().add(new LStringLang(swl.getLocale().toLanguageTag(), swl.getString()));
+        }
+    }
+
+    public LString(TranslatedString ts) {
+        this.setDefaultString(ts.getDefaultString());
+        for (Locale locale : ts.getLocales()) {
+            this.getLocalizedStrings().add(new LStringLang(locale.toLanguageTag(), ts.translate(locale)));
         }
     }
 
