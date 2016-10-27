@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Collection;
 
 import javax.swing.GroupLayout;
@@ -18,14 +19,17 @@ import org.beanfabrics.ModelSubscriber;
 import org.beanfabrics.Path;
 import org.beanfabrics.View;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnCheckBox;
 import org.beanfabrics.swing.BnTextField;
 
 import com.google.common.collect.Collections2;
+import com.google.common.io.Files;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.execution.OutputTemplateAction;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM.Action;
@@ -99,22 +103,30 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         generateAllButton.setModelProvider(provider);
         generateAllButton.setPath(new Path("generateAll"));
 
+        BnCheckBox clearDirectoryCheckBox = new BnCheckBox();
+        clearDirectoryCheckBox.setText(ResourceLoader.getString("ot.clear.directory"));
+        clearDirectoryCheckBox.setModelProvider(provider);
+        clearDirectoryCheckBox.setPath(new Path("clearDirectory"));
+
         GroupLayout generatePanelLayout = new GroupLayout(generatePanel);
         generatePanelLayout.setHorizontalGroup(
             generatePanelLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(generatePanelLayout.createSequentialGroup()
-                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(generateButton)
+                    .addContainerGap()
+                    .addComponent(clearDirectoryCheckBox)
+                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(generateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(generateAllButton)
+                    .addComponent(generateAllButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
         );
         generatePanelLayout.setVerticalGroup(
             generatePanelLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(generatePanelLayout.createSequentialGroup()
                     .addGroup(generatePanelLayout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(generateAllButton)
-                        .addComponent(generateButton))
+                        .addComponent(generateAllButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(generateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(clearDirectoryCheckBox))
                     .addContainerGap())
         );
         generatePanel.setLayout(generatePanelLayout);
@@ -207,11 +219,25 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         provider.setPresentationModel(pModel);
     }
 
+    private void clearDirectory(File location) {
+        Files.fileTreeTraverser().postOrderTraversal(location).forEach(file -> {
+            // try to delete - ignore if it doesn't succeed (successful operation is not required)
+            if (!file.equals(location)) {
+                file.delete();
+            }
+        });
+    }
+
     private void generateOutputs(final GenerateOutputPM pModel, Collection<Output> outputs) {
         ActionContext context = new ActionContext();
         context.setLocationComponent(this);
-        OutputTemplateAction action = new OutputTemplateAction(context, element,
-                settings, pModel.getLocation(), outputs);
+        OutputTemplateAction action = new OutputTemplateAction(context, element, settings, pModel.getLocation(),
+                outputs);
+        if (pModel.isClearDirectory()) {
+            ActionHandler.getInstance().execute(ModelAction.newAction(context, () -> {
+                clearDirectory(pModel.getLocation());
+            }));
+        }
         ActionHandler.getInstance().execute(action);
     }
 
