@@ -19,7 +19,8 @@ public enum ModelObjectType {
     CIRCULATION("circulation", TrainsCycle.class, diagram -> diagram.getCycles()),
     DRIVER_CIRCULATION("driver.circulation", TrainsCycle.class, diagram -> diagram.getDriverCycleType().getCycles()),
     TRAIN_UNIT_CIRCULATION("train.unit.circulation", TrainsCycle.class, diagram -> diagram.getTrainUnitCycleType().getCycles()),
-    ENGINE_CIRCULATION("engine.circulation", TrainsCycle.class, diagram -> diagram.getEngineCycleType().getCycles());
+    ENGINE_CIRCULATION("engine.circulation", TrainsCycle.class, diagram -> diagram.getEngineCycleType().getCycles()),
+    ROUTE("route", Route.class, diagram -> diagram.getRoutes());
 
     private String key;
     private Class<?> type;
