@@ -30,8 +30,11 @@ public class GTDrawOutput extends DrawOutput {
         Collection<GTDraw> draws = this.getDraws(params);
         if (draws == null) {
             Collection<GTDrawParams> gtParamList = this.getParams(params, diagram);
-            draws = new ArrayList<GTDraw>(gtParamList.size());
+            draws = new ArrayList<>(gtParamList.size());
             for (GTDrawParams gtParams : gtParamList) {
+                // update locale
+                gtParams.setLocale(this.getLocale());
+                // add to list  of draws
                 draws.add(drawFactory.createInstance(gtParams.getType(), gtParams.getSettings(), gtParams.getRoute(), new GTStorage()));
             }
         }
@@ -66,7 +69,7 @@ public class GTDrawOutput extends DrawOutput {
     }
 
     private Collection<Image> createImages(Collection<GTDraw> draws) {
-        Collection<Image> images = new ArrayList<Image>(draws.size());
+        Collection<Image> images = new ArrayList<>(draws.size());
         for (GTDraw draw : draws) {
             images.add(this.createImage(draw));
         }

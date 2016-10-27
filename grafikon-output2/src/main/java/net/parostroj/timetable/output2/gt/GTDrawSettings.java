@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,7 +37,8 @@ public class GTDrawSettings {
         TITLE_TEXT(String.class),
         BACKGROUND_COLOR(Color.class),
         ORIENTATION(GTOrientation.class),
-        TRAIN_ENDS(Boolean.class);
+        TRAIN_ENDS(Boolean.class),
+        LOCALE(Locale.class);
 
         private final Class<?> valueClass;
 
@@ -52,7 +54,7 @@ public class GTDrawSettings {
     protected Map<Key, Object> preferences;
 
     protected GTDrawSettings() {
-        preferences = new EnumMap<Key, Object>(Key.class);
+        preferences = new EnumMap<>(Key.class);
     }
 
     public GTDrawSettings set(Key key, Object value) {

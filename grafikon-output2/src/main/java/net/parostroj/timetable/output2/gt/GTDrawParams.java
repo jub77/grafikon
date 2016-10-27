@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.Dimension;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
@@ -114,5 +115,13 @@ public class GTDrawParams {
 
     public void setTrainNames(boolean trainNames) {
         this.settings.set(Key.TRAIN_NAMES, trainNames);
+    }
+
+    public void setLocaleTag(String tag) {
+        this.settings.set(Key.LOCALE, Locale.forLanguageTag(tag));
+    }
+
+    public void setLocale(Locale locale) {
+        this.settings.set(Key.LOCALE, locale);
     }
 }

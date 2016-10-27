@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
+import net.parostroj.timetable.output2.gt.GTDrawSettings.Key;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -69,6 +70,8 @@ abstract public class GTDrawBase implements GTDraw {
     protected List<Node> stations;
     protected double timeStep;
 
+    protected Locale locale;
+
     protected final Color background;
     protected final int startTime;
     protected final int endTime;
@@ -88,6 +91,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
             Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+        this.locale = config.get(Key.LOCALE, Locale.class);
         this.route = route;
         this.intervalFilter = intervalFilter;
         this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, TrainColors.class);
@@ -513,7 +517,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setTransform(newTransform);
         // length of the text
         Train train = interval.getTrain();
-        String trainName = train.getDefaultName();
+        String trainName = train.getName().translate(locale);
         Rectangle rr = this.getStringBounds(trainName, g);
         Shape nameShape = null;
 
