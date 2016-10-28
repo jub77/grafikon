@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +28,7 @@ import com.google.common.io.Files;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
+import net.parostroj.timetable.gui.GuiContextDataListener;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.ModelAction;
@@ -44,6 +46,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 
 public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> implements GuiContextComponent, View<GenerateOutputPM>, ModelSubscriber {
+
+    private static final String INI_KEY_CLEAR_DIRECTORY = "clear.directory";
 
     private ModelProvider provider;
     private Link link;
@@ -195,7 +199,16 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     @Override
     public void registerContext(GuiContext context) {
-        context.registerWindow("output.list", this);
+        context.registerWindow("output.list", this, GuiContextDataListener.create(initMap -> {
+            getPresentationModel().setClearDirectory(initMap.containsKey(INI_KEY_CLEAR_DIRECTORY));
+        }, () -> {
+            if (getPresentationModel().isClearDirectory()) {
+                return Collections.singletonMap(INI_KEY_CLEAR_DIRECTORY, "clear");
+            } else {
+                return Collections.emptyMap();
+            }
+        }));
+
         this.context = context;
     }
 

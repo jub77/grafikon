@@ -9,5 +9,9 @@ import java.awt.Window;
  */
 public interface GuiContext {
 
-    void registerWindow(String key, Window window);
+    default void registerWindow(String key, Window window) {
+        registerWindow(key, window, null);
+    }
+
+    void registerWindow(String key, Window window, GuiContextDataListener listener);
 }

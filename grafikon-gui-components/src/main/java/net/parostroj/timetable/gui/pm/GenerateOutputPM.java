@@ -132,4 +132,8 @@ public class GenerateOutputPM extends AbstractPM {
     public boolean isClearDirectory() {
         return clearDirectory.getBoolean();
     }
+
+    public void setClearDirectory(boolean clear) {
+        clearDirectory.setBoolean(clear);
+    }
 }
