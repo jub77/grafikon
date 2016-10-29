@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
@@ -50,6 +51,7 @@ public class CirculationDraw {
         public String titleText;
         public float zoom;
         public CirculationDrawColors colors;
+        public Locale locale;
 
         public int getRow(int rowIndex) {
             return startY + rowIndex * this.row + this.title;
@@ -120,6 +122,7 @@ public class CirculationDraw {
         this.layout.stepWidth = params.getWidthInChars();
         this.layout.zoom = params.getZoom();
         this.layout.rows = circulations.size();
+        this.layout.locale = params.getLocale();
         this.update = true;
         this.layout.titleText = params.getTitle();
         CirculationDrawColors colors = params.getColors();
@@ -265,9 +268,10 @@ public class CirculationDraw {
         g.fillRect(x, y, width, height);
         g.setColor(layout.colors.getColor(COLOR_OUTLINE, item));
         g.drawRect(x, y, width, height);
-        int w = DrawUtils.getStringWidth(g, item.getTrain().getDefaultName());
+        String name = item.getTrain().getName().translate(layout.locale);
+        int w = DrawUtils.getStringWidth(g, name);
         if (x + w <= this.getX(layout.toTime)) {
-            g.drawString(item.getTrain().getDefaultName(), x, partY);
+            g.drawString(name, x, partY);
         }
     }
 

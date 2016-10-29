@@ -24,8 +24,9 @@ public class CirculationDrawOutput extends DrawOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         Collection<CirculationDrawParams> cdParamList = this.getParams(params, diagram);
-        Collection<CirculationDraw> draws = new ArrayList<CirculationDraw>(cdParamList.size());
+        Collection<CirculationDraw> draws = new ArrayList<>(cdParamList.size());
         for (CirculationDrawParams cdParams : cdParamList) {
+            cdParams.setLocale(getLocale());
             draws.add(new CirculationDraw(cdParams));
         }
         this.draw(this.getFileOutputType(params), stream, draws, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
@@ -46,7 +47,7 @@ public class CirculationDrawOutput extends DrawOutput {
     }
 
     private Collection<Image> createImages(Collection<CirculationDraw> draws) {
-        Collection<Image> images = new ArrayList<Image>(draws.size());
+        Collection<Image> images = new ArrayList<>(draws.size());
         for (CirculationDraw draw : draws) {
             images.add(this.createImage(draw));
         }

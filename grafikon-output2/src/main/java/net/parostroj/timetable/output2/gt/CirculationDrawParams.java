@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -17,6 +18,7 @@ public class CirculationDrawParams {
     private String title;
     private float zoom;
     private CirculationDrawColors colors;
+    private Locale locale;
 
     public CirculationDrawParams(Collection<TrainsCycle> circulations) {
         this.circulations = circulations;
@@ -58,6 +60,10 @@ public class CirculationDrawParams {
         return colors;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
     public CirculationDrawParams setFrom(int from) {
         this.from = from;
         return this;
@@ -90,5 +96,13 @@ public class CirculationDrawParams {
     public CirculationDrawParams setColors(CirculationDrawColors colors) {
         this.colors = colors;
         return this;
+    }
+
+    public void setLocaleTag(String tag) {
+        this.locale = Locale.forLanguageTag(tag);
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }
