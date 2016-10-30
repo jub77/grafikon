@@ -87,9 +87,11 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
                 delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale>(l -> l.getDisplayName(l), l -> l != null ? l.toString() : "");
             } else if (o instanceof OutputTemplate) {
                 delegate = (WrapperDelegate<? super T>) new OutputTemplateWrapperDelegate();
+            } else if (o instanceof EngineClass) {
+                delegate = (WrapperDelegate<? super T>) new EngineClassWrapperDelegate();
             }
         }
-        return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
+        return delegate == null ? new Wrapper<>(o) : new Wrapper<>(o, delegate);
     }
 
     @SafeVarargs
@@ -102,7 +104,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     }
 
     public static <T> List<Wrapper<T>> getWrapperList(Iterable<? extends T> objList, WrapperDelegate<? super T> delegate) {
-        List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
+        List<Wrapper<T>> list = new LinkedList<>();
         Class<?> clazz = null;
         for (T o : objList) {
             list.add(getWrapper(o, delegate));
@@ -124,7 +126,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     }
 
     public static <T> List<T> unwrap(List<Wrapper<T>> list) {
-        List<T> result = new ArrayList<T>(list.size());
+        List<T> result = new ArrayList<>(list.size());
         for (Wrapper<T> w : list) {
             result.add(unwrap(w));
         }
@@ -147,7 +149,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     }
 
     public static <V> Wrapper<V> getPrototypeWrapper(String prototypeValue) {
-        return new PrototypeWrapper<V>(prototypeValue);
+        return new PrototypeWrapper<>(prototypeValue);
     }
 
     public static <V> Wrapper<V> getEmptyWrapper(String textValue) {

@@ -9,6 +9,7 @@ import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
+import net.parostroj.timetable.gui.pm.EngineClassPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -180,6 +181,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         weightTable.setEnabled(enabled);
         speedTextField.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+        editButton.setEnabled(enabled);
         copyEnable(ObjectsUtil.checkAndTrim(nameTextField.getText()), enabled);
         speedTextField.setText("");
         this.enableDisableDeleteRow();
@@ -209,6 +211,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         });
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        editButton.setEnabled(false);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
         copyButton.setEnabled(false);
@@ -226,6 +230,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
         newButton.addActionListener(evt -> newButtonActionPerformed(evt));
 
+        editButton.addActionListener(evt -> editButtonActionPerformed(evt));
         deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
         copyButton.addActionListener(evt -> copyButtonActionPerformed(evt));
@@ -260,6 +265,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                             .addComponent(copyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(newButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(editButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(nameTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -280,6 +286,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                         .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -309,6 +317,25 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             int index = listModel.getIndexOfObject(clazz);
             engineClassesList.setSelectedIndex(index);
             engineClassesList.ensureIndexIsVisible(index);
+        }
+    }
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (!engineClassesList.isSelectionEmpty()) {
+            int selected = engineClassesList.getSelectedIndex();
+            EngineClass engineClass = listModel.getIndex(selected).getElement();
+
+            EditEngineClassDialog dialog = new EditEngineClassDialog(this, true);
+            dialog.setLocationRelativeTo(editButton);
+            EngineClassPM pm = new EngineClassPM();
+            pm.init(engineClass);
+            dialog.setPresentationModel(pm);
+            dialog.setVisible(true);
+            dialog.dispose();
+
+            listModel.refreshAll();
+            Wrapper<EngineClass> selectedWrapper = listModel.getWrapperForObject(engineClass);
+            engineClassesList.setSelectedValue(selectedWrapper, true);
         }
     }
 
@@ -380,6 +407,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JList<Wrapper<EngineClass>> engineClassesList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
+    private javax.swing.JButton editButton;
     private javax.swing.JButton newRowButton;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JTable weightTable;
