@@ -163,7 +163,7 @@ public class TrainDiagramBuilder {
         diagram.getTrains().add(train);
     }
 
-    public void setEngineClass(LSEngineClass lsEngineClass) {
+    public void setEngineClass(LSEngineClass lsEngineClass) throws LSException {
         EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet().getLineClasses()::getById);
         EngineClass foundEc = null;
         if ((foundEc = diagram.getEngineClasses().getById(ec.getId())) != null) {

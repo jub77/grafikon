@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.WeightTableRow;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for engine class.
@@ -18,11 +19,12 @@ import net.parostroj.timetable.model.WeightTableRow;
  * @author jub
  */
 @XmlRootElement(name = "engine_class")
-@XmlType(propOrder = {"id", "name", "rows"})
+@XmlType(propOrder = {"id", "name", "attributes", "rows"})
 public class LSEngineClass {
 
     private String id;
     private String name;
+    private LSAttributes attributes;
     private List<LSWeightTableRow> rows;
 
     public LSEngineClass() {
@@ -35,6 +37,7 @@ public class LSEngineClass {
         for (WeightTableRow row : engineClass.getWeightTable()) {
             this.rows.add(new LSWeightTableRow(row));
         }
+        this.attributes = new LSAttributes(engineClass.getAttributes());
     }
 
     public String getId() {
@@ -63,12 +66,23 @@ public class LSEngineClass {
         this.rows = rows;
     }
 
-    public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) {
+    public LSAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(LSAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) throws LSException {
         EngineClass ec = new EngineClass(id, name);
         if (this.rows != null) {
             for (LSWeightTableRow lsRow : this.rows) {
                 ec.addWeightTableRow(lsRow.createWeightTableRow(lineClassMapping, ec));
             }
+        }
+        if (this.attributes != null) {
+            ec.getAttributes().add(this.attributes.createAttributes());
         }
         return ec;
     }

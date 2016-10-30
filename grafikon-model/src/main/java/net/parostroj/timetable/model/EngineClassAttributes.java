@@ -6,4 +6,5 @@ package net.parostroj.timetable.model;
 public interface EngineClassAttributes {
 
     public static final String ATTR_NAME = "name";
+    public static final String ATTR_GROUP_KEY = "group.key";
 }

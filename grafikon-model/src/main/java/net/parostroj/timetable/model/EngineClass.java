@@ -13,18 +13,21 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements ObjectWithId, Visitable, Observable, EngineClassAttributes {
+public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, EngineClassAttributes {
 
     private final String id;
     private String name;
     private final List<WeightTableRow> weightTable;
+    private final Attributes attributes;
     private final ListenerSupport listenerSupport;
 
     public EngineClass(String id, String name) {
         this.name = name;
         this.id = id;
-        this.weightTable = new LinkedList<WeightTableRow>();
+        this.weightTable = new LinkedList<>();
         this.listenerSupport = new ListenerSupport();
+        this.attributes = new Attributes(
+                (attrs, change) -> listenerSupport.fireEvent(new Event(EngineClass.this, change)));
     }
 
     public String getName() {
@@ -37,6 +40,14 @@ public class EngineClass implements ObjectWithId, Visitable, Observable, EngineC
             this.name = name;
             this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
+    }
+
+    public String getGroupKey() {
+        return this.getAttribute(ATTR_GROUP_KEY, String.class);
+    }
+
+    public void setGroupKey(String key) {
+        this.setRemoveAttribute(ATTR_GROUP_KEY, key);
     }
 
     @Override
@@ -156,5 +167,10 @@ public class EngineClass implements ObjectWithId, Visitable, Observable, EngineC
 
     public void removeAllListeners() {
         listenerSupport.removeAllListeners();
+    }
+
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
     }
 }

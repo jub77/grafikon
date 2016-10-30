@@ -13,10 +13,11 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements ObjectWithId, Visitable, ItemListObject, Observable, LineClassAttributes {
+public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemListObject, Observable, LineClassAttributes {
 
     private final String id;
     private String name;
+    private final Attributes attributes;
 
     private final ListenerSupport listenerSupport;
 
@@ -24,6 +25,8 @@ public class LineClass implements ObjectWithId, Visitable, ItemListObject, Obser
         this.id = id;
         this.name = name;
         this.listenerSupport = new ListenerSupport();
+        this.attributes = new Attributes(
+                (attrs, change) -> listenerSupport.fireEvent(new Event(LineClass.this, change)));
     }
 
     public String getName() {
@@ -69,5 +72,10 @@ public class LineClass implements ObjectWithId, Visitable, ItemListObject, Obser
     @Override
     public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
+    }
+
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
     }
 }
