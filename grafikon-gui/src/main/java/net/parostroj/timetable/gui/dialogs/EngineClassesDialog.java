@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
@@ -34,7 +33,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
         private EngineClass getCurrentEngineClass() {
             int selected = engineClassesList.getSelectedIndex();
-            EngineClass clazz = selected != -1 ? listModel.getIndex(selected).getElement() : null;
+            boolean one = engineClassesList.getSelectedIndices().length == 1;
+            EngineClass clazz = selected != -1 && one ? listModel.getIndex(selected).getElement() : null;
             return clazz;
         }
 
@@ -135,13 +135,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         super(parent, modal);
         tableModel = new WeightTableModel();
         initComponents();
-        weightTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    enableDisableDeleteRow();
-                }
+        weightTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                enableDisableDeleteRow();
             }
         });
     }
@@ -178,11 +174,12 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     private void enableDisable() {
         boolean enabled = !engineClassesList.isSelectionEmpty();
-        weightTable.setEnabled(enabled);
-        speedTextField.setEnabled(enabled);
+        boolean one = engineClassesList.getSelectedIndices().length == 1;
+        weightTable.setEnabled(one);
+        speedTextField.setEnabled(one);
         deleteButton.setEnabled(enabled);
-        editButton.setEnabled(enabled);
-        copyEnable(ObjectsUtil.checkAndTrim(nameTextField.getText()), enabled);
+        editButton.setEnabled(one);
+        copyEnable(ObjectsUtil.checkAndTrim(nameTextField.getText()), one);
         speedTextField.setText("");
         this.enableDisableDeleteRow();
     }
@@ -223,8 +220,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-
-        engineClassesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         engineClassesList.addListSelectionListener(evt -> engineClassesListValueChanged(evt));
         scrollPane1.setViewportView(engineClassesList);
 
@@ -341,18 +336,21 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!engineClassesList.isSelectionEmpty()) {
-            int selected = engineClassesList.getSelectedIndex();
-            listModel.removeIndex(selected);
-            if (selected >= listModel.getSize()) {
-                selected--;
+            int[] selected = engineClassesList.getSelectedIndices();
+            int first = selected[0];
+            for (int item : selected) {
+                listModel.removeIndex(item);
             }
-            engineClassesList.setSelectedIndex(selected);
+            if (first >= listModel.getSize()) {
+                first--;
+            }
+            engineClassesList.setSelectedIndex(first);
         }
     }
 
     private void engineClassesListValueChanged(javax.swing.event.ListSelectionEvent evt) {
         if (!evt.getValueIsAdjusting()) {
-            if (!engineClassesList.isSelectionEmpty()) {
+            if (engineClassesList.getSelectedIndices().length == 1) {
                 weightTable.removeEditor();
                 tableModel.updateInfo();
             }
