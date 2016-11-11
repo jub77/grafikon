@@ -20,6 +20,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
 import net.parostroj.timetable.utils.AttributeReference;
+import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.beanfabrics.ModelProvider;
@@ -60,7 +61,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
     private OutputTemplate template;
-    private OutputTemplate resultTemplate;
+    private OutputTemplate origTemplate;
 
     private final ModelProvider i18nProvider;
     private final ModelProvider nameProvider;
@@ -85,8 +86,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     }
 
     public void showDialog(OutputTemplate template) {
-        this.template = template;
-        this.resultTemplate = null;
+        this.origTemplate = template;
+        this.template = new CopyFactory(template.getDiagram().getPartFactory()).copy(template, IdGenerator.getInstance().getId());
         this.updateValues(false);
         this.setVisible(true);
     }
@@ -97,10 +98,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputComboBox.addItem(output);
         }
         outputComboBox.setSelectedItem(OutputTemplate.DEFAULT_OUTPUT);
-    }
-
-    public OutputTemplate getTemplate() {
-        return resultTemplate;
     }
 
     private void updateValues(boolean noTemplate) {
@@ -406,12 +403,20 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             setupPanel.stopEditing();
 
             this.template.setName(getNameLocalizedString());
-
-            this.resultTemplate = this.template;
+            this.mergeTemplate(this.origTemplate, this.template);
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
         }
+    }
+
+    private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {
+        template.setKey(fromTemplate.getKey());
+        template.setName(fromTemplate.getName());
+        template.setTemplate(fromTemplate.getTemplate());
+        template.getAttributes().merge(fromTemplate.getAttributes());
+        template.setScript(fromTemplate.getScript());
+        template.getAttachments().replaceAll(fromTemplate.getAttachments());
     }
 
     /**

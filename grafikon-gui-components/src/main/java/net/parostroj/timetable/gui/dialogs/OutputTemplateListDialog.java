@@ -282,15 +282,12 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         dialog.setTitle(template.getKey());
-        dialog.showDialog(this.copyTemplate(template));
-        if (dialog.getTemplate() != null) {
-            this.mergeTemplate(template, dialog.getTemplate());
-            // update description
-            updateDescription(template.getDescription());
-            Wrapper<OutputTemplate> selectedValue = templateList.getSelectedValue();
-            templatesModel.refreshAll();
-            templateList.setSelectedValue(selectedValue, true);
-        }
+        dialog.showDialog(template);
+        // update description
+        updateDescription(template.getDescription());
+        Wrapper<OutputTemplate> selectedValue = templateList.getSelectedValue();
+        templatesModel.refreshAll();
+        templateList.setSelectedValue(selectedValue, true);
     }
 
     private void outputButtonAction(OutputTemplate outputTemplate) {
@@ -307,15 +304,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
     private OutputTemplate copyTemplate(OutputTemplate template) {
         return new CopyFactory(template.getDiagram().getPartFactory()).copy(template, IdGenerator.getInstance().getId());
-    }
-
-    private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {
-        template.setKey(fromTemplate.getKey());
-        template.setName(fromTemplate.getName());
-        template.setTemplate(fromTemplate.getTemplate());
-        template.getAttributes().merge(fromTemplate.getAttributes());
-        template.setScript(fromTemplate.getScript());
-        template.getAttachments().replaceAll(fromTemplate.getAttachments());
     }
 
     private javax.swing.JPanel buttonPanel;
