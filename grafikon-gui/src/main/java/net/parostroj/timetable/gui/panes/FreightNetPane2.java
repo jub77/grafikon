@@ -151,7 +151,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final GraphicalTimetableViewWithSave graphicalTimetableView;
     private final GTLayeredPane2 scrollPane;
 
-    private final Tuple<TimeInterval> connection = new Tuple<TimeInterval>();
+    private final Tuple<TimeInterval> connection = new Tuple<>();
 
     private final JButton newButton;
     private final JButton deleteButton;
@@ -197,13 +197,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         newButton.setEnabled(false);
         newButton.addActionListener(e -> {
             FreightNet fn = model.getDiagram().getFreightNet();
-            if (fn.getConnection(connection.first, connection.second) == null) {
-                fn.addConnection(connection.first, connection.second);
+            FNConnection newOrExistingCconnection = fn.getConnection(connection.first, connection.second);
+            if (newOrExistingCconnection == null) {
+                newOrExistingCconnection =  fn.addConnection(connection.first, connection.second);
             }
             connection.first = null;
             connection.second = null;
             graphicalTimetableView.repaint();
             newButton.setEnabled(false);
+            selector.setSelected(newOrExistingCconnection);
             updateInfo();
         });
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -324,12 +326,9 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         HighlightSelection hts = new HighlightSelection();
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
-        model.addListener(new ApplicationModelListener() {
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());
-                }
+        model.addListener(event -> {
+            if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+                graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());
             }
         });
     }
