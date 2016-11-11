@@ -103,4 +103,9 @@ public abstract class TextTemplate {
         hash = 59 * hash + (this.template != null ? this.template.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%d]", getLanguage(), template != null ? template.length() : 0);
+    }
 }

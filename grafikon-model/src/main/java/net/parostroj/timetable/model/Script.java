@@ -74,4 +74,9 @@ public abstract class Script {
         hash = 59 * hash + (this.language != null ? this.language.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%d]", getLanguage(), sourceCode != null ? sourceCode.length() : 0);
+    }
 }
