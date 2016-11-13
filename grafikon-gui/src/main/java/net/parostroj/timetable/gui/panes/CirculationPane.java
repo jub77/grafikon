@@ -169,7 +169,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
                     editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
                 }
                 editDialog.setLocationRelativeTo(component);
-                editDialog.updateValues(this);
+                editDialog.updateValues(this, diagram);
                 editDialog.setVisible(true);
             }
 

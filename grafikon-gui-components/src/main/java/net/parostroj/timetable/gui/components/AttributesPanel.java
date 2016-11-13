@@ -33,6 +33,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.function.Function;
 
@@ -43,6 +44,7 @@ import java.util.function.Function;
  */
 public class AttributesPanel extends javax.swing.JPanel implements ModelSubscriber, View<ModelAttributesPM> {
 
+    private static final int SHOWN_ROW_COUNT = 7;
     private AttributesTableModel attributesTableModel;
     private String category;
     private Function<String, String> nameTranslation;
@@ -162,6 +164,9 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
         setLayout(new java.awt.BorderLayout());
 
         attributesTable.setModel(new net.parostroj.timetable.gui.components.AttributesTableModel(category));
+        Dimension prefViewportSize = attributesTable.getPreferredScrollableViewportSize();
+        prefViewportSize.setSize(0, attributesTable.getRowHeight() * SHOWN_ROW_COUNT);
+        attributesTable.setPreferredScrollableViewportSize(prefViewportSize);
         attributesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(attributesTable);
 

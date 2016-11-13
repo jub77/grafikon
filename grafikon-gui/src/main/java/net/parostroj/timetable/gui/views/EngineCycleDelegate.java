@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui.views;
 import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialogEngineClass;
+import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainsCycleType;
 
@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
  */
 public class EngineCycleDelegate extends TCDelegate {
 
-    private TCDetailsViewDialogEngineClass editDialog;
+    private TCDetailsViewDialog editDialog;
 
     public EngineCycleDelegate(ApplicationModel model) {
         super(model);
@@ -28,10 +28,10 @@ public class EngineCycleDelegate extends TCDelegate {
     @Override
     public void showEditDialog(JComponent component) {
         if (editDialog == null) {
-            editDialog = new TCDetailsViewDialogEngineClass(GuiComponentUtils.getWindow(component), true);
+            editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
         }
         editDialog.setLocationRelativeTo(component);
-        editDialog.updateValues(this, model.getDiagram());
+        editDialog.updateValues(this, model.get());
         editDialog.setVisible(true);
     }
 

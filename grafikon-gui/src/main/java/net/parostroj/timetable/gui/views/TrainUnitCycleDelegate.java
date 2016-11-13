@@ -31,7 +31,7 @@ public class TrainUnitCycleDelegate extends TCDelegate {
             editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
         }
         editDialog.setLocationRelativeTo(component);
-        editDialog.updateValues(this);
+        editDialog.updateValues(this, model.get());
         editDialog.setVisible(true);
     }
 
