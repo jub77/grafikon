@@ -53,6 +53,7 @@ public class DriverCyclesExtractor {
             outputCycle.setCompany(CompanyInfo.convert(company));
         }
         outputCycle.setAttributes(ae.extract(cycle.getAttributes()));
+        outputCycle.setLevel(cycle.getAttribute(TrainsCycle.ATTR_LEVEL, Integer.class));
         return outputCycle;
     }
 

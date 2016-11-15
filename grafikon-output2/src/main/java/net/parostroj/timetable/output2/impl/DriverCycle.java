@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "description", "routes", "attributes", "rows", "company"})
+@XmlType(propOrder={"name", "description", "routes", "attributes", "rows", "company", "level"})
 public class DriverCycle {
 
     private String name;
@@ -20,6 +20,7 @@ public class DriverCycle {
     private List<Attribute> attributes;
     private List<DriverCycleRow> rows;
     private CompanyInfo company;
+    private Integer level;
 
     public String getDescription() {
         return description;
@@ -40,7 +41,7 @@ public class DriverCycle {
     @XmlElement(name="row")
     public List<DriverCycleRow> getRows() {
         if (rows == null)
-            rows = new LinkedList<DriverCycleRow>();
+            rows = new LinkedList<>();
         return rows;
     }
 
@@ -51,7 +52,7 @@ public class DriverCycle {
     @XmlElement(name="route")
     public List<NetPartRouteInfo> getRoutes() {
         if (routes == null)
-            routes = new LinkedList<NetPartRouteInfo>();
+            routes = new LinkedList<>();
         return routes;
     }
 
@@ -74,5 +75,13 @@ public class DriverCycle {
 
     public void setCompany(CompanyInfo company) {
         this.company = company;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }
