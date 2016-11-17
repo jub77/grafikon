@@ -57,12 +57,11 @@ public class ExportAction extends AbstractAction {
         boolean cancelled = exportDialog.isCancelled();
 
         if (!cancelled) {
-            // saving train diagram
+            // saving library
             try (CloseableFileChooser gtmlFileChooser = FileChooserFactory.getInstance()
                     .getFileChooser(FileChooserFactory.Type.GTML)) {
                 int retVal = gtmlFileChooser.showSaveDialog(parent);
                 if (retVal == JFileChooser.APPROVE_OPTION) {
-                    model.setOpenedFile(gtmlFileChooser.getSelectedFile());
                     ActionContext c = new ActionContext(parent);
                     ModelAction action = getSaveModelAction(c, gtmlFileChooser.getSelectedFile(), parent, this.createLibrary(exportDialog.getSelection()));
                     ActionHandler.getInstance().execute(action);
