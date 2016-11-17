@@ -82,5 +82,24 @@ public interface AttributesHolder {
         getAttributes().setBool(category, name, value);
     }
 
+    default <T> T getNestedAttribute(Class<T> clazz, String... names) {
+        return clazz.cast(getNestedAttribute(names));
+    }
+
+    default Object getNestedAttribute(String... names) {
+        if (names.length == 0) {
+            return 0;
+        }
+        Object current = this;
+        for (String name : names) {
+            if (!(current instanceof AttributesHolder)) {
+                return null;
+            }
+            AttributesHolder holder = (AttributesHolder) current;
+            current = holder.getAttribute(name, Object.class);
+        }
+        return current;
+    }
+
     Attributes getAttributes();
 }
