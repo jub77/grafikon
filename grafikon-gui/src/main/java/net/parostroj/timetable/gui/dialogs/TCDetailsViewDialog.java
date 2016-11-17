@@ -55,6 +55,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         this.descTextField.setText(cycle.getDescription());
         boolean isEngineType = delegate.getType().isEngineType();
         boolean isDriverCycle = delegate.getType().isDriverType();
+        boolean isTrainUnitCycle = delegate.getType().isTrainUnitType();
         if (isEngineType) {
             this.engineClassComboBox.removeAllItems();
             this.engineClassComboBox.addItem(noneEngineClass);
@@ -70,10 +71,16 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                 levelComboBox.setSelectedItem(level);
             }
         }
+        if (isTrainUnitCycle) {
+            boolean freight = cycle.getAttributeAsBool(TrainsCycle.ATTR_FREIGHT);
+            freightCheckBox.setSelected(freight);
+        }
         this.levelComboBox.setVisible(isDriverCycle);
         this.levelLabel.setVisible(isDriverCycle);
         this.engineClassComboBox.setVisible(isEngineType);
         this.engineClassLabel.setVisible(isEngineType);
+        this.freightCheckBox.setVisible(isTrainUnitCycle);
+        this.freightLabel.setVisible(isTrainUnitCycle);
         this.companies = new WrapperListModel<>(false);
         Wrapper<Company> emptyCompany = Wrapper.<Company>getEmptyWrapper("-");
         this.companies.addWrapper(emptyCompany);
@@ -88,6 +95,10 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
+        freightLabel = new javax.swing.JLabel();
+        freightCheckBox = new javax.swing.JCheckBox();
+        freightCheckBox.setMargin(null);
+        freightCheckBox.setBorder(null);
         nameTextField = new javax.swing.JTextField();
         engineClassComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
@@ -107,6 +118,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         engineClassLabel.setText(ResourceLoader.getString("ec.details.engineclass") + ": "); // NOI18N
         companyLabel.setText(ResourceLoader.getString("ec.details.company") + ": "); // NOI18N
         levelLabel.setText(ResourceLoader.getString("ec.details.level") + ": "); // NOI18N
+        freightLabel.setText(ResourceLoader.getString("ec.details.freight") + ": "); // NOI18N
 
         nameTextField.setColumns(NAME_COLUMNS);
 
@@ -137,14 +149,16 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                             .addComponent(nameLabel)
                             .addComponent(engineClassLabel)
                             .addComponent(companyLabel)
-                            .addComponent(levelLabel))
+                            .addComponent(levelLabel)
+                            .addComponent(freightLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(engineClassComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(companyComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                            .addComponent(levelComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))))
+                            .addComponent(levelComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addComponent(freightCheckBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -170,6 +184,10 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(levelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(levelLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(freightCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(freightLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -213,6 +231,9 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
             }
             cycle.setRemoveAttribute(TrainsCycle.ATTR_LEVEL, level);
         }
+        if (delegate.getType().isTrainUnitType()) {
+            cycle.setAttributeAsBool(TrainsCycle.ATTR_FREIGHT, freightCheckBox.isSelected());
+        }
         // write back company
         Company selCompany = this.companies.getSelectedObject();
         cycle.getAttributes().setRemove(TrainsCycle.ATTR_COMPANY, selCompany);
@@ -232,6 +253,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JLabel engineClassLabel;
     private javax.swing.JLabel levelLabel;
+    private javax.swing.JLabel freightLabel;
+    private javax.swing.JCheckBox freightCheckBox;
 
     private WrapperListModel<Company> companies;
 }
