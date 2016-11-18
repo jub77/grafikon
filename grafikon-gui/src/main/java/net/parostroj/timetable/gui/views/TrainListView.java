@@ -216,6 +216,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 }
             }
         });
+        trainTree.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && model.getSelectedTrain() != null) {
+                    editAction();
+                }
+            }
+        });
     }
 
     private EditTrainDialog getEditTrainDialog() {
