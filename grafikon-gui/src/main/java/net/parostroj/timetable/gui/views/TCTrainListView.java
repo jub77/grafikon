@@ -7,6 +7,8 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -296,7 +298,15 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         cTrainsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !cTrainsList.isSelectionEmpty()) {
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && cTrainsList.getSelectedIndices().length == 1) {
+                    changeButtonActionPerformed();
+                }
+            }
+        });
+        cTrainsList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && cTrainsList.getSelectedIndices().length == 1) {
                     changeButtonActionPerformed();
                 }
             }
