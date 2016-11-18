@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.List;
+
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
@@ -13,6 +15,8 @@ import net.parostroj.timetable.utils.AttributeReference;
 
 public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedString>> extends AbstractPM implements IPM<ARLocalizationType<T>> {
 
+    public enum Selection { NONE, SINGLE, MULTIPLE }
+
     final LocalizedStringListPM<T> localized;
     final TextPM newKey;
 
@@ -24,7 +28,7 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
     final OperationPM moveDown;
 
     private boolean nonEmpty;
-    private boolean selected;
+    private Selection selected;
     private ARLocalizationType<T> type;
 
     public ARLocalizedStringListPM() {
@@ -60,9 +64,11 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
 
     @Operation(path = { "remove" })
     public boolean remove() {
-        T ref = localized.getSelectedReference();
-        type.addToRemove(ref);
-        localized.removeReference(ref);
+        List<T> refs = localized.getSelectedReferences();
+        for (T ref : refs) {
+            type.addToRemove(ref);
+            localized.removeReference(ref);
+        }
         return true;
     }
 
@@ -88,8 +94,9 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
 
     @OnChange(path = { "localized.list" })
     public void changedList() {
-        boolean oldSelected = selected;
-        selected = !localized.list.getSelection().isEmpty();
+        Selection oldSelected = selected;
+        selected = localized.list.getSelection().isEmpty() ? Selection.NONE
+                : (localized.list.getSelection().getIndexes().length == 1 ? Selection.SINGLE : Selection.MULTIPLE);
         if (oldSelected != selected) {
             this.getPropertyChangeSupport().firePropertyChange("selected", oldSelected, selected);
         }
@@ -111,17 +118,17 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
 
     @Validation(path = { "remove" })
     public boolean canRemove() {
-        return selected;
+        return selected != Selection.NONE;
     }
 
     @Validation(path = { "moveUp" })
     public boolean canMoveUp() {
-        return selected && !localized.isSorted() && localized.list.getSelection().getMinIndex() > 0;
+        return selected == Selection.SINGLE && !localized.isSorted() && localized.list.getSelection().getMinIndex() > 0;
     }
 
     @Validation(path = { "moveDown" })
     public boolean canMoveDown() {
-        return selected && !localized.isSorted() && localized.list.size() - 1 > localized.list.getSelection().getMaxIndex() ;
+        return selected == Selection.SINGLE && !localized.isSorted() && localized.list.size() - 1 > localized.list.getSelection().getMaxIndex() ;
     }
 
     public void setSorted(boolean sorted) {

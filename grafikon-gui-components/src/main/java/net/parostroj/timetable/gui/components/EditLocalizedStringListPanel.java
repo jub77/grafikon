@@ -25,6 +25,7 @@ public class EditLocalizedStringListPanel<T extends Reference<LocalizedString>> 
 
     private Link link;
     private ModelProvider localModelProvider;
+    private BnList list;
 
     public EditLocalizedStringListPanel(int gap) {
         localModelProvider = new ModelProvider();
@@ -37,7 +38,7 @@ public class EditLocalizedStringListPanel<T extends Reference<LocalizedString>> 
         localizedStringPanel.setPath(new Path("selected"));
         this.add(localizedStringPanel, BorderLayout.CENTER);
 
-        BnList list = new BnList();
+        list = new BnList();
         list.setModelProvider(localModelProvider);
         list.setPath(new Path("list"));
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -83,5 +84,10 @@ public class EditLocalizedStringListPanel<T extends Reference<LocalizedString>> 
     @Override
     public void setPresentationModel(LocalizedStringListPM<T> pModel) {
         localModelProvider.setPresentationModel(pModel);
+    }
+
+    public void setMultipleSelection(boolean multipleSelection) {
+        this.list.setSelectionMode(multipleSelection ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+                : ListSelectionModel.SINGLE_SELECTION);
     }
 }

@@ -35,6 +35,7 @@ public class EditLocalizedStringListAddRemovePanel<T extends AttributeReference<
         EditLocalizedStringListPanel<T> localized = new EditLocalizedStringListPanel<>(gap);
         localized.setModelProvider(localModelProvider);
         localized.setPath(new Path("localized"));
+        localized.setMultipleSelection(true);
         this.add(localized, BorderLayout.CENTER);
 
         JPanel addPanel = new JPanel();

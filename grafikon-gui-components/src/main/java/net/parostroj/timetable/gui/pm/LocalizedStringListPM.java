@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.pm;
 
 import java.text.CollationKey;
 import java.text.Collator;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.beanfabrics.Path;
@@ -76,13 +78,20 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         list.addListListener(new ListAdapter() {
             @Override
             public void elementsSelected(ElementsSelectedEvent evt) {
-                LStringPM at = list.getAt(evt.getBeginIndex());
-                selectStringImpl(at.localizedStringRef);
+                select();
             }
 
             @Override
             public void elementsDeselected(ElementsDeselectedEvent evt) {
-                selected.init(null, null);
+                select();
+            }
+
+            private void select() {
+                if (list.getSelection().size() == 1) {
+                    selectStringImpl(list.getSelection().stream().findAny().orElse(null).localizedStringRef);
+                } else {
+                    selected.init(null, null);
+                }
             }
         });
         PMManager.setup(this);
@@ -144,6 +153,10 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
     public T getSelectedReference() {
         LStringPM at = list.getAt(list.getSelection().getMinIndex());
         return at.localizedStringRef;
+    }
+
+    public List<T> getSelectedReferences() {
+        return list.getSelection().stream().map(at -> at.localizedStringRef).collect(Collectors.toList());
     }
 
     public void addReference(T ref) {
