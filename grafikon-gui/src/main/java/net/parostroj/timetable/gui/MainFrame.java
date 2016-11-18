@@ -583,6 +583,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         SettingsDialog settingsDialog = new SettingsDialog(this, true);
         settingsDialog.setLocationRelativeTo(this);
+        settingsDialog.registerContext(model.getGuiContext());
         settingsDialog.showDialog(model.getDiagram());
         settingsDialog.dispose();
         // check if recalculate should be executed

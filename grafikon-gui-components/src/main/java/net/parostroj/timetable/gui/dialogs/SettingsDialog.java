@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import net.parostroj.timetable.gui.GuiContext;
+import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.NumberTextField;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
@@ -39,7 +41,7 @@ import javax.swing.JLabel;
  *
  * @author jub
  */
-public class SettingsDialog extends javax.swing.JDialog {
+public class SettingsDialog extends javax.swing.JDialog implements GuiContextComponent {
 
     private static final Logger log = LoggerFactory.getLogger(SettingsDialog.class);
 
@@ -731,6 +733,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         // focus lost - check time information
         Tuple<Integer> timeRange = this.getTimeRange();
         this.setTimeRange(timeRange.first, timeRange.second);
+    }
+
+    @Override
+    public void registerContext(GuiContext context) {
+        context.registerWindow("settings", this);
     }
 
     private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
