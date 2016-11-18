@@ -7,9 +7,12 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,8 +42,8 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     /** Creates new form ECListView */
     public TCListView() {
         setLayout(new BorderLayout(0, 0));
-        cycles = new WrapperListModel<TrainsCycle>(true);
-        cyclesList = new javax.swing.JList<Wrapper<TrainsCycle>>(cycles);
+        cycles = new WrapperListModel<>(true);
+        cyclesList = new javax.swing.JList<>(cycles);
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         add(scrollPane, BorderLayout.CENTER);
 
@@ -111,6 +114,15 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         editButton.addActionListener(e -> {
             if (delegate.getSelectedCycle() != null) {
                 delegate.showEditDialog(editButton);
+            }
+        });
+
+        cyclesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && delegate.getSelectedCycle() != null) {
+                    delegate.showEditDialog(editButton);
+                }
             }
         });
 
@@ -194,7 +206,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get selected cycles ...
         int[] selectedIndices = cyclesList.getSelectedIndices();
-        List<TrainsCycle> toBeDeleted = new ArrayList<TrainsCycle>(selectedIndices.length);
+        List<TrainsCycle> toBeDeleted = new ArrayList<>(selectedIndices.length);
         for (int selectedIndex : selectedIndices) {
             TrainsCycle cycle = cycles.getIndex(selectedIndex).getElement();
             toBeDeleted.add(cycle);
