@@ -7,6 +7,8 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 import javax.swing.*;
@@ -236,55 +238,30 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allRadioButtonMenuItem.setSelected(true);
         allRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.all")); // NOI18N
         allRadioButtonMenuItem.setActionCommand(TrainFilter.ALL.getKey());
-        allRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterChangedActionPerformed(evt);
-            }
-        });
+        allRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
         filterMenu.add(allRadioButtonMenuItem);
 
         filterbuttonGroup.add(passengerRadioButtonMenuItem);
         passengerRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.passenger")); // NOI18N
         passengerRadioButtonMenuItem.setActionCommand(TrainFilter.PASSENGER.getKey());
-        passengerRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterChangedActionPerformed(evt);
-            }
-        });
+        passengerRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
         filterMenu.add(passengerRadioButtonMenuItem);
 
         filterbuttonGroup.add(freightRadioButtonMenuItem);
         freightRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.freight")); // NOI18N
         freightRadioButtonMenuItem.setActionCommand(TrainFilter.FREIGHT.getKey());
-        freightRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterChangedActionPerformed(evt);
-            }
-        });
+        freightRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
         filterMenu.add(freightRadioButtonMenuItem);
 
         filterbuttonGroup.add(customRadioButtonMenuItem);
         customRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.custom")); // NOI18N
         customRadioButtonMenuItem.setActionCommand(TrainFilter.CUSTOM.getKey());
-        customRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterChangedActionPerformed(evt);
-            }
-        });
+        customRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
         filterMenu.add(customRadioButtonMenuItem);
         filterMenu.add(separator);
 
         overlappingCheckBoxMenuItem.setText(ResourceLoader.getString("filter.trains.overlapping")); // NOI18N
-        overlappingCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                overlappingCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
+        overlappingCheckBoxMenuItem.addActionListener(evt -> overlappingCheckBoxMenuItemActionPerformed(evt));
         filterMenu.add(overlappingCheckBoxMenuItem);
 
         scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -292,41 +269,21 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allTrainsList.setComponentPopupMenu(filterMenu);
         allTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         allTrainsList.setVisibleRowCount(5);
-        allTrainsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                allTrainsListValueChanged(evt);
-            }
-        });
+        allTrainsList.addListSelectionListener(evt -> allTrainsListValueChanged(evt));
         scrollPane1.setViewportView(allTrainsList);
 
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         cTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         cTrainsList.setVisibleRowCount(5);
-        cTrainsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                ecTrainsListValueChanged(evt);
-            }
-        });
+        cTrainsList.addListSelectionListener(evt -> ecTrainsListValueChanged(evt));
         scrollPane2.setViewportView(cTrainsList);
 
         addButton.setEnabled(false);
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(evt -> addButtonActionPerformed(evt));
 
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
+        removeButton.addActionListener(evt -> removeButtonActionPerformed(evt));
 
         infoTextArea.setColumns(20);
         infoTextArea.setEditable(false);
@@ -335,10 +292,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         errorsScrollPane.setViewportView(infoTextArea);
 
         changeButton.setEnabled(false);
-        changeButton.addActionListener(new java.awt.event.ActionListener() {
+        changeButton.addActionListener(evt -> changeButtonActionPerformed());
+        cTrainsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeButtonActionPerformed(evt);
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !cTrainsList.isSelectionEmpty()) {
+                    changeButtonActionPerformed();
+                }
             }
         });
 
@@ -348,12 +308,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         coverageTextPane.setEditable(false);
         coverageScrollPane.setViewportView(coverageTextPane);
 
-        selectionButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectionButtonActionPerformed(evt);
-            }
-        });
+        selectionButton.addActionListener(evt -> selectionButtonActionPerformed(evt));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         layout.setHorizontalGroup(
@@ -441,7 +396,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         }
     }
 
-    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void changeButtonActionPerformed() {
         if (cTrainsList.getSelectedIndex() != -1) {
             TrainsCycleItem item = cTrains.getIndex(cTrainsList.getSelectedIndex()).getElement();
             Train train = item.getTrain();
