@@ -32,9 +32,12 @@ import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.ListSelectionModel;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -77,6 +80,7 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
         initComponents();
         this.link = new Link(this);
         this.localModelProvider = new ModelProvider();
+        attributesTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         attributesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -227,10 +231,14 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
     }
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        int row = attributesTable.getSelectedRow();
-        if (row != -1) {
-            String name = attributesTableModel.getUserNames().get(row);
-            attributesTableModel.getAttributes().remove(category, name);
+        if (attributesTable.getSelectedRowCount() > 0) {
+            List<String> names = new ArrayList<>();
+            for (int row : attributesTable.getSelectedRows()) {
+                names.add(attributesTableModel.getUserNames().get(row));
+            }
+            for (String name : names) {
+                attributesTableModel.getAttributes().remove(category, name);
+            }
         }
     }
 
