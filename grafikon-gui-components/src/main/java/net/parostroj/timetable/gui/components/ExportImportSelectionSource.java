@@ -22,7 +22,7 @@ public interface ExportImportSelectionSource {
         return new ExportImportSelectionSource() {
             @Override
             public Collection<ImportComponent> getTypes() {
-                return FluentIterable.of(ImportComponent.values()).filter(item -> item.getLibraryItemType() != null).toList();
+                return FluentIterable.from(ImportComponent.values()).filter(item -> item.getLibraryItemType() != null).toList();
             }
             @Override
             public Collection<ObjectWithId> getElementsForType(ImportComponent type) {
@@ -35,7 +35,7 @@ public interface ExportImportSelectionSource {
         return new ExportImportSelectionSource() {
             @Override
             public Collection<ImportComponent> getTypes() {
-                return FluentIterable.of(ImportComponent.values()).filter(item -> item.getLibraryItemType() != null).toList();
+                return FluentIterable.from(ImportComponent.values()).filter(item -> item.getLibraryItemType() != null).toList();
             }
             @Override
             public Collection<ObjectWithId> getElementsForType(ImportComponent type) {
