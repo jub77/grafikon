@@ -7,6 +7,8 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -121,6 +123,14 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && delegate.getSelectedCycle() != null) {
+                    delegate.showEditDialog(editButton);
+                }
+            }
+        });
+        cyclesList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && delegate.getSelectedCycle() != null) {
                     delegate.showEditDialog(editButton);
                 }
             }
