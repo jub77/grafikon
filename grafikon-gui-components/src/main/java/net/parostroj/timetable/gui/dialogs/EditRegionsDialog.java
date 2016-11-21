@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.Frame;
+import java.awt.Window;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -11,10 +11,20 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
-    private final Collection<Locale> locales;
+    private Collection<Locale> locales;
 
-    public EditRegionsDialog(Frame parent, boolean modal, Collection<Locale> locales) {
-        super(parent, modal, false, true, true);
+    public EditRegionsDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
+            boolean multiple) {
+        super(parent, modal, move, edit, newByName, copy, multiple);
+    }
+
+    public static EditRegionsDialog newInstance(Window parent, boolean modal, Collection<Locale> locales) {
+        EditRegionsDialog dialog = newBuilder(EditRegionsDialog.class).setEdit(true).setNewByName(true).build(parent, modal);
+        dialog.setLocales(locales);
+        return dialog;
+    }
+
+    private void setLocales(Collection<Locale> locales) {
         this.locales = locales;
     }
 

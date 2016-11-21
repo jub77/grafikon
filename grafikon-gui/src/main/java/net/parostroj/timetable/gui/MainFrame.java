@@ -616,28 +616,28 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        TrainTypesDialog trainTypesDialog = new TrainTypesDialog(this, true);
+        TrainTypesDialog trainTypesDialog = TrainTypesDialog.newInstance(this, true);
         trainTypesDialog.setLocationRelativeTo(this);
         trainTypesDialog.showDialog(model.getDiagram());
         trainTypesDialog.dispose();
     }
 
     private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        EditLineClassesDialog lineClassesDialog = new EditLineClassesDialog(this, true);
+        EditLineClassesDialog lineClassesDialog = EditLineClassesDialog.newInstance(this, true);
         lineClassesDialog.setLocationRelativeTo(this);
         lineClassesDialog.showDialog(model.getDiagram());
         lineClassesDialog.dispose();
     }
 
     private void regionsMenuItemActionPerformed(ActionEvent evt) {
-        EditRegionsDialog dialog = new EditRegionsDialog(this, true, model.getLanguageLoader().getAvailableLocales());
+        EditRegionsDialog dialog = EditRegionsDialog.newInstance(this, true, model.getLanguageLoader().getAvailableLocales());
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
     }
 
     private void companiesMenuItemActionPerformed(ActionEvent evt) {
-        EditCompaniesDialog dialog = new EditCompaniesDialog(this, true, model.getLanguageLoader().getAvailableLocales());
+        EditCompaniesDialog dialog = EditCompaniesDialog.newInstance(this, true, model.getLanguageLoader().getAvailableLocales());
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
@@ -737,7 +737,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void ouputMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         // dialog with outputs
-        EditOutputsDialog dialog = new EditOutputsDialog(this, true);
+        EditOutputsDialog dialog = EditOutputsDialog.newInstance(this, true);
         dialog.setSettings(new Settings(model.getOutputSettings().getLocale()));
         GenerateOutputPM pm = new GenerateOutputPM(model.getLanguageLoader().getAvailableLocales(), model.getDiagram().getLocales());
         try (CloseableFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY)) {

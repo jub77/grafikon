@@ -30,7 +30,7 @@ public class EditGroupsAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Window parent = GuiComponentUtils.getWindow((Component) e.getSource());
-        EditGroupsDialog dialog = new EditGroupsDialog(parent, true);
+        EditGroupsDialog dialog = EditGroupsDialog.newInstance(parent, true);
         dialog.setLocationRelativeTo(parent);
         dialog.showDialog(diagramReference.get());
         dialog.dispose();

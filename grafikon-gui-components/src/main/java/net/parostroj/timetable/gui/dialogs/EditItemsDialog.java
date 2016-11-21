@@ -1,15 +1,16 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.GroupLayout.ParallelGroup;
-import javax.swing.GroupLayout.SequentialGroup;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -19,6 +20,11 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.utils.ObjectsUtil;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.Box;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 
 /**
  * Dialog for editing list of items.
@@ -32,17 +38,22 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     private final boolean move;
     private final boolean edit;
-    private boolean newByName;
+    private final boolean newByName;
+    private final boolean copy;
+    private final boolean multiple;
 
-    public EditItemsDialog(java.awt.Window parent, boolean modal) {
-        this(parent, modal, true, false, true);
-    }
-
-    public EditItemsDialog(java.awt.Window parent, boolean modal, boolean move, boolean edit, boolean newByName) {
-        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
+    protected EditItemsDialog(java.awt.Window parent, boolean modal,
+            boolean move,
+            boolean edit,
+            boolean newByName,
+            boolean copy,
+            boolean multiple) {
+        super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         this.move = move;
         this.edit = edit;
         this.newByName = newByName;
+        this.copy = copy;
+        this.multiple = multiple;
         initComponents();
     }
 
@@ -91,76 +102,69 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             @Override
             public void moved(T object, int fromIndex, int toIndex) {
                 move(object, fromIndex, toIndex);
-            }});
+            }
+        });
         itemList.setModel(listModel);
         this.updateEnabled();
         this.itemList.requestFocusInWindow();
-    }
-
-    public void setMultipleSelection(boolean multiple) {
-        itemList.setSelectionMode(multiple ? javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-                : javax.swing.ListSelectionModel.SINGLE_SELECTION);
     }
 
     public void updateEnabled() {
         boolean enabled = !itemList.isSelectionEmpty();
         int selectedItemsCount = itemList.getSelectedIndices().length;
         boolean multiple = enabled && selectedItemsCount > 1;
-        if (upButton != null) upButton.setEnabled(enabled && !multiple);
-        if (downButton != null) downButton.setEnabled(enabled && !multiple);
+        if (upButton != null)
+            upButton.setEnabled(enabled && !multiple);
+        if (downButton != null)
+            downButton.setEnabled(enabled && !multiple);
         deleteButton.setEnabled(enabled);
-        if (editButton != null) editButton.setEnabled(enabled && !multiple);
+        if (editButton != null)
+            editButton.setEnabled(enabled && !multiple);
         this.selectionChanged(selectedItemsCount);
     }
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         itemList = new javax.swing.JList<>();
-        if (newByName) {
-            nameTextField = new javax.swing.JTextField();
-            nameTextField.setColumns(6);
-            nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
-                @Override
-                protected void change() {
-                    String text = nameTextField.getText();
-                    newButton.setEnabled(!ObjectsUtil.isEmpty(text));
-                }
-            });
-        }
+        itemList.setVisibleRowCount(12);
+        nameTextField = new javax.swing.JTextField();
+        nameTextField.setColumns(6);
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                updateNewButton();
+            }
+        });
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
-        newButton.setEnabled(!newByName);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
-        if (move) {
-            upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
-            downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
-            upButton.addActionListener(evt -> upButtonActionPerformed(evt));
-            downButton.addActionListener(evt -> downButtonActionPerformed(evt));
-        }
-        if (edit) {
-            editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-            editButton.addActionListener( evt -> {
-                edit(itemList.getSelectedValue().getElement());
-            });
-            itemList.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2 && !itemList.isSelectionEmpty()
-                            && itemList.getSelectedIndices().length == 1) {
-                        edit(itemList.getSelectedValue().getElement());
-                    }
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
+        upButton.addActionListener(evt -> upButtonActionPerformed(evt));
+        downButton.addActionListener(evt -> downButtonActionPerformed(evt));
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        editButton.addActionListener(evt -> {
+            edit(itemList.getSelectedValue().getElement());
+        });
+        itemList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && !itemList.isSelectionEmpty()
+                        && itemList.getSelectedIndices().length == 1) {
+                    edit(itemList.getSelectedValue().getElement());
                 }
-            });
-            itemList.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ENTER && itemList.getSelectedIndices().length == 1) {
-                        edit(itemList.getSelectedValue().getElement());
-                    }
+            }
+        });
+        itemList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && itemList.getSelectedIndices().length == 1) {
+                    edit(itemList.getSelectedValue().getElement());
                 }
-            });
-        }
+            }
+        });
 
-        itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        itemList.setSelectionMode(multiple ? javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+                : javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -172,68 +176,72 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         newButton.addActionListener(evt -> newButtonActionPerformed(evt));
         deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
+        Component box = Box.createRigidArea(new Dimension(0, 0));
+
         javax.swing.JPanel panel = new javax.swing.JPanel();
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(panel);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(scrollPane)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                        .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(newButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(deleteButton)
+                        .addComponent(upButton)
+                        .addComponent(downButton)
+                        .addComponent(editButton)
+                        .addComponent(box, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(scrollPane)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(newButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(deleteButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(upButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(downButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(editButton)
+                            .addComponent(box, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap())
+        );
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameTextField, newButton, deleteButton, upButton, downButton, editButton});
         panel.setLayout(layout);
 
         getContentPane().setLayout(new java.awt.BorderLayout());
         getContentPane().add(panel, java.awt.BorderLayout.CENTER);
 
-        ParallelGroup horizontal = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-            .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
-        if (move) {
-            horizontal.addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+        // update visual components
+        upButton.setVisible(move);
+        downButton.setVisible(move);
+        editButton.setVisible(edit);
+        nameTextField.setVisible(newByName);
+        this.updateNewButton();
+        if (copy) {
+            // TODO
         }
-        if (edit) {
-            horizontal.addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
-        }
-        if (newByName) {
-            horizontal.addComponent(nameTextField);
-        }
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(horizontal)
-                .addContainerGap())
-        );
-        SequentialGroup vertical = layout.createSequentialGroup();
-        if (newByName) {
-            vertical.addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED);
-        }
-        vertical.addComponent(newButton)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(deleteButton);
-        if (move) {
-            vertical.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(upButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(downButton);
-        }
-        if (edit) {
-            vertical.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editButton);
-        }
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, vertical))
-                .addContainerGap())
-        );
 
         pack();
     }
 
     protected void edit(T item) {
         throw new IllegalStateException("Edit action not implemented");
+    }
+
+    protected void copy(T item) {
+        throw new IllegalStateException("Copy action not implemented");
     }
 
     protected Wrapper<T> createWrapper(T item) {
@@ -318,6 +326,15 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             this.updateEnabled();
     }
 
+    private void updateNewButton() {
+        if (newByName) {
+            String text = nameTextField.getText();
+            newButton.setEnabled(!ObjectsUtil.isEmpty(text));
+        } else {
+            newButton.setEnabled(true);
+        }
+    }
+
     protected Collection<T> getSelectedItems() {
         List<T> result = new ArrayList<>();
         for (int index : itemList.getSelectedIndices()) {
@@ -330,7 +347,8 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         return itemList.getSelectedIndices().length;
     }
 
-    protected void selectionChanged(int selectedItemsCount) {}
+    protected void selectionChanged(int selectedItemsCount) {
+    }
 
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
@@ -339,4 +357,62 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     private javax.swing.JButton newButton;
     private javax.swing.JButton upButton;
     private javax.swing.JButton editButton;
+
+    public static class Builder<E extends EditItemsDialog<X, Y>, X, Y> {
+
+        private Constructor<E> constructor;
+        private boolean copy;
+        private boolean edit;
+        private boolean move;
+        private boolean newByName;
+        private boolean multiple;
+
+        private Builder(Constructor<E> constructor) {
+            this.constructor = constructor;
+        }
+
+        public Builder<E,X,Y> setCopy(boolean copy) {
+            this.copy = copy;
+            return this;
+        }
+
+        public Builder<E,X,Y> setEdit(boolean edit) {
+            this.edit = edit;
+            return this;
+        }
+
+        public Builder<E,X,Y> setMove(boolean move) {
+            this.move = move;
+            return this;
+        }
+
+        public Builder<E,X,Y> setNewByName(boolean newByName) {
+            this.newByName = newByName;
+            return this;
+        }
+
+        public Builder<E,X,Y> setMultiple(boolean multiple) {
+            this.multiple = multiple;
+            return this;
+        }
+
+        public E build(java.awt.Window window, boolean modal) {
+            try {
+                E instance = constructor.newInstance(window, modal, move, edit, newByName, copy, multiple);
+                return instance;
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                throw new RuntimeException("Problem creating instance: " + constructor);
+            }
+        }
+    }
+
+    public static <E extends EditItemsDialog<X, Y>,X,Y> Builder<E, X, Y> newBuilder(Class<E> clazz) {
+        try {
+            Constructor<E> c = clazz.getConstructor(java.awt.Window.class, Boolean.TYPE,
+                    Boolean.TYPE, Boolean.TYPE, Boolean.TYPE, Boolean.TYPE, Boolean.TYPE);
+            return new Builder<>(c);
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException("Missing constructor for class: " + clazz.getName());
+        }
+    }
 }

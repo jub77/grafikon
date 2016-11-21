@@ -28,10 +28,20 @@ public class EditAttachmentsDialog extends EditItemsDialog<Attachment, OutputTem
 
     private static final Logger log = LoggerFactory.getLogger(EditAttachmentsDialog.class);
 
-    private final JFileChooser chooser;
+    private JFileChooser chooser;
 
-    public EditAttachmentsDialog(Window parent, boolean modal, JFileChooser chooser) {
-        super(parent, modal, false, false, false);
+    public EditAttachmentsDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName,
+            boolean copy, boolean multiple) {
+        super(parent, modal, move, edit, newByName, copy, multiple);
+    }
+
+    public static EditAttachmentsDialog newInstance(Window parent, boolean modal, JFileChooser chooser) {
+        EditAttachmentsDialog dialog = newBuilder(EditAttachmentsDialog.class).build(parent, modal);
+        dialog.setFileChooser(chooser);
+        return dialog;
+    }
+
+    private void setFileChooser(JFileChooser chooser) {
         this.chooser = chooser;
     }
 

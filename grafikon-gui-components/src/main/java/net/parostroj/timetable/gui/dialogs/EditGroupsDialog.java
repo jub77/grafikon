@@ -14,8 +14,13 @@ import net.parostroj.timetable.model.TrainDiagramPartFactory;
  */
 public class EditGroupsDialog extends EditItemsDialog<Group, TrainDiagram> {
 
-    public EditGroupsDialog(Window parent, boolean modal) {
-        super(parent, modal, false, false, true);
+    public EditGroupsDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
+            boolean multiple) {
+        super(parent, modal, move, edit, newByName, copy, multiple);
+    }
+
+    public static EditGroupsDialog newInstance(Window parent, boolean modal) {
+        return newBuilder(EditGroupsDialog.class).setNewByName(true).build(parent, modal);
     }
 
     @Override

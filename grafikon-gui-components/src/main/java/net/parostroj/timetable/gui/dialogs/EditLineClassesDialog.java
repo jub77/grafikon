@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.Frame;
+import java.awt.Window;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.*;
@@ -8,8 +8,13 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagram> {
 
-    public EditLineClassesDialog(Frame parent, boolean modal) {
-        super(parent, modal);
+    public EditLineClassesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName,
+            boolean copy, boolean multiple) {
+        super(parent, modal, move, edit, newByName, copy, multiple);
+    }
+
+    public static EditLineClassesDialog newInstance(Window parent, boolean modal) {
+        return newBuilder(EditLineClassesDialog.class).setMove(true).setNewByName(true).build(parent, modal);
     }
 
     @Override

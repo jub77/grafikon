@@ -181,7 +181,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         JButton attachmentsButton = new JButton(ResourceLoader.getString("ot.button.attachments")); // NOI18N
         leftPanel.add(attachmentsButton);
         attachmentsButton.addActionListener(evt -> {
-            EditAttachmentsDialog dialog = new EditAttachmentsDialog(GuiComponentUtils.getWindow(this), true, attachmentChooser);
+            EditAttachmentsDialog dialog = EditAttachmentsDialog.newInstance(GuiComponentUtils.getWindow(this), true, attachmentChooser);
             dialog.setLocationRelativeTo(this);
             dialog.showDialog(template);
         });

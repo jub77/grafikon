@@ -54,10 +54,13 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     private GuiContext context;
     private Settings settings;
 
-    public EditOutputsDialog(Window window, boolean modal) {
-        super(window, modal, false, true, false);
+    public static EditOutputsDialog newInstance(Window parent, boolean modal) {
+        return newBuilder(EditOutputsDialog.class).setEdit(true).setMultiple(true).build(parent, modal);
+    }
 
-        this.setMultipleSelection(true);
+    public EditOutputsDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
+            boolean multiple) {
+        super(parent, modal, move, edit, newByName, copy, multiple);
 
         this.provider = new ModelProvider();
         this.link = new Link(this);
