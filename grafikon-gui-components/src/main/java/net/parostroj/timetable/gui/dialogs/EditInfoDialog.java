@@ -10,14 +10,15 @@ import java.awt.event.ActionListener;
 
 import net.parostroj.timetable.gui.components.BnTextAreaGrey;
 import net.parostroj.timetable.gui.pm.InfoPM;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.View;
 import org.beanfabrics.swing.*;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
@@ -46,6 +47,8 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
     }
 
     private void initComponents() {
+        Font font = new JTextField().getFont();
+
         java.awt.GridBagConstraints gridBagConstraints;
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
         BnButton okButton = new BnButton();
@@ -64,9 +67,37 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gbc_tabbedPane.gridy = 0;
         getContentPane().add(tabbedPane, gbc_tabbedPane);
 
-        BnTextArea infoTextArea = new BnTextArea();
-        javax.swing.JPanel dataPanel = new javax.swing.JPanel();
+        javax.swing.JPanel dataPanel = createDataPanel();
+
         tabbedPane.addTab(ResourceLoader.getString("info.info"), dataPanel);
+
+        JPanel routePanel = createRoutePanel(font);
+
+        tabbedPane.addTab(ResourceLoader.getString("info.routes.overwrite"), routePanel);
+        tabbedPane.setEnabledAt(1, false);
+
+        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
+        okButton.addActionListener(closeListener);
+        buttonsPanel.add(okButton);
+
+        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
+        cancelButton.addActionListener(closeListener);
+        buttonsPanel.add(cancelButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        getContentPane().add(buttonsPanel, gridBagConstraints);
+        okButton.setModelProvider(provider);
+        okButton.setPath(new Path("ok"));
+
+        pack();
+    }
+
+    private javax.swing.JPanel createDataPanel() {
+        java.awt.GridBagConstraints gridBagConstraints;
+        javax.swing.JPanel dataPanel = new javax.swing.JPanel();
 
         GridBagLayout gbl_dataPanel = new GridBagLayout();
         dataPanel.setLayout(gbl_dataPanel);
@@ -80,6 +111,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
 
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
 
+        BnTextArea infoTextArea = new BnTextArea();
         infoTextArea.setColumns(35);
         infoTextArea.setRows(4);
         scrollPane.setViewportView(infoTextArea);
@@ -128,10 +160,11 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routeInfoCheckBox.setPath(new Path("isRouteInfo"));
         validityTextField.setModelProvider(provider);
         validityTextField.setPath(new Path("validity"));
+        return dataPanel;
+    }
 
+    private JPanel createRoutePanel(Font font) {
         JPanel routePanel = new JPanel();
-        tabbedPane.addTab(ResourceLoader.getString("info.routes.overwrite"), routePanel);
-        tabbedPane.setEnabledAt(1, false);
         GridBagLayout gbl_routePanel = new GridBagLayout();
         routePanel.setLayout(gbl_routePanel);
         JLabel label = new JLabel(ResourceLoader.getString("info.route.number"));
@@ -153,7 +186,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routePanel.add(scrollPane1, gbc_scrollPane1);
         scrollPane1.setViewportView(routeNumberTextArea);
 
-        routeNumberTextArea.setFont(validityTextField.getFont());
+        routeNumberTextArea.setFont(font);
         routeNumberTextArea.setModelProvider(provider);
         routeNumberTextArea.setPath(new Path("routeNumbers"));
         JLabel label_1 = new JLabel(ResourceLoader.getString("info.routes"));
@@ -173,27 +206,10 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routesTextArea.setColumns(35);
         routesTextArea.setRows(5);
         scrollPane2.setViewportView(routesTextArea);
-        routesTextArea.setFont(validityTextField.getFont());
+        routesTextArea.setFont(font);
         routesTextArea.setModelProvider(provider);
         routesTextArea.setPath(new Path("routeNodes"));
-
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(closeListener);
-        buttonsPanel.add(okButton);
-
-        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(closeListener);
-        buttonsPanel.add(cancelButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        getContentPane().add(buttonsPanel, gridBagConstraints);
-        okButton.setModelProvider(provider);
-        okButton.setPath(new Path("ok"));
-
-        pack();
+        return routePanel;
     }
 
     @Override
