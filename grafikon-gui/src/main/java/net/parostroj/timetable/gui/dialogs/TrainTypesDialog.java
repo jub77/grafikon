@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Window;
 import java.util.Collection;
 
+import net.parostroj.timetable.model.CopyFactory;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
@@ -21,7 +22,8 @@ public class TrainTypesDialog extends EditItemsDialog<TrainType, TrainDiagram> {
     }
 
     public static TrainTypesDialog newInstance(Window parent, boolean modal) {
-        return newBuilder(TrainTypesDialog.class).setMove(true).setEdit(true).setNewByName(true).setMultiple(true).build(parent, modal);
+        return newBuilder(TrainTypesDialog.class).setMove(true).setEdit(true).setNewByName(true).setMultiple(true)
+                .setCopy(true).build(parent, modal);
     }
 
     @Override
@@ -56,6 +58,14 @@ public class TrainTypesDialog extends EditItemsDialog<TrainType, TrainDiagram> {
         newType.setAbbr(LocalizedString.fromString(name));
         newType.setColor(Color.BLACK);
         return newType;
+    }
+
+    @Override
+    protected TrainType copy(String name, TrainType item) {
+        CopyFactory copyFactory = new CopyFactory(element.getPartFactory());
+        TrainType copiedType = copyFactory.copy(item, element.getPartFactory().createId());
+        copiedType.setDesc(LocalizedString.fromString(name));
+        return copiedType;
     }
 
     @Override
