@@ -79,6 +79,11 @@ public class CopyFactory {
         copy.setAbbr(trainType.getAbbr());
         copy.setDesc(trainType.getDesc());
         copy.setColor(trainType.getColor());
+        copy.setPlatform(trainType.isPlatform());
+        copy.setTrainNameTemplate(trainType.getTrainNameTemplate());
+        copy.setTrainCompleteNameTemplate(trainType.getTrainCompleteNameTemplate());
+        copy.setCategory(trainType.getCategory());
+        copy.getAttributes().add(trainType.getAttributes());
         return copy;
     }
 
@@ -87,7 +92,7 @@ public class CopyFactory {
         return copy;
     }
 
-    public ObjectWithId copy(TrainTypeCategory category, String id) {
+    public TrainTypeCategory copy(TrainTypeCategory category, String id) {
         TrainTypeCategory copy = new TrainTypeCategory(id);
         copy.setKey(category.getKey());
         copy.setName(category.getName());
