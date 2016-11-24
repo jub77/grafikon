@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -121,6 +122,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         if (editButton != null)
             editButton.setEnabled(enabled && !multiple);
         this.selectionChanged(selectedItemsCount);
+        this.updateCopyButton();
     }
 
     private void initComponents() {
@@ -133,9 +135,11 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             @Override
             protected void change() {
                 updateNewButton();
+                updateCopyButton();
             }
         });
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
@@ -174,6 +178,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         scrollPane.setViewportView(itemList);
 
         newButton.addActionListener(evt -> newButtonActionPerformed(evt));
+        copyButton.addActionListener(evt -> copyButtonActionPerformed(evt));
         deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
         Component box = Box.createRigidArea(new Dimension(0, 0));
@@ -188,12 +193,13 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                         .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(newButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(newButton)
+                        .addComponent(copyButton)
                         .addComponent(deleteButton)
                         .addComponent(upButton)
                         .addComponent(downButton)
                         .addComponent(editButton)
-                        .addComponent(box, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(box))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -207,6 +213,8 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(newButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(copyButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(deleteButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(upButton)
@@ -217,7 +225,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
                             .addComponent(box, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameTextField, newButton, deleteButton, upButton, downButton, editButton});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameTextField, newButton, copyButton, deleteButton, upButton, downButton, editButton});
         panel.setLayout(layout);
 
         getContentPane().setLayout(new java.awt.BorderLayout());
@@ -228,10 +236,8 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         downButton.setVisible(move);
         editButton.setVisible(edit);
         nameTextField.setVisible(newByName);
+        copyButton.setVisible(copy);
         this.updateNewButton();
-        if (copy) {
-            // TODO
-        }
 
         pack();
     }
@@ -240,7 +246,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         throw new IllegalStateException("Edit action not implemented");
     }
 
-    protected void copy(T item) {
+    protected T copy(String name, T item) {
         throw new IllegalStateException("Copy action not implemented");
     }
 
@@ -257,22 +263,31 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        createNewImpl(name -> this.createNew(name));
+    }
+
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        T itemToCopy = listModel.getElementAt(itemList.getSelectedIndex()).getElement();
+        createNewImpl(name -> this.copy(name, itemToCopy));
+    }
+
+    private void createNewImpl(Function<String, T> createFunction) {
         T item = null;
         if (newByName) {
             String name = ObjectsUtil.checkAndTrim(nameTextField.getText());
             if (name != null) {
-                // create new item
-                item = this.createNew(name);
+                item = createFunction.apply(name);
                 nameTextField.setText("");
             }
         } else {
-            item = this.createNew(null);
+            item = createFunction.apply(null);
         }
         if (item != null) {
             Wrapper<T> newWrapper = createWrapper(item);
             listModel.addWrapper(newWrapper);
             itemList.setSelectedValue(newWrapper, true);
         }
+        itemList.requestFocus();
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -335,6 +350,16 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         }
     }
 
+    private void updateCopyButton() {
+        boolean selectedOne = itemList.getSelectedIndices().length == 1;
+        if (newByName) {
+            String text = nameTextField.getText();
+            copyButton.setEnabled(selectedOne && !ObjectsUtil.isEmpty(text));
+        } else {
+            copyButton.setEnabled(selectedOne);
+        }
+    }
+
     protected Collection<T> getSelectedItems() {
         List<T> result = new ArrayList<>();
         for (int index : itemList.getSelectedIndices()) {
@@ -355,6 +380,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     private javax.swing.JList<Wrapper<T>> itemList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
+    private javax.swing.JButton copyButton;
     private javax.swing.JButton upButton;
     private javax.swing.JButton editButton;
 
