@@ -28,6 +28,7 @@ public class LSAttributesItem {
 
     private static final String SET_KEY = "set";
     private static final String LIST_KEY = "list";
+    private static final String MAP_KEY = "map";
     private static final String LOCALIZED_STRING_KEY = "localized.string";
 
     private static final String ENGINE_CLASS_KEY = "model.engine.class";
@@ -55,6 +56,15 @@ public class LSAttributesItem {
             type = value instanceof Set ? SET_KEY : LIST_KEY;
             for (Object item : (Collection<?>) value) {
                 LSAttributesValue cValue = extractSimpleValue(key, item);
+                this.getValues().add(cValue);
+            }
+        } else if (value instanceof Map) {
+            type = MAP_KEY;
+            for (Map.Entry<?, ?> entry : ((Map<?,?>) value).entrySet()) {
+                LSAttributesValue cValue = extractSimpleValue(key, entry.getValue());
+                LSAttributesValue cKey = extractSimpleValue(key, entry.getKey());
+                cValue.setKey(cKey.getValue());
+                cValue.setKeyType(cKey.getType());
                 this.getValues().add(cValue);
             }
         } else if (value instanceof LocalizedString) {
@@ -162,6 +172,14 @@ public class LSAttributesItem {
             }
             for (LSAttributesValue value : getValues()) {
                 result.add(convertSimpleValue(mapping, value.getValue(), value.getType()));
+            }
+            return result;
+        } else if (MAP_KEY.equals(type)) {
+            Map<Object, Object> result = new HashMap<>();
+            for (LSAttributesValue value : getValues()) {
+                Object cValue = convertSimpleValue(mapping, value.getValue(), value.getType());
+                Object cKey = convertSimpleValue(mapping, value.getKey(), value.getKeyType());
+                result.put(cKey, cValue);
             }
             return result;
         } else if (LOCALIZED_STRING_KEY.equals(type)) {

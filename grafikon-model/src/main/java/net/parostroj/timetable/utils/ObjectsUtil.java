@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class ObjectsUtil {
@@ -119,6 +120,17 @@ public class ObjectsUtil {
         } else {
             checkClass(orig, clazz);
             return Lists.transform(orig, o -> clazz.cast(o));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> checkedMap(Map<?, ?> orig, Class<K> keyClazz, Class<V> valueClazz) {
+        if (orig == null) {
+            return null;
+        } else {
+            checkClass(orig.keySet(), keyClazz);
+            checkClass(orig.values(), valueClazz);
+            return (Map<K, V>) ImmutableMap.copyOf(orig);
         }
     }
 

@@ -51,11 +51,10 @@ public class LSRegion {
         this.attributes = attributes;
     }
 
-    public Region createRegion(TrainDiagram diagram) throws LSException {
+    public DelayedAttributes<Region> createRegion(TrainDiagram diagram) throws LSException {
         Region region = diagram.getPartFactory().createRegion(id);
         // expected value -> null (for compatibility before version 4.18.2)
         region.setName(name);
-        region.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
-        return region;
+        return new DelayedAttributes<>(region, attributes, diagram::getObjectById);
     }
 }

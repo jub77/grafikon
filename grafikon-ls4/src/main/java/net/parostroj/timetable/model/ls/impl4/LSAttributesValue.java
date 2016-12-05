@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType
 public class LSAttributesValue {
 
+    private String key;
+    private String keyType;
     private String value;
     private String type;
 
@@ -21,6 +23,24 @@ public class LSAttributesValue {
     public LSAttributesValue(String value, String type) {
         this.value = value;
         this.type = type;
+    }
+
+    @XmlAttribute
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @XmlAttribute
+    public String getKeyType() {
+        return keyType;
+    }
+
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
 
     @XmlValue
@@ -43,6 +63,6 @@ public class LSAttributesValue {
 
     @Override
     public String toString() {
-        return String.format("<%s,%s>", type, value);
+        return key == null ? String.format("<%s,%s>", type, value) : String.format("<%s,%s,%s,%s>", keyType, key, type, value);
     }
 }

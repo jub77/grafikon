@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +75,12 @@ public class TrainDiagramBuilder {
         this.diagram.setNet(net);
         // add regions
         if (lsNet.getRegions() != null) {
+            Collection<DelayedAttributes<Region>> regions = new ArrayList<>();
             for (LSRegion lsRegion : lsNet.getRegions()) {
-                net.getRegions().add(lsRegion.createRegion(diagram));
+                regions.add(lsRegion.createRegion(diagram));
+            }
+            for (DelayedAttributes<Region> region : regions) {
+                net.getRegions().add(region.addAttributes());
             }
         }
         // add line classes

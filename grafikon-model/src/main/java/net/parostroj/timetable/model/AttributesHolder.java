@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for class that hold attributes.
@@ -64,6 +65,14 @@ public interface AttributesHolder {
 
     default <T> List<T> getAttributeAsList(String name, Class<T> clazz, List<T> defaultValue) {
         return getAttributes().getAsList(name, clazz, defaultValue);
+    }
+
+    default <K, V> Map<K, V> getAttributeAsMap(String name, Class<K> keyClazz, Class<V> valueClazz) {
+        return getAttributes().getAsMap(name, keyClazz, valueClazz);
+    }
+
+    default <K, V> Map<K, V> getAttributeAsMap(String name, Class<K> keyClazz, Class<V> valueClazz, Map<K, V> defaultValue) {
+        return getAttributes().getAsMap(name, keyClazz, valueClazz, defaultValue);
     }
 
     default boolean getAttributeAsBool(String name) {
