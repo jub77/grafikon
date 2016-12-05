@@ -102,24 +102,24 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         return this.getOptions();
     }
 
-    public static <V> Map<V, String> createValueMapWithNull(Collection<? extends V> values, WrapperConversion<V> conversion) {
+    public static <V> Map<V, String> createValueMapWithNull(Iterable<? extends V> values, WrapperConversion<V> conversion) {
         final Map<V, String> conversionMap = new LinkedHashMap<>();
         conversionMap.put(null, conversion.toString(null));
         return createValueMapImpl(values, conversion, conversionMap);
     }
 
-    public static <V> Map<V, String> createValueMap(Collection<? extends V> values, WrapperConversion<V> conversion, String nullValueText) {
+    public static <V> Map<V, String> createValueMap(Iterable<? extends V> values, WrapperConversion<V> conversion, String nullValueText) {
         final Map<V, String> conversionMap = new LinkedHashMap<>();
         conversionMap.put(null, nullValueText);
         return createValueMapImpl(values, conversion, conversionMap);
     }
 
-    public static <V> Map<V, String> createValueMap(Collection<? extends V> values, WrapperConversion<V> conversion) {
+    public static <V> Map<V, String> createValueMap(Iterable<? extends V> values, WrapperConversion<V> conversion) {
         final Map<V, String> conversionMap = new LinkedHashMap<>();
         return createValueMapImpl(values, conversion, conversionMap);
     }
 
-    private static <V> Map<V, String> createValueMapImpl(Collection<? extends V> values, WrapperConversion<V> conversion,
+    private static <V> Map<V, String> createValueMapImpl(Iterable<? extends V> values, WrapperConversion<V> conversion,
             final Map<V, String> conversionMap) {
         for (V value : values) {
             conversionMap.put(value, conversion.toString(value));
@@ -127,7 +127,7 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         return conversionMap;
     }
 
-    public static <V> Map<V, String> createValueMap(Collection<? extends V> values, Collection<String> textValues) {
+    public static <V> Map<V, String> createValueMap(Iterable<? extends V> values, Iterable<String> textValues) {
         Iterator<String> si = textValues.iterator();
         Iterator<? extends V> vi = values.iterator();
         final Map<V, String> conversionMap = new LinkedHashMap<>();
@@ -160,7 +160,7 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
             return this;
         }
 
-        public Builder<T> addAll(Collection<? extends T> values) {
+        public Builder<T> addAll(Iterable<? extends T> values) {
             for (T value : values) {
                 this.add(value);
             }
