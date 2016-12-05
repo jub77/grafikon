@@ -66,7 +66,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
         EditRegionDialog dialog = new EditRegionDialog(this, true, locales);
         dialog.setLocationRelativeTo(this);
         String regionName = region.getName();
-        dialog.showDialog(region);
+        dialog.showDialog(region, element);
         dialog.dispose();
         if (!ObjectsUtil.compareWithNull(regionName, region.getName())) {
             this.refreshAll();

@@ -38,15 +38,14 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
             throw new IllegalArgumentException("At least one value has to be present");
         }
         this.setOptions(new Options<>());
-        this.getOptionsImpl().putAll(valueMap);
+        this.addValues(valueMap);
         this.setRestrictedToOptions(true);
         this.setText(this.getOptionsImpl().getValue(0));
     }
 
     public EnumeratedValuesPM(Map<E, String> valueMap, String nullValueText) {
         this.setOptions(new Options<>());
-        this.getOptionsImpl().put(null, nullValueText);
-        this.getOptionsImpl().putAll(valueMap);
+        this.addValues(valueMap, nullValueText);
         this.setRestrictedToOptions(true);
         this.setText(this.getOptionsImpl().getValue(0));
     }
@@ -68,6 +67,16 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
     }
 
     @Override
+    public void addValues(Map<E, String> valueMap) {
+        this.getOptionsImpl().putAll(valueMap);
+    }
+
+    public void addValues(Map<E, String> valueMap, String nullValueText) {
+        this.getOptionsImpl().put(null, nullValueText);
+        this.getOptionsImpl().putAll(valueMap);
+    }
+
+    @Override
     public boolean removeValue(E value) {
         Options<E> options = this.getOptionsImpl();
         boolean removed = false;
@@ -76,6 +85,11 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
             removed = true;
         }
         return removed;
+    }
+
+    @Override
+    public void removeAllValues() {
+        this.getOptionsImpl().clear();
     }
 
     @Override
@@ -89,13 +103,19 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
     }
 
     public static <V> Map<V, String> createValueMapWithNull(Collection<? extends V> values, WrapperConversion<V> conversion) {
-        final Map<V, String> conversionMap = new LinkedHashMap<V, String>();
+        final Map<V, String> conversionMap = new LinkedHashMap<>();
         conversionMap.put(null, conversion.toString(null));
         return createValueMapImpl(values, conversion, conversionMap);
     }
 
+    public static <V> Map<V, String> createValueMap(Collection<? extends V> values, WrapperConversion<V> conversion, String nullValueText) {
+        final Map<V, String> conversionMap = new LinkedHashMap<>();
+        conversionMap.put(null, nullValueText);
+        return createValueMapImpl(values, conversion, conversionMap);
+    }
+
     public static <V> Map<V, String> createValueMap(Collection<? extends V> values, WrapperConversion<V> conversion) {
-        final Map<V, String> conversionMap = new LinkedHashMap<V, String>();
+        final Map<V, String> conversionMap = new LinkedHashMap<>();
         return createValueMapImpl(values, conversion, conversionMap);
     }
 
@@ -110,7 +130,7 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
     public static <V> Map<V, String> createValueMap(Collection<? extends V> values, Collection<String> textValues) {
         Iterator<String> si = textValues.iterator();
         Iterator<? extends V> vi = values.iterator();
-        final Map<V, String> conversionMap = new LinkedHashMap<V, String>();
+        final Map<V, String> conversionMap = new LinkedHashMap<>();
         while (vi.hasNext() && si.hasNext()) {
             conversionMap.put(vi.next(), si.next());
         }
@@ -137,6 +157,13 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         public Builder<T> add(T value) {
             if (conversion == null) throw new IllegalStateException("Conversion missing");
             map.put(value, conversion.toString(value));
+            return this;
+        }
+
+        public Builder<T> addAll(Collection<? extends T> values) {
+            for (T value : values) {
+                this.add(value);
+            }
             return this;
         }
 

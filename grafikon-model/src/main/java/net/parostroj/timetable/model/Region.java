@@ -1,5 +1,11 @@
 package net.parostroj.timetable.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
+import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -15,12 +21,26 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     private final String id;
     private final Attributes attributes;
 
+    // only dynamic view on sub regions
+    private final Set<Region> subRegions;
+
     private boolean events;
 
     Region(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributes = new Attributes((attrs, change) -> {if (events) diagram.fireEvent(new Event(diagram, Region.this, change)); });
+        this.attributes = new Attributes((attrs, change) -> {
+            if (events) diagram.fireEvent(new Event(diagram, Region.this, change));
+        });
+        this.attributes.addListener((attrs, change) -> {
+            if (change.checkName(ATTR_SUPER_REGION)) {
+                Region oldR = (Region) change.getOldValue();
+                Region newR = (Region) change.getNewValue();
+                if (oldR != null) oldR.removeSubRegion(Region.this);
+                if (newR != null) newR.addSubRegion(Region.this);
+            }
+        });
+        this.subRegions = new HashSet<>();
     }
 
     @Override
@@ -44,6 +64,38 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public void setName(String name) {
         attributes.set(ATTR_NAME, name);
+    }
+
+    public Region getSuperRegion() {
+        return getAttributes().get(ATTR_SUPER_REGION, Region.class);
+    }
+
+    public void setSuperRegion(Region superRegion) {
+        getAttributes().setRemove(ATTR_SUPER_REGION, superRegion);
+    }
+
+    protected void addSubRegion(Region added) {
+        Set<Region> old = ImmutableSet.copyOf(subRegions);
+        subRegions.add(added);
+        fireSubRegionsEvent(old);
+    }
+
+    protected void removeSubRegion(Region removed) {
+        Set<Region> old = ImmutableSet.copyOf(subRegions);
+        subRegions.remove(removed);
+        fireSubRegionsEvent(old);
+    }
+
+    private void fireSubRegionsEvent(Set<Region> old) {
+        if (events) diagram.fireEvent(new Event(diagram, this, new AttributeChange(ATTR_SUB_REGIONS, old, subRegions)));
+    }
+
+    public Set<Region> getSubRegions() {
+        return subRegions;
+    }
+
+    public boolean isSuperRegion() {
+        return !subRegions.isEmpty();
     }
 
     @Override

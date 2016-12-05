@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import net.parostroj.timetable.gui.pm.RegionPM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.TrainDiagram;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
@@ -36,8 +37,8 @@ public class EditRegionDialog extends JDialog {
         this.setResizable(false);
     }
 
-    public void showDialog(Region region) {
-        provider.<RegionPM> getPresentationModel().init(region);
+    public void showDialog(Region region, TrainDiagram diagram) {
+        provider.<RegionPM> getPresentationModel().init(region, diagram.getNet().getRegions());
         this.setVisible(true);
     }
 
@@ -99,12 +100,30 @@ public class EditRegionDialog extends JDialog {
         localeComboBox.setModelProvider(provider);
         localeComboBox.setPath(new Path("locale"));
 
+        JLabel superRegionLabel = new JLabel(ResourceLoader.getString("edit.region.super.region")); // NOI18N
+        GridBagConstraints srlCons = new GridBagConstraints();
+        srlCons.anchor = GridBagConstraints.WEST;
+        srlCons.insets = new Insets(0, 0, 5, 5);
+        srlCons.gridx = 0;
+        srlCons.gridy = 2;
+        panel.add(superRegionLabel, srlCons);
+
+        BnComboBox superRegionComboBox = new BnComboBox();
+        GridBagConstraints srltfCons = new GridBagConstraints();
+        srltfCons.insets = new Insets(0, 0, 5, 0);
+        srltfCons.fill = GridBagConstraints.HORIZONTAL;
+        srltfCons.gridx = 1;
+        srltfCons.gridy = 2;
+        panel.add(superRegionComboBox, srltfCons);
+        superRegionComboBox.setModelProvider(provider);
+        superRegionComboBox.setPath(new Path("superRegion"));
+
         Component verticalGlue = Box.createVerticalGlue();
         GridBagConstraints vgCons = new GridBagConstraints();
         vgCons.fill = GridBagConstraints.VERTICAL;
         vgCons.insets = new Insets(0, 0, 0, 5);
         vgCons.gridx = 0;
-        vgCons.gridy = 2;
+        vgCons.gridy = 3;
         panel.add(verticalGlue, vgCons);
 
         JPanel buttonPanel = new JPanel();
