@@ -86,4 +86,9 @@ public class Event {
     public Object getData() {
         return data;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)%s", source, type, attributeChange != null ? ": " + attributeChange : "");
+    }
 }
