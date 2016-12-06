@@ -3,11 +3,16 @@ package net.parostroj.timetable.utils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class ObjectsUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(ObjectsUtil.class);
 
     private ObjectsUtil() {
     }
@@ -134,9 +139,29 @@ public class ObjectsUtil {
         }
     }
 
+    public static <T> List<T> checkEmpty(List<T> list) {
+        return list == null ? null : (list.isEmpty() ? null : list);
+    }
+
+    public static <K, V> Map<K, V> checkEmpty(Map<K, V> map) {
+        return map == null ? null : (map.isEmpty() ? null : map);
+    }
+
     private static <T> void checkClass(Collection<?> orig, Class<T> clazz) {
-        if (orig.stream().anyMatch(o -> !clazz.isInstance(o))) {
+        if (orig.stream().anyMatch(o -> !checkInstanceOf(clazz, o))) {
             throw new ClassCastException("Wrong class");
         }
+    }
+
+    private static <T> boolean checkInstanceOf(Class<T> clazz, Object o) {
+        boolean isInstanceOf = clazz.isInstance(o);
+        if (!isInstanceOf) {
+            if (o != null) {
+                log.error("Wrong class: {} (expected: {})", o.getClass(), clazz);
+            } else {
+                log.error("Object is null");
+            }
+        }
+        return isInstanceOf;
     }
 }
