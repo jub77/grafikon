@@ -33,7 +33,8 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         this.id = id;
         this.diagram = diagram;
         this.attributes = new Attributes((attrs, change) -> {
-            if (events) diagram.fireEvent(new Event(diagram, Region.this, change));
+            Event event = new Event(diagram, Region.this, change);
+            fireEvent(event);
         });
         this.attributes.addListener((attrs, change) -> {
             if (change.checkName(ATTR_SUPER_REGION)) {
@@ -98,7 +99,14 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     }
 
     private void fireSubRegionsEvent(Set<Region> old) {
-        if (events) diagram.fireEvent(new Event(diagram, this, new AttributeChange(ATTR_SUB_REGIONS, old, subRegions)));
+        Event event = new Event(diagram, this, new AttributeChange(ATTR_SUB_REGIONS, old, subRegions));
+        fireEvent(event);
+    }
+
+    private void fireEvent(Event event) {
+        if (events) {
+            diagram.fireEvent(event);
+        }
     }
 
     public Set<Region> getSubRegions() {
