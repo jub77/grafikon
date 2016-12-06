@@ -78,11 +78,11 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     }
 
     public Map<FreightColor, Region> getColorMap() {
-        return getAttributes().getAsMap(ATTR_COLOR_MAP, FreightColor.class, Region.class, Collections.emptyMap());
+        return getAttributes().getAsMap(ATTR_FREIGHT_COLOR_MAP, FreightColor.class, Region.class, Collections.emptyMap());
     }
 
     public void setColorMap(Map<FreightColor, Region> colorMap) {
-        getAttributes().setRemove(ATTR_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
+        getAttributes().setRemove(ATTR_FREIGHT_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
     }
 
     private void addSubRegion(Region added) {
