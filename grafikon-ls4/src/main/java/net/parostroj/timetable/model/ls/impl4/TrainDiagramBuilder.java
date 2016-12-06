@@ -77,10 +77,12 @@ public class TrainDiagramBuilder {
         if (lsNet.getRegions() != null) {
             Collection<DelayedAttributes<Region>> regions = new ArrayList<>();
             for (LSRegion lsRegion : lsNet.getRegions()) {
-                regions.add(lsRegion.createRegion(diagram));
+                DelayedAttributes<Region> daRegion = lsRegion.createRegion(diagram);
+                net.getRegions().add(daRegion.getObject());
+                regions.add(daRegion);
             }
-            for (DelayedAttributes<Region> region : regions) {
-                net.getRegions().add(region.addAttributes());
+            for (DelayedAttributes<Region> daRegion : regions) {
+                daRegion.addAttributes();
             }
         }
         // add line classes

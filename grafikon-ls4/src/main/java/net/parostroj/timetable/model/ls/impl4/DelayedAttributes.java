@@ -26,8 +26,7 @@ public class DelayedAttributes<T extends AttributesHolder> {
         return object;
     }
 
-    public T addAttributes() throws LSException {
+    public void addAttributes() throws LSException {
         object.getAttributes().add(attributes.createAttributes(mapping));
-        return object;
     }
 }
