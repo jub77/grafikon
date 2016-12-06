@@ -1,12 +1,15 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -74,13 +77,21 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         getAttributes().setRemove(ATTR_SUPER_REGION, superRegion);
     }
 
-    protected void addSubRegion(Region added) {
+    public Map<FreightColor, Region> getColorMap() {
+        return getAttributes().getAsMap(ATTR_COLOR_MAP, FreightColor.class, Region.class, Collections.emptyMap());
+    }
+
+    public void setColorMap(Map<FreightColor, Region> colorMap) {
+        getAttributes().setRemove(ATTR_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
+    }
+
+    private void addSubRegion(Region added) {
         Set<Region> old = ImmutableSet.copyOf(subRegions);
         subRegions.add(added);
         fireSubRegionsEvent(old);
     }
 
-    protected void removeSubRegion(Region removed) {
+    private void removeSubRegion(Region removed) {
         Set<Region> old = ImmutableSet.copyOf(subRegions);
         subRegions.remove(removed);
         fireSubRegionsEvent(old);

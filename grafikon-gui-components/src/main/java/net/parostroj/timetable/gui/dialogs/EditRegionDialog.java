@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import net.parostroj.timetable.gui.pm.RegionPM;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -18,6 +20,8 @@ import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
 import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
+import org.beanfabrics.swing.table.BnColumn;
+import org.beanfabrics.swing.table.BnTable;
 
 /**
  * Dialog for editing region.
@@ -25,6 +29,8 @@ import org.beanfabrics.swing.BnTextField;
  * @author jub
  */
 public class EditRegionDialog extends JDialog {
+
+    private static final int DEFAULT_ROW_COUNT = 3;
 
     private final ModelProvider provider = new ModelProvider(RegionPM.class);
 
@@ -118,12 +124,52 @@ public class EditRegionDialog extends JDialog {
         superRegionComboBox.setModelProvider(provider);
         superRegionComboBox.setPath(new Path("superRegion"));
 
+        JScrollPane scrollPane = new JScrollPane();
+        BnTable mapTable = new BnTable();
+        Dimension viewportSize = mapTable.getPreferredScrollableViewportSize();
+        viewportSize.setSize(0, mapTable.getRowHeight() * DEFAULT_ROW_COUNT);
+        mapTable.setPreferredScrollableViewportSize(viewportSize);
+        GridBagConstraints mapCons = new GridBagConstraints();
+        mapCons.insets = new Insets(0, 0, 5, 0);
+        mapCons.fill = GridBagConstraints.BOTH;
+        mapCons.gridx = 0;
+        mapCons.gridy = 3;
+        mapCons.weighty = 1.0;
+        mapCons.gridwidth = 2;
+        panel.add(scrollPane, mapCons);
+        scrollPane.setViewportView(mapTable);
+        mapTable.setModelProvider(provider);
+        mapTable.setPath(new Path("colorMap"));
+        mapTable.addColumn(new BnColumn(new Path("color"), "color"));
+        mapTable.addColumn(new BnColumn(new Path("region"), "region"));
+        mapTable.setSortable(true);
+
+        JPanel addRemovePanel = new JPanel();
+        GridBagConstraints arCons = new GridBagConstraints();
+        arCons.insets = new Insets(0, 0, 5, 0);
+        arCons.fill = GridBagConstraints.HORIZONTAL;
+        arCons.gridx = 0;
+        arCons.gridy = 4;
+        arCons.gridwidth = 2;
+        panel.add(addRemovePanel, arCons);
+        addRemovePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        BnButton addButton = GuiComponentUtils.createBnButton(GuiIcon.ADD, 2);
+        addRemovePanel.add(addButton);
+        addButton.setModelProvider(provider);
+        addButton.setPath(new Path("add"));
+        addRemovePanel.add(Box.createHorizontalStrut(5));
+        BnButton removeButton = GuiComponentUtils.createBnButton(GuiIcon.REMOVE, 2);
+        addRemovePanel.add(removeButton);
+        removeButton.setModelProvider(provider);
+        removeButton.setPath(new Path("remove"));
+
         Component verticalGlue = Box.createVerticalGlue();
         GridBagConstraints vgCons = new GridBagConstraints();
         vgCons.fill = GridBagConstraints.VERTICAL;
         vgCons.insets = new Insets(0, 0, 0, 5);
         vgCons.gridx = 0;
-        vgCons.gridy = 3;
+        vgCons.gridy = 5;
         panel.add(verticalGlue, vgCons);
 
         JPanel buttonPanel = new JPanel();
