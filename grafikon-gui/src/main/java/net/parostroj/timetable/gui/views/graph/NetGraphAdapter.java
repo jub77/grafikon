@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,6 +93,11 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
                             String.format("<b>%s</b>", region.getName()) : region.getName())
                     .collect(Collectors.joining(","));
             value = value.append("\n(").append(regionsStr).append(')');
+        }
+        Collection<FreightColor> colors = node.getFreightColors();
+        if (!colors.isEmpty()) {
+            String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(","));
+            value.append("\n<font color=gray>[").append(colorsStr).append("]</font>");
         }
         return value.toString();
     }
