@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
+import java.text.Collator;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -36,6 +37,8 @@ public class RegionPM extends AbstractPM {
 
     private WeakReference<Region> regionRef;
 
+    private Collator collator = Collator.getInstance();
+
     public RegionPM(Collection<Locale> locales) {
         locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
                 locales, l -> l.getDisplayName(l)), "-");
@@ -49,7 +52,8 @@ public class RegionPM extends AbstractPM {
         this.regionRef = new WeakReference<>(region);
         this.name.setText(region.getName());
         this.locale.setValue(region.getAttribute(Region.ATTR_LOCALE, Locale.class));
-        Collection<Region> regions = allRegions.stream().filter(r -> r != region).sorted().collect(Collectors.toList());
+        Collection<Region> regions = allRegions.stream().filter(r -> r != region)
+                .sorted((o1, o2) -> collator.compare(o1.getName(), o2.getName())).collect(Collectors.toList());
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
         // color map
