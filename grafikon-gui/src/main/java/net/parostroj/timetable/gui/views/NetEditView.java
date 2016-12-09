@@ -65,6 +65,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
 
+    private NetItemInfo netItemInfo;
+
     private EditNodeDialog editNodeDialog;
     private EditLineDialog editLineDialog;
 
@@ -80,7 +82,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private mxGraphOutline graphOutline;
     private NodeInsertHandler insertHandler;
     private mxRubberband selectionHandler;
-    private final Collection<JComponent> controls = new ArrayList<JComponent>();
+    private final Collection<JComponent> controls = new ArrayList<>();
 
     private JPanel outlinePanel;
     private JPanel rightPanel;
@@ -304,7 +306,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         // add net edit model to net view
         netEditModel = new NetSelectionModel();
         netEditModel.addNetSelectionListener(this);
-        netEditModel.addNetSelectionListener(new NetItemInfo(textArea, () -> model != null ? model.getProgramSettings() : null));
+        netItemInfo = new NetItemInfo(textArea, () -> model != null ? model.getProgramSettings() : null);
+        netEditModel.addNetSelectionListener(netItemInfo);
     }
 
     private void initializeDialogs() {
@@ -555,6 +558,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateNode(Node node) {
         graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
+        netItemInfo.updateItem();
     }
 
     private void updateAll() {
@@ -575,6 +579,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateLine(Line line) {
         graph.cellLabelChanged(graph.getEdgeToCellMap().get(line), line, true);
+        netItemInfo.updateItem();
     }
 
     private void setNet(ApplicationModel model) {
