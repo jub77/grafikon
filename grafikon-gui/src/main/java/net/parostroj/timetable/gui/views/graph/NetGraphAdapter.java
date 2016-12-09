@@ -78,26 +78,22 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     }
 
     private String convertNode(Node node) {
-        String value;
+        StringBuilder value = new StringBuilder();
         Company company = node.getCompany();
         List<Region> regions = node.getRegions();
         List<Region> centerRegions = node.getCenterRegions();
-        value = node.getName();
-        String description = null;
+        value.append("<font color=black>").append(node.getName()).append("</font>");
         if (company != null) {
-            description = company.getAbbr();
+            value.append(" <font color=gray>[").append(company.getAbbr()).append("]</font>");
         }
         if (!regions.isEmpty()) {
             String regionsStr = regions.stream()
                     .map(region -> centerRegions.contains(region) ?
                             String.format("<b>%s</b>", region.getName()) : region.getName())
                     .collect(Collectors.joining(","));
-        	description = description == null ? regionsStr : description + "," + regionsStr;
+            value = value.append("\n(").append(regionsStr).append(')');
         }
-        if (description != null) {
-            value = String.format("%s%n(%s)", value, description);
-        }
-        return value;
+        return value.toString();
     }
 
     private String convertLine(Line line) {
