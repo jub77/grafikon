@@ -139,6 +139,10 @@ public class ObjectsUtil {
         }
     }
 
+    public static <T> Collection<T> checkEmpty(Collection<T> collection) {
+        return collection == null ? null : (collection.isEmpty() ? null : collection);
+    }
+
     public static <T> List<T> checkEmpty(List<T> list) {
         return list == null ? null : (list.isEmpty() ? null : list);
     }

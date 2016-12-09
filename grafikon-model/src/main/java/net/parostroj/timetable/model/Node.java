@@ -166,7 +166,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             TimeIntervalResult result = track.testTimeIntervalOI(interval);
             if (result.getStatus() == TimeIntervalResult.Status.OVERLAPPING) {
                 if (out == null) {
-                    out = new HashSet<TimeInterval>(result.getOverlappingIntervals());
+                    out = new HashSet<>(result.getOverlappingIntervals());
                 } else {
                     out.addAll(result.getOverlappingIntervals());
                 }
@@ -206,6 +206,14 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     public List<Region> getRegions() {
     	return this.getAttributeAsList(ATTR_REGIONS, Region.class, Collections.emptyList());
+    }
+
+    public Collection<FreightColor> getFreightColors() {
+        return this.getAttributeAsCollection(ATTR_FREIGHT_COLORS, FreightColor.class, Collections.emptyList());
+    }
+
+    public void setFreightColors(Collection<FreightColor> freightColors) {
+        getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
     }
 
     /**
