@@ -542,23 +542,24 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     @Override
-    public void selection(NetSelectionModel.Action action, Node node, Line line) {
-        switch (action) {
-            case LINE_SELECTED:
-            case NODE_SELECTED:
-                editAction.setEnabled(true);
-                deleteAction.setEnabled(true);
-                break;
-            case NOTHING_SELECTED:
-                editAction.setEnabled(false);
-                deleteAction.setEnabled(false);
-                break;
+    public void selection(Object item) {
+        if (item != null) {
+            editAction.setEnabled(true);
+            deleteAction.setEnabled(true);
+        } else {
+            editAction.setEnabled(false);
+            deleteAction.setEnabled(false);
         }
+    }
+
+    private Object getIfSingleSelected() {
+        Object[] cells = graph.getSelectionCells();
+        return cells != null && cells.length == 1 ? ((mxCell) cells[0]).getValue() : null;
     }
 
     private void updateNode(Node node) {
         graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
-        netItemInfo.updateItem();
+        netItemInfo.updateItem(getIfSingleSelected());
     }
 
     private void updateAll() {
@@ -579,7 +580,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateLine(Line line) {
         graph.cellLabelChanged(graph.getEdgeToCellMap().get(line), line, true);
-        netItemInfo.updateItem();
+        netItemInfo.updateItem(getIfSingleSelected());
     }
 
     private void setNet(ApplicationModel model) {

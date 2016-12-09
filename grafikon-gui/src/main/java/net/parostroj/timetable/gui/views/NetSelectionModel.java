@@ -23,16 +23,12 @@ public class NetSelectionModel implements mxIEventListener {
     private Node selectedNode;
     private Line selectedLine;
 
-    public static enum Action {
-        NODE_SELECTED, LINE_SELECTED, NOTHING_SELECTED;
-    }
-
     public interface NetSelectionListener {
-        public void selection(Action action, Node node, Line line);
+        public void selection(Object item);
     }
 
     public NetSelectionModel() {
-        listeners = new HashSet<NetSelectionListener>();
+        listeners = new HashSet<>();
     }
 
     public void addNetSelectionListener(NetSelectionListener listener) {
@@ -52,19 +48,19 @@ public class NetSelectionModel implements mxIEventListener {
         if (cell != null && mm.getCells().length == 1) {
             if (cell.getValue() instanceof Node) {
                 selectedNode = (Node) cell.getValue();
-                this.callListeners(Action.NODE_SELECTED, selectedNode, null);
+                this.callListeners(selectedNode);
             } else if (cell.getValue() instanceof Line) {
                 selectedLine = (Line) cell.getValue();
-                this.callListeners(Action.LINE_SELECTED, null, selectedLine);
+                this.callListeners(selectedLine);
             }
         } else {
-            this.callListeners(Action.NOTHING_SELECTED, null, null);
+            this.callListeners(null);
         }
     }
 
-    private void callListeners(Action action, Node node, Line line) {
+    private void callListeners(Object item) {
         for (NetSelectionListener listener : listeners) {
-            listener.selection(action, node, line);
+            listener.selection(item);
         }
     }
 

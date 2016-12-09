@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 import javax.swing.JLabel;
 
 import net.parostroj.timetable.gui.data.ProgramSettings;
-import net.parostroj.timetable.gui.views.NetSelectionModel.Action;
 import net.parostroj.timetable.gui.views.NetSelectionModel.NetSelectionListener;
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Line;
@@ -38,23 +37,23 @@ public class NetItemInfo implements NetSelectionListener {
     }
 
     @Override
-    public void selection(Action action, Node node, Line line) {
-        switch (action) {
-            case LINE_SELECTED:
-                itemRef = new WeakReference<>(line);
-                break;
-            case NODE_SELECTED:
-                itemRef = new WeakReference<>(node);
-                break;
-            case NOTHING_SELECTED:
-                itemRef = null;
-                break;
+    public void selection(Object item) {
+        if (item == null) {
+            itemRef = null;
+        } else {
+            itemRef = new WeakReference<>(item);
         }
-        this.updateItem();
+        this.updateItemImpl(item);
     }
 
-    public void updateItem() {
-        Object item = itemRef != null ? itemRef.get() : null;
+    public void updateItem(Object item) {
+        Object currentItem = getCurrentItem();
+        if (currentItem != null && currentItem == item) {
+            this.updateItemImpl(currentItem);
+        }
+    }
+
+    private void updateItemImpl(Object item) {
         if (item == null) {
             text.setText(null);
         } else if (item instanceof Node) {
@@ -62,6 +61,10 @@ public class NetItemInfo implements NetSelectionListener {
         } else if (item instanceof Line) {
             this.setTextImpl(this.createText((Line) item));
         }
+    }
+
+    private Object getCurrentItem() {
+        return itemRef != null ? itemRef.get() : null;
     }
 
     private String createText(Node node) {
