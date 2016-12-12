@@ -747,6 +747,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             dialog.registerContext(model.getGuiContext());
             dialog.showDialog(model.getDiagram());
             dialog.dispose();
+            pm.writeBack();
         }
     }
 

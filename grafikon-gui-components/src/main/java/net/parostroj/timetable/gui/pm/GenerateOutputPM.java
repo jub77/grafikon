@@ -108,7 +108,8 @@ public class GenerateOutputPM extends AbstractPM {
         if (chooserRef != null && path.isValid()) {
             JFileChooser chooser = chooserRef.get();
             if (chooser != null) {
-                chooser.setSelectedFile(new File(path.getText()));
+                String pathText = path.getText();
+                chooser.setSelectedFile(new File(pathText));
             }
         }
     }

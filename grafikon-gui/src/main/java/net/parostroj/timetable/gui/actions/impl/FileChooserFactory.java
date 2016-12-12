@@ -30,7 +30,7 @@ public class FileChooserFactory implements StorableGuiData {
 
     public enum Type {
         GTM("last.directory.model"),
-        OUTPUT_DIRECTORY("last.directory.html.dir", true),
+        OUTPUT_DIRECTORY("last.directory.output", true),
         ALL_FILES("last.directory.all.files"),
         GTML("last.directory.model"),
         GTM_GTML("last.directory.model");
@@ -95,6 +95,10 @@ public class FileChooserFactory implements StorableGuiData {
 
         public void cleanUpChooser(ApprovedFileChooser chooser) {
             File location = chooser.getCurrentDirectory();
+            File selectedFile = chooser.getSelectedFile();
+            if (selectedFile != null && selectedFile.isDirectory()) {
+                location = selectedFile;
+            }
             locations.put(type.getKey(), location);
             if (filter != null) {
                 chooser.removeChoosableFileFilter(filter);
