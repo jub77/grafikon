@@ -107,7 +107,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
             }
             TimeIntervalResult result = list.testIntervalForRouteSegment(interval);
             if (result.getStatus() == Status.OK) {
-                list.addIntervalForRouteSegment(interval);
+                list.addIntervalForRouteSegmentWithoutCheck(interval);
                 found = true;
             } else {
                 level++;
