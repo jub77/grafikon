@@ -11,7 +11,9 @@ import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.WeightUnit;
+import net.parostroj.timetable.utils.CollectionUtils;
 import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +63,9 @@ public class LSAttributesItem {
         } else if (value instanceof Map) {
             type = MAP_KEY;
             for (Map.Entry<?, ?> entry : ((Map<?,?>) value).entrySet()) {
-                LSAttributesValue cValue = extractSimpleValue(key, entry.getValue());
                 LSAttributesValue cKey = extractSimpleValue(key, entry.getKey());
-                cValue.setKey(cKey.getValue());
-                cValue.setKeyType(cKey.getType());
+                this.getValues().add(cKey);
+                LSAttributesValue cValue = extractSimpleValue(key, entry.getValue());
                 this.getValues().add(cValue);
             }
         } else if (value instanceof LocalizedString) {
@@ -176,10 +177,10 @@ public class LSAttributesItem {
             return result;
         } else if (MAP_KEY.equals(type)) {
             Map<Object, Object> result = new HashMap<>();
-            for (LSAttributesValue value : getValues()) {
-                Object cValue = convertSimpleValue(mapping, value.getValue(), value.getType());
-                Object cKey = convertSimpleValue(mapping, value.getKey(), value.getKeyType());
-                result.put(cKey, cValue);
+            for (Tuple<LSAttributesValue> t : CollectionUtils.tuples(getValues())) {
+                Object key = convertSimpleValue(mapping, t.first.getValue(), t.first.getType());
+                Object value = convertSimpleValue(mapping, t.second.getValue(), t.second.getType());
+                result.put(key, value);
             }
             return result;
         } else if (LOCALIZED_STRING_KEY.equals(type)) {
