@@ -140,4 +140,37 @@ public final class CollectionUtils {
             }
         };
     }
+
+    /**
+     * Returns iterable with tuples from source iterable.
+     *
+     * @param iterable source iterable
+     * @return iterable with tuples
+     */
+    public static <T> Iterable<Tuple<T>> tuples(final Iterable<T> iterable) {
+        return () -> tuples(iterable.iterator());
+    }
+
+    /**
+     * Returns iterator with tuples from source iterator.
+     *
+     * @param iterator source iterator
+     * @return iterator with tuples
+     */
+    public static <T> Iterator<Tuple<T>> tuples(final Iterator<T> iterator) {
+        return new AbstractIterator<Tuple<T>>() {
+
+            @Override
+            protected Tuple<T> computeNext() {
+                if (iterator.hasNext()) {
+                    T first = iterator.next();
+                    if (iterator.hasNext()) {
+                        T second = iterator.next();
+                        return new Tuple<>(first, second);
+                    }
+                }
+                return endOfData();
+            }
+        };
+    }
 }
