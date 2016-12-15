@@ -48,15 +48,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             item.getOverlappingIntervals().add(interval);
         }
 
-        int i = 0;
-        for (TimeInterval item : this) {
-            if (item.compareOpenNormalized(interval) == -1) {
-                this.add(i, interval);
-                return;
-            }
-            i++;
-        }
-        this.add(interval);
+        addIntervalImpl(interval);
     }
 
     /**
@@ -66,6 +58,10 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
      * @param interval time interval do be added
      */
     public void addIntervalForRouteSegmentWithoutCheck(TimeInterval interval) {
+        addIntervalImpl(interval);
+    }
+
+    private void addIntervalImpl(TimeInterval interval) {
         int i = 0;
         for (TimeInterval item : this) {
             if (item.compareOpenNormalized(interval) == -1) {
