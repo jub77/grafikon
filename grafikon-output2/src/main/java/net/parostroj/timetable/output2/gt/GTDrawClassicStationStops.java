@@ -29,8 +29,8 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     public GTDrawClassicStationStops(GTDrawSettings config, Route route, TrainRegionCollector collector,
             Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
         super(config, route, collector, intervalFilter, chooser, highlightedTrains);
-        nodeIntervalLists = new HashMap<Node, List<TimeIntervalList>>();
-        locationMap = new HashMap<TimeInterval, Integer>();
+        nodeIntervalLists = new HashMap<>();
+        locationMap = new HashMap<>();
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         inStationGap = (int) (TRAIN_STROKE_WIDTH * 1.75f * zoom);
         trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -72,7 +72,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
             if (location == null) {
                 List<TimeIntervalList> im = nodeIntervalLists.get(interval.getOwnerAsNode());
                 if (im == null) {
-                    im = new LinkedList<TimeIntervalList>();
+                    im = new LinkedList<>();
                     nodeIntervalLists.put(interval.getOwnerAsNode(), im);
                 }
                 location = this.findLocation(interval, im);
@@ -107,7 +107,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
             }
             TimeIntervalResult result = list.testIntervalForRouteSegment(interval);
             if (result.getStatus() == Status.OK) {
-                list.addIntervalForRouteSegment(interval);
+                list.addIntervalForRouteSegmentWithoutCheck(interval);
                 found = true;
             } else {
                 level++;
