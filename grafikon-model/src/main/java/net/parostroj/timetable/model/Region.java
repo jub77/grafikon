@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,6 +85,14 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public void setColorMap(Map<FreightColor, Region> colorMap) {
         getAttributes().setRemove(ATTR_FREIGHT_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
+    }
+
+    public Locale getLocale() {
+        return attributes.get(ATTR_LOCALE, Locale.class);
+    }
+
+    public void setLocale(Locale locale) {
+        attributes.setRemove(ATTR_LOCALE, locale);
     }
 
     private void addSubRegion(Region added) {
