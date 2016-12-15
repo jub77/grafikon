@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.template.TemplateOutputResources;
+import net.parostroj.timetable.output2.util.OutputUtil;
 import net.parostroj.timetable.output2.util.WrapperLogMap;
 
 /**
@@ -152,6 +153,7 @@ public class OutputWriter {
             binding.put("locale", modelOutput.getLocale() != null ? modelOutput.getLocale() : settings.getLocale());
             binding.put("key", getOutputKey(modelOutput));
             binding.put("selection", modelOutput.getSelection());
+            binding.put("util", new OutputUtil());
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
@@ -244,6 +246,7 @@ public class OutputWriter {
                 outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N),
                 templateLog, "localization"));
         context.put("selection", modelOutput.getSelection());
+        context.put("util", new OutputUtil());
         return context;
     }
 
