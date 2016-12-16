@@ -17,6 +17,8 @@ public class Attributes implements Map<String, Object> {
     private final Map<String, Object> values;
     private Map<String, Map<String, Object>> valuesWithCategory;
 
+    private boolean skipListeners = false;
+
     /**
      * Default constructor.
      */
@@ -128,7 +130,7 @@ public class Attributes implements Map<String, Object> {
         }
         return object instanceof List
                 ? ObjectsUtil.checkedList((List<?>) object, clazz)
-                : ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
+                : (object instanceof Set ? ObjectsUtil.checkedSet((Set<?>) object, clazz) : ObjectsUtil.checkedCollection((Collection<?>) object, clazz));
     }
 
     public <T> Set<T> getAsSet(String name, Class<T> clazz) {
@@ -244,8 +246,11 @@ public class Attributes implements Map<String, Object> {
     }
 
     protected void fireChange(AttributeChange change) {
-        for (AttributesListener l : listeners)
-            l.attributeChanged(this, change);
+        if (!skipListeners) {
+            for (AttributesListener l : listeners) {
+                l.attributeChanged(this, change);
+            }
+        }
     }
 
     private Map<String, Object> getMapForCategory(String category) {
@@ -328,6 +333,14 @@ public class Attributes implements Map<String, Object> {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             this.set(category, entry.getKey(), entry.getValue());
         }
+    }
+
+    public void setSkipListeners(boolean skipListeners) {
+        this.skipListeners = skipListeners;
+    }
+
+    public boolean isSkipListeners() {
+        return skipListeners;
     }
 
     // ------------ Map methods ------------
