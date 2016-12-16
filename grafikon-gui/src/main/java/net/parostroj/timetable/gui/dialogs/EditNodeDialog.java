@@ -207,7 +207,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void updateRegionsTextField(javax.swing.JTextField field, Collection<Region> regions) {
-        field.setText(Wrapper.getWrapperList(regions).toString());
+        field.setText(Wrapper.getWrapperList(Node.sortRegions(regions)).toString());
     }
 
     private Set<Region> editRegions(javax.swing.JTextField field, Set<Region> all, Set<Region> selected, Set<Region> locked) {

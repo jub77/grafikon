@@ -38,6 +38,10 @@ public class FreightDst {
         return node.getCenterRegions();
     }
 
+    public List<Region> getSortedRegions() {
+        return node.getSortedCenterRegions();
+    }
+
     public Train getTrain() {
         return timeInterval.getTrain();
     }
@@ -85,9 +89,7 @@ public class FreightDst {
             freightStr.append(colorsStr.toString());
         }
         if (this.isCenter() && center) {
-            TextList o = new TextList(freightStr, "(", ")", ",");
-            o.addItems(node.getCenterRegions());
-            o.finish();
+            new TextList(freightStr, "(", ")", ",").addItems(node.getSortedCenterRegions()).finish();
         }
         return freightStr.toString();
     }

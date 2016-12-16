@@ -103,9 +103,7 @@ public class FreightDstInfo {
             return "";
         }
         StringBuilder regionsStr = new StringBuilder();
-        TextList o = new TextList(regionsStr, ",");
-        o.addItems(this.regions);
-        o.finish();
+        new TextList(regionsStr, ",").addItems(this.regions).finish();
         return regionsStr.toString();
     }
 
@@ -121,7 +119,7 @@ public class FreightDstInfo {
             }
         }
         if (dst.isCenter()) {
-            info.setRegions(dst.getRegions().stream().map(reg -> reg.getName()).collect(Collectors.toList()));
+            info.setRegions(dst.getSortedRegions().stream().map(reg -> reg.getName()).collect(Collectors.toList()));
         }
         return info;
     }

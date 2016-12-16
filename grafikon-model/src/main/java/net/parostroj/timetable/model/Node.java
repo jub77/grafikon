@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model;
 
+import java.text.Collator;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -220,11 +222,24 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return sortColors(getFreightColors());
     }
 
+    public List<Region> getSortedRegions() {
+        return sortRegions(getRegions());
+    }
+
+    public List<Region> getSortedCenterRegions() {
+        return sortRegions(getCenterRegions());
+    }
+
     public static List<FreightColor> sortColors(Collection<FreightColor> colors) {
         if (colors.isEmpty()) return Collections.emptyList();
-        List<FreightColor> sortedColors = new ArrayList<>(colors);
-        Collections.sort(sortedColors);
-        return sortedColors;
+        return colors.stream().sorted().collect(Collectors.toList());
+    }
+
+    public static List<Region> sortRegions(Collection<Region> regions) {
+        if (regions.isEmpty()) return Collections.emptyList();
+        final Collator collator = Collator.getInstance();
+        return regions.stream().sorted((a, b) -> collator.compare(a.getName(), b.getName()))
+                .collect(Collectors.toList());
     }
 
     /**

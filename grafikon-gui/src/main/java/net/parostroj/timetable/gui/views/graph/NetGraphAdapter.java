@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,7 +82,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private String convertNode(Node node) {
         StringBuilder value = new StringBuilder();
         Company company = node.getCompany();
-        Set<Region> regions = node.getRegions();
+        List<Region> regions = node.getSortedRegions();
         Set<Region> centerRegions = node.getCenterRegions();
         value.append("<font color=black>").append(node.getName()).append("</font>");
         if (company != null) {
