@@ -4,6 +4,8 @@ import java.awt.Window;
 import java.util.Collection;
 import java.util.Locale;
 
+import net.parostroj.timetable.gui.wrappers.BasicWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainDiagramPartFactory;
@@ -59,6 +61,17 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
         Region newRegion = factory.createRegion(factory.createId());
         newRegion.setName(name);
         return newRegion;
+    }
+
+    @Override
+    protected Wrapper<Region> createWrapper(Region item) {
+        return Wrapper.getWrapper(item, new BasicWrapperDelegate<Region>() {
+            @Override
+            public String toString(Region element) {
+                return element.getSuperRegion() == null ? element.getName()
+                        : String.format("%s [%s]", element.getName(), element.getSuperRegion().getName());
+            }
+        });
     }
 
     @Override
