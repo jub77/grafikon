@@ -57,7 +57,7 @@ public class RegionPM extends AbstractPM {
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
         // color map
-        Map<FreightColor, Region> cMap = region.getColorMap();
+        Map<FreightColor, Region> cMap = region.getFreightColorMap();
         colorMap.clear();
         for (Map.Entry<FreightColor, Region> entry : cMap.entrySet()) {
             ColorMappingPM mapping = new ColorMappingPM();
@@ -109,7 +109,7 @@ public class RegionPM extends AbstractPM {
                     map.put(mColor, mRegion);
                 }
             }
-            region.setColorMap(map);
+            region.setFreightColorMap(map);
         }
         return true;
     }
