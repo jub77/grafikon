@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.validators;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -47,8 +48,33 @@ public class RegionValidator implements TrainDiagramValidator {
             for (Region region : ((Node) event.getSource()).getRegions()) {
                 if (region.isSuperRegion()) this.cancelSuperRegion(region);
             }
+            checkCommonSuperRegion((Node) event.getSource());
         }
         return false;
+    }
+
+    // checks that all regions have the same super-region
+    private void checkCommonSuperRegion(Node node) {
+        List<Region> regions = node.getRegions();
+        Iterator<Region> iterator = regions.iterator();
+        List<Region> toBeRemovedRegions = null;
+        if (regions.size() > 1 && iterator.hasNext()) {
+            Region commonSuperRegion = iterator.next().getSuperRegion();
+            while (iterator.hasNext()) {
+                Region region = iterator.next();
+                Region superRegion = region.getSuperRegion();
+                if (superRegion != commonSuperRegion) {
+                    if (toBeRemovedRegions == null) toBeRemovedRegions = new ArrayList<>();
+                    toBeRemovedRegions.add(region);
+                }
+            }
+        }
+        if (toBeRemovedRegions != null) {
+            for (Region removedRegion : toBeRemovedRegions) {
+                regions = removeRegion(regions, removedRegion);
+            }
+            node.setAttribute(Node.ATTR_REGIONS, regions);
+        }
     }
 
     private void cancelSuperRegion(Region region) {
