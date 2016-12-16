@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JOptionPane;
@@ -93,7 +94,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        types = new WrapperListModel<NodeType>(false);
+        types = new WrapperListModel<>(false);
 
         // fill combo box
         NodeTypeWrapperDelegate delegate = new NodeTypeWrapperDelegate();
@@ -151,7 +152,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void updateValues() {
-        removed = new LinkedList<EditTrack>();
+        removed = new LinkedList<>();
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
@@ -194,7 +195,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         types.setSelectedObject(node.getType());
 
         // company
-        this.companies = new WrapperListModel<Company>(false);
+        this.companies = new WrapperListModel<>(false);
         this.companies.addWrapper(EMPTY_COMPANY);
         TrainDiagram diagram = node.getDiagram();
         for (Company company : diagram.getCompanies()) {
@@ -319,9 +320,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox<Wrapper<NodeType>>();
+        typeComboBox = new javax.swing.JComboBox<>();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        trackList = new javax.swing.JList<EditTrack>();
+        trackList = new javax.swing.JList<>();
         newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
         renameTrackButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
@@ -340,7 +341,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         centerRegionsTextField = new javax.swing.JTextField();
         centerRegionsTextField.setEditable(false);
 
-        companyComboBox = new javax.swing.JComboBox<Wrapper<Company>>();
+        companyComboBox = new javax.swing.JComboBox<>();
 
         setResizable(false);
 
@@ -418,8 +419,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
         sSpeedPanel.setLayout(new BorderLayout(0, 0));
 
         javax.swing.JButton editRegionsButton = new javax.swing.JButton("..."); // NOI18N
-        editRegionsButton.addActionListener(e -> this.regions = editRegions(regionsTextField,
-                node.getDiagram().getNet().getRegions(), this.regions, this.centerRegions));
+        editRegionsButton
+                .addActionListener(e -> this.regions = editRegions(
+                        regionsTextField, node.getDiagram().getNet().getRegions().stream()
+                                .filter(r -> !r.isSuperRegion()).collect(Collectors.toList()),
+                        this.regions, this.centerRegions));
         javax.swing.JButton editCenterRegionsButton = new javax.swing.JButton("..."); // NOI18N
         editCenterRegionsButton.addActionListener(
                 e -> this.centerRegions = editRegions(centerRegionsTextField, regions, centerRegions, null));
