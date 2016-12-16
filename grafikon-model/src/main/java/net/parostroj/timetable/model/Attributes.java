@@ -131,6 +131,18 @@ public class Attributes implements Map<String, Object> {
                 : ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
     }
 
+    public <T> Set<T> getAsSet(String name, Class<T> clazz) {
+        return this.getAsSet(name, clazz, null);
+    }
+
+    public <T> Set<T> getAsSet(String name, Class<T> clazz, Set<T> defaultValue) {
+        Object object = this.get(null, name, Object.class, defaultValue);
+        if (object != null && !(object instanceof Set)) {
+            throw new ClassCastException("Wrong type: " + object.getClass());
+        }
+        return ObjectsUtil.checkedSet((Set<?>) object, clazz);
+    }
+
     public <T> List<T> getAsList(String name, Class<T> clazz) {
         return this.getAsList(name, clazz, null);
     }

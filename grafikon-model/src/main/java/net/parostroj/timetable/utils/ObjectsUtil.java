@@ -128,6 +128,15 @@ public class ObjectsUtil {
         }
     }
 
+    public static <T> Set<T> checkedSet(Set<?> orig, Class<T> clazz) {
+        if (orig == null) {
+            return null;
+        } else {
+            checkClass(orig, clazz);
+            return orig.stream().map(i -> clazz.cast(i)).collect(Collectors.toSet());
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> checkedMap(Map<?, ?> orig, Class<K> keyClazz, Class<V> valueClazz) {
         if (orig == null) {
