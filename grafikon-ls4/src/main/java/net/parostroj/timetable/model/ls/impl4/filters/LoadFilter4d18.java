@@ -38,9 +38,9 @@ public class LoadFilter4d18 implements LoadFilter {
                 Region region = (Region) node.removeAttribute("region");
                 if (region != null) {
                     Boolean regionCenter = (Boolean) node.removeAttribute("region.start");
-                    node.setAttribute(Node.ATTR_REGIONS, Collections.singletonList(region));
+                    node.setAttribute(Node.ATTR_REGIONS, Collections.singleton(region));
                     if (regionCenter != null && regionCenter) {
-                        node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, Collections.singletonList(region));
+                        node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, Collections.singleton(region));
                     }
                 }
             }

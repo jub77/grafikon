@@ -2,7 +2,7 @@ package net.parostroj.timetable.gui.utils;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,16 +73,16 @@ public class NetItemInfo implements NetSelectionListener {
         if (node.getCompany() != null) {
             builder.append(" [").append(node.getCompany().getAbbr()).append("]");
         }
-        List<Region> regions = node.getRegions();
+        Set<Region> regions = node.getRegions();
         if (regions != null) {
-            List<Region> centerRegions = node.getCenterRegions();
+            Set<Region> centerRegions = node.getCenterRegions();
             String regionsStr = regions.stream()
                     .map(region -> centerRegions.contains(region) ?
                             String.format("<b>%s</b>", region.getName()) : region.getName())
                     .collect(Collectors.joining(", "));
             builder.append(getNL()).append(regionsStr);
         }
-        Collection<FreightColor> colors = node.getFreightColors();
+        Collection<FreightColor> colors = node.getSortedFreightColors();
         if (colors != null) {
             String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(", "));
             builder.append(getNL()).append(colorsStr);

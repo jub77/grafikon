@@ -195,25 +195,36 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return this.getAttribute(ATTR_COMPANY, Company.class);
     }
 
-    public List<Region> getCenterRegions() {
-    	return this.getAttributeAsList(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptyList());
+    public Set<Region> getCenterRegions() {
+    	return this.getAttributeAsSet(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptySet());
     }
 
     public boolean isCenterOfRegions() {
-        List<?> regions = this.getAttribute(ATTR_CENTER_OF_REGIONS, List.class);
+        Set<?> regions = this.getAttribute(ATTR_CENTER_OF_REGIONS, Set.class);
         return regions != null && !regions.isEmpty();
     }
 
-    public List<Region> getRegions() {
-    	return this.getAttributeAsList(ATTR_REGIONS, Region.class, Collections.emptyList());
+    public Set<Region> getRegions() {
+    	return this.getAttributeAsSet(ATTR_REGIONS, Region.class, Collections.emptySet());
     }
 
-    public Collection<FreightColor> getFreightColors() {
-        return this.getAttributeAsCollection(ATTR_FREIGHT_COLORS, FreightColor.class, Collections.emptyList());
+    public Set<FreightColor> getFreightColors() {
+        return this.getAttributeAsSet(ATTR_FREIGHT_COLORS, FreightColor.class, Collections.emptySet());
     }
 
-    public void setFreightColors(Collection<FreightColor> freightColors) {
+    public void setFreightColors(Set<FreightColor> freightColors) {
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
+    }
+
+    public List<FreightColor> getSortedFreightColors() {
+        return sortColors(getFreightColors());
+    }
+
+    public static List<FreightColor> sortColors(Collection<FreightColor> colors) {
+        if (colors.isEmpty()) return Collections.emptyList();
+        List<FreightColor> sortedColors = new ArrayList<>(colors);
+        Collections.sort(sortedColors);
+        return sortedColors;
     }
 
     /**

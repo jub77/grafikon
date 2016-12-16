@@ -1,7 +1,9 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
@@ -32,7 +34,7 @@ public class FreightDst {
         return node;
     }
 
-    public List<Region> getRegions() {
+    public Set<Region> getRegions() {
         return node.getCenterRegions();
     }
 
@@ -69,7 +71,7 @@ public class FreightDst {
     public String toString(Locale locale, boolean abbreviation, boolean center) {
         StringBuilder freightStr = new StringBuilder();
         StringBuilder colorsStr = null;
-        List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
+        Collection<FreightColor> cs = node.getSortedFreightColors();
         if (cs != null && !cs.isEmpty()) {
             colorsStr = new StringBuilder();
             TextList o = new TextList(colorsStr, "[", "]", ",");

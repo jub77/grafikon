@@ -1,8 +1,10 @@
 package net.parostroj.timetable.model.validators;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
@@ -55,7 +57,7 @@ public class RegionValidator implements TrainDiagramValidator {
 
     // checks that all regions have the same super-region
     private void checkCommonSuperRegion(Node node) {
-        List<Region> regions = node.getRegions();
+        Set<Region> regions = node.getRegions();
         Iterator<Region> iterator = regions.iterator();
         List<Region> toBeRemovedRegions = null;
         if (regions.size() > 1 && iterator.hasNext()) {
@@ -94,8 +96,8 @@ public class RegionValidator implements TrainDiagramValidator {
         }
     }
 
-    private List<Region> removeRegion(List<Region> regions, Region toBeRemoved) {
-    	List<Region> newList = new ArrayList<>(regions);
+    private Set<Region> removeRegion(Set<Region> regions, Region toBeRemoved) {
+    	Set<Region> newList = new HashSet<>(regions);
     	newList.remove(toBeRemoved);
     	return newList.isEmpty() ? null : newList;
     }

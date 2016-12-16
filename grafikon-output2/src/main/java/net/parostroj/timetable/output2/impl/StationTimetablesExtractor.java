@@ -38,7 +38,7 @@ public class StationTimetablesExtractor {
             timetable.setType(node.getType());
 
             // regions + company
-            List<Region> regions = node.getRegions();
+            Set<Region> regions = node.getRegions();
             if (!regions.isEmpty()) {
                 timetable.setRegions(regions.stream()
                         .map(region -> RegionInfo.convert(region))

@@ -86,7 +86,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private Node node;
     private List<EditTrack> removed;
-    private Collection<FreightColor> colors;
+    private Set<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
     /** Creates new form EditNodeDialog */
@@ -161,12 +161,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
         updateColors();
 
         // add current regions
-        this.regions = new ArrayList<>();
+        this.regions = new HashSet<>();
         this.regions.addAll(node.getRegions());
         this.updateRegionsTextField(regionsTextField, regions);
 
         // add center of regions
-        this.centerRegions = new ArrayList<>();
+        this.centerRegions = new HashSet<>();
         this.centerRegions.addAll(node.getCenterRegions());
         this.updateRegionsTextField(centerRegionsTextField, centerRegions);
 
@@ -210,12 +210,13 @@ public class EditNodeDialog extends javax.swing.JDialog {
         field.setText(Wrapper.getWrapperList(regions).toString());
     }
 
-    private Collection<Region> editRegions(javax.swing.JTextField field, Collection<Region> all, Collection<Region> selected, Collection<Region> locked) {
+    private Set<Region> editRegions(javax.swing.JTextField field, Set<Region> all, Set<Region> selected, Set<Region> locked) {
         ElementSelectionCheckBoxDialog<Region> dialog = new ElementSelectionCheckBoxDialog<>(this, true);
         dialog.setLocationRelativeTo(this);
-        Collection<Region> newSelection = dialog.selectElements(all, selected, locked);
+        Collection<Region> returnedSelection = dialog.selectElements(all, selected, locked);
         dialog.dispose();
-        if (newSelection != null) {
+        if (returnedSelection != null) {
+            Set<Region> newSelection = new HashSet<>(returnedSelection);
             updateRegionsTextField(field, newSelection);
             return newSelection;
         } else {
@@ -233,11 +234,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void updateColors() {
-        colors = node.getAttribute(Node.ATTR_FREIGHT_COLORS, Collection.class);
+        colors = node.getFreightColors();
         if (colors == null) {
-            colors = Collections.emptyList();
+            colors = Collections.emptySet();
         }
     }
 
@@ -396,7 +396,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             dialog.setLocationRelativeTo(EditNodeDialog.this);
             List<FreightColor> result = dialog.showDialog(colors);
             if (result != null) {
-                colors = result;
+                colors = new HashSet<>(result);
             }
             dialog.dispose();
         });
@@ -422,7 +422,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         editRegionsButton
                 .addActionListener(e -> this.regions = editRegions(
                         regionsTextField, node.getDiagram().getNet().getRegions().stream()
-                                .filter(r -> !r.isSuperRegion()).collect(Collectors.toList()),
+                                .filter(r -> !r.isSuperRegion()).collect(Collectors.toSet()),
                         this.regions, this.centerRegions));
         javax.swing.JButton editCenterRegionsButton = new javax.swing.JButton("..."); // NOI18N
         editCenterRegionsButton.addActionListener(
@@ -717,6 +717,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox sSpeedCheckBox;
 
     private WrapperListModel<Company> companies;
-    private Collection<Region> regions;
-    private Collection<Region> centerRegions;
+    private Set<Region> regions;
+    private Set<Region> centerRegions;
 }

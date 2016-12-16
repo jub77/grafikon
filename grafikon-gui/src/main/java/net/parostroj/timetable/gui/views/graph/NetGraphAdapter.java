@@ -2,7 +2,7 @@ package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.ListenableGraph;
@@ -81,8 +81,8 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private String convertNode(Node node) {
         StringBuilder value = new StringBuilder();
         Company company = node.getCompany();
-        List<Region> regions = node.getRegions();
-        List<Region> centerRegions = node.getCenterRegions();
+        Set<Region> regions = node.getRegions();
+        Set<Region> centerRegions = node.getCenterRegions();
         value.append("<font color=black>").append(node.getName()).append("</font>");
         if (company != null) {
             value.append(" <font color=gray>[").append(company.getAbbr()).append("]</font>");
@@ -94,7 +94,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
                     .collect(Collectors.joining(","));
             value = value.append("\n(").append(regionsStr).append(')');
         }
-        Collection<FreightColor> colors = node.getFreightColors();
+        Collection<FreightColor> colors = node.getSortedFreightColors();
         if (!colors.isEmpty()) {
             String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(","));
             value.append("\n<font color=gray>[").append(colorsStr).append("]</font>");

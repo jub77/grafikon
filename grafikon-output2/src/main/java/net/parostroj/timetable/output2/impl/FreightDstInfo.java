@@ -13,8 +13,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.actions.TextList;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.model.FreightColor;
+import net.parostroj.timetable.model.FreightDst;
+import net.parostroj.timetable.model.NodeType;
 
 /**
  * Freight destination information.
@@ -113,8 +114,8 @@ public class FreightDstInfo {
         if (dst.getNode() != null) {
             info.setName(dst.getNode().getName());
             info.setAbbr(dst.getNode().getAbbr());
-            List<?> lColors = dst.getNode().getAttribute(Node.ATTR_FREIGHT_COLORS, List.class);
-            info.setColors(ObjectsUtil.copyToList(lColors, FreightColor.class));
+            List<FreightColor> sortedColors = dst.getNode().getSortedFreightColors();
+            info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
             if (dst.getNode().getType() == NodeType.STATION_HIDDEN) {
                 info.setHidden(true);
             }

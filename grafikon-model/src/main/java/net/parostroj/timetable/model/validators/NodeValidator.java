@@ -1,7 +1,8 @@
 package net.parostroj.timetable.model.validators;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -58,7 +59,7 @@ public class NodeValidator implements TrainDiagramValidator {
 
     private boolean checkImpl(Node node) {
         boolean applied = false;
-        List<Region> regions = node.getCenterRegions();
+        Set<Region> regions = node.getCenterRegions();
         if (!regions.isEmpty()) {
             for (Region region : regions) {
                 // look through all nodes for another region start in
@@ -66,9 +67,9 @@ public class NodeValidator implements TrainDiagramValidator {
                 for (Node tn : diagram.getNet().getNodes()) {
                     if (tn != node && tn.getCenterRegions().contains(region)) {
                         // ensure that there is no region start
-                        List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
-                        newList.remove(region);
-                        tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
+                        Set<Region> newSet = new HashSet<>(tn.getCenterRegions());
+                        newSet.remove(region);
+                        tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newSet.isEmpty() ? null : newSet);
                     }
                 }
             }

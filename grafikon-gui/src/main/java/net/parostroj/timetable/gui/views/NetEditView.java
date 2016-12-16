@@ -360,7 +360,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         }
                         break;
                     case OBJECT_ATTRIBUTE:
-                        updateNodeForObjectListAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGIONS, event);
+                        updateNodeForObjectCollectionAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGIONS, event);
                         updateNodeForObjectAttribute(Company.class, Company.ATTR_ABBR, Node.ATTR_COMPANY, event);
                         break;
                     case ATTRIBUTE:
@@ -373,7 +373,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 }
             }
 
-            private <T> void updateNodeForObjectListAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, Event event) {
+            private <T> void updateNodeForObjectCollectionAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, Event event) {
                 if (objectClass.isInstance(event.getObject()) && event.getAttributeChange().checkName(objectAttribute)) {
                     T object = objectClass.cast(event.getObject());
                     for (Node node : ((TrainDiagram) event.getSource()).getNet().getNodes()) {
