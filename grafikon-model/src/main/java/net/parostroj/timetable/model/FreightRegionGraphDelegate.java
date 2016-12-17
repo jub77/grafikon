@@ -1,7 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -13,6 +13,13 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import com.google.common.collect.FluentIterable;
+
+import net.parostroj.timetable.model.freight.Connection;
+import net.parostroj.timetable.model.freight.NodeConnection;
+import net.parostroj.timetable.model.freight.NodeConnectionEdges;
+import net.parostroj.timetable.model.freight.NodeConnectionNodes;
+import net.parostroj.timetable.model.freight.RegionConnection;
+import net.parostroj.timetable.model.freight.TrainConnection;
 
 class FreightRegionGraphDelegate {
 
@@ -46,27 +53,27 @@ class FreightRegionGraphDelegate {
         return graph;
     }
 
-    Map<NodeConnection, List<Node>> getRegionConnectionNodes() {
+    Collection<NodeConnectionNodes> getRegionConnectionNodes() {
         return this.computeRegionConnectionsImpl(this.getRegionGraph(),
-                        path -> FluentIterable.from(path.getEdgeList())
-                                .filter(conn -> conn.getTo() != path.getEndVertex())
-                                .transform(conn -> conn.getTo()).toList());
+                (connect, path) -> new NodeConnectionNodesImpl(connect, FluentIterable.from(path.getEdgeList())
+                        .filter(conn -> conn.getTo() != path.getEndVertex()).transform(conn -> conn.getTo()).toList()));
     }
 
-    Map<NodeConnection, List<RegionConnection>> getRegionConnectionEdges() {
+    Collection<NodeConnectionEdges> getRegionConnectionEdges() {
         return this.computeRegionConnectionsImpl(this.getRegionGraph(),
-                path -> FluentIterable.from(path.getEdgeList()).filter(RegionConnection.class).toList());
+                (connect, path) -> new NodeConnectionEdgesImpl(connect,
+                        FluentIterable.from(path.getEdgeList()).filter(RegionConnection.class).toList()));
     }
 
-    protected <T> Map<NodeConnection, T> computeRegionConnectionsImpl(
+    protected <T extends NodeConnection> Collection<T> computeRegionConnectionsImpl(
             DirectedGraph<Node, RegionFreightConnection> graph,
-            Function<GraphPath<Node, RegionFreightConnection>, T> conversion) {
-        Map<NodeConnection, T> connections = new HashMap<>();
+            BiFunction<NodeConnection, GraphPath<Node, RegionFreightConnection>, T> conversion) {
+        Collection<T> connections = new ArrayList<>();
         this.getAllConnectionVariants(graph).forEach(nodeConn -> {
                     DijkstraShortestPath<Node, RegionFreightConnection> path = new DijkstraShortestPath<>(graph,
                             nodeConn.getFrom(), nodeConn.getTo());
                     if (path.getPath() != null) {
-                        connections.put(nodeConn, conversion.apply(path.getPath()));
+                        connections.add(conversion.apply(nodeConn, path.getPath()));
                     }
                 });
         return connections;
@@ -86,6 +93,68 @@ class FreightRegionGraphDelegate {
     static class TrainFreightConnection extends FreightConnection<TimeInterval> implements TrainConnection {
         public TrainFreightConnection(TimeInterval from, TimeInterval to) {
             super(from, to);
+        }
+    }
+
+    static class NodeConnectionNodesImpl implements NodeConnectionNodes {
+
+        private NodeConnection connection;
+        private List<Node> nodes;
+
+        public NodeConnectionNodesImpl(NodeConnection connection, List<Node> nodes) {
+            this.connection = connection;
+            this.nodes = nodes;
+        }
+
+        @Override
+        public Node getFrom() {
+            return connection.getFrom();
+        }
+
+        @Override
+        public Node getTo() {
+            return connection.getTo();
+        }
+
+        @Override
+        public List<Node> getNodes() {
+            return nodes;
+        }
+
+        @Override
+        public String toString() {
+            return connection.toString();
+        }
+    }
+
+    static class NodeConnectionEdgesImpl implements NodeConnectionEdges {
+
+        private NodeConnection connection;
+        private List<RegionConnection> edges;
+
+        public NodeConnectionEdgesImpl(NodeConnection connection, List<RegionConnection> edges) {
+            this.connection = connection;
+            this.edges = edges;
+        }
+
+        @Override
+        public Node getFrom() {
+            return connection.getFrom();
+        }
+
+        @Override
+        public Node getTo() {
+            return connection.getTo();
+        }
+
+        @Override
+        public List<RegionConnection> getEdges() {
+            return edges;
+        }
+
+        @Override
+        public String toString() {
+            return connection.toString();
         }
     }
 

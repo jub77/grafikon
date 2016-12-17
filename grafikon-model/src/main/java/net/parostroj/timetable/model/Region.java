@@ -126,6 +126,22 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return !subRegions.isEmpty();
     }
 
+    public boolean isOnPathIn(Region region) {
+        Region current = region;
+        while (current != null && current != this) {
+            current = current.getSuperRegion();
+        }
+        return current == this;
+    }
+
+    public Region getTopSuperRegion() {
+        Region current = this;
+        while (current.getSuperRegion() != null) {
+            current = current.getSuperRegion();
+        }
+        return current;
+    }
+
     @Override
     public void added() {
         events = true;

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.freight;
 
 import java.util.Collection;
 

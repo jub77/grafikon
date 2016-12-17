@@ -1,4 +1,6 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.freight;
+
+import net.parostroj.timetable.model.Node;
 
 /**
  * Connection between nodes.
