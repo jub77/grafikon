@@ -1,7 +1,10 @@
 package net.parostroj.timetable.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +86,20 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return getAttributes().getAsMap(ATTR_FREIGHT_COLOR_MAP, FreightColor.class, Region.class, Collections.emptyMap());
     }
 
+    public Map<FreightColor, Region> getRecursiveFreightColorMap() {
+        Map<FreightColor, Region> map = null;
+        Region current = this;
+        do {
+            Map<FreightColor, Region> currentMap = this.getFreightColorMap();
+            if (!currentMap.isEmpty()) {
+                if (map == null) map = new EnumMap<>(FreightColor.class);
+                map.putAll(currentMap);
+            }
+            current = current.getSuperRegion();
+        } while (current != null);
+        return map == null ? Collections.emptyMap() : map;
+    }
+
     public void setFreightColorMap(Map<FreightColor, Region> colorMap) {
         getAttributes().setRemove(ATTR_FREIGHT_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
     }
@@ -93,6 +110,16 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public void setLocale(Locale locale) {
         attributes.setRemove(ATTR_LOCALE, locale);
+    }
+
+    public List<Region> getRegionHierarchy() {
+        List<Region> list = new ArrayList<>();
+        Region current = this;
+        do {
+            list.add(current);
+            current = current.getSuperRegion();
+        } while (current != null);
+        return list;
     }
 
     private void addSubRegion(Region added) {

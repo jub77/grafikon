@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.actions.TextList;
 
@@ -11,11 +12,9 @@ import net.parostroj.timetable.actions.TextList;
  */
 class FreightConverter {
 
-    String freightDstListToString(Collection<FreightDst> list) {
+    String freightDstListToString(Locale locale, Node from, Collection<FreightDst> list) {
         StringBuilder builder = new StringBuilder();
-        TextList output = new TextList(builder, ",");
-        output.addItems(list);
-        output.finish();
+        new TextList(builder, ",").addItems(list, dst -> dst.toString(locale, from, true, true)).finish();
         return builder.toString();
     }
 }

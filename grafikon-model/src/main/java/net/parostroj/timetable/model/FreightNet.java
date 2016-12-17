@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -273,7 +274,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     public String freightDstListToString(Collection<FreightDst> list) {
-        return converter.freightDstListToString(list);
+        return converter.freightDstListToString(Locale.getDefault(), null, list);
+    }
+
+    public String freightDstListToString(Locale locale, Node from, Collection<FreightDst> list) {
+        return converter.freightDstListToString(locale, from, list);
     }
 
     @Override

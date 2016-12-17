@@ -21,12 +21,14 @@ public class StationTimetablesExtractor {
     private final TimeConverter converter;
     private final boolean techTime;
     private final boolean adjacentSessions;
+    private final Locale locale;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, boolean adjacentSessions, Locale locale) {
         this.diagram = diagram;
         this.nodes = nodes;
         this.techTime = techTime;
         this.adjacentSessions = adjacentSessions;
+        this.locale = locale;
         this.converter = diagram.getTimeConverter();
     }
 
@@ -120,7 +122,7 @@ public class StationTimetablesExtractor {
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
                 for (FreightDst dst : freightDests) {
-                    fl.add(FreightDstInfo.convert(dst));
+                    fl.add(FreightDstInfo.convert(locale, interval.getOwnerAsNode(), dst));
                 }
                 row.setFreightTo(fl);
             }
@@ -135,7 +137,7 @@ public class StationTimetablesExtractor {
                     List<FreightDst> mList = entry.getValue();
                     List<FreightDstInfo> fl = new ArrayList<>(mList.size());
                     for (FreightDst dst : mList) {
-                        fl.add(FreightDstInfo.convert(dst));
+                        fl.add(FreightDstInfo.convert(locale, interval.getOwnerAsNode(), dst));
                     }
                     ftt.setFreightTo(fl);
                     fttl.add(ftt);

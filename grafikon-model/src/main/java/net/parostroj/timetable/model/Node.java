@@ -223,11 +223,35 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     }
 
     public List<Region> getSortedRegions() {
-        return sortRegions(getRegions());
+        return getSortedRegions(Locale.getDefault());
+    }
+
+    public List<Region> getSortedRegions(Locale locale) {
+        return sortRegions(locale, getRegions());
     }
 
     public List<Region> getSortedCenterRegions() {
-        return sortRegions(getCenterRegions());
+        return getSortedCenterRegions(Locale.getDefault());
+    }
+
+    public List<Region> getSortedCenterRegions(Locale locale) {
+        return sortRegions(locale, getCenterRegions());
+    }
+
+    public Map<FreightColor, Region> getRecursiveFreightColorMap() {
+        Map<FreightColor, Region> map = null;
+        for (Region region : getRegions()) {
+            Map<FreightColor, Region> regionMap = region.getRecursiveFreightColorMap();
+            if (!regionMap.isEmpty()) {
+                if (map == null) map = new EnumMap<>(FreightColor.class);
+                map.putAll(regionMap);
+            }
+        }
+        return map == null ? Collections.emptyMap() : map;
+    }
+
+    public FreightDst toFreightDst() {
+        return new FreightDst(this);
     }
 
     public static List<FreightColor> sortColors(Collection<FreightColor> colors) {
@@ -235,9 +259,9 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return colors.stream().sorted().collect(Collectors.toList());
     }
 
-    public static List<Region> sortRegions(Collection<Region> regions) {
+    public static List<Region> sortRegions(Locale locale, Collection<Region> regions) {
         if (regions.isEmpty()) return Collections.emptyList();
-        final Collator collator = Collator.getInstance();
+        final Collator collator = Collator.getInstance(locale);
         return regions.stream().sorted((a, b) -> collator.compare(a.getName(), b.getName()))
                 .collect(Collectors.toList());
     }

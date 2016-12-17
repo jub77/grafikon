@@ -234,7 +234,7 @@ public class TrainTimetablesExtractor {
                 if (!freightDests.isEmpty()) {
                     ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
                     for (FreightDst dst : freightDests) {
-                        fl.add(FreightDstInfo.convert(dst));
+                        fl.add(FreightDstInfo.convert(locale, nodeI.getOwnerAsNode(), dst));
                     }
                     row.setFreightDest(fl);
                 }

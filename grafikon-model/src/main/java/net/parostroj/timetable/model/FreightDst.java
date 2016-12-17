@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -19,6 +20,10 @@ public class FreightDst {
     private final Node node;
     private final TimeInterval timeInterval;
     private final List<TimeInterval> path;
+
+    public FreightDst(Node node) {
+        this(node, null, null);
+    }
 
     public FreightDst(Node node, TimeInterval timeInterval) {
         this(node, timeInterval, null);
@@ -40,6 +45,41 @@ public class FreightDst {
 
     public List<Region> getSortedRegions() {
         return node.getSortedCenterRegions();
+    }
+
+    public List<Region> getSortedRegions(Locale locale) {
+        return node.getSortedCenterRegions(locale);
+    }
+
+    public List<Region> getSortedRegionsFrom(Locale locale, Node from) {
+        return Node.sortRegions(locale, getRegionsFrom(from));
+    }
+
+    public Set<Region> getRegionsFrom(Node from) {
+        Node to = this.node;
+        if (!to.isCenterOfRegions()) throw new IllegalArgumentException("No center of region: " + to);
+        Set<Region> toCenterRegions = to.getCenterRegions();
+        Region toSuper = toCenterRegions.isEmpty() ? null : getSuperRegion(toCenterRegions);
+        Set<Region> fromCenterRegions = from.getRegions();
+        Region fromSuper = fromCenterRegions.isEmpty() ? null : getSuperRegion(fromCenterRegions);
+        // all center regions has to have the same super region (if exists)
+        if (!toCenterRegions.isEmpty() && !fromCenterRegions.isEmpty()) {
+            if (fromSuper == null && toSuper != null) {
+                toCenterRegions = Collections.singleton(toSuper.getTopSuperRegion());
+            } else if (toSuper != null && !toSuper.isOnPathIn(fromSuper)) {
+                Region dest = toSuper;
+                while (dest.getSuperRegion() != null && !dest.getSuperRegion().isOnPathIn(fromSuper)) {
+                    dest = dest.getSuperRegion();
+                }
+                toCenterRegions = Collections.singleton(dest);
+            }
+        }
+        return toCenterRegions;
+    }
+
+    // returns super region - the assumption is that regions share the same super region
+    private Region getSuperRegion(Collection<? extends Region> toCenterRegions) {
+        return toCenterRegions.iterator().next().getSuperRegion();
     }
 
     public Train getTrain() {
@@ -69,18 +109,17 @@ public class FreightDst {
     }
 
     public String toString(Locale locale, boolean abbreviation) {
-        return this.toString(locale, abbreviation, true);
+        return this.toString(locale, null, abbreviation, true);
     }
 
-    public String toString(Locale locale, boolean abbreviation, boolean center) {
+    public String toString(Locale locale, Node from, boolean abbreviation, boolean center) {
         StringBuilder freightStr = new StringBuilder();
         StringBuilder colorsStr = null;
         Collection<FreightColor> cs = node.getSortedFreightColors();
         if (cs != null && !cs.isEmpty()) {
             colorsStr = new StringBuilder();
-            TextList o = new TextList(colorsStr, "[", "]", ",");
-            o.addItems(Iterables.filter(cs, FreightColor.class), color -> color.getName(locale));
-            o.finish();
+            new TextList(colorsStr, "[", "]", ",")
+                    .addItems(Iterables.filter(cs, FreightColor.class), color -> color.getName(locale)).finish();
         }
         if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {
             freightStr.append(abbreviation ? node.getAbbr() : node.getName());
@@ -89,7 +128,9 @@ public class FreightDst {
             freightStr.append(colorsStr.toString());
         }
         if (this.isCenter() && center) {
-            new TextList(freightStr, "(", ")", ",").addItems(node.getSortedCenterRegions()).finish();
+            List<Region> regions = from == null ? node.getSortedCenterRegions(locale)
+                    : this.getSortedRegionsFrom(locale, from);
+            new TextList(freightStr, "(", ")", ",").addItems(regions).finish();
         }
         return freightStr.toString();
     }
