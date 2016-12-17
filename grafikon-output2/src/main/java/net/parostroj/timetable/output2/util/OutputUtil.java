@@ -16,6 +16,8 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public class OutputUtil {
 
+    private OutputFreightUtil freight;
+
     public List<TimeInterval> sortIntervals(List<TimeInterval> intervals) {
         return intervals.stream()
                 .sorted((o1, o2) -> o1.getInterval().getNormalizedStart() - o2.getInterval().getNormalizedStart())
@@ -38,5 +40,12 @@ public class OutputUtil {
             locale = node.getCompany().getLocale();
         }
         return locale;
+    }
+
+    public OutputFreightUtil getFreight() {
+        if (freight == null) {
+            freight = new OutputFreightUtil();
+        }
+        return freight;
     }
 }
