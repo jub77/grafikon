@@ -17,16 +17,17 @@ import net.parostroj.timetable.model.Region;
  */
 public class OutputFreightUtil {
 
-    public Collection<Region> getTargetCenterRegions(Node from, Node to) {
+    public Collection<Region> targetCenterRegions(Node from, Node to) {
+        if (!to.isCenterOfRegions()) throw new IllegalArgumentException("No center of region: " + to);
         Set<Region> toCenterRegions = to.getCenterRegions();
         Region toSuper = toCenterRegions.isEmpty() ? null : getSuperRegion(toCenterRegions);
-        Set<Region> fromCenterRegions = from.getCenterRegions();
+        Set<Region> fromCenterRegions = from.getRegions();
         Region fromSuper = fromCenterRegions.isEmpty() ? null : getSuperRegion(fromCenterRegions);
         // all center regions has to have the same super region (if exists)
         if (!toCenterRegions.isEmpty() && !fromCenterRegions.isEmpty()) {
             if (fromSuper == null && toSuper != null) {
                 toCenterRegions = Collections.singleton(toSuper.getTopSuperRegion());
-            } else if (toSuper != null) {
+            } else if (toSuper != null && !toSuper.isOnPathIn(fromSuper)) {
                 Region dest = toSuper;
                 while (dest.getSuperRegion() != null && !dest.getSuperRegion().isOnPathIn(fromSuper)) {
                     dest = dest.getSuperRegion();
@@ -34,6 +35,7 @@ public class OutputFreightUtil {
                 toCenterRegions = Collections.singleton(dest);
             }
         }
+        System.out.printf("From: %s, To: %s, Result: %s%n", from, to, toCenterRegions);
         return toCenterRegions;
     }
 
@@ -44,7 +46,7 @@ public class OutputFreightUtil {
 
 
 
-    public Map<FreightColor, Region> getFreightColorMap(Node node) {
+    public Map<FreightColor, Region> freightColorMap(Node node) {
         return node.getRegions().stream().flatMap(region -> region.getFreightColorMap().entrySet().stream())
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
