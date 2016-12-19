@@ -281,6 +281,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return converter.freightDstListToString(locale, from, list);
     }
 
+    public Set<Region>getTargetRegionsFrom(Set<Region> toCenterRegions, Set<Region> fromRegions) {
+        return FreightDst.getTargetRegionsFrom(toCenterRegions, fromRegions);
+    }
+
     @Override
     public String toString() {
         return String.format("FreightNet[connections=%d]", fromMap.size());

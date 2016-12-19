@@ -52,18 +52,22 @@ public class FreightDst {
     }
 
     public List<Region> getSortedRegionsFrom(Locale locale, Node from) {
-        return Node.sortRegions(locale, getRegionsFrom(from));
+        return Node.sortRegions(locale, getTargetRegionsFrom(from));
     }
 
-    public Set<Region> getRegionsFrom(Node from) {
+    public Set<Region> getTargetRegionsFrom(Node from) {
         Node to = this.node;
         if (!to.isCenterOfRegions()) throw new IllegalArgumentException("No center of region: " + to);
         Set<Region> toCenterRegions = to.getCenterRegions();
+        Set<Region> fromRegions = from.getRegions();
+        return getTargetRegionsFrom(toCenterRegions, fromRegions);
+    }
+
+    public static Set<Region> getTargetRegionsFrom(Set<Region> toCenterRegions, Set<Region> fromRegions) {
         Region toSuper = toCenterRegions.isEmpty() ? null : getSuperRegion(toCenterRegions);
-        Set<Region> fromCenterRegions = from.getRegions();
-        Region fromSuper = fromCenterRegions.isEmpty() ? null : getSuperRegion(fromCenterRegions);
+        Region fromSuper = fromRegions.isEmpty() ? null : getSuperRegion(fromRegions);
         // all center regions has to have the same super region (if exists)
-        if (!toCenterRegions.isEmpty() && !fromCenterRegions.isEmpty()) {
+        if (!toCenterRegions.isEmpty() && !fromRegions.isEmpty()) {
             if (fromSuper == null && toSuper != null) {
                 toCenterRegions = Collections.singleton(toSuper.getTopSuperRegion());
             } else if (toSuper != null && !toSuper.isOnPathIn(fromSuper)) {
@@ -78,7 +82,7 @@ public class FreightDst {
     }
 
     // returns super region - the assumption is that regions share the same super region
-    private Region getSuperRegion(Collection<? extends Region> toCenterRegions) {
+    private static Region getSuperRegion(Collection<? extends Region> toCenterRegions) {
         return toCenterRegions.iterator().next().getSuperRegion();
     }
 
