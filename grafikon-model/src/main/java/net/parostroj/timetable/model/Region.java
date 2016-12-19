@@ -90,7 +90,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         Map<FreightColor, Region> map = null;
         Region current = this;
         do {
-            Map<FreightColor, Region> currentMap = this.getFreightColorMap();
+            Map<FreightColor, Region> currentMap = current.getFreightColorMap();
             if (!currentMap.isEmpty()) {
                 if (map == null) map = new EnumMap<>(FreightColor.class);
                 map.putAll(currentMap);
