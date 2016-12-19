@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.views;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
@@ -226,7 +227,8 @@ class TrainTableModel extends AbstractTableModel {
                     Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                         List<FreightDst> mList = entry.getValue();
-                        result.append('(').append(diagram.getFreightNet().freightDstListToString(mList));
+                        result.append('(').append(diagram.getFreightNet().freightDstListToString(Locale.getDefault(),
+                                interval.getOwnerAsNode(), mList));
                         result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
@@ -235,7 +237,8 @@ class TrainTableModel extends AbstractTableModel {
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
-                        result.append(diagram.getFreightNet().freightDstListToString(mList));
+                    result.append(diagram.getFreightNet().freightDstListToString(Locale.getDefault(),
+                            interval.getOwnerAsNode(), mList));
                     }
                     retValue = result.toString();
                 }
