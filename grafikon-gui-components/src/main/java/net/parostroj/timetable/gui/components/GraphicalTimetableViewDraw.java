@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.text.Collator;
 import java.util.List;
 
 import javax.swing.JViewport;
@@ -171,7 +172,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         // check current route
         if (event.getType() == Type.REMOVED && event.getObject() instanceof Route && event.getObject().equals(this.getRoute())) {
             if (!diagram.getRoutes().isEmpty()) {
-                this.setRoute(diagram.getRoutes().iterator().next());
+                this.setRoute(getFirstRoute());
             } else {
                 this.setRoute(null);
             }
@@ -179,6 +180,11 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         if (event.getType() == Type.ADDED && event.getObject() instanceof Route && this.getRoute() == null) {
             this.setRoute((Route)event.getObject());
         }
+    }
+
+    private Route getFirstRoute() {
+        Collator collator = Collator.getInstance();
+        return diagram.getRoutes().stream().sorted((a, b) -> collator.compare(a.getName(), b.getName())).findFirst().orElse(null);
     }
 
     public <T> void setRegionSelector(RegionSelector<T> selector, Class<T> clazz) {
@@ -257,9 +263,9 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                     to = this.endTime;
                 }
             }
-            return new Tuple<Integer>(from, to);
+            return new Tuple<>(from, to);
         } else {
-            return new Tuple<Integer>();
+            return new Tuple<>();
         }
     }
 
