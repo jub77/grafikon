@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -26,6 +27,11 @@ public class OutputUtil {
 
     public Collator getCollator(Locale locale) {
         return Collator.getInstance(locale);
+    }
+
+    public Comparator<String> getStringComparator(Locale locale) {
+        final Collator collator = Collator.getInstance(locale);
+        return (a, b) -> collator.compare(a, b);
     }
 
     public Locale getLocaleForNode(Node node, Locale defaultLocale) {
