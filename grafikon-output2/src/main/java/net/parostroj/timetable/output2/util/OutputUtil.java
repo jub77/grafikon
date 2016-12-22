@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -30,22 +29,21 @@ public class OutputUtil {
     }
 
     public Comparator<String> getStringComparator(Locale locale) {
-        final Collator collator = Collator.getInstance(locale);
-        return (a, b) -> collator.compare(a, b);
+        return Collator.getInstance(locale)::compare;
     }
 
     public Locale getLocaleForNode(Node node, Locale defaultLocale) {
-        Locale locale = defaultLocale;
-        for (Region region : node.getRegions()) {
-            Locale regionLocale = region.getLocale();
-            if (regionLocale != null) {
-                locale = regionLocale;
-            }
+        // company has the highest priority
+        Locale locale = node.getCompany() != null ? node.getCompany().getLocale() : null;
+        // otherwise get locale from regions
+        if (locale == null) {
+            locale = node.getRegions().stream()
+                    .map(region -> region.getLocale())
+                    .filter(loc -> loc != null)
+                    .findAny()
+                    .orElse(null);
         }
-        if (node.getCompany() != null && node.getCompany().getLocale() != null) {
-            locale = node.getCompany().getLocale();
-        }
-        return locale;
+        return locale == null ? defaultLocale : locale;
     }
 
     public OutputFreightUtil getFreight() {
