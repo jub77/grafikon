@@ -139,7 +139,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             };
             this.diagram.addAllEventListener(this.currentListener);
             if (!diagram.getRoutes().isEmpty()) {
-                this.setRoute(diagram.getRoutes().iterator().next());
+                this.setRoute(getFirstRoute());
             } else {
                 this.setRoute(null);
             }
