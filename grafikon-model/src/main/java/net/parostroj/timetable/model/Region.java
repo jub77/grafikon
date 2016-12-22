@@ -153,12 +153,12 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return !subRegions.isEmpty();
     }
 
-    public boolean isOnPathIn(Region region) {
-        Region current = region;
-        while (current != null && current != this) {
+    public boolean containsInHierarchy(Region region) {
+        Region current = this;
+        while (current != null && current != region) {
             current = current.getSuperRegion();
         }
-        return current == this;
+        return current == region;
     }
 
     public Region getTopSuperRegion() {

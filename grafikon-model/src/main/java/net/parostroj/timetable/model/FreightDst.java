@@ -70,9 +70,9 @@ public class FreightDst {
         if (!toCenterRegions.isEmpty() && !fromRegions.isEmpty()) {
             if (fromSuper == null && toSuper != null) {
                 toCenterRegions = Collections.singleton(toSuper.getTopSuperRegion());
-            } else if (toSuper != null && !toSuper.isOnPathIn(fromSuper)) {
+            } else if (toSuper != null && !fromSuper.containsInHierarchy(toSuper)) {
                 Region dest = toSuper;
-                while (dest.getSuperRegion() != null && !dest.getSuperRegion().isOnPathIn(fromSuper)) {
+                while (dest.getSuperRegion() != null && !fromSuper.containsInHierarchy(dest.getSuperRegion())) {
                     dest = dest.getSuperRegion();
                 }
                 toCenterRegions = Collections.singleton(dest);
