@@ -20,7 +20,7 @@ public class OutputUtil {
 
     public List<TimeInterval> sortIntervals(List<TimeInterval> intervals) {
         return intervals.stream()
-                .sorted((o1, o2) -> o1.getInterval().getNormalizedStart() - o2.getInterval().getNormalizedStart())
+                .sorted(getNormalizedStartComparator())
                 .collect(Collectors.toList());
     }
 
@@ -30,6 +30,10 @@ public class OutputUtil {
 
     public Comparator<String> getStringComparator(Locale locale) {
         return Collator.getInstance(locale)::compare;
+    }
+
+    public Comparator<TimeInterval> getNormalizedStartComparator() {
+        return (a, b) -> Integer.compare(a.getInterval().getNormalizedStart(), b.getInterval().getNormalizedStart());
     }
 
     public Locale getLocaleForNode(Node node, Locale defaultLocale) {
