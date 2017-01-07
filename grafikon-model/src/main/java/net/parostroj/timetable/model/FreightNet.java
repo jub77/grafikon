@@ -18,8 +18,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
-import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
-import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
+import net.parostroj.timetable.model.FreightDestinationFilter.FilterContext;
+import net.parostroj.timetable.model.FreightDestinationFilter.FilterResult;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
@@ -205,7 +205,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         Map<Train, List<FreightDestination>> result = new LinkedHashMap<>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDestination> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter(), true));
+            List<FreightDestination> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDestinationFilterFactory.createEmptyFilter(), true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -215,16 +215,16 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        return this.getFreightToNodesImpl(fromInterval, FreightDstFilterFactory.createEmptyFilter());
+        return this.getFreightToNodesImpl(fromInterval, FreightDestinationFilterFactory.createEmptyFilter());
     }
 
-    private List<FreightDestination> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
+    private List<FreightDestination> getFreightToNodesImpl(TimeInterval fromInterval, FreightDestinationFilter filter) {
         List<FreightDestination> result = new LinkedList<>();
         this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDestination> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDestination> result, Set<FNConnection> used, FreightDestinationFilter filter, FilterContext context) {
         FilterResult filterResult = FilterResult.OK;
         Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
         Iterators.find(intervals, interval -> interval == fromInterval);

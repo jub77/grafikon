@@ -5,16 +5,16 @@ import java.util.List;
 /**
  * @author jub
  */
-public class FreightDstFilterImpl implements FreightDstFilter {
+class FreightDstFilterImpl implements FreightDestinationFilter {
 
-    private final FreightDstFilter parent;
+    private final FreightDestinationFilter parent;
     private List<Node> stopNodes;
     private List<Node> stopNodesExclude;
     private List<Node> fromNodes;
     private List<Node> toNodes;
     private Integer transitionLimit;
 
-    protected FreightDstFilterImpl(FreightDstFilter parent) {
+    protected FreightDstFilterImpl(FreightDestinationFilter parent) {
         if (parent == null) {
             throw new IllegalArgumentException("parent cannot be null");
         }

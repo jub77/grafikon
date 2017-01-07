@@ -5,7 +5,7 @@ package net.parostroj.timetable.model;
  *
  * @author jub
  */
-public interface FreightDstFilter {
+public interface FreightDestinationFilter {
 
     public enum FilterResult {
         OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE

@@ -1,19 +1,19 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
+import net.parostroj.timetable.model.FreightDestinationFilter.FilterResult;
 
 /**
  * Filter factory.
  *
  * @author jub
  */
-public class FreightDstFilterFactory {
+public class FreightDestinationFilterFactory {
 
-    public static FreightDstFilter createEmptyFilter() {
+    public static FreightDestinationFilter createEmptyFilter() {
         return (context, dst, limit) -> FilterResult.OK;
     }
 
-    public static FreightDstFilter createFilter(FreightDstFilter currentFilter, FNConnection connection, boolean ignoreFrom) {
+    public static FreightDestinationFilter createFilter(FreightDestinationFilter currentFilter, FNConnection connection, boolean ignoreFrom) {
         FreightDstFilterImpl filter = new FreightDstFilterImpl(currentFilter);
         filter.setTransitionLimit(connection.get(FNConnection.ATTR_TRANSITION_LIMIT, Integer.class));
         filter.setStopNodes(connection.getAsList(FNConnection.ATTR_LAST_NODES, Node.class));
