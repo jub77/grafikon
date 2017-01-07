@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +19,7 @@ public class OutputUtil {
 
     private OutputFreightUtil freight;
 
-    public List<TimeInterval> sortIntervals(List<TimeInterval> intervals) {
+    public List<TimeInterval> sortIntervals(Collection<TimeInterval> intervals) {
         return intervals.stream()
                 .sorted(getNormalizedStartComparator())
                 .collect(Collectors.toList());
