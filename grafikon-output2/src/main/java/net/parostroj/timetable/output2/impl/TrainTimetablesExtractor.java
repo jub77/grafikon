@@ -230,10 +230,10 @@ public class TrainTimetablesExtractor {
 
             // freight
             if (nodeI.isFirst() && nodeI.isFreight()) {
-                List<FreightDst> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
+                List<FreightDestination> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
                 if (!freightDests.isEmpty()) {
                     ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
-                    for (FreightDst dst : freightDests) {
+                    for (FreightDestination dst : freightDests) {
                         fl.add(FreightDstInfo.convert(locale, nodeI.getOwnerAsNode(), dst));
                     }
                     row.setFreightDest(fl);

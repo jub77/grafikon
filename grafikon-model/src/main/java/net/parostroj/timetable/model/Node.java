@@ -250,8 +250,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return map == null ? Collections.emptyMap() : map;
     }
 
-    public FreightDst toFreightDst() {
-        return new FreightDst(this);
+    public FreightDestination toFreightDst() {
+        return new FreightDestination(this);
     }
 
     public static List<FreightColor> sortColors(Collection<FreightColor> colors) {

@@ -49,8 +49,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        public Collection<FreightDst> getFreight(TimeInterval interval);
-        public Map<Train, List<FreightDst>> getPassedFreight(TimeInterval interval);
+        public Collection<FreightDestination> getFreight(TimeInterval interval);
+        public Map<Train, List<FreightDestination>> getPassedFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -58,12 +58,12 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private TextTemplate toolTipTemplateLine;
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
-    private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
+    private final Map<String, Object> toolTipformattingMap = new HashMap<>();
 
     public GraphicalTimetableView() {
         this.initComponents();
 
-        this.listeners = new ArrayList<GTViewListener>();
+        this.listeners = new ArrayList<>();
 
         this.addSizesToMenu();
         // binding for tool tips
@@ -85,7 +85,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Collection<FreightDst> getFreight(TimeInterval interval) {
+            public Collection<FreightDestination> getFreight(TimeInterval interval) {
                 if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
                     return diagram.getFreightNet().getFreightToNodes(interval);
@@ -95,10 +95,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Map<Train, List<FreightDst>> getPassedFreight(TimeInterval interval) {
+            public Map<Train, List<FreightDestination>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    Map<Train, List<FreightDst>> freight = diagram.getFreightNet().getFreightPassedInNode(interval);
+                    Map<Train, List<FreightDestination>> freight = diagram.getFreightNet().getFreightPassedInNode(interval);
                     return freight;
                 } else {
                     return Collections.emptyMap();
@@ -164,7 +164,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         // remove rest
         routesMenu.removeAll();
         // sort routes
-        List<Route> routes = new ArrayList<Route>(routesCollection);
+        List<Route> routes = new ArrayList<>(routesCollection);
         Collections.sort(routes, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         int i = 0;
         for (Route lRoute : routes) {
@@ -209,13 +209,13 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     private void initComponents() {
         popupMenu = new javax.swing.JPopupMenu();
-        routesMenu = new SelectionMenu<Route>();
+        routesMenu = new SelectionMenu<>();
         javax.swing.JMenuItem routesEditMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
-        typesMenu = new SelectionMenu<GTDraw.Type>();
-        sizesMenu = new SelectionMenu<Integer>();
-        orientationMenu = new SelectionMenu<GTOrientation>();
-        preferencesMenu = new ChoicesMenu<Key>();
+        typesMenu = new SelectionMenu<>();
+        sizesMenu = new SelectionMenu<>();
+        orientationMenu = new SelectionMenu<>();
+        preferencesMenu = new ChoicesMenu<>();
 
         routesMenu.setText(ResourceLoader.getString("gt.routes")); // NOI18N
         popupMenu.add(routesMenu);

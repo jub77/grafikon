@@ -15,21 +15,21 @@ import net.parostroj.timetable.actions.TextList;
  *
  * @author jub
  */
-public class FreightDst {
+public class FreightDestination {
 
     private final Node node;
     private final TimeInterval timeInterval;
     private final List<TimeInterval> path;
 
-    public FreightDst(Node node) {
+    public FreightDestination(Node node) {
         this(node, null, null);
     }
 
-    public FreightDst(Node node, TimeInterval timeInterval) {
+    public FreightDestination(Node node, TimeInterval timeInterval) {
         this(node, timeInterval, null);
     }
 
-    public FreightDst(Node node, TimeInterval timeInterval, List<TimeInterval> path) {
+    public FreightDestination(Node node, TimeInterval timeInterval, List<TimeInterval> path) {
         this.node = node;
         this.timeInterval = timeInterval;
         this.path = path;
@@ -155,7 +155,7 @@ public class FreightDst {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        FreightDst other = (FreightDst) obj;
+        FreightDestination other = (FreightDestination) obj;
         if (node == null) {
             if (other.node != null)
                 return false;

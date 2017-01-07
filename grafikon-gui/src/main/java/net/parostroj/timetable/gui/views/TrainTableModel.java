@@ -224,16 +224,16 @@ class TrainTableModel extends AbstractTableModel {
                 FreightNet freightNet = train.getDiagram().getFreightNet();
                 if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
-                    for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
-                        List<FreightDst> mList = entry.getValue();
+                    Map<Train, List<FreightDestination>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
+                    for (Map.Entry<Train, List<FreightDestination>> entry : passedCargoDst.entrySet()) {
+                        List<FreightDestination> mList = entry.getValue();
                         result.append('(').append(diagram.getFreightNet().freightDstListToString(Locale.getDefault(),
                                 interval.getOwnerAsNode(), mList));
                         result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
-                        List<FreightDst> cargoDst = freightNet.getFreightToNodes(interval);
-                        List<FreightDst> mList = cargoDst;
+                        List<FreightDestination> cargoDst = freightNet.getFreightToNodes(interval);
+                        List<FreightDestination> mList = cargoDst;
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }

@@ -42,7 +42,7 @@ public class FreightDstFilterImpl implements FreightDstFilter {
     }
 
     @Override
-    public FilterResult accepted(FilterContext context, FreightDst dst, int level) {
+    public FilterResult accepted(FilterContext context, FreightDestination dst, int level) {
         if (transitionLimit != null && transitionLimit < level) {
             return FilterResult.STOP_EXCLUDE;
         }
@@ -62,11 +62,11 @@ public class FreightDstFilterImpl implements FreightDstFilter {
         return FilterResult.OK;
     }
 
-    private boolean isInNodeList(FreightDst dst, List<Node> nodes) {
+    private boolean isInNodeList(FreightDestination dst, List<Node> nodes) {
         return nodes != null && nodes.contains(dst.getNode());
     }
 
-    private boolean isNotInNodeList(FreightDst dst, List<Node> nodes) {
+    private boolean isNotInNodeList(FreightDestination dst, List<Node> nodes) {
         return nodes != null && !nodes.contains(dst.getNode());
     }
 

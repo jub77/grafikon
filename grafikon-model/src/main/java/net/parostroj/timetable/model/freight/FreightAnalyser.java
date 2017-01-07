@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import net.parostroj.timetable.model.FreightDst;
+import net.parostroj.timetable.model.FreightDestination;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -32,7 +32,7 @@ public class FreightAnalyser {
                 .collect(Collectors.toList());
     }
 
-    public Map<FreightDst, Set<TimeInterval>> getFreightFrom(Node node) {
+    public Map<FreightDestination, Set<TimeInterval>> getFreightFrom(Node node) {
          return getFreightIntervalsFrom(node).stream()
             .flatMap(i -> diagram.getFreightNet()
                     .getFreightToNodes(i).stream()

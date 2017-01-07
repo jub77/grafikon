@@ -198,33 +198,33 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return this.attributes;
     }
 
-    public Map<Train, List<FreightDst>> getFreightPassedInNode(TimeInterval fromInterval) {
+    public Map<Train, List<FreightDestination>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        Map<Train, List<FreightDst>> result = new LinkedHashMap<>();
+        Map<Train, List<FreightDestination>> result = new LinkedHashMap<>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter(), true));
+            List<FreightDestination> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter(), true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
     }
 
-    public List<FreightDst> getFreightToNodes(TimeInterval fromInterval) {
+    public List<FreightDestination> getFreightToNodes(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
         return this.getFreightToNodesImpl(fromInterval, FreightDstFilterFactory.createEmptyFilter());
     }
 
-    private List<FreightDst> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
-        List<FreightDst> result = new LinkedList<>();
+    private List<FreightDestination> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
+        List<FreightDestination> result = new LinkedList<>();
         this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDestination> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
         FilterResult filterResult = FilterResult.OK;
         Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
         Iterators.find(intervals, interval -> interval == fromInterval);
@@ -233,7 +233,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         while (intervals.hasNext()) {
             TimeInterval i = intervals.next();
             if (i.isFreight()) {
-                FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i, path);
+                FreightDestination newDst = new FreightDestination(i.getOwnerAsNode(), i, path);
                 filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
@@ -273,16 +273,16 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return regionConnections.getRegionConnectionEdges();
     }
 
-    public String freightDstListToString(Collection<FreightDst> list) {
+    public String freightDstListToString(Collection<FreightDestination> list) {
         return converter.freightDstListToString(Locale.getDefault(), null, list);
     }
 
-    public String freightDstListToString(Locale locale, Node from, Collection<FreightDst> list) {
+    public String freightDstListToString(Locale locale, Node from, Collection<FreightDestination> list) {
         return converter.freightDstListToString(locale, from, list);
     }
 
     public Set<Region>getTargetRegionsFrom(Set<Region> toCenterRegions, Set<Region> fromRegions) {
-        return FreightDst.getTargetRegionsFrom(toCenterRegions, fromRegions);
+        return FreightDestination.getTargetRegionsFrom(toCenterRegions, fromRegions);
     }
 
     @Override

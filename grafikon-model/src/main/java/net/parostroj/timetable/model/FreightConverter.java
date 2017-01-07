@@ -12,7 +12,7 @@ import net.parostroj.timetable.actions.TextList;
  */
 class FreightConverter {
 
-    String freightDstListToString(Locale locale, Node from, Collection<FreightDst> list) {
+    String freightDstListToString(Locale locale, Node from, Collection<FreightDestination> list) {
         StringBuilder builder = new StringBuilder();
         new TextList(builder, ",").addItems(list, dst -> dst.toString(locale, from, true, true)).finish();
         return builder.toString();

@@ -14,7 +14,7 @@ import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.actions.TextList;
 import net.parostroj.timetable.model.FreightColor;
-import net.parostroj.timetable.model.FreightDst;
+import net.parostroj.timetable.model.FreightDestination;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Region;
@@ -109,7 +109,7 @@ public class FreightDstInfo {
         return regionsStr.toString();
     }
 
-    public static FreightDstInfo convert(Locale locale, Node from, FreightDst dst) {
+    public static FreightDstInfo convert(Locale locale, Node from, FreightDestination dst) {
         FreightDstInfo info = new FreightDstInfo();
         if (dst.getNode() != null) {
             info.setName(dst.getNode().getName());

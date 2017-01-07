@@ -24,5 +24,5 @@ public interface FreightDstFilter {
         }
     }
 
-    FilterResult accepted(FilterContext context, FreightDst dst, int level);
+    FilterResult accepted(FilterContext context, FreightDestination dst, int level);
 }
