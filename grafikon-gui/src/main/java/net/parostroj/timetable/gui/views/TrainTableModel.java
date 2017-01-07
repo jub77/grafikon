@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -30,9 +31,11 @@ class TrainTableModel extends AbstractTableModel {
     private int lastRow;
     private boolean editBlock;
     private TimeConverter converter;
+    private OutputFreightUtil freightUtil;
 
     public TrainTableModel(ApplicationModel model, Train train) {
         this.setTrain(train);
+        this.freightUtil = new OutputFreightUtil();
     }
 
     public Train getTrain() {
@@ -224,21 +227,19 @@ class TrainTableModel extends AbstractTableModel {
                 FreightNet freightNet = train.getDiagram().getFreightNet();
                 if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<FreightDestination>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
-                    for (Map.Entry<Train, List<FreightDestination>> entry : passedCargoDst.entrySet()) {
-                        List<FreightDestination> mList = entry.getValue();
-                        result.append('(').append(diagram.getFreightNet().freightDstListToString(Locale.getDefault(),
-                                interval.getOwnerAsNode(), mList));
+                    Map<Train, List<FreightDestinationWithPath>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
+                    for (Map.Entry<Train, List<FreightDestinationWithPath>> entry : passedCargoDst.entrySet()) {
+                        List<FreightDestinationWithPath> mList = entry.getValue();
+                        result.append('(').append(freightUtil.freightListToString(mList, Locale.getDefault()));
                         result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
-                        List<FreightDestination> cargoDst = freightNet.getFreightToNodes(interval);
-                        List<FreightDestination> mList = cargoDst;
+                        List<FreightDestinationWithPath> cargoDst = freightNet.getFreightToNodes(interval);
+                        List<FreightDestinationWithPath> mList = cargoDst;
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
-                    result.append(diagram.getFreightNet().freightDstListToString(Locale.getDefault(),
-                            interval.getOwnerAsNode(), mList));
+                    result.append(freightUtil.freightListToString(mList, Locale.getDefault()));
                     }
                     retValue = result.toString();
                 }

@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,13 +47,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
-    private final FreightConverter converter;
     private final FreightRegionGraphDelegate regionConnections;
 
     FreightNet(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.converter = new FreightConverter();
         this.regionConnections = new FreightRegionGraphDelegate(diagram);
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
@@ -198,33 +195,33 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return this.attributes;
     }
 
-    public Map<Train, List<FreightDestination>> getFreightPassedInNode(TimeInterval fromInterval) {
+    public Map<Train, List<FreightDestinationWithPath>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        Map<Train, List<FreightDestination>> result = new LinkedHashMap<>();
+        Map<Train, List<FreightDestinationWithPath>> result = new LinkedHashMap<>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDestination> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDestinationFilterFactory.createEmptyFilter(), true));
+            List<FreightDestinationWithPath> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDestinationFilterFactory.createEmptyFilter(), true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
     }
 
-    public List<FreightDestination> getFreightToNodes(TimeInterval fromInterval) {
+    public List<FreightDestinationWithPath> getFreightToNodes(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
         return this.getFreightToNodesImpl(fromInterval, FreightDestinationFilterFactory.createEmptyFilter());
     }
 
-    private List<FreightDestination> getFreightToNodesImpl(TimeInterval fromInterval, FreightDestinationFilter filter) {
-        List<FreightDestination> result = new LinkedList<>();
-        this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
+    private List<FreightDestinationWithPath> getFreightToNodesImpl(TimeInterval fromInterval, FreightDestinationFilter filter) {
+        List<FreightDestinationWithPath> result = new LinkedList<>();
+        this.getFreightToNodesImpl(fromInterval.getOwnerAsNode(), fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDestination> result, Set<FNConnection> used, FreightDestinationFilter filter, FilterContext context) {
+    private void getFreightToNodesImpl(Node start, TimeInterval fromInterval, List<TimeInterval> path, List<FreightDestinationWithPath> result, Set<FNConnection> used, FreightDestinationFilter filter, FilterContext context) {
         FilterResult filterResult = FilterResult.OK;
         Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
         Iterators.find(intervals, interval -> interval == fromInterval);
@@ -233,7 +230,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         while (intervals.hasNext()) {
             TimeInterval i = intervals.next();
             if (i.isFreight()) {
-                FreightDestination newDst = new FreightDestination(i.getOwnerAsNode(), i, path);
+                FreightDestinationWithPath newDst = FreightDestinationFactory.createFreightDestination(start, i.getOwnerAsNode(), i, path);
                 filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
@@ -251,7 +248,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
                     List<TimeInterval> newPath = new ArrayList<>(path.size() + 1);
                     newPath.addAll(path);
                     newPath.add(conn.getFrom());
-                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
+                    this.getFreightToNodesImpl(start, conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
                 }
             }
         }
@@ -271,18 +268,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     public Collection<NodeConnectionEdges> getRegionConnectionEdges() {
         return regionConnections.getRegionConnectionEdges();
-    }
-
-    public String freightDstListToString(Collection<FreightDestination> list) {
-        return converter.freightDstListToString(Locale.getDefault(), null, list);
-    }
-
-    public String freightDstListToString(Locale locale, Node from, Collection<FreightDestination> list) {
-        return converter.freightDstListToString(locale, from, list);
-    }
-
-    public Set<Region>getTargetRegionsFrom(Set<Region> toCenterRegions, Set<Region> fromRegions) {
-        return FreightDestination.getTargetRegionsFrom(toCenterRegions, fromRegions);
     }
 
     @Override

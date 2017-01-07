@@ -49,8 +49,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        public Collection<FreightDestination> getFreight(TimeInterval interval);
-        public Map<Train, List<FreightDestination>> getPassedFreight(TimeInterval interval);
+        public Collection<FreightDestinationWithPath> getFreight(TimeInterval interval);
+        public Map<Train, List<FreightDestinationWithPath>> getPassedFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -85,7 +85,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Collection<FreightDestination> getFreight(TimeInterval interval) {
+            public Collection<FreightDestinationWithPath> getFreight(TimeInterval interval) {
                 if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
                     return diagram.getFreightNet().getFreightToNodes(interval);
@@ -95,11 +95,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Map<Train, List<FreightDestination>> getPassedFreight(TimeInterval interval) {
+            public Map<Train, List<FreightDestinationWithPath>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    Map<Train, List<FreightDestination>> freight = diagram.getFreightNet().getFreightPassedInNode(interval);
-                    return freight;
+                    return diagram.getFreightNet().getFreightPassedInNode(interval);
                 } else {
                     return Collections.emptyMap();
                 }

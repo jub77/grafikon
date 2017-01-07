@@ -63,11 +63,11 @@ class FreightDstFilterImpl implements FreightDestinationFilter {
     }
 
     private boolean isInNodeList(FreightDestination dst, List<Node> nodes) {
-        return nodes != null && nodes.contains(dst.getNode());
+        return nodes != null && nodes.contains(dst.getTo());
     }
 
     private boolean isNotInNodeList(FreightDestination dst, List<Node> nodes) {
-        return nodes != null && !nodes.contains(dst.getNode());
+        return nodes != null && !nodes.contains(dst.getTo());
     }
 
     private boolean isNotInNodeList(TimeInterval interval, List<Node> nodes) {

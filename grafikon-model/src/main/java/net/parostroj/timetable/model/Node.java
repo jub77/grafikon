@@ -16,7 +16,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>, AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
+public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>, AttributesHolder,
+        ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart, FreightDestination {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -197,10 +198,12 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return this.getAttribute(ATTR_COMPANY, Company.class);
     }
 
+    @Override
     public Set<Region> getCenterRegions() {
     	return this.getAttributeAsSet(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptySet());
     }
 
+    @Override
     public boolean isCenterOfRegions() {
         Set<?> regions = this.getAttribute(ATTR_CENTER_OF_REGIONS, Set.class);
         return regions != null && !regions.isEmpty();
@@ -250,10 +253,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return map == null ? Collections.emptyMap() : map;
     }
 
-    public FreightDestination toFreightDst() {
-        return new FreightDestination(this);
-    }
-
     public static List<FreightColor> sortColors(Collection<FreightColor> colors) {
         if (colors.isEmpty()) return Collections.emptyList();
         return colors.stream().sorted().collect(Collectors.toList());
@@ -297,5 +296,15 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     @Override
     public boolean isNode() {
         return true;
+    }
+
+    @Override
+    public Node getTo() {
+        return this;
+    }
+
+    @Override
+    public Node getFrom() {
+        return null;
     }
 }

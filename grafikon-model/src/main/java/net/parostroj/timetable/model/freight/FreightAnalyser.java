@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.freight;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.StreamSupport;
 
 import net.parostroj.timetable.model.FreightDestination;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Pair;
@@ -55,5 +57,28 @@ public class FreightAnalyser {
 
     protected static int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
         return Integer.compare(i1.getInterval().getNormalizedStart(), i2.getInterval().getNormalizedStart());
+    }
+
+    // returns super region - the assumption is that regions share the same super region
+    public static Region getSuperRegion(Collection<? extends Region> regions) {
+        return regions.iterator().next().getSuperRegion();
+    }
+
+    public static Set<Region> getTargetRegionsFrom(Set<Region> toCenterRegions, Set<Region> fromRegions) {
+        Region toSuper = toCenterRegions.isEmpty() ? null : getSuperRegion(toCenterRegions);
+        Region fromSuper = fromRegions.isEmpty() ? null : getSuperRegion(fromRegions);
+        // all center regions has to have the same super region (if exists)
+        if (!toCenterRegions.isEmpty() && !fromRegions.isEmpty()) {
+            if (fromSuper == null && toSuper != null) {
+                toCenterRegions = Collections.singleton(toSuper.getTopSuperRegion());
+            } else if (toSuper != null && !fromSuper.containsInHierarchy(toSuper)) {
+                Region dest = toSuper;
+                while (dest.getSuperRegion() != null && !fromSuper.containsInHierarchy(dest.getSuperRegion())) {
+                    dest = dest.getSuperRegion();
+                }
+                toCenterRegions = Collections.singleton(dest);
+            }
+        }
+        return toCenterRegions;
     }
 }

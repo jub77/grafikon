@@ -1,8 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.text.Collator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -18,6 +19,7 @@ import net.parostroj.timetable.model.FreightDestination;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 /**
  * Freight destination information.
@@ -111,19 +113,18 @@ public class FreightDstInfo {
 
     public static FreightDstInfo convert(Locale locale, Node from, FreightDestination dst) {
         FreightDstInfo info = new FreightDstInfo();
-        if (dst.getNode() != null) {
-            info.setName(dst.getNode().getName());
-            info.setAbbr(dst.getNode().getAbbr());
-            List<FreightColor> sortedColors = dst.getNode().getSortedFreightColors();
+        if (dst.getTo() != null) {
+            info.setName(dst.getTo().getName());
+            info.setAbbr(dst.getTo().getAbbr());
+            List<FreightColor> sortedColors = dst.getTo().getSortedFreightColors();
             info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
-            if (dst.getNode().getType() == NodeType.STATION_HIDDEN) {
+            if (dst.getTo().getType() == NodeType.STATION_HIDDEN) {
                 info.setHidden(true);
             }
         }
-        if (dst.isCenter()) {
-            List<Region> sortedRegions = from == null ? dst.getSortedRegions(locale)
-                    : dst.getSortedRegionsFrom(locale, from);
-            info.setRegions(sortedRegions.stream().map(reg -> reg.getName()).collect(Collectors.toList()));
+        if (dst.isCenterOfRegions()) {
+            Set<Region> regions = dst.getTargetRegionsFrom();
+            info.setRegions(new OutputFreightUtil().regionsToString(regions, Collator.getInstance(locale)));
         }
         return info;
     }

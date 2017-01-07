@@ -118,7 +118,7 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreight()) {
-            List<FreightDestination> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
+            List<? extends FreightDestination> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
                 for (FreightDestination dst : freightDests) {
@@ -128,13 +128,13 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreightConnection()) {
-            Map<Train, List<FreightDestination>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
+            Map<Train, List<FreightDestinationWithPath>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<>();
-                for (Map.Entry<Train, List<FreightDestination>> entry : passedCargoDst.entrySet()) {
+                for (Map.Entry<Train, List<FreightDestinationWithPath>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
-                    List<FreightDestination> mList = entry.getValue();
+                    List<? extends FreightDestination> mList = entry.getValue();
                     List<FreightDstInfo> fl = new ArrayList<>(mList.size());
                     for (FreightDestination dst : mList) {
                         fl.add(FreightDstInfo.convert(locale, interval.getOwnerAsNode(), dst));
