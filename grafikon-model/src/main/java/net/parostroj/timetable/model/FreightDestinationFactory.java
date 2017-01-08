@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Factory for creating destinations.
@@ -78,6 +80,11 @@ public class FreightDestinationFactory {
         }
 
         @Override
+        public Set<Region> getCenterRegions() {
+            return !isCenterOfRegions() ? Collections.emptySet() : super.getCenterRegions();
+        }
+
+        @Override
         public TimeInterval getTimeInterval() {
             return timeInterval;
         }
@@ -90,7 +97,7 @@ public class FreightDestinationFactory {
         @Override
         public boolean isCenterOfRegions() {
             boolean noCenter = timeInterval != null && timeInterval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER);
-            return getTo().isCenterOfRegions() && !noCenter;
+            return !noCenter && getTo().isCenterOfRegions();
         }
 
         @Override
