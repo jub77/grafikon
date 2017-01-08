@@ -12,4 +12,5 @@ public interface RegionAttributes {
     public static final String ATTR_SUPER_REGION = "super.region";
     public static final String ATTR_SUB_REGIONS = "sub.regions";
     public static final String ATTR_FREIGHT_COLOR_MAP = "freight.color.map";
+    public static final String ATTR_NODES = "nodes";
 }

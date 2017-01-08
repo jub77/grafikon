@@ -33,10 +33,31 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     /**
      * Initialization.
      */
+    @SuppressWarnings("unchecked")
     private void init() {
         location = new Location(0, 0);
         attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(Node.this, change)));
+        attributes.addListener((attrs, change) -> {
+            if (change.checkName(ATTR_REGIONS)) {
+                Set<Region> oldR = (Set<Region>) change.getOldValue();
+                Set<Region> newR = (Set<Region>) change.getNewValue();
+                if (oldR != null) {
+                    for (Region r : oldR) {
+                        if (newR == null || !newR.contains(r)) {
+                            r.removeNode(Node.this);
+                        }
+                    }
+                }
+                if (newR != null) {
+                    for (Region r : newR) {
+                        if (oldR == null || !oldR.contains(r)) {
+                            r.addNode(Node.this);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**

@@ -30,6 +30,8 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     // only dynamic view on sub regions
     private final Set<Region> subRegions;
+    // dynamic view on nodes directly in this region
+    private final Set<Node> nodes;
 
     private boolean events;
 
@@ -49,6 +51,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
             }
         });
         this.subRegions = new HashSet<>();
+        this.nodes = new HashSet<>();
     }
 
     @Override
@@ -139,6 +142,11 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         fireEvent(event);
     }
 
+    private void fireNodesEvent(Set<Node> old) {
+        Event event = new Event(diagram, this, new AttributeChange(ATTR_NODES, old, nodes));
+        fireEvent(event);
+    }
+
     private void fireEvent(Event event) {
         if (events) {
             diagram.fireEvent(event);
@@ -167,6 +175,22 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
             current = current.getSuperRegion();
         }
         return current;
+    }
+
+    void addNode(Node node) {
+        Set<Node> old = ImmutableSet.copyOf(nodes);
+        nodes.add(node);
+        fireNodesEvent(old);
+    }
+
+    void removeNode(Node node) {
+        Set<Node> old = ImmutableSet.copyOf(nodes);
+        nodes.remove(node);
+        fireNodesEvent(old);
+    }
+
+    public Set<Node> getNodes() {
+        return nodes;
     }
 
     @Override
