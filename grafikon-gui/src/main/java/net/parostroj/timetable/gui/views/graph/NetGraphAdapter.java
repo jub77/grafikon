@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.views.graph;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ import com.mxgraph.util.mxXmlUtils;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.utils.NetItemConversionUtil;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 /**
  * Specific adapter for graph with nodes and lines.
@@ -82,7 +84,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private String convertNode(Node node) {
         StringBuilder value = new StringBuilder();
         Company company = node.getCompany();
-        List<Region> regions = node.getSortedRegions();
+        List<Region> regions = OutputFreightUtil.sortRegions(node.getRegions(), Locale.getDefault());
         Set<Region> centerRegions = node.getCenterRegions();
         value.append("<font color=black>").append(node.getName()).append("</font>");
         if (company != null) {
@@ -95,7 +97,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
                     .collect(Collectors.joining(","));
             value = value.append("\n(").append(regionsStr).append(')');
         }
-        Collection<FreightColor> colors = node.getSortedFreightColors();
+        Collection<FreightColor> colors = OutputFreightUtil.sortFreightColors(node.getFreightColors());
         if (!colors.isEmpty()) {
             String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(","));
             value.append("\n<font color=gray>[").append(colorsStr).append("]</font>");

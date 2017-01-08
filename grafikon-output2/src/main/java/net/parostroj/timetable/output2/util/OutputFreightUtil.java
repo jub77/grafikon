@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class OutputFreightUtil {
         Node node = dest.getTo();
         StringBuilder freightStr = new StringBuilder();
         StringBuilder colorsStr = null;
-        Collection<FreightColor> cs = node.getSortedFreightColors();
+        Collection<FreightColor> cs = sortFreightColors(node.getFreightColors());
         if (cs != null && !cs.isEmpty()) {
             colorsStr = new StringBuilder();
             new TextList(colorsStr, "[", "]", ",")
@@ -88,5 +89,17 @@ public class OutputFreightUtil {
             String destString = freightNodeToString(d, locale, true);
             return d.isCenterOfRegions() ? String.format("%s(%s)", destString, freightRegionsToString(d, locale)): destString;
         }).collect(Collectors.joining(","));
+    }
+
+    public static List<FreightColor> sortFreightColors(Collection<FreightColor> colors) {
+        if (colors.isEmpty()) return Collections.emptyList();
+        return colors.stream().sorted().collect(Collectors.toList());
+    }
+
+    public static List<Region> sortRegions(Collection<Region> regions, Locale locale) {
+        if (regions.isEmpty()) return Collections.emptyList();
+        final Collator collator = Collator.getInstance(locale);
+        return regions.stream().sorted((a, b) -> collator.compare(a.getName(), b.getName()))
+                .collect(Collectors.toList());
     }
 }

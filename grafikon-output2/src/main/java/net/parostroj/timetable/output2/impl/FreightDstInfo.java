@@ -116,7 +116,7 @@ public class FreightDstInfo {
         if (dst.getTo() != null) {
             info.setName(dst.getTo().getName());
             info.setAbbr(dst.getTo().getAbbr());
-            List<FreightColor> sortedColors = dst.getTo().getSortedFreightColors();
+            List<FreightColor> sortedColors = OutputFreightUtil.sortFreightColors(dst.getTo().getFreightColors());
             info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
             if (dst.getTo().getType() == NodeType.STATION_HIDDEN) {
                 info.setHidden(true);

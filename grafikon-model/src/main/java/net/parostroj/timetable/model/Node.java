@@ -1,8 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.text.Collator;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -222,26 +220,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
     }
 
-    public List<FreightColor> getSortedFreightColors() {
-        return sortColors(getFreightColors());
-    }
-
-    public List<Region> getSortedRegions() {
-        return getSortedRegions(Locale.getDefault());
-    }
-
-    public List<Region> getSortedRegions(Locale locale) {
-        return sortRegions(locale, getRegions());
-    }
-
-    public List<Region> getSortedCenterRegions() {
-        return getSortedCenterRegions(Locale.getDefault());
-    }
-
-    public List<Region> getSortedCenterRegions(Locale locale) {
-        return sortRegions(locale, getCenterRegions());
-    }
-
     public Map<FreightColor, Region> getRecursiveFreightColorMap() {
         Map<FreightColor, Region> map = null;
         for (Region region : getRegions()) {
@@ -252,18 +230,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             }
         }
         return map == null ? Collections.emptyMap() : map;
-    }
-
-    public static List<FreightColor> sortColors(Collection<FreightColor> colors) {
-        if (colors.isEmpty()) return Collections.emptyList();
-        return colors.stream().sorted().collect(Collectors.toList());
-    }
-
-    public static List<Region> sortRegions(Locale locale, Collection<Region> regions) {
-        if (regions.isEmpty()) return Collections.emptyList();
-        final Collator collator = Collator.getInstance(locale);
-        return regions.stream().sorted((a, b) -> collator.compare(a.getName(), b.getName()))
-                .collect(Collectors.toList());
     }
 
     /**

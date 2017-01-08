@@ -27,6 +27,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -207,7 +208,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void updateRegionsTextField(javax.swing.JTextField field, Collection<Region> regions) {
-        field.setText(Wrapper.getWrapperList(Node.sortRegions(Locale.getDefault(), regions)).toString());
+        field.setText(Wrapper.getWrapperList(OutputFreightUtil.sortRegions(regions, Locale.getDefault())).toString());
     }
 
     private Set<Region> editRegions(javax.swing.JTextField field, Set<Region> all, Set<Region> selected, Set<Region> locked) {

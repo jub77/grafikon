@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.utils;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 public class NetItemInfo implements NetSelectionListener {
 
@@ -74,7 +76,7 @@ public class NetItemInfo implements NetSelectionListener {
         if (node.getCompany() != null) {
             builder.append(" [").append(node.getCompany().getAbbr()).append("]");
         }
-       List<Region> regions = node.getSortedRegions();
+       List<Region> regions = OutputFreightUtil.sortRegions(node.getRegions(), Locale.getDefault());
         if (regions != null) {
             Set<Region> centerRegions = node.getCenterRegions();
             String regionsStr = regions.stream()
@@ -83,7 +85,7 @@ public class NetItemInfo implements NetSelectionListener {
                     .collect(Collectors.joining(", "));
             builder.append(getNL()).append(regionsStr);
         }
-        Collection<FreightColor> colors = node.getSortedFreightColors();
+        Collection<FreightColor> colors = OutputFreightUtil.sortFreightColors(node.getFreightColors());
         if (colors != null) {
             String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(", "));
             builder.append(getNL()).append(colorsStr);
