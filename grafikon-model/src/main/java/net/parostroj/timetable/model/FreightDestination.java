@@ -12,7 +12,17 @@ import net.parostroj.timetable.model.freight.NodeConnection;
  */
 public interface FreightDestination extends NodeConnection {
 
-    Set<Region> getCenterRegions();
+    enum DestinationType {
+        NODE, REGION
+    }
+
+    default DestinationType getDestinationType() {
+        return DestinationType.NODE;
+    }
+
+    default Set<Region> getCenterRegions() {
+        return getTo().getCenterRegions();
+    }
 
     default Set<Region> getTargetRegionsFrom() {
         if (!this.isCenterOfRegions()) throw new IllegalArgumentException("No center of region: " + this);
@@ -26,5 +36,15 @@ public interface FreightDestination extends NodeConnection {
         }
     }
 
-    public boolean isCenterOfRegions();
+    default boolean isCenterOfRegions() {
+        return getTo().isCenterOfRegions();
+    }
+
+    default boolean isHidden() {
+        return getTo().getType().isHidden();
+    }
+
+    default Set<FreightColor> getFreightColors() {
+        return getTo().getFreightColors();
+    }
 }

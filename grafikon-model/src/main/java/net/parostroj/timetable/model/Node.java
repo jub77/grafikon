@@ -213,6 +213,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     	return this.getAttributeAsSet(ATTR_REGIONS, Region.class, Collections.emptySet());
     }
 
+    @Override
     public Set<FreightColor> getFreightColors() {
         return this.getAttributeAsSet(ATTR_FREIGHT_COLORS, FreightColor.class, Collections.emptySet());
     }

@@ -1,7 +1,6 @@
 package net.parostroj.timetable.model;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Factory for creating destinations.
@@ -36,16 +35,6 @@ public class FreightDestinationFactory {
         @Override
         public Node getTo() {
             return toNode;
-        }
-
-        @Override
-        public Set<Region> getCenterRegions() {
-            return toNode.getCenterRegions();
-        }
-
-        @Override
-        public boolean isCenterOfRegions() {
-            return toNode.isCenterOfRegions();
         }
 
         @Override

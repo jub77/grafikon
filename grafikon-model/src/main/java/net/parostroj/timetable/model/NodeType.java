@@ -59,4 +59,8 @@ public enum NodeType {
     public boolean isPassenger() {
         return this == STATION || this == STATION_BRANCH || this == STOP;
     }
+
+    public boolean isHidden() {
+        return this == STATION_HIDDEN;
+    }
 }
