@@ -54,7 +54,7 @@ public class OutputFreightUtil {
         Node node = dest.getTo();
         StringBuilder freightStr = new StringBuilder();
         StringBuilder colorsStr = null;
-        Collection<FreightColor> cs = sortFreightColors(node.getFreightColors());
+        Collection<FreightColor> cs = sortFreightColors(dest.getFreightColors());
         if (cs != null && !cs.isEmpty()) {
             colorsStr = new StringBuilder();
             new TextList(colorsStr, "[", "]", ",")

@@ -12,14 +12,6 @@ import net.parostroj.timetable.model.freight.NodeConnection;
  */
 public interface FreightDestination extends NodeConnection {
 
-    enum DestinationType {
-        NODE, REGION
-    }
-
-    default DestinationType getDestinationType() {
-        return DestinationType.NODE;
-    }
-
     default Set<Region> getCenterRegions() {
         return getTo().getCenterRegions();
     }
@@ -40,11 +32,20 @@ public interface FreightDestination extends NodeConnection {
         return getTo().isCenterOfRegions();
     }
 
-    default boolean isHidden() {
-        return getTo().getType().isHidden();
+    default boolean isNode() {
+        return true;
     }
 
     default Set<FreightColor> getFreightColors() {
         return getTo().getFreightColors();
+    }
+
+    default boolean isNodeVisible() {
+        if (isNode()) {
+            boolean hidden = getTo().getType().isHidden();
+            return !hidden || (hidden && !getFreightColors().isEmpty());
+        } else {
+            return false;
+        }
     }
 }
