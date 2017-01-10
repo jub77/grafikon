@@ -421,10 +421,16 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         javax.swing.JButton editRegionsButton = new javax.swing.JButton("..."); // NOI18N
         editRegionsButton
-                .addActionListener(e -> this.regions = editRegions(
-                        regionsTextField, node.getDiagram().getNet().getRegions().stream()
-                                .filter(r -> !r.isSuperRegion()).collect(Collectors.toSet()),
-                        this.regions, this.centerRegions));
+                .addActionListener(e -> {
+                    boolean isEmpty = this.regions.isEmpty();
+                    Region superRegion = isEmpty ? null : this.regions.iterator().next().getSuperRegion();
+                    Set<Region> available = node.getDiagram().getNet().getRegions().stream()
+                            .filter(r -> !r.isSuperRegion() && (isEmpty || r.getSuperRegion() == superRegion))
+                            .collect(Collectors.toSet());
+                    this.regions = editRegions(
+                            regionsTextField, available,
+                            this.regions, this.centerRegions);
+                });
         javax.swing.JButton editCenterRegionsButton = new javax.swing.JButton("..."); // NOI18N
         editCenterRegionsButton.addActionListener(
                 e -> this.centerRegions = editRegions(centerRegionsTextField, regions, centerRegions, null));
