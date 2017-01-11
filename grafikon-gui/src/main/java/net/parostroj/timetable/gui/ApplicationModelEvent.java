@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui;
 
 /**
  * Event that can be generated for model.
- * 
+ *
  * @author jub
  */
 public class ApplicationModelEvent {
@@ -16,12 +16,12 @@ public class ApplicationModelEvent {
     private ApplicationModelEventType type;
 
     private ApplicationModel model;
-    
+
     private Object object;
 
     /**
      * creates new event.
-     * 
+     *
      * @param type type of the event
      * @param model associated model with the event
      */
@@ -32,7 +32,7 @@ public class ApplicationModelEvent {
 
     /**
      * create new event
-     * 
+     *
      * @param type type of the event
      * @param model associated mode
      * @param object object
@@ -53,5 +53,10 @@ public class ApplicationModelEvent {
 
     public Object getObject() {
         return object;
+    }
+
+    @Override
+    public String toString() {
+        return type.toString();
     }
 }
