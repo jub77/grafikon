@@ -138,7 +138,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         private final String prototypeValue;
 
         public PrototypeWrapper(String prototypeValue) {
-            super(null);
+            super(null, new WrapperDelegateAdapter<>(element -> prototypeValue));
             this.prototypeValue = prototypeValue;
         }
 
