@@ -40,8 +40,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
                 (attrs, change) -> listenerSupport.fireEvent(new Event(Node.this, change)));
         attributes.addListener((attrs, change) -> {
             if (change.checkName(ATTR_REGIONS)) {
-                Set<Region> oldR = (Set<Region>) change.getOldValue();
-                Set<Region> newR = (Set<Region>) change.getNewValue();
+                Collection<Region> oldR = (Collection<Region>) change.getOldValue();
+                Collection<Region> newR = (Collection<Region>) change.getNewValue();
                 if (oldR != null) {
                     for (Region r : oldR) {
                         if (newR == null || !newR.contains(r)) {
