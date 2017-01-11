@@ -5,5 +5,5 @@ package net.parostroj.timetable.model.events;
  *
  * @author jub
  */
-public interface WeakListener {
+public interface WeakListener extends Listener {
 }
