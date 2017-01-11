@@ -326,9 +326,21 @@ public class FloatingWindowsFactory {
     private static FloatingWindow createNetView(Frame frame, Mediator mediator, ApplicationModel model) {
         NetEditView netEditView = new NetEditView();
         netEditView.setModel(model);
-        FloatingFrame dialog = new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view") {
+        FloatingFrame dialog = new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view");
+        return dialog;
+    }
 
-        };
+    private static FloatingWindow createFreightDestinationView(Frame frame, Mediator mediator, ApplicationModel model) {
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.freightdestination.title", "freight.destination");
+        mediator.addColleague(new ApplicationGTEventColleague() {
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+                    // TODO update
+                }
+            }
+        }, ApplicationModelEvent.class);
         return dialog;
     }
 
@@ -445,6 +457,7 @@ public class FloatingWindowsFactory {
         list.add(createCirculationViewDialog(frame, mediator, model));
         list.add(createTimeIntervalsTrainsChanged(frame, mediator, model));
         list.add(createNetView(frame, mediator, model));
+        list.add(createFreightDestinationView(frame, mediator, model));
         return list;
     }
 }
