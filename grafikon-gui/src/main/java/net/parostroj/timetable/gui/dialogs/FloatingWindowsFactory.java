@@ -331,13 +331,13 @@ public class FloatingWindowsFactory {
     }
 
     private static FloatingWindow createFreightDestinationView(Frame frame, Mediator mediator, ApplicationModel model) {
-        javax.swing.JPanel panel = new javax.swing.JPanel();
+        final FreightPanel panel = new FreightPanel();
         FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.freightdestination.title", "freight.destination");
         mediator.addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    // TODO update
+                    panel.setDiagram(event.getModel().get());
                 }
             }
         }, ApplicationModelEvent.class);
