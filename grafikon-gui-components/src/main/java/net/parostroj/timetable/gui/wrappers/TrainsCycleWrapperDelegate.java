@@ -20,7 +20,7 @@ public class TrainsCycleWrapperDelegate extends BasicWrapperDelegate<TrainsCycle
     }
 
     @Override
-    protected String toCompareString(TrainsCycle element) {
+    public String toCompareString(TrainsCycle element) {
         return element.getName();
     }
 

@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import java.util.Comparator;
+
 import net.parostroj.timetable.model.EngineClass;
 
 /**
@@ -13,7 +15,7 @@ public class EngineClassWrapperDelegate extends BasicWrapperDelegate<EngineClass
     }
 
     @Override
-    protected String toCompareString(EngineClass element) {
+    public String toCompareString(EngineClass element) {
         return element.getName();
     }
 
@@ -23,10 +25,14 @@ public class EngineClassWrapperDelegate extends BasicWrapperDelegate<EngineClass
     }
 
     @Override
-    public int compare(EngineClass o1, EngineClass o2) {
+    public Comparator<? super EngineClass> getComparator() {
+        return this::compare;
+    }
+
+    private int compare(EngineClass o1, EngineClass o2) {
         String groupKey1 = o1.getGroupKey();
         String groupKey2 = o2.getGroupKey();
         int result = getCollator().compare(groupKey1 == null ? "" : groupKey1, groupKey2 == null ? "" : groupKey2);
-        return result == 0 ? super.compare(o1, o2) : result;
+        return result == 0 ? getCollator().compare(toCompareString(o1), toCompareString(o2)) : result;
     }
 }

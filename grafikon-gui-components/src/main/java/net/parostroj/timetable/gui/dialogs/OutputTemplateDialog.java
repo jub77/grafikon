@@ -510,8 +510,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         }
 
         @Override
-        public int compare(ModelObjectType o1, ModelObjectType o2) {
-            return o1 == null ? -1 : (o2 == null ? 1 : o1.compareTo(o2));
+        public Comparator<? super ModelObjectType> getComparator() {
+            return (o1, o2) -> o1 == null ? -1 : (o2 == null ? 1 : o1.compareTo(o2));
         }
     }
 }

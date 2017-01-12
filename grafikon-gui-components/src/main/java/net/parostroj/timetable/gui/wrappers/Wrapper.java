@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import java.text.Collator;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
@@ -12,6 +13,8 @@ import net.parostroj.timetable.model.imports.ImportMatch;
  * @author jub
  */
 public class Wrapper<T> implements Comparable<Wrapper<T>> {
+
+    private static final Collator collator = Collator.getInstance();
 
     private T wrappedElement;
     private final WrapperDelegate<? super T> delegate;
@@ -58,7 +61,12 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
 
     @Override
     public int compareTo(Wrapper<T> o) {
-        return delegate.compare(getElement(), o.getElement());
+        Comparator<? super T> comparator = this.delegate.getComparator();
+        if (comparator != null) {
+            return comparator.compare(getElement(), o.getElement());
+        } else {
+            return collator.compare(this.delegate.toCompareString(getElement()), o.delegate.toCompareString(o.getElement()));
+        }
     }
 
     @Override

@@ -23,7 +23,7 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate<Route> {
     }
 
     @Override
-    protected String toCompareString(Route element) {
+    public String toCompareString(Route element) {
         String result = element.getName();
         if (result == null) {
             result = element.toString();

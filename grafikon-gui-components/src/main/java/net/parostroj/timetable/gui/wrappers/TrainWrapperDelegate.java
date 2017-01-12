@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import java.util.Comparator;
+
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -34,8 +36,8 @@ public class TrainWrapperDelegate implements WrapperDelegate<Train> {
     }
 
     @Override
-    public int compare(Train o1, Train o2) {
-        return comparator.compare(o1, o2);
+    public Comparator<? super Train> getComparator() {
+        return comparator;
     }
 
     private String toStringTrain(Train train) {

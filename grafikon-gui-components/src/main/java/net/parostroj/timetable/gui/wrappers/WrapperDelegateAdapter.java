@@ -22,7 +22,7 @@ public class WrapperDelegateAdapter<T> extends BasicWrapperDelegate<T> {
     }
 
     @Override
-    protected String toCompareString(T element) {
+    public String toCompareString(T element) {
         return compareConversion.toString(element);
     }
 

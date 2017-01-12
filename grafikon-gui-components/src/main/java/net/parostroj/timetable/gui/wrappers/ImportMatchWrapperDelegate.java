@@ -15,10 +15,4 @@ public class ImportMatchWrapperDelegate implements WrapperDelegate<ImportMatch> 
         ImportMatch match = element;
         return ResourceLoader.getString(match.getKey());
     }
-
-    @Override
-    public int compare(ImportMatch o1, ImportMatch o2) {
-        return 0;
-    }
-
 }

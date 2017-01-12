@@ -421,10 +421,5 @@ public class TrainTypeDialog extends javax.swing.JDialog {
             String key = element.getKey();
             return ResourceLoader.getString("edit.traintypes.line.type." + key);
         }
-
-        @Override
-        public int compare(LineType o1, LineType o2) {
-            return 0;
-        }
     }
 }

@@ -28,7 +28,7 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
     }
 
     @Override
-    protected String toCompareString(OutputTemplate element) {
+    public String toCompareString(OutputTemplate element) {
         return toString(element);
     }
 

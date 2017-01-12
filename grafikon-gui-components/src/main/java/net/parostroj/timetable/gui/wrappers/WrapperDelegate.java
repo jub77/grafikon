@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import java.util.Comparator;
+
 /**
  * Wrapper delegate.
  *
@@ -7,5 +9,11 @@ package net.parostroj.timetable.gui.wrappers;
  */
 public interface WrapperDelegate<T> extends WrapperConversion<T> {
 
-    public int compare(T o1, T o2);
+    default String toCompareString(T element) {
+        return "";
+    }
+
+    default Comparator<? super T> getComparator() {
+        return null;
+    }
 }

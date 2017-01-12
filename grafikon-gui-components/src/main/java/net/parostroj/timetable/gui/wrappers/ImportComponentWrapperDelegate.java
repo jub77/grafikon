@@ -15,10 +15,4 @@ public class ImportComponentWrapperDelegate implements WrapperDelegate<ImportCom
         ImportComponent component = element;
         return ResourceLoader.getString("import." + component.getKey());
     }
-
-    @Override
-    public int compare(ImportComponent o1, ImportComponent o2) {
-        return 0;
-    }
-
 }
