@@ -17,23 +17,23 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 
         <batik.version>1.8</batik.version>
-        <groovy.version>2.4.7</groovy.version>
+        <groovy.version>2.4.8</groovy.version>
         <jgraph.version>3.4.1.3</jgraph.version>
         <jgrapht.version>1.0.0</jgrapht.version>
         <mvel2.version>2.3.1.Final</mvel2.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <commons.io.version>1.3.1</commons.io.version>
         <fop.version>2.1</fop.version>
         <avalon.version>4.2.0</avalon.version>
         <rsyntaxtextarea.version>2.6.0</rsyntaxtextarea.version>
         <jxlayer.version>3.0.4</jxlayer.version>
-        <jodatime.version>2.9.6</jodatime.version>
+        <jodatime.version>2.9.7</jodatime.version>
         <xmlgraphics.version>2.1</xmlgraphics.version>
         <ini4j.version>0.5.4</ini4j.version>
-        <guava.version>20.0</guava.version>
+        <guava.version>21.0</guava.version>
         <beanfabrics.version>1.4.3</beanfabrics.version>
         <xml-apis.version>1.3.04</xml-apis.version>
-        <proxy-vole.version>1.0.2</proxy-vole.version>
+        <proxy-vole.version>1.0.3</proxy-vole.version>
         <jna.version>4.2.2</jna.version>
         <grafikon.jnlp.version>dev</grafikon.jnlp.version>
         <grafikon.version.base>1.3.0-alfa</grafikon.version.base>
@@ -370,7 +370,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
