@@ -36,10 +36,10 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
      */
     public Net(String id, TrainDiagram diagram) {
         this.itemLists = new LinkedList<>();
-        this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
-        this.lineClasses = new ItemWithIdListImpl<LineClass>(
+        this.netDelegate = new ListenableUndirectedGraph<>(Line.class);
+        this.lineClasses = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
-        this.regions = new ItemWithIdSetImpl<Region>(
+        this.regions = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
@@ -60,7 +60,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     }
 
     public Tuple<Node> getNodes(Line track) {
-        return new Tuple<Node>(netDelegate.getEdgeSource(track),netDelegate.getEdgeTarget(track));
+        return new Tuple<>(netDelegate.getEdgeSource(track),netDelegate.getEdgeTarget(track));
     }
 
     public Set<Node> getNodes() {
@@ -109,7 +109,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     }
 
     private List<NodeTrack> straight(Node node) {
-        LinkedList<NodeTrack> result = new LinkedList<NodeTrack>();
+        LinkedList<NodeTrack> result = new LinkedList<>();
         for (NodeTrack track : node.getTracks()) {
             if (track.getAttributes().getBool(NodeTrack.ATTR_NODE_TRACK_STRAIGHT)) {
                 result.add(track);

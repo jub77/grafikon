@@ -1,6 +1,5 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.text.Collator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -15,10 +14,10 @@ import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.actions.TextList;
 import net.parostroj.timetable.model.FreightColor;
-import net.parostroj.timetable.model.FreightDestination;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 /**
@@ -27,7 +26,7 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
  * @author jub
  */
 @XmlType(propOrder = {"name", "abbr", "regions", "colors"})
-public class FreightDstInfo {
+public class FreightDestinationInfo {
 
     private String name;
     private String abbr;
@@ -111,20 +110,21 @@ public class FreightDstInfo {
         return regionsStr.toString();
     }
 
-    public static FreightDstInfo convert(Locale locale, Node from, FreightDestination dst) {
-        FreightDstInfo info = new FreightDstInfo();
-        if (dst.getTo() != null) {
-            info.setName(dst.getTo().getName());
-            info.setAbbr(dst.getTo().getAbbr());
-            List<FreightColor> sortedColors = OutputFreightUtil.sortFreightColors(dst.getTo().getFreightColors());
+    public static FreightDestinationInfo convert(Locale locale, FreightConnection dst) {
+        FreightDestinationInfo info = new FreightDestinationInfo();
+        if (dst.getTo().isNode()) {
+            Node to = dst.getTo().getNode();
+            info.setName(to.getName());
+            info.setAbbr(to.getAbbr());
+            List<FreightColor> sortedColors = OutputFreightUtil.sortFreightColors(to.getFreightColors());
             info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
-            if (dst.getTo().getType() == NodeType.STATION_HIDDEN) {
+            if (to.getType() == NodeType.STATION_HIDDEN) {
                 info.setHidden(true);
             }
         }
-        if (dst.isCenterOfRegions()) {
-            Set<Region> regions = dst.getTargetRegionsFrom();
-            info.setRegions(new OutputFreightUtil().regionsToString(regions, Collator.getInstance(locale)));
+        if (dst.getTo().isCenter()) {
+            Set<Region> regions = dst.getToRegions();
+            info.setRegions(new OutputFreightUtil().regionsToString(regions, locale));
         }
         return info;
     }

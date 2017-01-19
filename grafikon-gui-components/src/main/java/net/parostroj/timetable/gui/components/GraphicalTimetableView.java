@@ -4,9 +4,19 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
@@ -14,13 +24,19 @@ import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
 import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.GrafikonException;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.TextTemplate;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.events.Event;
-import net.parostroj.timetable.output2.gt.*;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
+import net.parostroj.timetable.output2.gt.GTDraw;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.parostroj.timetable.output2.gt.GTOrientation;
+import net.parostroj.timetable.output2.gt.RegionCollector;
 
 /**
  * Graphical timetable view - with interaction.
@@ -49,8 +65,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        public Collection<FreightDestinationWithPath> getFreight(TimeInterval interval);
-        public Map<Train, List<FreightDestinationWithPath>> getPassedFreight(TimeInterval interval);
+        public Collection<FreightConnectionPath> getFreight(TimeInterval interval);
+        public Map<Train, List<FreightConnectionPath>> getPassedFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -85,7 +101,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Collection<FreightDestinationWithPath> getFreight(TimeInterval interval) {
+            public Collection<FreightConnectionPath> getFreight(TimeInterval interval) {
                 if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
                     return diagram.getFreightNet().getFreightToNodes(interval);
@@ -95,7 +111,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Map<Train, List<FreightDestinationWithPath>> getPassedFreight(TimeInterval interval) {
+            public Map<Train, List<FreightConnectionPath>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
                     return diagram.getFreightNet().getFreightPassedInNode(interval);

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -161,6 +163,10 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return !subRegions.isEmpty();
     }
 
+    /**
+     * @param region region to be checked
+     * @return if the checked region is this one or one of its super regions
+     */
     public boolean containsInHierarchy(Region region) {
         Region current = this;
         while (current != null && current != region) {
@@ -191,6 +197,18 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public Set<Node> getNodes() {
         return nodes;
+    }
+
+    public Set<Node> getAllNodes() {
+        return getNodesImpl().collect(Collectors.toSet());
+    }
+
+    protected Stream<Node> getNodesImpl() {
+        if (isSuperRegion()) {
+            return getSubRegions().stream().flatMap(sr -> sr.getNodesImpl());
+        } else {
+            return getNodes().stream();
+        }
     }
 
     @Override

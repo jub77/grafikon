@@ -33,10 +33,10 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
     private boolean enabled;
 
     ChangesTrackerImpl() {
-        sets = new LinkedList<DiagramChangeSetImpl>();
+        sets = new LinkedList<>();
         trackedVisitor = new TrackedCheckVisitor();
         transformVisitor = new TransformVisitor();
-        listeners = new HashSet<ChangesTrackerListener>();
+        listeners = new HashSet<>();
     }
 
     private void receiveEvent(Event event) {
@@ -102,7 +102,7 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public List<String> getVersions() {
-        List<String> versions = new ArrayList<String>(sets.size());
+        List<String> versions = new ArrayList<>(sets.size());
         for (DiagramChangeSet set : sets)
             versions.add(set.getVersion());
         return versions;

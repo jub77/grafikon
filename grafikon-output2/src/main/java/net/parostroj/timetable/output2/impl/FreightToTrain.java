@@ -16,16 +16,16 @@ import net.parostroj.timetable.model.TranslatedString;
 public class FreightToTrain {
 
     private TranslatedString train;
-    private List<FreightDstInfo> freightTo;
+    private List<FreightDestinationInfo> freightTo;
 
     public FreightToTrain() {
     }
 
-    public List<FreightDstInfo> getFreightTo() {
+    public List<FreightDestinationInfo> getFreightTo() {
         return freightTo;
     }
 
-    public void setFreightTo(List<FreightDstInfo> freightTo) {
+    public void setFreightTo(List<FreightDestinationInfo> freightTo) {
         this.freightTo = freightTo;
     }
 

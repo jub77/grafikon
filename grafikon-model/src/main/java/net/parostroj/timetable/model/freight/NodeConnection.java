@@ -7,5 +7,5 @@ import net.parostroj.timetable.model.Node;
  *
  * @author jub
  */
-public interface NodeConnection extends Connection<Node> {
+public interface NodeConnection extends Connection<Node, Node> {
 }

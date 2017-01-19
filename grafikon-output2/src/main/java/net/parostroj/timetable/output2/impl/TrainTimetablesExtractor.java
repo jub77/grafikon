@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.Pair;
@@ -230,11 +231,11 @@ public class TrainTimetablesExtractor {
 
             // freight
             if (nodeI.isFirst() && nodeI.isFreight()) {
-                List<? extends FreightDestination> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
+                List<? extends FreightConnection> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
                 if (!freightDests.isEmpty()) {
-                    ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
-                    for (FreightDestination dst : freightDests) {
-                        fl.add(FreightDstInfo.convert(locale, nodeI.getOwnerAsNode(), dst));
+                    ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
+                    for (FreightConnection dst : freightDests) {
+                        fl.add(FreightDestinationInfo.convert(locale, dst));
                     }
                     row.setFreightDest(fl);
                 }

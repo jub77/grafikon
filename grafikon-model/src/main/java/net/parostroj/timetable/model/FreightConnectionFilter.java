@@ -1,11 +1,13 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.freight.FreightConnection;
+
 /**
  * Filter.
  *
  * @author jub
  */
-public interface FreightDestinationFilter {
+public interface FreightConnectionFilter {
 
     public enum FilterResult {
         OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE
@@ -24,5 +26,5 @@ public interface FreightDestinationFilter {
         }
     }
 
-    FilterResult accepted(FilterContext context, FreightDestination dst, int level);
+    FilterResult accepted(FilterContext context, FreightConnection dst, int level);
 }

@@ -5,7 +5,7 @@ package net.parostroj.timetable.model.freight;
  *
  * @author jub
  */
-public interface Connection<T> {
-    T getFrom();
+public interface Connection<F, T> {
+    F getFrom();
     T getTo();
 }

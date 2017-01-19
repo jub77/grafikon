@@ -7,5 +7,5 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
-public interface TrainConnection extends Connection<TimeInterval> {
+public interface TrainConnection extends Connection<TimeInterval, TimeInterval> {
 }

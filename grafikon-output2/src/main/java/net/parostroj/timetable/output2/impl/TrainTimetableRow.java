@@ -43,7 +43,7 @@ public class TrainTimetableRow {
     private Double routePosition;
     private Double routePositionOut;
     private Integer lineTracks;
-    private List<FreightDstInfo> freightDest;
+    private List<FreightDestinationInfo> freightDest;
 
     public String getArrival() {
         return arrival;
@@ -225,13 +225,13 @@ public class TrainTimetableRow {
         this.lineTracks = lineTracks;
     }
 
-    public void setFreightDest(List<FreightDstInfo> freightDest) {
+    public void setFreightDest(List<FreightDestinationInfo> freightDest) {
         this.freightDest = freightDest;
     }
 
     @XmlElement(name="dest")
     @XmlElementWrapper(name="freight")
-    public List<FreightDstInfo> getFreightDest() {
+    public List<FreightDestinationInfo> getFreightDest() {
         return freightDest;
     }
 }

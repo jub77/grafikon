@@ -29,8 +29,8 @@ class FreightRegionGraphDelegate {
         this.diagram = diagram;
     }
 
-    DirectedGraph<Node, RegionFreightConnection> getRegionGraph() {
-        SimpleDirectedWeightedGraph<Node, RegionFreightConnection> graph = new SimpleDirectedWeightedGraph<>(RegionFreightConnection.class);
+    DirectedGraph<Node, RegionConnectionImpl> getRegionGraph() {
+        SimpleDirectedWeightedGraph<Node, RegionConnectionImpl> graph = new SimpleDirectedWeightedGraph<>(RegionConnectionImpl.class);
         diagram.getNet().getNodes().stream().filter(node -> node.isCenterOfRegions())
                 .forEach(node -> graph.addVertex(node));
         for (Node node : graph.vertexSet()) {
@@ -41,9 +41,9 @@ class FreightRegionGraphDelegate {
                     .forEach(connection -> {
                         Node n1 = connection.getFrom().getOwnerAsNode();
                         Node n2 = connection.getTo().getOwnerAsNode();
-                        RegionFreightConnection edge = graph.getEdge(n1, n2);
+                        RegionConnectionImpl edge = graph.getEdge(n1, n2);
                         if (edge == null) {
-                            edge = new RegionFreightConnection(connection);
+                            edge = new RegionConnectionImpl(connection);
                             graph.addEdge(n1, n2, edge);
                         } else {
                             edge.connections.add(connection);
@@ -66,11 +66,11 @@ class FreightRegionGraphDelegate {
     }
 
     protected <T extends NodeConnection> Collection<T> computeRegionConnectionsImpl(
-            DirectedGraph<Node, RegionFreightConnection> graph,
-            BiFunction<NodeConnection, GraphPath<Node, RegionFreightConnection>, T> conversion) {
+            DirectedGraph<Node, RegionConnectionImpl> graph,
+            BiFunction<NodeConnection, GraphPath<Node, RegionConnectionImpl>, T> conversion) {
         Collection<T> connections = new ArrayList<>();
         this.getAllConnectionVariants(graph).forEach(nodeConn -> {
-                    DijkstraShortestPath<Node, RegionFreightConnection> path = new DijkstraShortestPath<>(graph,
+                    DijkstraShortestPath<Node, RegionConnectionImpl> path = new DijkstraShortestPath<>(graph,
                             nodeConn.getFrom(), nodeConn.getTo());
                     if (path.getPath() != null) {
                         connections.add(conversion.apply(nodeConn, path.getPath()));
@@ -79,18 +79,18 @@ class FreightRegionGraphDelegate {
         return connections;
     }
 
-    private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, RegionFreightConnection> graph) {
+    private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, RegionConnectionImpl> graph) {
         return graph.vertexSet().stream().flatMap(nodeFrom -> graph.vertexSet().stream().filter(node -> node != nodeFrom)
                 .map(nodeTo -> new NodeFreightConnection(nodeFrom, nodeTo)));
     }
 
-    static class NodeFreightConnection extends FreightConnection<Node> implements NodeConnection {
+    static class NodeFreightConnection extends ConnectionImpl<Node, Node> implements NodeConnection {
         public NodeFreightConnection(Node from, Node to) {
             super(from, to);
         }
     }
 
-    static class TrainFreightConnection extends FreightConnection<TimeInterval> implements TrainConnection {
+    static class TrainFreightConnection extends ConnectionImpl<TimeInterval, TimeInterval> implements TrainConnection {
         public TrainFreightConnection(TimeInterval from, TimeInterval to) {
             super(from, to);
         }
@@ -117,7 +117,7 @@ class FreightRegionGraphDelegate {
         }
 
         @Override
-        public List<Node> getNodes() {
+        public List<Node> getIntermediateNodes() {
             return nodes;
         }
 
@@ -158,18 +158,18 @@ class FreightRegionGraphDelegate {
         }
     }
 
-    static class FreightConnection<T> implements Connection<T> {
+    static class ConnectionImpl<F, T> implements Connection<F, T> {
 
-        private final T from;
+        private final F from;
         private final T to;
 
-        public FreightConnection(T from, T to) {
+        public ConnectionImpl(F from, T to) {
             this.from = from;
             this.to = to;
         }
 
         @Override
-        public T getFrom() {
+        public F getFrom() {
             return from;
         }
 
@@ -184,11 +184,11 @@ class FreightRegionGraphDelegate {
         }
     }
 
-    static class RegionFreightConnection extends DefaultWeightedEdge implements RegionConnection {
+    static class RegionConnectionImpl extends DefaultWeightedEdge implements RegionConnection {
 
         protected final Collection<TrainConnection> connections;
 
-        RegionFreightConnection(TrainConnection connection) {
+        RegionConnectionImpl(TrainConnection connection) {
             this.connections = new ArrayList<>();
             this.connections.add(connection);
         }

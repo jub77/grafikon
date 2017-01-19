@@ -1,13 +1,38 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.*;
+import static net.parostroj.timetable.actions.TrainsHelper.getNextLength;
+import static net.parostroj.timetable.actions.TrainsHelper.isHelperEngine;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static net.parostroj.timetable.actions.TrainsHelper.*;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.actions.TrainsHelper.NextType;
+import net.parostroj.timetable.model.Company;
+import net.parostroj.timetable.model.FNConnection;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.TimeConverter;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.TimeIntervalList;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.TranslatedString;
+import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.utils.*;
+import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.TransformUtil;
 
 /**
  * Extracts information for station timetables.
@@ -118,26 +143,26 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreight()) {
-            List<? extends FreightDestination> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
+            List<? extends FreightConnection> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
             if (!freightDests.isEmpty()) {
-                ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
-                for (FreightDestination dst : freightDests) {
-                    fl.add(FreightDstInfo.convert(locale, interval.getOwnerAsNode(), dst));
+                ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
+                for (FreightConnection dst : freightDests) {
+                    fl.add(FreightDestinationInfo.convert(locale, dst));
                 }
                 row.setFreightTo(fl);
             }
         }
         if (interval.isFreightConnection()) {
-            Map<Train, List<FreightDestinationWithPath>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
+            Map<Train, List<FreightConnectionPath>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<>();
-                for (Map.Entry<Train, List<FreightDestinationWithPath>> entry : passedCargoDst.entrySet()) {
+                for (Map.Entry<Train, List<FreightConnectionPath>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
-                    List<? extends FreightDestination> mList = entry.getValue();
-                    List<FreightDstInfo> fl = new ArrayList<>(mList.size());
-                    for (FreightDestination dst : mList) {
-                        fl.add(FreightDstInfo.convert(locale, interval.getOwnerAsNode(), dst));
+                    List<? extends FreightConnection> mList = entry.getValue();
+                    List<FreightDestinationInfo> fl = new ArrayList<>(mList.size());
+                    for (FreightConnection dst : mList) {
+                        fl.add(FreightDestinationInfo.convert(locale, dst));
                     }
                     ftt.setFreightTo(fl);
                     fttl.add(ftt);

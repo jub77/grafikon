@@ -2,19 +2,21 @@ package net.parostroj.timetable.model;
 
 import java.util.List;
 
+import net.parostroj.timetable.model.freight.FreightConnection;
+
 /**
  * @author jub
  */
-class FreightDstFilterImpl implements FreightDestinationFilter {
+class FreightConnectionFilterImpl implements FreightConnectionFilter {
 
-    private final FreightDestinationFilter parent;
+    private final FreightConnectionFilter parent;
     private List<Node> stopNodes;
     private List<Node> stopNodesExclude;
     private List<Node> fromNodes;
     private List<Node> toNodes;
     private Integer transitionLimit;
 
-    protected FreightDstFilterImpl(FreightDestinationFilter parent) {
+    protected FreightConnectionFilterImpl(FreightConnectionFilter parent) {
         if (parent == null) {
             throw new IllegalArgumentException("parent cannot be null");
         }
@@ -42,7 +44,7 @@ class FreightDstFilterImpl implements FreightDestinationFilter {
     }
 
     @Override
-    public FilterResult accepted(FilterContext context, FreightDestination dst, int level) {
+    public FilterResult accepted(FilterContext context, FreightConnection dst, int level) {
         if (transitionLimit != null && transitionLimit < level) {
             return FilterResult.STOP_EXCLUDE;
         }
@@ -62,11 +64,11 @@ class FreightDstFilterImpl implements FreightDestinationFilter {
         return FilterResult.OK;
     }
 
-    private boolean isInNodeList(FreightDestination dst, List<Node> nodes) {
+    private boolean isInNodeList(FreightConnection dst, List<Node> nodes) {
         return nodes != null && nodes.contains(dst.getTo());
     }
 
-    private boolean isNotInNodeList(FreightDestination dst, List<Node> nodes) {
+    private boolean isNotInNodeList(FreightConnection dst, List<Node> nodes) {
         return nodes != null && !nodes.contains(dst.getTo());
     }
 
