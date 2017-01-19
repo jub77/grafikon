@@ -58,8 +58,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final TrainDiagramPartFactory partFactory;
 
     private final List<TrainDiagramValidator> validators;
-    private final Listener listener;
-    private final ValidationListener validationListener;
+    private final ValidationListener listener;
     private final ChangesTrackerImpl changesTracker;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
@@ -75,7 +74,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.partFactory = new TrainDiagramPartFactory(this);
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
-        this.validationListener = event -> this.processValidators(event);
         this.routes = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.trains = new ItemWithIdSetImpl<>((type, item) -> {
@@ -112,12 +110,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.trainsData = new TrainsData(this);
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
-        this.net.addAllEventListener(validationListener);
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
         this.freightNet = partFactory.createFreightNet(IdGenerator.getInstance().getId());
-        this.freightNet.addListener(validationListener);
         this.freightNet.addListener(listener);
         this.validators = new ArrayList<>();
         this.validators.add(new TrainNamesValidator(this));
@@ -148,12 +144,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void setNet(Net net) {
         if (net != this.net) {
             if (this.net != null) {
-                this.net.removeAllEventListener(validationListener);
                 this.net.removeAllEventListener(listener);
             }
             Net oldNet = this.net;
             this.net = net;
-            this.net.addAllEventListener(validationListener);
             this.net.addAllEventListener(listener);
             this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_NET, oldNet, net)));
         }
@@ -162,12 +156,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void setFreightNet(FreightNet freightNet) {
         if (freightNet != this.freightNet) {
             if (this.freightNet != null) {
-                this.freightNet.removeListener(validationListener);
                 this.freightNet.removeListener(listener);
             }
             FreightNet oldFreightNet = this.freightNet;
             this.freightNet = freightNet;
-            this.freightNet.addListener(validationListener);
             this.freightNet.addListener(listener);
             this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_FREIGHT_NET, oldFreightNet, freightNet)));
         }
@@ -328,10 +320,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     protected void fireNestedEvent(Event event) {
+        processValidators(event);
         listenerSupportAll.fireEvent(event);
     }
 
     protected void fireEvent(Event event) {
+        processValidators(event);
         listenerSupport.fireEvent(event);
         listenerSupportAll.fireEvent(event);
     }
