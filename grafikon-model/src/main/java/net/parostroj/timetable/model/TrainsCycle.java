@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.Collections2;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;

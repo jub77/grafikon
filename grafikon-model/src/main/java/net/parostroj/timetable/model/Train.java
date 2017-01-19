@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;

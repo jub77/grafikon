@@ -23,6 +23,7 @@ import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.model.freight.FreightFactory;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;

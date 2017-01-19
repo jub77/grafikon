@@ -1,6 +1,4 @@
-package net.parostroj.timetable.model;
-
-import net.parostroj.timetable.model.events.Listener;
+package net.parostroj.timetable.model.events;
 
 /**
  * Observable

@@ -10,6 +10,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.LocalizedString.Builder;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;

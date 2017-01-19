@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 

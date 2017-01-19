@@ -2,8 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.Observable;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -19,7 +19,7 @@ import org.jgrapht.graph.ListenableUndirectedGraph;
  *
  * @author jub
  */
-public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observable {
+public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observable, CompounedObservable {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -186,10 +186,12 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         this.listenerSupport.removeListener(listener);
     }
 
+    @Override
     public void addAllEventListener(Listener listener) {
         this.listenerSupportAll.addListener(listener);
     }
 
+    @Override
     public void removeAllEventListener(Listener listener) {
         this.listenerSupportAll.removeListener(listener);
     }

@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -18,7 +19,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, TrainDiagramAttributes, Observable {
+public class TrainDiagram
+        implements AttributesHolder, ObjectWithId, Visitable, TrainDiagramAttributes, Observable, CompounedObservable {
 
     /** Id. */
     private final String id;
@@ -311,10 +313,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         listenerSupport.removeListener(listener);
     }
 
+    @Override
     public void addAllEventListener(Listener listener) {
         listenerSupportAll.addListener(listener);
     }
 
+    @Override
     public void removeAllEventListener(Listener listener) {
         listenerSupportAll.removeListener(listener);
     }
