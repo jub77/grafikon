@@ -29,6 +29,7 @@ public class RegionPM extends AbstractPM {
     final TextPM name = new TextPM();
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<Region> superRegion;
+    final IBooleanPM colorCenter;
     final ListPM<ColorMappingPM> colorMap;
 
     final OperationPM ok = new OperationPM();
@@ -44,6 +45,7 @@ public class RegionPM extends AbstractPM {
                 locales, l -> l.getDisplayName(l)), "-");
         name.setMandatory(true);
         superRegion = new EnumeratedValuesPM<>();
+        colorCenter = new BooleanPM();
         colorMap = new ListPM<>();
         PMManager.setup(this);
     }
@@ -56,6 +58,8 @@ public class RegionPM extends AbstractPM {
                 .sorted((o1, o2) -> collator.compare(o1.getName(), o2.getName())).collect(Collectors.toList());
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
+        this.colorCenter.setBoolean(region.isColorCenter());
+        this.colorCenter.setEditable(region.isSuperRegion());
         // color map
         Map<FreightColor, Region> cMap = region.getFreightColorMap();
         colorMap.clear();
@@ -64,6 +68,11 @@ public class RegionPM extends AbstractPM {
             mapping.set(entry.getKey(), entry.getValue(), allRegions);
             colorMap.add(mapping);
         }
+    }
+
+    @Validation(path = { "add" })
+    public boolean isColorCenter() {
+        return colorCenter.getBoolean();
     }
 
     @Validation(path = { "remove" })
@@ -100,6 +109,7 @@ public class RegionPM extends AbstractPM {
             region.setAttribute(Region.ATTR_LOCALE, locale.getValue());
             region.setName(ObjectsUtil.checkAndTrim(name.getText()));
             region.setSuperRegion(this.superRegion.getValue());
+            region.setColorCenter(colorCenter.getBoolean());
             // color mapping
             HashMap<FreightColor, Region> map = new HashMap<>();
             for (ColorMappingPM cMapping : colorMap) {

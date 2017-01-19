@@ -117,6 +117,14 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         attributes.setRemove(ATTR_LOCALE, locale);
     }
 
+    public boolean isColorCenter() {
+        return attributes.getBool(ATTR_COLOR_CENTER);
+    }
+
+    public void setColorCenter(boolean colorCenter) {
+        attributes.setBool(ATTR_COLOR_CENTER, colorCenter);
+    }
+
     public List<Region> getRegionHierarchy() {
         List<Region> list = new ArrayList<>();
         Region current = this;

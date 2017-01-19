@@ -18,6 +18,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnCheckBox;
 import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 import org.beanfabrics.swing.table.BnColumn;
@@ -124,6 +125,25 @@ public class EditRegionDialog extends JDialog {
         superRegionComboBox.setModelProvider(provider);
         superRegionComboBox.setPath(new Path("superRegion"));
 
+        JLabel colorCenterLabel = new JLabel(ResourceLoader.getString("edit.region.color.center")); // NOI18N
+        GridBagConstraints cclCons = new GridBagConstraints();
+        cclCons.anchor = GridBagConstraints.WEST;
+        cclCons.insets = new Insets(0, 0, 5, 5);
+        cclCons.gridx = 0;
+        cclCons.gridy = 3;
+        panel.add(colorCenterLabel, cclCons);
+
+        BnCheckBox colorCenterCheckBox = new BnCheckBox();
+        colorCenterCheckBox.setBorder(null);
+        GridBagConstraints cccbCons = new GridBagConstraints();
+        cccbCons.insets = new Insets(0, 0, 5, 0);
+        cccbCons.fill = GridBagConstraints.HORIZONTAL;
+        cccbCons.gridx = 1;
+        cccbCons.gridy = 3;
+        panel.add(colorCenterCheckBox, cccbCons);
+        colorCenterCheckBox.setModelProvider(provider);
+        colorCenterCheckBox.setPath(new Path("colorCenter"));
+
         JScrollPane scrollPane = new JScrollPane();
         BnTable mapTable = new BnTable();
         Dimension viewportSize = mapTable.getPreferredScrollableViewportSize();
@@ -133,7 +153,7 @@ public class EditRegionDialog extends JDialog {
         mapCons.insets = new Insets(0, 0, 5, 0);
         mapCons.fill = GridBagConstraints.BOTH;
         mapCons.gridx = 0;
-        mapCons.gridy = 3;
+        mapCons.gridy = 4;
         mapCons.weighty = 1.0;
         mapCons.gridwidth = 2;
         panel.add(scrollPane, mapCons);
@@ -149,7 +169,7 @@ public class EditRegionDialog extends JDialog {
         arCons.insets = new Insets(0, 0, 5, 0);
         arCons.fill = GridBagConstraints.HORIZONTAL;
         arCons.gridx = 0;
-        arCons.gridy = 4;
+        arCons.gridy = 5;
         arCons.gridwidth = 2;
         panel.add(addRemovePanel, arCons);
         addRemovePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -169,7 +189,7 @@ public class EditRegionDialog extends JDialog {
         vgCons.fill = GridBagConstraints.VERTICAL;
         vgCons.insets = new Insets(0, 0, 0, 5);
         vgCons.gridx = 0;
-        vgCons.gridy = 5;
+        vgCons.gridy = 6;
         panel.add(verticalGlue, vgCons);
 
         JPanel buttonPanel = new JPanel();
