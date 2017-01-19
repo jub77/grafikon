@@ -26,7 +26,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     private final ItemWithIdList<LineClass> lineClasses;
     private final ItemWithIdSet<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
-    private final ValidationListener listener;
+    private final SystemListener listener;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
     private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;

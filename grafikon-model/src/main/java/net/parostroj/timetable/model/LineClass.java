@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
-import net.parostroj.timetable.model.events.ListenerSupport;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;

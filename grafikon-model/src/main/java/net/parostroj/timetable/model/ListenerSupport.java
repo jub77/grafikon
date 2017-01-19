@@ -1,13 +1,17 @@
-package net.parostroj.timetable.model.events;
+package net.parostroj.timetable.model;
 
 import java.util.*;
+
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.WeakListener;
 
 /**
  * Listener support. Acts as a delegate for distribution of events.
  *
  * @author jub
  */
-public class ListenerSupport {
+class ListenerSupport {
 
     private final Set<Listener> listeners;
     private final Set<Listener> weakListeners;
@@ -20,7 +24,7 @@ public class ListenerSupport {
     }
 
     public void addListener(Listener listener) {
-        if (listener instanceof ValidationListener) {
+        if (listener instanceof SystemListener) {
             this.validationListeners.add(listener);
         } else if (listener instanceof WeakListener) {
             this.weakListeners.add(listener);
@@ -30,7 +34,7 @@ public class ListenerSupport {
     }
 
     public void removeListener(Listener listener) {
-        if (listener instanceof ValidationListener) {
+        if (listener instanceof SystemListener) {
             this.validationListeners.remove(listener);
         } else if (listener instanceof WeakListener) {
             this.weakListeners.remove(listener);

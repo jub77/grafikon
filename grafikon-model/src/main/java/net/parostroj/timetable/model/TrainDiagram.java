@@ -58,7 +58,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final TrainDiagramPartFactory partFactory;
 
     private final List<TrainDiagramValidator> validators;
-    private final ValidationListener listener;
+    private final SystemListener listener;
     private final ChangesTrackerImpl changesTracker;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;

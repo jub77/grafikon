@@ -9,7 +9,6 @@ import java.util.ListIterator;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
-import net.parostroj.timetable.model.events.ListenerSupport;
 
 /**
  * Category of train types - freight, passenger ...
