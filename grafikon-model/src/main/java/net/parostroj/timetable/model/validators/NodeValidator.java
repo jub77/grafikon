@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.validators;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -34,8 +35,8 @@ public class NodeValidator implements TrainDiagramValidator {
                 for (TimeInterval i : intervals) {
                     i.getTrain().recalculate();
                 }
-            } else if (event.getAttributeChange().checkName(Node.ATTR_FREIGHT_COLORS)) {
-                this.checkAllowedFreightColors((Node) event.getSource());
+            } else if (event.getAttributeChange().checkName(Node.ATTR_FREIGHT_COLORS, Node.ATTR_REGIONS)) {
+                checkAllowedFreightColors((Node) event.getSource());
             }
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node) {
             Node node = (Node) event.getObject();
@@ -83,8 +84,20 @@ public class NodeValidator implements TrainDiagramValidator {
         return applied;
     }
 
-    private void checkAllowedFreightColors(Node node) {
+    static void checkAllowedFreightColors(Node node) {
+        if (node.getFreightColors().isEmpty()) {
+            return;
+        }
         // get all nodes with the same color center
-        // TODO
+        Optional<Region> center = node.getRegionHierarchy().find(r -> r.isColorCenter());
+        if (center.isPresent()) {
+            Set<FreightColor> colors = node.getFreightColors();
+            center.get().getAllNodes().stream().filter(n -> n != node && !n.getFreightColors().isEmpty()).forEach(n -> {
+                Set<FreightColor> nColors = new HashSet<>(n.getFreightColors());
+                if (nColors.removeAll(colors)) {
+                    n.setFreightColors(nColors);
+                }
+            });
+        }
     }
 }

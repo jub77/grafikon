@@ -38,11 +38,13 @@ public class RegionValidator implements TrainDiagramValidator {
         if (event.getType() == Type.OBJECT_ATTRIBUTE && event.getObject() instanceof Region) {
             if (event.getAttributeChange().checkName(Region.ATTR_SUPER_REGION)) {
                 // in case a region changes to super-region
-                Region region = (Region) event.getAttributeChange().getNewValue();
-                if (region != null) {
-                    this.removeRegionFromNet(region);
-                    return true;
+                Region superRegion = (Region) event.getAttributeChange().getNewValue();
+                if (superRegion != null) {
+                    this.removeRegionFromNet(superRegion);
                 }
+                Region region = (Region) event.getObject();
+                Region firstColorCenter = getColorCenterRegion(region);
+                checkRegionsInHierarchyForDuplicateColorCenter(firstColorCenter);
             }
             // in case a region changes color center attribute
             if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {
@@ -125,6 +127,10 @@ public class RegionValidator implements TrainDiagramValidator {
             // check all sub regions...
             removeColorCenterSubRegions(region);
             removeColorCenterSuperRegions(region);
+            // check freight colors
+            region.getAllNodes().stream()
+                    .filter(n -> !n.getFreightColors().isEmpty())
+                    .forEach(n -> NodeValidator.checkAllowedFreightColors(n));
         }
     }
 
@@ -145,5 +151,12 @@ public class RegionValidator implements TrainDiagramValidator {
             }
             removeColorCenterSubRegions(subRegion);
         }
+    }
+
+    private Region getColorCenterRegion(Region start) {
+        while (start != null && !start.isColorCenter()) {
+            start = start.getSuperRegion();
+        }
+        return start;
     }
 }
