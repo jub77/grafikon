@@ -5,12 +5,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.RegionHierarchy;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Pair;
@@ -85,43 +87,43 @@ public class FreightAnalyser {
         return Integer.compare(i1.getInterval().getNormalizedStart(), i2.getInterval().getNormalizedStart());
     }
 
-    // returns super region - the assumption is that regions share the same super region
-    public static Region getSuperRegion(Collection<? extends Region> regions) {
-        return regions.isEmpty() ? null : regions.iterator().next().getSuperRegion();
-    }
-
     /**
      * @param fromRegions starting regions
      * @param toRegions destination regions
      * @return destination regions based on regions bellow the first common region
      */
-    public static Set<Region> transformToRegions(Set<Region> fromRegions, Set<Region> toRegions) {
-        Region toSuper = getSuperRegion(toRegions);
-        Region fromSuper = getSuperRegion(fromRegions);
+    public static Set<Region> transformToRegions(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
+        Region toSuper = toRegions.getFirstSuperRegion();
+        Region fromSuper = fromRegions.getFirstSuperRegion();
+        Set<Region> result = toRegions.getRegions();
         // all center regions has to have the same super region (if exists)
-        if (!toRegions.isEmpty() && !fromRegions.isEmpty()) {
+        if (!toRegions.getRegions().isEmpty() && !fromRegions.getRegions().isEmpty()) {
             if (fromSuper == null && toSuper != null) {
-                toRegions = Collections.singleton(toSuper.getTopSuperRegion());
-            } else if (toSuper != null && !fromSuper.containsInHierarchy(toSuper)) {
+                result = Collections.singleton(toRegions.getTopSuperRegion());
+            } else if (toSuper != null && !fromRegions.findInSuperRegions(r -> r == toSuper).isPresent()) {
                 Region dest = toSuper;
-                while (dest.getSuperRegion() != null && !fromSuper.containsInHierarchy(dest.getSuperRegion())) {
+                while (dest.getSuperRegion() != null && !fromRegions.findInSuperRegions(equalsReference(dest.getSuperRegion())).isPresent()) {
                     dest = dest.getSuperRegion();
                 }
-                toRegions = Collections.singleton(dest);
+                result = Collections.singleton(dest);
             }
         }
-        return toRegions;
+        return result;
     }
 
-    public static Region getFirstCommonRegion(Collection<? extends Region> fromRegions, Collection<? extends Region> toRegions) {
-        Region toSuper = getSuperRegion(toRegions);
-        Region fromSuper = getSuperRegion(fromRegions);
+    private static <T> Predicate<T> equalsReference(T value) {
+        return v -> v == value;
+    }
+
+    public static Region getFirstCommonRegion(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
+        Region toSuper = toRegions.getFirstSuperRegion();
+        Region fromSuper = fromRegions.getFirstSuperRegion();
 
         Region commonRegion = null;
 
         if (fromSuper != null && toSuper != null) {
             commonRegion = fromSuper;
-            while (commonRegion != null && !toSuper.containsInHierarchy(commonRegion)) {
+            while (commonRegion != null && !toRegions.findInSuperRegions(equalsReference(commonRegion)).isPresent()) {
                 commonRegion = commonRegion.getSuperRegion();
             }
         }

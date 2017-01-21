@@ -35,13 +35,30 @@ public class RegionValidator implements TrainDiagramValidator {
             this.removeRegionFromNet((Region) event.getObject());
             return true;
         }
-        // in case a region changes to super-region
-        if (event.getType() == Type.OBJECT_ATTRIBUTE && event.getObject() instanceof Region
-                && event.getAttributeChange().checkName(Region.ATTR_SUPER_REGION)) {
-            Region region = (Region) event.getAttributeChange().getNewValue();
-            if (region != null) {
-                this.removeRegionFromNet(region);
-                return true;
+        if (event.getType() == Type.OBJECT_ATTRIBUTE && event.getObject() instanceof Region) {
+            if (event.getAttributeChange().checkName(Region.ATTR_SUPER_REGION)) {
+                // in case a region changes to super-region
+                Region region = (Region) event.getAttributeChange().getNewValue();
+                if (region != null) {
+                    this.removeRegionFromNet(region);
+                    return true;
+                }
+                // in case the region cease to exist as super-region - do not allow color center on non-super-region
+                Region oldRegion = (Region) event.getAttributeChange().getOldValue();
+                if (oldRegion != null) {
+                    checkColorCenterWhenNotSuperRegion(oldRegion);
+                }
+            }
+            // in case a region changes color center attribute
+            if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {
+                Region region = (Region) event.getObject();
+                checkColorCenterWhenNotSuperRegion(region);
+                checkFreightColorMapWithColorCenter(region);
+            }
+            // in case freight color map is set
+            if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_MAP)) {
+                Region region = (Region) event.getObject();
+                checkFreightColorMapWithColorCenter(region);
             }
         }
         // in case region is used - cannot be used as super-region
@@ -100,5 +117,17 @@ public class RegionValidator implements TrainDiagramValidator {
     	Set<Region> newList = new HashSet<>(regions);
     	newList.remove(toBeRemoved);
     	return newList.isEmpty() ? null : newList;
+    }
+
+    private void checkColorCenterWhenNotSuperRegion(Region region) {
+        if (region.isColorCenter() && !region.isSuperRegion()) {
+            region.setColorCenter(false);
+        }
+    }
+
+    private void checkFreightColorMapWithColorCenter(Region region) {
+        if (!region.isColorCenter() && !region.getFreightColorMap().isEmpty()) {
+            region.setFreightColorMap(null);
+        }
     }
 }

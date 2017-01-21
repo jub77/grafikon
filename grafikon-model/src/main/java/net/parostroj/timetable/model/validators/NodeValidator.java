@@ -34,6 +34,8 @@ public class NodeValidator implements TrainDiagramValidator {
                 for (TimeInterval i : intervals) {
                     i.getTrain().recalculate();
                 }
+            } else if (event.getAttributeChange().checkName(Node.ATTR_FREIGHT_COLORS)) {
+                this.checkAllowedFreightColors((Node) event.getSource());
             }
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node) {
             Node node = (Node) event.getObject();
@@ -41,7 +43,6 @@ public class NodeValidator implements TrainDiagramValidator {
         }
         return false;
     }
-
     private boolean inCheckNodeControl;
 
     private boolean checkNodeControl(Node node) {
@@ -80,5 +81,10 @@ public class NodeValidator implements TrainDiagramValidator {
             }
         }
         return applied;
+    }
+
+    private void checkAllowedFreightColors(Node node) {
+        // get all nodes with the same color center
+
     }
 }

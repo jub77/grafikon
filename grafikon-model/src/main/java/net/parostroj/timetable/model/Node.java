@@ -30,6 +30,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     /** Location of node. */
     private Location location;
 
+    // views on regions
+    private final RegionHierarchy regionHierarchy;
+    private final RegionHierarchy centerRegionHierarchy;
+
     /**
      * Initialization.
      */
@@ -76,6 +80,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         this.abbr = abbr;
         this.diagram = diagram;
         init();
+        regionHierarchy = new NodeRegionHierarchy(false);
+        centerRegionHierarchy = new NodeRegionHierarchy(true);
     }
 
     @Override
@@ -221,6 +227,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     	return this.getAttributeAsSet(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptySet());
     }
 
+    public RegionHierarchy getCenterRegionHierarchy() {
+        return centerRegionHierarchy;
+    }
+
     public boolean isCenterOfRegions() {
         Set<?> regions = this.getAttribute(ATTR_CENTER_OF_REGIONS, Set.class);
         return regions != null && !regions.isEmpty();
@@ -230,24 +240,16 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     	return this.getAttributeAsSet(ATTR_REGIONS, Region.class, Collections.emptySet());
     }
 
+    public RegionHierarchy getRegionHierarchy() {
+        return regionHierarchy;
+    }
+
     public Set<FreightColor> getFreightColors() {
         return this.getAttributeAsSet(ATTR_FREIGHT_COLORS, FreightColor.class, Collections.emptySet());
     }
 
     public void setFreightColors(Set<FreightColor> freightColors) {
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
-    }
-
-    public Map<FreightColor, Region> getRecursiveFreightColorMap() {
-        Map<FreightColor, Region> map = null;
-        for (Region region : getRegions()) {
-            Map<FreightColor, Region> regionMap = region.getRecursiveFreightColorMap();
-            if (!regionMap.isEmpty()) {
-                if (map == null) map = new EnumMap<>(FreightColor.class);
-                map.putAll(regionMap);
-            }
-        }
-        return map == null ? Collections.emptyMap() : map;
     }
 
     /**
@@ -281,5 +283,18 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     @Override
     public boolean isNode() {
         return true;
+    }
+
+    private class NodeRegionHierarchy extends RegionHierarchyImpl {
+        private final boolean center;
+
+        public NodeRegionHierarchy(boolean center) {
+            this.center = center;
+        }
+
+        @Override
+        public Set<Region> getRegions() {
+            return center ? Node.this.getCenterRegions() : Node.this.getRegions();
+        }
     }
 }

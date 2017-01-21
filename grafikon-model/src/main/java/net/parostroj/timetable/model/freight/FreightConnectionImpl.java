@@ -1,11 +1,8 @@
 package net.parostroj.timetable.model.freight;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
@@ -60,39 +57,12 @@ class FreightConnectionImpl implements FreightConnection {
     @Override
     public Set<Region> getToRegions() {
         if (!this.getTo().isCenter()) return Collections.emptySet();
-        Set<Region> toCenterRegions = this.getTo().getRegions();
-        Set<Region> fromRegions = getFrom().getRegions();
-        return FreightAnalyser.transformToRegions(fromRegions, toCenterRegions);
+        return FreightAnalyser.transformToRegions(getFrom().getRegionHierarchy(), getTo().getRegionHierarchy());
     }
 
     @Override
     public Set<FreightColor> getToFreightColors() {
-        Set<Region> regions = getTo().getRegions();
-
-        Region commonRegion = FreightAnalyser.getFirstCommonRegion(getFrom().getRegions(), regions);
-        Set<FreightColor> filtered = null;
-        if (commonRegion == null) {
-            filtered = Optional.ofNullable(FreightAnalyser.getSuperRegion(regions))
-                    .map(r -> r.getTopSuperRegion().getAllNodes().stream()
-                            .flatMap(node -> node.getFreightColors().stream())
-                            .collect(Collectors.toSet()))
-                    .orElse(Collections.emptySet());
-        } else {
-            // common region - no filtering
-            filtered = Collections.emptySet();
-        }
-
-        // get colors of the target region
-        if (!regions.isEmpty()) {
-
-        }
-
-
-        // get all
-
-        Set<Region> allRegionSet = regions.stream().flatMap(r -> r.getRegionHierarchy().stream()).distinct().collect(Collectors.toSet());
-        Map<FreightColor, Region> filteredMap = getFrom().getRecursiveFreightColorMap().entrySet().stream().filter(e -> !allRegionSet.contains(e.getValue())).collect(Collectors.toMap(c -> c.getKey(), c -> c.getValue()));
-
-        return getTo().isNode() ? getTo().getNode().getFreightColors() : Collections.emptySet();
+        // TODO missing impl
+        return null;
     }
 }

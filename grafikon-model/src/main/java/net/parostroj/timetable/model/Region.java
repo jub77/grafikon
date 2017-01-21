@@ -1,10 +1,7 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -91,20 +88,6 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return getAttributes().getAsMap(ATTR_FREIGHT_COLOR_MAP, FreightColor.class, Region.class, Collections.emptyMap());
     }
 
-    public Map<FreightColor, Region> getRecursiveFreightColorMap() {
-        Map<FreightColor, Region> map = null;
-        Region current = this;
-        do {
-            Map<FreightColor, Region> currentMap = current.getFreightColorMap();
-            if (!currentMap.isEmpty()) {
-                if (map == null) map = new EnumMap<>(FreightColor.class);
-                map.putAll(currentMap);
-            }
-            current = current.getSuperRegion();
-        } while (current != null);
-        return map == null ? Collections.emptyMap() : map;
-    }
-
     public void setFreightColorMap(Map<FreightColor, Region> colorMap) {
         getAttributes().setRemove(ATTR_FREIGHT_COLOR_MAP, ObjectsUtil.checkEmpty(colorMap));
     }
@@ -123,16 +106,6 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public void setColorCenter(boolean colorCenter) {
         attributes.setBool(ATTR_COLOR_CENTER, colorCenter);
-    }
-
-    public List<Region> getRegionHierarchy() {
-        List<Region> list = new ArrayList<>();
-        Region current = this;
-        do {
-            list.add(current);
-            current = current.getSuperRegion();
-        } while (current != null);
-        return list;
     }
 
     private void addSubRegion(Region added) {
@@ -169,26 +142,6 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public boolean isSuperRegion() {
         return !subRegions.isEmpty();
-    }
-
-    /**
-     * @param region region to be checked
-     * @return if the checked region is this one or one of its super regions
-     */
-    public boolean containsInHierarchy(Region region) {
-        Region current = this;
-        while (current != null && current != region) {
-            current = current.getSuperRegion();
-        }
-        return current == region;
-    }
-
-    public Region getTopSuperRegion() {
-        Region current = this;
-        while (current.getSuperRegion() != null) {
-            current = current.getSuperRegion();
-        }
-        return current;
     }
 
     void addNode(Node node) {

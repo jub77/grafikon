@@ -7,6 +7,8 @@ import java.util.Set;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.RegionHierarchy;
+import net.parostroj.timetable.model.RegionHierarchyImpl;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -46,26 +48,31 @@ public class FreightFactory {
     }
 
     public static FreightDestination createFreightDestination(Node node, boolean disableCenter) {
-        return new FreightDestinationImpl(node, disableCenter ? Collections.emptySet() : null);
+        return new FreightDestinationImpl(node, disableCenter ? new RegionHierarchyImpl() {
+            @Override
+            public Set<Region> getRegions() {
+                return Collections.emptySet();
+            }
+        } : null);
     }
 
-    public static FreightDestination createFreightDestination(Set<Region> regions) {
+    public static FreightDestination createFreightDestination(RegionHierarchy regions) {
         return new FreightDestinationImpl(null, regions);
     }
 
     private static class FreightDestinationImpl implements FreightDestination {
 
         private final Node node;
-        private final Set<Region> regions;
+        private final RegionHierarchy regions;
 
-        public FreightDestinationImpl(Node node, Set<Region> regions) {
+        public FreightDestinationImpl(Node node, RegionHierarchy regions) {
             this.node = node;
             this.regions = regions;
         }
 
         @Override
-        public Set<Region> getRegions() {
-            return regions == null ? node.getCenterRegions() : regions;
+        public RegionHierarchy getRegionHierarchy() {
+            return regions == null ? node.getCenterRegionHierarchy() : regions;
         }
 
         @Override

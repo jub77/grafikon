@@ -4,6 +4,7 @@ import java.util.Set;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.RegionHierarchy;
 
 /**
  * Freight destination (node or broader - regions).
@@ -12,7 +13,7 @@ import net.parostroj.timetable.model.Region;
  */
 public interface FreightDestination {
 
-    Set<Region> getRegions();
+    RegionHierarchy getRegionHierarchy();
 
     Node getNode();
 
@@ -21,7 +22,7 @@ public interface FreightDestination {
     }
 
     default boolean isCenter() {
-        Set<Region> regions = getRegions();
+        Set<Region> regions = getRegionHierarchy().getRegions();
         return regions != null && !regions.isEmpty();
     }
 
