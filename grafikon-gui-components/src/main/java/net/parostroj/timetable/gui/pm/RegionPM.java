@@ -59,7 +59,6 @@ public class RegionPM extends AbstractPM {
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
         this.colorCenter.setBoolean(region.isColorCenter());
-        this.colorCenter.setEditable(region.isSuperRegion());
         // color map
         Map<FreightColor, Region> cMap = region.getFreightColorMap();
         colorMap.clear();

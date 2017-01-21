@@ -43,16 +43,10 @@ public class RegionValidator implements TrainDiagramValidator {
                     this.removeRegionFromNet(region);
                     return true;
                 }
-                // in case the region cease to exist as super-region - do not allow color center on non-super-region
-                Region oldRegion = (Region) event.getAttributeChange().getOldValue();
-                if (oldRegion != null) {
-                    checkColorCenterWhenNotSuperRegion(oldRegion);
-                }
             }
             // in case a region changes color center attribute
             if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {
                 Region region = (Region) event.getObject();
-                checkColorCenterWhenNotSuperRegion(region);
                 checkFreightColorMapWithColorCenter(region);
             }
             // in case freight color map is set
@@ -117,12 +111,6 @@ public class RegionValidator implements TrainDiagramValidator {
     	Set<Region> newList = new HashSet<>(regions);
     	newList.remove(toBeRemoved);
     	return newList.isEmpty() ? null : newList;
-    }
-
-    private void checkColorCenterWhenNotSuperRegion(Region region) {
-        if (region.isColorCenter() && !region.isSuperRegion()) {
-            region.setColorCenter(false);
-        }
     }
 
     private void checkFreightColorMapWithColorCenter(Region region) {

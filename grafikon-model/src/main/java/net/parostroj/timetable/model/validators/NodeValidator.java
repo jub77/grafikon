@@ -85,6 +85,6 @@ public class NodeValidator implements TrainDiagramValidator {
 
     private void checkAllowedFreightColors(Node node) {
         // get all nodes with the same color center
-
+        // TODO
     }
 }
