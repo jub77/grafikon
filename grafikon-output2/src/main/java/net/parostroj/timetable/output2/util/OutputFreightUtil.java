@@ -15,6 +15,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.Transport;
 
 /**
  * Utilities for output specific to dealing with freight.
@@ -44,6 +45,14 @@ public class OutputFreightUtil {
                     return String.format("%s (%s)", trainName, time);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<String> transportToString(TrainDiagram diagram, Transport transport, Locale locale) {
+        if (transport.isDirect()) {
+            return this.intervalsToString(diagram, transport.getTrains(), locale);
+        } else {
+            return this.regionsToString(transport.getConnection().getTo().getRegions(), locale);
+        }
     }
 
     // TODO rewrite -- node is not always the only destination
