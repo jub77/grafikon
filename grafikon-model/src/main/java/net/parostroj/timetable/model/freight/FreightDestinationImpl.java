@@ -3,6 +3,8 @@ package net.parostroj.timetable.model.freight;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
@@ -46,7 +48,14 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public Set<FreightColor> getFreightColors() {
-        return node != null ? node.getFreightColors() : Collections.emptySet();
+        Set<FreightColor> colors = node != null ? node.getFreightColors() : Collections.emptySet();
+        Set<Region> centerRegions = getRegions();
+        if (!centerRegions.isEmpty()) {
+            colors = Stream.concat(colors.stream(), centerRegions.stream()
+                    .flatMap(r -> r.getAllNodes().stream().flatMap(n -> n.getFreightColors().stream())).distinct())
+                    .collect(Collectors.toSet());
+        }
+        return colors;
     }
 
     @Override
@@ -61,7 +70,7 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public boolean isFreightColors() {
-        return isNode() && !getNode().getFreightColors().isEmpty();
+        return !getFreightColors().isEmpty();
     }
 
     @Override

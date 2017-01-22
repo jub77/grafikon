@@ -40,8 +40,8 @@ class FreightDestinationFromWrapper implements FreightDestination {
 
     @Override
     public Set<FreightColor> getFreightColors() {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO implementation
+        return destination.getFreightColors();
     }
 
     @Override
@@ -56,8 +56,7 @@ class FreightDestinationFromWrapper implements FreightDestination {
 
     @Override
     public boolean isFreightColors() {
-        // TODO implement
-        return false;
+        return !getFreightColors().isEmpty();
     }
 
     @Override
