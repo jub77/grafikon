@@ -66,7 +66,7 @@ public class FreightAnalyser {
         } else {
             // get direct connection map to centers
             Map<Node, FreightConnectionVia> centers = nodeTransport.getDirectConnections().stream()
-                    .filter(c -> c.getTo().isCenter())
+                    .filter(c -> c.getTo().isRegions())
                     .collect(Collectors.toMap(c -> c.getTo().getNode(), c -> c));
             // filter region connections to connections started from reachable direct connections and
             // do not lead to reachable region

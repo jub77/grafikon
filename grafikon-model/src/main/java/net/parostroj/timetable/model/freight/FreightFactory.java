@@ -1,14 +1,10 @@
 package net.parostroj.timetable.model.freight;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.model.RegionHierarchy;
-import net.parostroj.timetable.model.RegionHierarchyImpl;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -43,64 +39,29 @@ public class FreightFactory {
         return new FreightConnectionImpl(nodeConnection.getFrom(), createFreightDestination(nodeConnection.getTo()));
     }
 
+    public static FreightDestination createFreightDestination(Node fromNode, FreightDestination destination) {
+        if (destination instanceof FreightDestinationFromWrapper) {
+            FreightDestinationFromWrapper wrapper = (FreightDestinationFromWrapper) destination;
+            if (wrapper.getFrom() == fromNode) {
+                return wrapper;
+            } else {
+                return new FreightDestinationFromWrapper(fromNode, wrapper.getDestination());
+            }
+        } else {
+            return new FreightDestinationFromWrapper(fromNode, destination);
+        }
+    }
+
     public static FreightDestination createFreightDestination(Node node) {
-        return new FreightDestinationImpl(node, null);
+        return new FreightDestinationImpl(node, false);
     }
 
     public static FreightDestination createFreightDestination(Node node, boolean disableCenter) {
-        return new FreightDestinationImpl(node, disableCenter ? new RegionHierarchyImpl() {
-            @Override
-            public Set<Region> getRegions() {
-                return Collections.emptySet();
-            }
-        } : null);
+        return new FreightDestinationImpl(node, !disableCenter);
     }
 
-    public static FreightDestination createFreightDestination(RegionHierarchy regions) {
-        return new FreightDestinationImpl(null, regions);
-    }
-
-    private static class FreightDestinationImpl implements FreightDestination {
-
-        private final Node node;
-        private final RegionHierarchy regions;
-
-        public FreightDestinationImpl(Node node, RegionHierarchy regions) {
-            this.node = node;
-            this.regions = regions;
-        }
-
-        @Override
-        public RegionHierarchy getRegionHierarchy() {
-            return regions == null ? node.getCenterRegionHierarchy() : regions;
-        }
-
-        @Override
-        public Node getNode() {
-            return node;
-        }
-
-        @Override
-        public String toString() {
-            return node.getName();
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(node, regions);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            FreightDestinationImpl other = (FreightDestinationImpl) obj;
-            return Objects.equals(node, other.node) && Objects.equals(regions, other.regions);
-        }
+    public static FreightDestination createFreightDestination(Set<Region> regions) {
+        return new FreightDestinationImpl(regions);
     }
 
     private static class FreightConnectionPathImpl extends FreightConnectionImpl implements FreightConnectionPath {

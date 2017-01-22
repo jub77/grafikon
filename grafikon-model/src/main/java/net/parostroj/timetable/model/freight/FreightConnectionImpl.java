@@ -1,12 +1,11 @@
 package net.parostroj.timetable.model.freight;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.RegionHierarchyImpl;
 
 class FreightConnectionImpl implements FreightConnection {
 
@@ -15,7 +14,7 @@ class FreightConnectionImpl implements FreightConnection {
 
     public FreightConnectionImpl(Node from, FreightDestination to) {
         this.from = from;
-        this.to = to;
+        this.to = FreightFactory.createFreightDestination(from, to);
     }
 
     @Override
@@ -54,15 +53,17 @@ class FreightConnectionImpl implements FreightConnection {
         return Objects.equals(this.from, other.from) && Objects.equals(this.to, other.to);
     }
 
-    @Override
-    public Set<Region> getToRegions() {
-        if (!this.getTo().isCenter()) return Collections.emptySet();
-        return FreightAnalyser.transformToRegions(getFrom().getRegionHierarchy(), getTo().getRegionHierarchy());
-    }
+    static class RegionsRegionHierarchy extends RegionHierarchyImpl {
 
-    @Override
-    public Set<FreightColor> getToFreightColors() {
-        // TODO missing impl
-        return null;
+        private final Set<Region> regions;
+
+        public RegionsRegionHierarchy(Set<Region> regions) {
+            this.regions = regions;
+        }
+
+        @Override
+        public Set<Region> getRegions() {
+            return regions;
+        }
     }
 }

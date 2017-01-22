@@ -63,10 +63,10 @@ public class OutputFreightUtil {
 
     // TODO rewrite -- sort regions ...
     public String freightRegionToString(FreightConnection dest, Locale locale) {
-        if (!dest.getTo().isCenter()) {
+        if (!dest.getTo().isRegions()) {
             throw new IllegalArgumentException("Destination is not center of regions: " + dest);
         }
-        Set<Region> regions = dest.getToRegions();
+        Set<Region> regions = dest.getTo().getRegions();
         return regionsToString(regions, locale).stream()
                 .collect(Collectors.joining(","));
     }
@@ -78,7 +78,7 @@ public class OutputFreightUtil {
     public String freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
         return list.stream().map(d -> {
             String destString = freightNodeToString(d, locale, true);
-            return d.getTo().isCenter() ? String.format("%s(%s)", destString, freightRegionToString(d, locale)): destString;
+            return d.getTo().isRegions() ? String.format("%s(%s)", destString, freightRegionToString(d, locale)): destString;
         }).collect(Collectors.joining(","));
     }
 

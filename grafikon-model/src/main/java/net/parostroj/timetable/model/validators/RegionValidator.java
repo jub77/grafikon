@@ -44,7 +44,9 @@ public class RegionValidator implements TrainDiagramValidator {
                 }
                 Region region = (Region) event.getObject();
                 Region firstColorCenter = getColorCenterRegion(region);
-                checkRegionsInHierarchyForDuplicateColorCenter(firstColorCenter);
+                if (firstColorCenter != null) {
+                    checkRegionsInHierarchyForDuplicateColorCenter(firstColorCenter);
+                }
             }
             // in case a region changes color center attribute
             if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {

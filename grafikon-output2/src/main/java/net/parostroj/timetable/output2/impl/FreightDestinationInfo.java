@@ -15,7 +15,6 @@ import com.google.common.collect.Iterables;
 import net.parostroj.timetable.actions.TextList;
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
@@ -116,14 +115,14 @@ public class FreightDestinationInfo {
             Node to = dst.getTo().getNode();
             info.setName(to.getName());
             info.setAbbr(to.getAbbr());
-            List<FreightColor> sortedColors = OutputFreightUtil.sortFreightColors(to.getFreightColors());
+            List<FreightColor> sortedColors = OutputFreightUtil.sortFreightColors(dst.getTo().getFreightColors());
             info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
-            if (to.getType() == NodeType.STATION_HIDDEN) {
+            if (!dst.getTo().isVisible()) {
                 info.setHidden(true);
             }
         }
-        if (dst.getTo().isCenter()) {
-            Set<Region> regions = dst.getToRegions();
+        if (dst.getTo().isRegions()) {
+            Set<Region> regions = dst.getTo().getRegions();
             info.setRegions(new OutputFreightUtil().regionsToString(regions, locale));
         }
         return info;
