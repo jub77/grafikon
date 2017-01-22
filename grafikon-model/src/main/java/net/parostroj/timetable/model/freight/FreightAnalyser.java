@@ -53,16 +53,15 @@ public class FreightAnalyser {
         // depending if the node is center of regions or not
         Collection<NodeConnectionNodes> connections = diagram.getFreightNet().getRegionConnectionNodes();
         Map<Node, FreightConnectionVia> nodes = nodeTransport.getDirectConnectionsMap();
+        Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
             Stream<NodeConnectionNodes> targets = connections.stream().filter(c -> c.getFrom() == node);
-            Stream<FreightConnectionVia> conns = targets.map(t -> {
+            conns = targets.map(t -> {
                 Node intermediateNode = t.getFirstIntermediateNode();
                 Node endNode = t.getTo();
                 Transport transport = intermediateNode == null ? nodes.get(endNode).getTransport() : new TransportImpl(nodes.get(intermediateNode), null);
                 return FreightFactory.createFreightNodeConnection(node, FreightFactory.createFreightDestination(endNode), transport);
             });
-            Set<FreightConnectionVia> regionSet = conns.collect(Collectors.toSet());
-            return new NodeFreightImpl(nodeTransport.getDirectConnections(), regionSet);
         } else {
             // get direct connection map to centers
             Map<Node, FreightConnectionVia> centers = nodeTransport.getDirectConnections().stream()
@@ -73,14 +72,22 @@ public class FreightAnalyser {
             Stream<NodeConnectionNodes> targets = connections.stream()
                     .filter(c -> centers.containsKey(c.getFrom()))
                     .filter(c -> !centers.containsKey(c.getTo()));
-            Stream<FreightConnectionVia> conns = targets.map(t -> {
+            conns = targets.map(t -> {
                 Transport transport = new TransportImpl(nodes.get(t.getFrom()), null);
-                return FreightFactory.createFreightNodeConnection(node, FreightFactory.createFreightDestination(t.getTo()), transport);
+                FreightDestination destination = FreightFactory.createFreightDestination(t.getTo());
+                FreightConnectionVia createFreightNodeConnection = FreightFactory.createFreightNodeConnection(node,
+                        destination, transport);
+                return createFreightNodeConnection;
             });
             conns = Stream.concat(conns, centers.values().stream());
-            Set<FreightConnectionVia> regionSet = conns.collect(Collectors.toSet());
-            return new NodeFreightImpl(nodeTransport.getDirectConnections(), regionSet);
         }
+        // filter connections where to regions are the same as via (transport) regions
+        conns = conns.filter(fc -> fc.getTransport().isDirect()
+                || !fc.getTransport().getConnection().getTo().getRegions().equals(fc.getTo().getRegions()));
+        // filter duplicates
+        conns = conns.distinct();
+        Set<FreightConnectionVia> regionSet = conns.collect(Collectors.toSet());
+        return new NodeFreightImpl(nodeTransport.getDirectConnections(), regionSet);
     }
 
     protected int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
