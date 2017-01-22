@@ -80,15 +80,11 @@ public class OutputFreightUtil {
                 .collect(Collectors.joining(","));
     }
 
-    public String freightListToString(Collection<? extends FreightConnection> list) {
-        return this.freightListToString(list, Locale.getDefault());
-    }
-
-    public String freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
+    public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
         return list.stream().map(d -> {
             String destString = freightNodeToString(d, locale, true);
             return d.getTo().isRegions() ? String.format("%s(%s)", destString, freightRegionToString(d, locale)): destString;
-        }).collect(Collectors.joining(","));
+        }).collect(Collectors.toList());
     }
 
     public static List<FreightColor> sortFreightColors(Collection<FreightColor> colors) {
