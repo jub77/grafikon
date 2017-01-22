@@ -165,14 +165,10 @@ public class FreightDestinationPanel extends JPanel {
         List<Tuple<String>> lines = regionTransport.getRegionConnections().stream()
                 .map(e -> {
                     String node = util.freightRegionToString(e, locale);
-                    String through = e.getTransport().getTrains() != null
-                            ? util.intervalsToString(diagram, e.getTransport().getTrains(), locale).stream().collect(
-                                    Collectors.joining(", "))
-                            : util.freightRegionToString(e.getTransport().getConnection(), locale);
-                    return new Tuple<>(node, through);
+                    String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    return new Tuple<>(node, transport);
                 })
-                .filter(t -> !t.first.equals(t.second))
-                .distinct()
                 .sorted((a, b) -> collator.compare(a.first, b.first))
                 .collect(Collectors.toList());
         if (model.getRowCount() != 0) {
