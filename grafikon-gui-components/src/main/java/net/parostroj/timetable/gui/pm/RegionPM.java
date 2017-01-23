@@ -54,7 +54,7 @@ public class RegionPM extends AbstractPM {
         this.regionRef = new WeakReference<>(region);
         this.name.setText(region.getName());
         this.locale.setValue(region.getAttribute(Region.ATTR_LOCALE, Locale.class));
-        Collection<Region> regions = allRegions.stream().filter(r -> r != region)
+        Collection<Region> regions = allRegions.stream().filter(r -> r != region).filter(r -> r.isColorCenter())
                 .sorted((o1, o2) -> collator.compare(o1.getName(), o2.getName())).collect(Collectors.toList());
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
