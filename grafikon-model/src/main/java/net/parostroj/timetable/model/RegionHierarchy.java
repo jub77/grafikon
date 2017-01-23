@@ -17,7 +17,7 @@ public interface RegionHierarchy {
 
     Map<FreightColor, Region> getFreightColorMap();
 
-    Region getColorCenter();
+    Region getFreightColorRegion();
 
     Region getFirstSuperRegion();
 

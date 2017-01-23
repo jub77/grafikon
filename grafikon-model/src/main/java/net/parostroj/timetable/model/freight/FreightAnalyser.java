@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.RegionHierarchy;
@@ -122,20 +123,8 @@ public class FreightAnalyser {
         return result;
     }
 
-    public static Region getFirstCommonRegion(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
-        Region toSuper = toRegions.getFirstSuperRegion();
-        Region fromSuper = fromRegions.getFirstSuperRegion();
-
-        Region commonRegion = null;
-
-        if (fromSuper != null && toSuper != null) {
-            commonRegion = fromSuper;
-            while (commonRegion != null && !toRegions.findInSuperRegions(Predicate.isEqual(commonRegion)).isPresent()) {
-                commonRegion = commonRegion.getSuperRegion();
-            }
-        }
-
-        return commonRegion;
+    public static Set<FreightColor> transformToFreightColors(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
+        return Collections.emptySet();
     }
 
     private static class NodeFreightImpl implements NodeFreight {

@@ -18,7 +18,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     }
 
     @Override
-    public Region getColorCenter() {
+    public Region getFreightColorRegion() {
         return this
                 .find(r -> r.isFreightColorRegion())
                 .orElse(null);
