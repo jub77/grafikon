@@ -29,7 +29,7 @@ public class RegionPM extends AbstractPM {
     final TextPM name = new TextPM();
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<Region> superRegion;
-    final IBooleanPM colorCenter;
+    final IBooleanPM colorRegion;
     final ListPM<ColorMappingPM> colorMap;
 
     final OperationPM ok = new OperationPM();
@@ -45,7 +45,7 @@ public class RegionPM extends AbstractPM {
                 locales, l -> l.getDisplayName(l)), "-");
         name.setMandatory(true);
         superRegion = new EnumeratedValuesPM<>();
-        colorCenter = new BooleanPM();
+        colorRegion = new BooleanPM();
         colorMap = new ListPM<>();
         PMManager.setup(this);
     }
@@ -54,11 +54,11 @@ public class RegionPM extends AbstractPM {
         this.regionRef = new WeakReference<>(region);
         this.name.setText(region.getName());
         this.locale.setValue(region.getAttribute(Region.ATTR_LOCALE, Locale.class));
-        Collection<Region> regions = allRegions.stream().filter(r -> r != region).filter(r -> r.isColorCenter())
+        Collection<Region> regions = allRegions.stream().filter(r -> r != region).filter(r -> r.isFreightColorRegion())
                 .sorted((o1, o2) -> collator.compare(o1.getName(), o2.getName())).collect(Collectors.toList());
         this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
-        this.colorCenter.setBoolean(region.isColorCenter());
+        this.colorRegion.setBoolean(region.isFreightColorRegion());
         // color map
         Map<FreightColor, Region> cMap = region.getFreightColorMap();
         colorMap.clear();
@@ -70,8 +70,8 @@ public class RegionPM extends AbstractPM {
     }
 
     @Validation(path = { "add" })
-    public boolean isColorCenter() {
-        return colorCenter.getBoolean();
+    public boolean isColorRegion() {
+        return colorRegion.getBoolean();
     }
 
     @Validation(path = { "remove" })
@@ -108,7 +108,7 @@ public class RegionPM extends AbstractPM {
             region.setAttribute(Region.ATTR_LOCALE, locale.getValue());
             region.setName(ObjectsUtil.checkAndTrim(name.getText()));
             region.setSuperRegion(this.superRegion.getValue());
-            region.setColorCenter(colorCenter.getBoolean());
+            region.setFreightColorRegion(colorRegion.getBoolean());
             // color mapping
             HashMap<FreightColor, Region> map = new HashMap<>();
             for (ColorMappingPM cMapping : colorMap) {

@@ -13,5 +13,5 @@ public interface RegionAttributes {
     String ATTR_SUB_REGIONS = "sub.regions";
     String ATTR_FREIGHT_COLOR_MAP = "freight.color.map";
     String ATTR_NODES = "nodes";
-    String ATTR_COLOR_CENTER = "color.center";
+    String ATTR_FREIGHT_COLOR_REGION = "freight.color.region";
 }

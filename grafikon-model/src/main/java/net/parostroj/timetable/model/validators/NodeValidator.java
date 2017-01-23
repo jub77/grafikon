@@ -89,7 +89,7 @@ public class NodeValidator implements TrainDiagramValidator {
             return;
         }
         // get all nodes with the same color center
-        Optional<Region> center = node.getRegionHierarchy().find(r -> r.isColorCenter());
+        Optional<Region> center = node.getRegionHierarchy().find(r -> r.isFreightColorRegion());
         if (center.isPresent()) {
             Set<FreightColor> colors = node.getFreightColors();
             center.get().getAllNodes().stream().filter(n -> n != node && !n.getFreightColors().isEmpty()).forEach(n -> {

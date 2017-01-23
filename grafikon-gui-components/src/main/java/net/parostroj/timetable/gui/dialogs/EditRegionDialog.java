@@ -125,24 +125,24 @@ public class EditRegionDialog extends JDialog {
         superRegionComboBox.setModelProvider(provider);
         superRegionComboBox.setPath(new Path("superRegion"));
 
-        JLabel colorCenterLabel = new JLabel(ResourceLoader.getString("edit.region.color.center")); // NOI18N
+        JLabel colorRegionLabel = new JLabel(ResourceLoader.getString("edit.region.color.region")); // NOI18N
         GridBagConstraints cclCons = new GridBagConstraints();
         cclCons.anchor = GridBagConstraints.WEST;
         cclCons.insets = new Insets(0, 0, 5, 5);
         cclCons.gridx = 0;
         cclCons.gridy = 3;
-        panel.add(colorCenterLabel, cclCons);
+        panel.add(colorRegionLabel, cclCons);
 
-        BnCheckBox colorCenterCheckBox = new BnCheckBox();
-        colorCenterCheckBox.setBorder(null);
+        BnCheckBox colorRegionCheckBox = new BnCheckBox();
+        colorRegionCheckBox.setBorder(null);
         GridBagConstraints cccbCons = new GridBagConstraints();
         cccbCons.insets = new Insets(0, 0, 5, 0);
         cccbCons.fill = GridBagConstraints.HORIZONTAL;
         cccbCons.gridx = 1;
         cccbCons.gridy = 3;
-        panel.add(colorCenterCheckBox, cccbCons);
-        colorCenterCheckBox.setModelProvider(provider);
-        colorCenterCheckBox.setPath(new Path("colorCenter"));
+        panel.add(colorRegionCheckBox, cccbCons);
+        colorRegionCheckBox.setModelProvider(provider);
+        colorRegionCheckBox.setPath(new Path("colorRegion"));
 
         JScrollPane scrollPane = new JScrollPane();
         BnTable mapTable = new BnTable();

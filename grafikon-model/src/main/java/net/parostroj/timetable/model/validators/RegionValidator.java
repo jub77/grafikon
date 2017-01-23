@@ -52,7 +52,7 @@ public class RegionValidator implements TrainDiagramValidator {
                 }
             }
             // in case a region changes color center attribute
-            if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {
+            if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_REGION)) {
                 Region region = (Region) event.getObject();
                 checkFreightColorMapWithColorCenter(region);
                 checkOtherFreightColorMapsWhenColorCenterDeactivates(region);
@@ -123,15 +123,15 @@ public class RegionValidator implements TrainDiagramValidator {
     }
 
     private void checkFreightColorMapWithColorCenter(Region region) {
-        if (!region.isColorCenter() && !region.getFreightColorMap().isEmpty()) {
+        if (!region.isFreightColorRegion() && !region.getFreightColorMap().isEmpty()) {
             region.setFreightColorMap(null);
         }
     }
 
     private void checkOtherFreightColorMapsWhenColorCenterDeactivates(Region region) {
         // remove existing color mapping to this region
-        if (!region.isColorCenter()) {
-            diagram.getNet().getRegions().stream().filter(r -> r != region).filter(r -> r.isColorCenter())
+        if (!region.isFreightColorRegion()) {
+            diagram.getNet().getRegions().stream().filter(r -> r != region).filter(r -> r.isFreightColorRegion())
                     .forEach(r -> {
                         Map<FreightColor, Region> colorMap = r.getFreightColorMap();
                         if (colorMap.values().contains(region)) {
@@ -143,7 +143,7 @@ public class RegionValidator implements TrainDiagramValidator {
     }
 
     private void checkRegionsInHierarchyForDuplicateColorCenter(Region region) {
-        if (region.isColorCenter()) {
+        if (region.isFreightColorRegion()) {
             // check all sub regions...
             removeColorCenterSubRegions(region);
             removeColorCenterSuperRegions(region);
@@ -157,8 +157,8 @@ public class RegionValidator implements TrainDiagramValidator {
     private void removeColorCenterSuperRegions(Region region) {
         Region current = region.getSuperRegion();
         while (current != null) {
-            if (current.isColorCenter()) {
-                current.setColorCenter(false);
+            if (current.isFreightColorRegion()) {
+                current.setFreightColorRegion(false);
             }
             current = current.getSuperRegion();
         }
@@ -166,15 +166,15 @@ public class RegionValidator implements TrainDiagramValidator {
 
     private void removeColorCenterSubRegions(Region region) {
         for (Region subRegion : region.getSubRegions()) {
-            if (subRegion.isColorCenter()) {
-                subRegion.setColorCenter(false);
+            if (subRegion.isFreightColorRegion()) {
+                subRegion.setFreightColorRegion(false);
             }
             removeColorCenterSubRegions(subRegion);
         }
     }
 
     private Region getColorCenterRegion(Region start) {
-        while (start != null && !start.isColorCenter()) {
+        while (start != null && !start.isFreightColorRegion()) {
             start = start.getSuperRegion();
         }
         return start;

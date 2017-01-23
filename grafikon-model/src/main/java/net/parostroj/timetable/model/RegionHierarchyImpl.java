@@ -12,7 +12,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Map<FreightColor, Region> getFreightColorMap() {
         return this
-                .find(r -> r.isColorCenter())
+                .find(r -> r.isFreightColorRegion())
                 .map(r -> r.getFreightColorMap())
                 .orElse(Collections.emptyMap());
     }
@@ -20,7 +20,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Region getColorCenter() {
         return this
-                .find(r -> r.isColorCenter())
+                .find(r -> r.isFreightColorRegion())
                 .orElse(null);
     }
 

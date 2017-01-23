@@ -100,12 +100,12 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         attributes.setRemove(ATTR_LOCALE, locale);
     }
 
-    public boolean isColorCenter() {
-        return attributes.getBool(ATTR_COLOR_CENTER);
+    public boolean isFreightColorRegion() {
+        return attributes.getBool(ATTR_FREIGHT_COLOR_REGION);
     }
 
-    public void setColorCenter(boolean colorCenter) {
-        attributes.setBool(ATTR_COLOR_CENTER, colorCenter);
+    public void setFreightColorRegion(boolean colorCenter) {
+        attributes.setBool(ATTR_FREIGHT_COLOR_REGION, colorCenter);
     }
 
     private void addSubRegion(Region added) {
