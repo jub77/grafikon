@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
@@ -52,6 +55,7 @@ public class RegionValidator implements TrainDiagramValidator {
             if (event.getAttributeChange().checkName(Region.ATTR_COLOR_CENTER)) {
                 Region region = (Region) event.getObject();
                 checkFreightColorMapWithColorCenter(region);
+                checkOtherFreightColorMapsWhenColorCenterDeactivates(region);
                 checkRegionsInHierarchyForDuplicateColorCenter(region);
             }
             // in case freight color map is set
@@ -121,6 +125,20 @@ public class RegionValidator implements TrainDiagramValidator {
     private void checkFreightColorMapWithColorCenter(Region region) {
         if (!region.isColorCenter() && !region.getFreightColorMap().isEmpty()) {
             region.setFreightColorMap(null);
+        }
+    }
+
+    private void checkOtherFreightColorMapsWhenColorCenterDeactivates(Region region) {
+        // remove existing color mapping to this region
+        if (!region.isColorCenter()) {
+            diagram.getNet().getRegions().stream().filter(r -> r != region).filter(r -> r.isColorCenter())
+                    .forEach(r -> {
+                        Map<FreightColor, Region> colorMap = r.getFreightColorMap();
+                        if (colorMap.values().contains(region)) {
+                            r.setFreightColorMap(colorMap.entrySet().stream().filter(e -> e.getValue() != region)
+                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())));
+                        }
+                    });
         }
     }
 
