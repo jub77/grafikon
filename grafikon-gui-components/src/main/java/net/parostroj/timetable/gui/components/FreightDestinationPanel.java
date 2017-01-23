@@ -150,7 +150,7 @@ public class FreightDestinationPanel extends JPanel {
         List<Tuple<String>> lines = nodeTransport.getDirectConnections().stream()
                 .filter(e -> e.getTo().isVisible())
                 .map(e -> {
-                    String node = util.freightNodeToString(e, locale, false);
+                    String node = util.freightNodeToString(e.getTo(), locale, false);
                     String trains = util.intervalsToString(diagram, e.getTransport().getTrains(), locale).stream()
                             .collect(Collectors.joining(", "));
                     return new Tuple<>(node, trains);
@@ -164,7 +164,7 @@ public class FreightDestinationPanel extends JPanel {
         Collator collator = Collator.getInstance();
         List<Tuple<String>> lines = regionTransport.getRegionConnections().stream()
                 .map(e -> {
-                    String node = util.freightRegionToString(e, locale);
+                    String node = util.freightRegionToString(e.getTo(), locale);
                     String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
                             .collect(Collectors.joining(", "));
                     return new Tuple<>(node, transport);

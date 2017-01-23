@@ -15,6 +15,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.FreightDestination;
 import net.parostroj.timetable.model.freight.Transport;
 
 /**
@@ -55,35 +56,45 @@ public class OutputFreightUtil {
         }
     }
 
-    // TODO rewrite -- node is not always the only destination
-    public String freightNodeToString(FreightConnection dest, Locale locale, boolean abbreviation) {
-        if (!dest.getTo().isNode()) {
-            throw new IllegalArgumentException("Destination is not node: " + dest);
+    public String freightNodeToString(FreightDestination dest, Locale locale, boolean abbreviation) {
+        if (!dest.isNode()) {
+            throw new IllegalArgumentException("Destination is not to node: " + dest);
         }
-        Node node = dest.getTo().getNode();
+        Node node = dest.getNode();
         return abbreviation ? node.getAbbr() : node.getName();
     }
 
-    public String freightColorsToString(Collection<FreightColor> colors, Locale locale) {
-        return sortFreightColors(colors).stream()
+    public String freightColorsToString(FreightDestination dest, Locale locale) {
+        if (!dest.isFreightColors()) {
+            throw new IllegalArgumentException("Destination is not to freight colors: " + dest);
+        }
+        return sortFreightColors(dest.getFreightColors()).stream()
                 .map(color -> color.getName(locale))
                 .collect(Collectors.joining(","));
     }
 
-    // TODO rewrite -- sort regions ...
-    public String freightRegionToString(FreightConnection dest, Locale locale) {
-        if (!dest.getTo().isRegions()) {
-            throw new IllegalArgumentException("Destination is not center of regions: " + dest);
+    public String freightRegionToString(FreightDestination dest, Locale locale) {
+        if (!dest.isRegions()) {
+            throw new IllegalArgumentException("Destination is not to regions: " + dest);
         }
-        Set<Region> regions = dest.getTo().getRegions();
+        Set<Region> regions = dest.getRegions();
         return regionsToString(regions, locale).stream()
                 .collect(Collectors.joining(","));
     }
 
     public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
-        return list.stream().map(d -> {
-            String destString = freightNodeToString(d, locale, true);
-            return d.getTo().isRegions() ? String.format("%s(%s)", destString, freightRegionToString(d, locale)): destString;
+        return list.stream().map(c -> c.getTo()).map(d -> {
+            StringBuilder result = new StringBuilder();
+            if (d.isNode()) {
+                result.append(freightNodeToString(d, locale, true));
+            }
+            if (d.isFreightColors()) {
+                result.append('[').append(freightColorsToString(d, locale)).append(']');
+            }
+            if (d.isRegions()) {
+                result.append('(').append(freightRegionToString(d, locale)).append(')');
+            }
+            return result.toString();
         }).collect(Collectors.toList());
     }
 
