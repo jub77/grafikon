@@ -160,8 +160,8 @@ public class EditRegionDialog extends JDialog {
         scrollPane.setViewportView(mapTable);
         mapTable.setModelProvider(provider);
         mapTable.setPath(new Path("colorMap"));
-        mapTable.addColumn(new BnColumn(new Path("color"), "color"));
-        mapTable.addColumn(new BnColumn(new Path("region"), "region"));
+        mapTable.addColumn(new BnColumn(new Path("color"), ResourceLoader.getString("edit.region.color"))); // NOI18N
+        mapTable.addColumn(new BnColumn(new Path("region"), ResourceLoader.getString("edit.region.region"))); // NOI18N
         mapTable.setSortable(true);
 
         JPanel addRemovePanel = new JPanel();
