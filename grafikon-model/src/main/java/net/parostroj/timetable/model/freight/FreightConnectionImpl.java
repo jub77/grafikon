@@ -14,7 +14,7 @@ class FreightConnectionImpl implements FreightConnection {
 
     public FreightConnectionImpl(Node from, FreightDestination to) {
         this.from = from;
-        this.to = FreightFactory.createFreightDestination(from, to);
+        this.to = to;
     }
 
     @Override

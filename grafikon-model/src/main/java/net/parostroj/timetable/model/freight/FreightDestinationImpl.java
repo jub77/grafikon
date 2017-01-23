@@ -3,8 +3,6 @@ package net.parostroj.timetable.model.freight;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
@@ -19,26 +17,17 @@ class FreightDestinationImpl implements FreightDestination {
 
     private final Node node;
     private final Set<Region> regions;
-    private final boolean nodeCenterAllowed;
+    private final Set<FreightColor> freightColors;
 
-    public FreightDestinationImpl(Set<Region> regions) {
-        this(null, true, regions);
-    }
-
-    public FreightDestinationImpl(Node node, boolean nodeCenterAllowed) {
-        this(node, true, null);
-    }
-
-    private FreightDestinationImpl(Node node, boolean nodeCenterAllowed, Set<Region> regions) {
+    public FreightDestinationImpl(Node node, Set<Region> regions, Set<FreightColor> freightColors) {
         this.node = node;
         this.regions = regions;
-        this.nodeCenterAllowed = nodeCenterAllowed;
+        this.freightColors = freightColors;
     }
 
     @Override
     public Set<Region> getRegions() {
-        return regions != null ? regions
-                : ((nodeCenterAllowed && node != null) ? node.getCenterRegions() : Collections.emptySet());
+        return regions == null ? Collections.emptySet() : regions;
     }
 
     @Override
@@ -48,14 +37,7 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public Set<FreightColor> getFreightColors() {
-        Set<FreightColor> colors = node != null ? node.getFreightColors() : Collections.emptySet();
-        Set<Region> centerRegions = getRegions();
-        if (!centerRegions.isEmpty()) {
-            colors = Stream.concat(colors.stream(), centerRegions.stream()
-                    .flatMap(r -> r.getAllNodes().stream().flatMap(n -> n.getFreightColors().stream())).distinct())
-                    .collect(Collectors.toSet());
-        }
-        return colors;
+        return freightColors == null ? Collections.emptySet() : freightColors;
     }
 
     @Override
@@ -65,7 +47,7 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public boolean isRegions() {
-        return regions != null || (nodeCenterAllowed && node != null && node.isCenterOfRegions());
+        return !getRegions().isEmpty();
     }
 
     @Override
@@ -80,7 +62,7 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public int hashCode() {
-        return Objects.hash(node, regions);
+        return Objects.hash(node, regions, freightColors);
     }
 
     @Override
@@ -92,6 +74,7 @@ class FreightDestinationImpl implements FreightDestination {
         if (getClass() != obj.getClass())
             return false;
         FreightDestinationImpl other = (FreightDestinationImpl) obj;
-        return Objects.equals(node, other.node) && Objects.equals(regions, other.regions);
+        return Objects.equals(node, other.node) && Objects.equals(this.getRegions(), other.getRegions())
+                && Objects.equals(this.getFreightColors(), other.getFreightColors());
     }
 }

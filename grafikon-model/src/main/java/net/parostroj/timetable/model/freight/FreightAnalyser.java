@@ -59,8 +59,10 @@ public class FreightAnalyser {
             conns = targets.map(t -> {
                 Node intermediateNode = t.getFirstIntermediateNode();
                 Node endNode = t.getTo();
-                Transport transport = intermediateNode == null ? nodes.get(endNode).getTransport() : new TransportImpl(nodes.get(intermediateNode), null);
-                return FreightFactory.createFreightNodeConnection(node, FreightFactory.createFreightDestination(endNode), transport);
+                Transport transport = intermediateNode == null ? nodes.get(endNode).getTransport()
+                        : new TransportImpl(nodes.get(intermediateNode), null);
+                return FreightFactory.createFreightNodeConnection(node,
+                        FreightFactory.createFreightDestination(node, null, endNode.getCenterRegions()), transport);
             });
         } else {
             // get direct connection map to centers
@@ -74,7 +76,8 @@ public class FreightAnalyser {
                     .filter(c -> !centers.containsKey(c.getTo()));
             conns = targets.map(t -> {
                 Transport transport = new TransportImpl(nodes.get(t.getFrom()), null);
-                FreightDestination destination = FreightFactory.createFreightDestination(t.getTo());
+                FreightDestination destination = FreightFactory.createFreightDestination(node, null,
+                        t.getTo().getCenterRegions());
                 FreightConnectionVia createFreightNodeConnection = FreightFactory.createFreightNodeConnection(node,
                         destination, transport);
                 return createFreightNodeConnection;
@@ -109,17 +112,14 @@ public class FreightAnalyser {
                 result = Collections.singleton(toRegions.getTopSuperRegion());
             } else if (toSuper != null && !fromRegions.findInSuperRegions(r -> r == toSuper).isPresent()) {
                 Region dest = toSuper;
-                while (dest.getSuperRegion() != null && !fromRegions.findInSuperRegions(equalsReference(dest.getSuperRegion())).isPresent()) {
+                while (dest.getSuperRegion() != null
+                        && !fromRegions.findInSuperRegions(Predicate.isEqual(dest.getSuperRegion())).isPresent()) {
                     dest = dest.getSuperRegion();
                 }
                 result = Collections.singleton(dest);
             }
         }
         return result;
-    }
-
-    private static <T> Predicate<T> equalsReference(T value) {
-        return v -> v == value;
     }
 
     public static Region getFirstCommonRegion(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
@@ -130,7 +130,7 @@ public class FreightAnalyser {
 
         if (fromSuper != null && toSuper != null) {
             commonRegion = fromSuper;
-            while (commonRegion != null && !toRegions.findInSuperRegions(equalsReference(commonRegion)).isPresent()) {
+            while (commonRegion != null && !toRegions.findInSuperRegions(Predicate.isEqual(commonRegion)).isPresent()) {
                 commonRegion = commonRegion.getSuperRegion();
             }
         }

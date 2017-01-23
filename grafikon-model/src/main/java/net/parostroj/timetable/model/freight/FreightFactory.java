@@ -5,6 +5,7 @@ import java.util.Set;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.RegionHierarchyImpl;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -16,11 +17,9 @@ public class FreightFactory {
 
     public static FreightConnectionPath createFreightNodeConnection(Node fromNode, Node toNode,
             TimeInterval timeInterval, List<TimeInterval> path) {
-        return new FreightConnectionPathImpl(fromNode, createFreightDestination(toNode, timeInterval.isNoRegionCenterTransfer()), timeInterval, path);
-    }
-
-    public static FreightConnection createFreightNodeConnection(Node fromNode, Node toNode) {
-        return new FreightConnectionImpl(fromNode, createFreightDestination(toNode));
+        return new FreightConnectionPathImpl(fromNode,
+                createFreightDestination(fromNode, toNode, timeInterval.isNoRegionCenterTransfer()), timeInterval,
+                path);
     }
 
     public static FreightConnection createFreightNodeConnection(Node fromNode, FreightDestination dest) {
@@ -36,32 +35,27 @@ public class FreightFactory {
     }
 
     public static FreightConnection createFreightNodeConnection(NodeConnection nodeConnection) {
-        return new FreightConnectionImpl(nodeConnection.getFrom(), createFreightDestination(nodeConnection.getTo()));
+        return new FreightConnectionImpl(nodeConnection.getFrom(),
+                createFreightDestination(nodeConnection.getFrom(), nodeConnection.getTo(), false));
     }
 
-    public static FreightDestination createFreightDestination(Node fromNode, FreightDestination destination) {
-        if (destination instanceof FreightDestinationFromWrapper) {
-            FreightDestinationFromWrapper wrapper = (FreightDestinationFromWrapper) destination;
-            if (wrapper.getFrom() == fromNode) {
-                return wrapper;
-            } else {
-                return new FreightDestinationFromWrapper(fromNode, wrapper.getDestination());
-            }
-        } else {
-            return new FreightDestinationFromWrapper(fromNode, destination);
-        }
+    public static FreightDestination createFreightDestination(Node fromNode, Node toNode, boolean disableCenter) {
+        // TODO add freight colors
+        return new FreightDestinationImpl(toNode,
+                toNode.isCenterOfRegions() && !disableCenter ? FreightAnalyser
+                        .transformToRegions(fromNode.getRegionHierarchy(), toNode.getCenterRegionHierarchy()) : null,
+                null);
     }
 
-    public static FreightDestination createFreightDestination(Node node) {
-        return new FreightDestinationImpl(node, false);
-    }
-
-    public static FreightDestination createFreightDestination(Node node, boolean disableCenter) {
-        return new FreightDestinationImpl(node, !disableCenter);
-    }
-
-    public static FreightDestination createFreightDestination(Set<Region> regions) {
-        return new FreightDestinationImpl(regions);
+    public static FreightDestination createFreightDestination(Node fromNode, Node toNode, Set<Region> regions) {
+        // TODO add freight colors
+        return new FreightDestinationImpl(toNode, regions != null
+                ? FreightAnalyser.transformToRegions(fromNode.getRegionHierarchy(), new RegionHierarchyImpl() {
+                    @Override
+                    public Set<Region> getRegions() {
+                        return regions;
+                    }
+                }) : null, null);
     }
 
     private static class FreightConnectionPathImpl extends FreightConnectionImpl implements FreightConnectionPath {
