@@ -85,14 +85,17 @@ public class OutputFreightUtil {
     public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
         return list.stream().map(c -> c.getTo()).map(d -> {
             StringBuilder result = new StringBuilder();
-            if (d.isNode()) {
+            if (d.isNode() && d.isVisible()) {
                 result.append(freightNodeToString(d, locale, true));
             }
             if (d.isFreightColors()) {
                 result.append('[').append(freightColorsToString(d, locale)).append(']');
             }
             if (d.isRegions()) {
-                result.append('(').append(freightRegionToString(d, locale)).append(')');
+                boolean empty = result.length() == 0;
+                if (!empty) result.append('(');
+                result.append(freightRegionToString(d, locale));
+                if (!empty) result.append(')');
             }
             return result.toString();
         }).collect(Collectors.toList());
