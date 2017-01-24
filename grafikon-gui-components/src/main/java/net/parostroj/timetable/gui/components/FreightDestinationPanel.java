@@ -171,7 +171,7 @@ public class FreightDestinationPanel extends JPanel {
                 })
                 .sorted((a, b) -> collator.compare(a.first, b.first))
                 .collect(Collectors.toList());
-        if (model.getRowCount() != 0) {
+        if (model.getRowCount() != 0 && !lines.isEmpty()) {
             model.addLine("", "");
         }
         model.addLines(lines);
