@@ -40,12 +40,14 @@ public class OutputFreightUtil {
     public List<String> intervalsToString(TrainDiagram diagram, Collection<TimeInterval> intervals, Locale locale) {
         return intervals.stream()
                 .sorted((a, b) -> Integer.compare(a.getEnd(), b.getEnd()))
-                .map(i -> {
-                    String trainName = i.getTrain().getName().translate(locale);
-                    String time = diagram.getTimeConverter().convertIntToText(i.getEnd());
-                    return String.format("%s (%s)", trainName, time);
-                })
+                .map(i -> intervalToString(diagram, i, locale))
                 .collect(Collectors.toList());
+    }
+
+    public String intervalToString(TrainDiagram diagram, TimeInterval interval, Locale locale) {
+        String trainName = interval.getTrain().getName().translate(locale);
+        String time = diagram.getTimeConverter().convertIntToText(interval.getEnd());
+        return String.format("%s (%s)", trainName, time);
     }
 
     public List<String> transportToString(TrainDiagram diagram, Transport transport, Locale locale) {

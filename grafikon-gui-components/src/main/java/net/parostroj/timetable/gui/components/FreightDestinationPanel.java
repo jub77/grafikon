@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.NodeFreight;
@@ -140,14 +142,36 @@ public class FreightDestinationPanel extends JPanel {
             NodeFreight freight = analyser.getFreightNodeRegionsFrom(node);
             this.addFreightToNodes(freight);
             this.addFreightToRegions(freight);
+            this.addFreightToColors(freight);
+
+            this.addTrainsFromNode(node, analyser);
+
             adjustColumnWidth.run();
         }
     }
 
-    private void addFreightToNodes(NodeFreight nodeTransport) {
+    private void addTrainsFromNode(Node node, FreightAnalyser analyser) {
         Locale locale = Locale.getDefault();
         Collator collator = Collator.getInstance();
-        List<Tuple<String>> lines = nodeTransport.getDirectConnections().stream()
+        List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
+        List<Tuple<String>> trains = intervalsFrom.stream()
+                .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
+                        util.freightListToString(diagram.getFreightNet().getFreightToNodes(i), locale).stream()
+                                .collect(Collectors.joining(", "))))
+                .sorted(comparator(collator))
+                .collect(Collectors.toList());
+
+        addLines(trains);
+    }
+
+    private Comparator<? super Tuple<String>> comparator(Collator collator) {
+        return (a, b) -> collator.compare(a.first, b.first);
+    }
+
+    private void addFreightToNodes(NodeFreight nodeFreight) {
+        Locale locale = Locale.getDefault();
+        Collator collator = Collator.getInstance();
+        List<Tuple<String>> lines = nodeFreight.getDirectConnections().stream()
                 .filter(e -> e.getTo().isVisible())
                 .map(e -> {
                     String node = util.freightNodeToString(e.getTo(), locale, false);
@@ -155,22 +179,39 @@ public class FreightDestinationPanel extends JPanel {
                             .collect(Collectors.joining(", "));
                     return new Tuple<>(node, trains);
                 })
-                .sorted((a, b) -> collator.compare(a.first, b.first)).collect(Collectors.toList());
+                .sorted(comparator(collator)).collect(Collectors.toList());
         model.addLines(lines);
     }
 
-    private void addFreightToRegions(NodeFreight regionTransport) {
+    private void addFreightToRegions(NodeFreight nodeFreight) {
         Locale locale = Locale.getDefault();
         Collator collator = Collator.getInstance();
-        List<Tuple<String>> lines = regionTransport.getRegionConnections().stream()
+        List<Tuple<String>> lines = nodeFreight.getRegionConnections().stream()
                 .map(e -> {
-                    String node = util.freightRegionToString(e.getTo(), locale);
+                    String region = util.freightRegionToString(e.getTo(), locale);
                     String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
                             .collect(Collectors.joining(", "));
-                    return new Tuple<>(node, transport);
+                    return new Tuple<>(region, transport);
                 })
-                .sorted((a, b) -> collator.compare(a.first, b.first))
+                .sorted(comparator(collator))
                 .collect(Collectors.toList());
+        addLines(lines);
+    }
+
+    private void addFreightToColors(NodeFreight nodeFreight) {
+        Locale locale = Locale.getDefault();
+        List<Tuple<String>> lines = nodeFreight.getFreightColorConnections().stream()
+                .map(e -> {
+                    String color = util.freightColorsToString(e.getTo(), locale);
+                    String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    return new Tuple<>(color, transport);
+                })
+                .collect(Collectors.toList());
+        addLines(lines);
+    }
+
+    private void addLines(List<Tuple<String>> lines) {
         if (model.getRowCount() != 0 && !lines.isEmpty()) {
             model.addLine("", "");
         }
