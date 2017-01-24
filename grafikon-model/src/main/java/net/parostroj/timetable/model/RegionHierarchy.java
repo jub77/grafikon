@@ -28,4 +28,13 @@ public interface RegionHierarchy {
     void apply(Consumer<Region> consumer);
 
     Optional<Region> findInSuperRegions(Predicate<Region> predicate);
+
+    static RegionHierarchy from(Set<Region> regions) {
+        return new RegionHierarchyImpl() {
+            @Override
+            public Set<Region> getRegions() {
+                return regions;
+            }
+        };
+    }
 }
