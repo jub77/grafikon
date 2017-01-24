@@ -29,7 +29,7 @@ class FreightConnectionImpl implements FreightConnection {
 
     @Override
     public String toString() {
-        return to.toString();
+        return String.format("%s to %s", from, to);
     }
 
     @Override

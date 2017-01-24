@@ -44,21 +44,16 @@ public class FreightFactory {
     }
 
     public static FreightDestination createFreightDestination(Node fromNode, Node toNode, RegionHierarchy toRegions) {
-        return createFreightDestincationImpl(fromNode, toNode, toRegions);
+        return createFreightDestinationImpl(fromNode, toNode, toRegions);
     }
 
     public static FreightDestination createFreightDestination(Node fromNode, RegionHierarchy toRegions) {
-        return createFreightDestincationImpl(fromNode, null, toRegions);
+        return createFreightDestinationImpl(fromNode, null, toRegions);
     }
 
-    private static FreightDestination createFreightDestincationImpl(Node fromNode, Node toNode, RegionHierarchy toRegions) {
-        Set<FreightColor> colors = toNode != null ? FreightAnalyser.getNodeFreightColors(fromNode, toNode) : null;
-        // TODO add freight colors - based on center...
-        Set<Region> regions = toRegions != null && !toRegions.getRegions().isEmpty()
-                ? FreightAnalyser.transformToRegions(fromNode.getRegionHierarchy(), toRegions) : null;
-        if (regions != null && !regions.isEmpty()) {
-            // TODO get all colors based on all subregions
-        }
+    private static FreightDestination createFreightDestinationImpl(Node fromNode, Node toNode, RegionHierarchy toRegions) {
+        Set<Region> regions = FreightAnalyser.transformToRegions(fromNode.getRegionHierarchy(), toRegions);
+        Set<FreightColor> colors = FreightAnalyser.getFreightColors(fromNode, toNode, regions);
         return new FreightDestinationImpl(toNode, regions, colors);
     }
 
@@ -83,11 +78,6 @@ public class FreightFactory {
         public List<TimeInterval> getPath() {
             return path;
         }
-
-        @Override
-        public String toString() {
-            return getTo().toString();
-        }
     }
 
     private static class FreightConnectionViaImpl extends FreightConnectionImpl implements FreightConnectionVia {
@@ -102,6 +92,11 @@ public class FreightFactory {
         @Override
         public Transport getTransport() {
             return transport;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s to %s via (%s)", getFrom(), getTo(), transport);
         }
     }
 }

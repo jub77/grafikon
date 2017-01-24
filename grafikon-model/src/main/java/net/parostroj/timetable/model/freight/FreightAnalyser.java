@@ -104,6 +104,7 @@ public class FreightAnalyser {
      * @return destination regions based on regions bellow the first common region
      */
     public static Set<Region> transformToRegions(RegionHierarchy fromRegions, RegionHierarchy toRegions) {
+        if (toRegions == null || toRegions.getRegions().isEmpty()) return Collections.emptySet();
         Region toSuper = toRegions.getFirstSuperRegion();
         Region fromSuper = fromRegions.getFirstSuperRegion();
         Set<Region> result = toRegions.getRegions();
@@ -123,15 +124,44 @@ public class FreightAnalyser {
         return result;
     }
 
-    public static Set<FreightColor> getNodeFreightColors(Node fromNode, Node toNode) {
+    /**
+     * Extracts information about colors.
+     *
+     * @param fromNode from node
+     * @param toNode to node (if exists, can be null)
+     * @param toRegions target regions (can be empty if the target is node only
+     * @return set of colors for the connection
+     */
+    public static Set<FreightColor> getFreightColors(Node fromNode, Node toNode, Set<Region> toRegions) {
+        Set<FreightColor> colors = Collections.emptySet();
         Region fromFC = fromNode.getRegionHierarchy().getFreightColorRegion();
-        Region toFC = toNode.getRegionHierarchy().getFreightColorRegion();
-        if (fromFC == toFC) {
-            // in the same region - use node freight color ...
-            return toNode.getFreightColors();
-        } else {
-            return Collections.emptySet();
+        if (toNode != null && !toNode.getFreightColors().isEmpty()) {
+            // node colors ...
+            Region toFC = toNode.getRegionHierarchy().getFreightColorRegion();
+            if (fromFC == toFC) {
+                // in the same region - use node freight color ...
+                colors = toNode.getFreightColors();
+            }
         }
+        if (!toRegions.isEmpty()) {
+            Region toFC = RegionHierarchy.from(toRegions).getFreightColorRegion();
+            if (fromFC == toFC) {
+                // the same freight color region - get all freight colors from regions
+                Stream<FreightColor> regionColors = toRegions.stream()
+                        .flatMap(r -> r.getAllNodes().stream())
+                        .flatMap(n -> n.getFreightColors().stream());
+                colors = Stream.concat(regionColors, colors.stream()).collect(Collectors.toSet());
+            } else {
+                // different freight color regions - get colors from color map
+                if (fromFC != null && toFC != null) {
+                    Stream<FreightColor> regionMapColors = fromFC.getFreightColorMap().entrySet().stream()
+                            .filter(e -> e.getValue() == toFC)
+                            .map(e -> e.getKey());
+                    colors = Stream.concat(regionMapColors, colors.stream()).collect(Collectors.toSet());
+                }
+            }
+        }
+        return colors;
     }
 
     private static class NodeFreightImpl implements NodeFreight {
@@ -139,6 +169,7 @@ public class FreightAnalyser {
         private final Set<FreightConnectionVia> directConnections;
         private final Set<FreightConnectionVia> regionConnections;
         private Map<Node, FreightConnectionVia> directMap;
+        private Set<FreightConnectionVia> freightColorConnections;
 
         private NodeFreightImpl(Set<FreightConnectionVia> directConnections, Set<FreightConnectionVia> regionConnections) {
             this.directConnections = directConnections;
@@ -168,6 +199,20 @@ public class FreightAnalyser {
                         .collect(Collectors.toMap(t -> t.getTo().getNode(), t -> t));
             }
             return directMap;
+        }
+
+        @Override
+        public Set<FreightConnectionVia> getFreightColorConnections() {
+            if (freightColorConnections == null) {
+                // filter direct connections which are not region (they appear also in region list)
+                Stream<FreightConnectionVia> directStream = directConnections.stream()
+                        .filter(c -> !c.getTo().isRegions());
+                // combine region and director connections and filter them for freight colors
+                Stream<FreightConnectionVia> stream = Stream.concat(directStream, regionConnections.stream())
+                        .filter(c -> c.getTo().isFreightColors());
+                freightColorConnections = stream.distinct().collect(Collectors.toSet());
+            }
+            return freightColorConnections;
         }
     }
 

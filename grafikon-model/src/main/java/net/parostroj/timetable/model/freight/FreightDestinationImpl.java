@@ -57,7 +57,7 @@ class FreightDestinationImpl implements FreightDestination {
 
     @Override
     public String toString() {
-        return node.getName();
+        return String.format("<%s,%s,%s>", node, regions, freightColors);
     }
 
     @Override
