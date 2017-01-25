@@ -80,13 +80,15 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
         loadFilters = new ArrayList<>();
+        // filter up to 22 is first because it deals with change from list to set (format)
+        loadFilters.add(new LoadFilter4d22());
+        // filters with increasing version
         loadFilters.add(new LoadFilter4d2());
         loadFilters.add(new LoadFilter4d7());
         loadFilters.add(new LoadFilter4d13());
         loadFilters.add(new LoadFilter4d18());
         loadFilters.add(new LoadFilter4d19());
         loadFilters.add(new LoadFilter4d21());
-        loadFilters.add(new LoadFilter4d22());
     }
 
     @Override
