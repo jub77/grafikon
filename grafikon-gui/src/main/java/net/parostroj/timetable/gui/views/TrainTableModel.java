@@ -97,7 +97,7 @@ class TrainTableModel extends AbstractTableModel {
                 }
             }
             if (columnIndex == TrainTableColumn.REGION_CENTER_TRANSFER.ordinal() && rowIndex != 0) {
-                return interval.getOwnerAsNode().isCenterOfRegions();
+                return train.isManagedFreight() && interval.getOwnerAsNode().isCenterOfRegions();
             }
         }
         return TrainTableColumn.getColumn(columnIndex).isAllowedToEdit(rowIndex, lastRow, interval);
@@ -222,13 +222,13 @@ class TrainTableModel extends AbstractTableModel {
                 // managed freight
                 retValue = false;
                 if (train.isManagedFreight() && interval.isNodeOwner()) {
-                    retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                    retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributeAsBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
                 break;
             case REGION_CENTER_TRANSFER:
                 // transfer in region center
                 retValue = false;
-                if (interval.isNodeOwner()) {
+                if (interval.isNodeOwner() && train.isManagedFreight()) {
                     if (interval.getOwnerAsNode().isCenterOfRegions() && !interval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER) && rowIndex != 0) {
                         retValue = true;
                     }
