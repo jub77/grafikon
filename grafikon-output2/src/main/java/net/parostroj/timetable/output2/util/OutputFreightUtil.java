@@ -85,22 +85,21 @@ public class OutputFreightUtil {
         return abbreviation ? node.getAbbr() : node.getName();
     }
 
-    public String freightColorsToString(FreightDestination dest, Locale locale) {
+    public List<String> freightColorsToString(FreightDestination dest, Locale locale) {
         if (!dest.isFreightColors()) {
             throw new IllegalArgumentException("Destination is not to freight colors: " + dest);
         }
         return sortFreightColors(dest.getFreightColors()).stream()
                 .map(color -> color.getName(locale))
-                .collect(Collectors.joining(","));
+                .collect(Collectors.toList());
     }
 
-    public String freightRegionToString(FreightDestination dest, Locale locale) {
+    public List<String> freightRegionsToString(FreightDestination dest, Locale locale) {
         if (!dest.isRegions()) {
             throw new IllegalArgumentException("Destination is not to regions: " + dest);
         }
         Set<Region> regions = dest.getRegions();
-        return regionsToString(regions, locale).stream()
-                .collect(Collectors.joining(","));
+        return regionsToString(regions, locale);
     }
 
     public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
@@ -110,12 +109,13 @@ public class OutputFreightUtil {
                 result.append(freightNodeToString(d, locale, true));
             }
             if (d.isFreightColors()) {
-                result.append('[').append(freightColorsToString(d, locale)).append(']');
+                result.append('[').append(freightColorsToString(d, locale).stream().collect(Collectors.joining(",")))
+                        .append(']');
             }
             if (d.isRegions()) {
                 boolean empty = result.length() == 0;
                 if (!empty) result.append('(');
-                result.append(freightRegionToString(d, locale));
+                result.append(freightRegionsToString(d, locale).stream().collect(Collectors.joining(",")));
                 if (!empty) result.append(')');
             }
             return result.toString();
