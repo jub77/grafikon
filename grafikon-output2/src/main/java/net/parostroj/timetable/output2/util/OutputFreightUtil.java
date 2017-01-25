@@ -7,16 +7,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightDestination;
 import net.parostroj.timetable.model.freight.Transport;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Utilities for output specific to dealing with freight.
@@ -48,6 +52,21 @@ public class OutputFreightUtil {
         String trainName = interval.getTrain().getName().translate(locale);
         String time = diagram.getTimeConverter().convertIntToText(interval.getEnd());
         return String.format("%s (%s)", trainName, time);
+    }
+
+    public List<String> intervalFreightTrainUnitToString(TrainDiagram diagram, TimeInterval interval) {
+        Collection<TrainsCycleItem> items = interval.getTrain()
+                .getCycleItemsForInterval(diagram.getTrainUnitCycleType(), interval);
+        Stream<TrainsCycle> cycles = items.stream().map(item -> item.getCycle())
+                .filter(cycle -> cycle.getAttributeAsBool(TrainsCycle.ATTR_FREIGHT));
+        return cycles.map(cycle -> {
+            String desc = cycle.getDescription();
+            if (ObjectsUtil.isEmpty(desc)) {
+                return cycle.getName();
+            } else {
+                return String.format("%s (%s)", cycle.getName(), desc);
+            }
+        }).collect(Collectors.toList());
     }
 
     public List<String> transportToString(TrainDiagram diagram, Transport transport, Locale locale) {

@@ -16,6 +16,7 @@ import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.RegionHierarchy;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -32,6 +33,16 @@ public class FreightAnalyser {
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
         return StreamSupport.stream(node.spliterator(), true).filter(i -> !i.isTechnological() && i.isFreightFrom())
                 .sorted(this::compareNormalizedStarts).collect(Collectors.toList());
+    }
+
+    public List<TimeInterval> getFreightTrainUnitIntervals(Node node) {
+        return StreamSupport.stream(node.spliterator(), true)
+                .filter(i -> i.isFirst())
+                .filter(i -> i.getTrain().getCycleItemsForInterval(diagram.getTrainUnitCycleType(), i).stream()
+                        .filter(item -> item.getCycle().getAttributeAsBool(TrainsCycle.ATTR_FREIGHT)).findAny()
+                        .isPresent())
+                .sorted(this::compareNormalizedStarts)
+                .collect(Collectors.toList());
     }
 
     public NodeFreight getFreightNodesFrom(Node node) {

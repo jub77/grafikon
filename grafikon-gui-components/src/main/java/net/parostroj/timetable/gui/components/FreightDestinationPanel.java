@@ -144,21 +144,31 @@ public class FreightDestinationPanel extends JPanel {
             this.addFreightToRegions(freight);
             this.addFreightToColors(freight);
 
-            this.addTrainsFromNode(node, analyser);
+            this.addFreightTrainsFromNode(node, analyser);
+            this.addFreightTrainUnitsFromNode(node, analyser);
 
             adjustColumnWidth.run();
         }
     }
 
-    private void addTrainsFromNode(Node node, FreightAnalyser analyser) {
+    private void addFreightTrainUnitsFromNode(Node node, FreightAnalyser analyser) {
         Locale locale = Locale.getDefault();
-        Collator collator = Collator.getInstance();
+        List<TimeInterval> intervals = analyser.getFreightTrainUnitIntervals(node);
+        List<Tuple<String>> trains = intervals.stream()
+                .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
+                       util.intervalFreightTrainUnitToString(diagram, i).stream().collect(Collectors.joining(", "))))
+                .collect(Collectors.toList());
+
+        addLines(trains);
+    }
+
+    private void addFreightTrainsFromNode(Node node, FreightAnalyser analyser) {
+        Locale locale = Locale.getDefault();
         List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
         List<Tuple<String>> trains = intervalsFrom.stream()
                 .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
                         util.freightListToString(diagram.getFreightNet().getFreightToNodes(i), locale).stream()
                                 .collect(Collectors.joining(", "))))
-                .sorted(comparator(collator))
                 .collect(Collectors.toList());
 
         addLines(trains);
