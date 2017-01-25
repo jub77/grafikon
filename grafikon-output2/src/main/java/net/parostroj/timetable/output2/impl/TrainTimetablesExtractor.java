@@ -90,7 +90,7 @@ public class TrainTimetablesExtractor {
         if (train.getType() != null && train.getType().getCategory() != null) {
             timetable.setCategoryKey(train.getType().getCategory().getKey());
         }
-        if (train.oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
+        if (train.getAnalysis().oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
         WeightDataExtractor wex = new WeightDataExtractor(train, diagram.getTrainUnitCycleType());
         timetable.setWeightData(wex.getData());

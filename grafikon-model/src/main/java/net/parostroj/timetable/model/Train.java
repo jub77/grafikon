@@ -53,6 +53,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private final List<TimeInterval> timeIntervalsView;
     private final TrainNameDelegate nameDelegate;
 
+    private final TrainAnalysis analysis = new TrainAnalysis();
+
     /**
      * Constructor.
      *
@@ -796,69 +798,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return PenaltyTable.getDecPenalty(this, speed);
     }
 
-    /**
-     * checks if all lines have given attribute.
-     *
-     * @param key key
-     * @param value value
-     * @return result of the check
-     */
-    public boolean allLinesHaveAttribute(String key, Object value) {
-        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
-            if (!value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
-                return false;
-            }
-        }
-        return true;
+    public TrainAnalysis getAnalysis() {
+        return analysis;
     }
 
-    /**
-     * checks if all nodes have given attribute.
-     *
-     * @param key key
-     * @param value value
-     * @return result of the check
-     */
-    public boolean allNodesHaveAttribute(String key, Object value) {
-        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
-            if (!value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * checks if at least one line has given attribute.
-     *
-     * @param key key
-     * @param value value
-     * @return result of the check
-     */
-    public boolean oneLineHasAttribute(String key, Object value) {
-        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
-            if (value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * checks if at least one node has given attribute.
-     *
-     * @param key key
-     * @param value value
-     * @return result of the check
-     */
-    public boolean oneNodeHasAttribute(String key, Object value) {
-        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
-            if (value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * attaches the train to the net. It adds time intervals to nodes and lines.
@@ -1064,5 +1007,75 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public class TrainAnalysis {
+
+        private TrainAnalysis() {
+        }
+
+        /**
+         * checks if all lines have given attribute.
+         *
+         * @param key key
+         * @param value value
+         * @return result of the check
+         */
+        public boolean allLinesHaveAttribute(String key, Object value) {
+            for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
+                if (!value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * checks if all nodes have given attribute.
+         *
+         * @param key key
+         * @param value value
+         * @return result of the check
+         */
+        public boolean allNodesHaveAttribute(String key, Object value) {
+            for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
+                if (!value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * checks if at least one line has given attribute.
+         *
+         * @param key key
+         * @param value value
+         * @return result of the check
+         */
+        public boolean oneLineHasAttribute(String key, Object value) {
+            for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
+                if (value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * checks if at least one node has given attribute.
+         *
+         * @param key key
+         * @param value value
+         * @return result of the check
+         */
+        public boolean oneNodeHasAttribute(String key, Object value) {
+            for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
+                if (value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
