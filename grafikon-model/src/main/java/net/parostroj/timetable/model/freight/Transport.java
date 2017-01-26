@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.freight;
 
 import java.util.Set;
 
+import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -11,11 +12,11 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public interface Transport {
 
-    FreightConnection getConnection();
+    Set<Region> getRegions();
 
     Set<TimeInterval> getTrains();
 
     default boolean isDirect() {
-        return getTrains() != null;
+        return getTrains() != null && !getTrains().isEmpty();
     }
 }

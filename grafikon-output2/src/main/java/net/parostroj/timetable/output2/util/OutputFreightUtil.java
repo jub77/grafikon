@@ -73,7 +73,7 @@ public class OutputFreightUtil {
         if (transport.isDirect()) {
             return this.intervalsToString(diagram, transport.getTrains(), locale);
         } else {
-            return this.regionsToString(transport.getConnection().getTo().getRegions(), locale);
+            return this.regionsToString(transport.getRegions(), locale);
         }
     }
 

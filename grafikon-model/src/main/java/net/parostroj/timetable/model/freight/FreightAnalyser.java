@@ -72,7 +72,7 @@ public class FreightAnalyser {
                 Node intermediateNode = t.getFirstIntermediateNode();
                 Node endNode = t.getTo();
                 Transport transport = intermediateNode == null ? nodes.get(endNode).getTransport()
-                        : new TransportImpl(nodes.get(intermediateNode), null);
+                        : new TransportImpl(nodes.get(intermediateNode).getTo().getRegions(), null);
                 return FreightFactory.createFreightNodeConnection(node,
                         FreightFactory.createFreightDestination(node, endNode.getCenterRegionHierarchy()), transport);
             });
@@ -87,7 +87,7 @@ public class FreightAnalyser {
                     .filter(c -> centers.containsKey(c.getFrom()))
                     .filter(c -> !centers.containsKey(c.getTo()));
             conns = targets.map(t -> {
-                Transport transport = new TransportImpl(nodes.get(t.getFrom()), null);
+                Transport transport = new TransportImpl(nodes.get(t.getFrom()).getTo().getRegions(), null);
                 FreightDestination destination = FreightFactory.createFreightDestination(node,
                         t.getTo().getCenterRegionHierarchy());
                 FreightConnectionVia createFreightNodeConnection = FreightFactory.createFreightNodeConnection(node,
@@ -98,7 +98,7 @@ public class FreightAnalyser {
         }
         // filter connections where to regions are the same as via (transport) regions
         conns = conns.filter(fc -> fc.getTransport().isDirect()
-                || !fc.getTransport().getConnection().getTo().getRegions().equals(fc.getTo().getRegions()));
+                || !fc.getTransport().getRegions().equals(fc.getTo().getRegions()));
         // filter duplicates
         conns = conns.distinct();
         Set<FreightConnectionVia> regionSet = conns.collect(Collectors.toSet());
@@ -229,17 +229,17 @@ public class FreightAnalyser {
 
     public static class TransportImpl implements Transport {
 
-        private final FreightConnection connection;
+        private final Set<Region> regions;
         private final Set<TimeInterval> trains;
 
-        private TransportImpl(FreightConnection connection, Set<TimeInterval> trains) {
-            this.connection = connection;
+        private TransportImpl(Set<Region> regions, Set<TimeInterval> trains) {
+            this.regions = regions;
             this.trains = trains;
         }
 
         @Override
-        public FreightConnection getConnection() {
-            return connection;
+        public Set<Region> getRegions() {
+            return regions;
         }
 
         @Override
@@ -249,7 +249,7 @@ public class FreightAnalyser {
 
         @Override
         public String toString() {
-            return isDirect() ? trains.toString() : connection.toString();
+            return isDirect() ? trains.toString() : regions.toString();
         }
     }
 }
