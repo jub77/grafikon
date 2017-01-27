@@ -425,7 +425,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     boolean isEmpty = this.regions.isEmpty();
                     Region superRegion = isEmpty ? null : this.regions.iterator().next().getSuperRegion();
                     Set<Region> available = node.getDiagram().getNet().getRegions().stream()
-                            .filter(r -> !r.isSuperRegion() && (isEmpty || r.getSuperRegion() == superRegion))
+                            .filter(r -> !r.hasSubRegions() && (isEmpty || r.getSuperRegion() == superRegion))
                             .collect(Collectors.toSet());
                     this.regions = editRegions(
                             regionsTextField, available,

@@ -3,9 +3,11 @@ package net.parostroj.timetable.gui.pm;
 import java.lang.ref.WeakReference;
 import java.text.Collator;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.beanfabrics.model.*;
@@ -54,9 +56,14 @@ public class RegionPM extends AbstractPM {
         this.regionRef = new WeakReference<>(region);
         this.name.setText(region.getName());
         this.locale.setValue(region.getAttribute(Region.ATTR_LOCALE, Locale.class));
-        Collection<Region> regions = allRegions.stream().filter(r -> r != region).filter(r -> r.isFreightColorRegion())
-                .sorted((o1, o2) -> collator.compare(o1.getName(), o2.getName())).collect(Collectors.toList());
-        this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regions, item -> item.getName(), "-"));
+        Comparator<? super Region> comparator = (o1, o2) -> collator.compare(o1.getName(), o2.getName());
+        Predicate<? super Region> notThisOne = r -> r != region;
+        Collection<Region> regionsForSuper = allRegions.stream()
+                .filter(notThisOne)
+                .filter(r -> r.getNodes().isEmpty())
+                .sorted(comparator)
+                .collect(Collectors.toList());
+        this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regionsForSuper, item -> item.getName(), "-"));
         this.superRegion.setValue(region.getSuperRegion());
         this.colorRegion.setBoolean(region.isFreightColorRegion());
         // color map
@@ -64,7 +71,11 @@ public class RegionPM extends AbstractPM {
         colorMap.clear();
         for (Map.Entry<FreightColor, Region> entry : cMap.entrySet()) {
             ColorMappingPM mapping = new ColorMappingPM();
-            mapping.set(entry.getKey(), entry.getValue(), allRegions);
+            mapping.set(entry.getKey(), entry.getValue(), allRegions.stream()
+                    .filter(notThisOne)
+                    .filter(r -> r.isFreightColorRegion())
+                    .sorted(comparator)
+                    .collect(Collectors.toSet()));
             colorMap.add(mapping);
         }
     }

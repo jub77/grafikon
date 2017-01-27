@@ -68,7 +68,7 @@ public class RegionValidator implements TrainDiagramValidator {
         if (event.getSource() instanceof Node && event.getType() == Type.ATTRIBUTE &&
                 event.getAttributeChange().checkName(Node.ATTR_REGIONS)) {
             for (Region region : ((Node) event.getSource()).getRegions()) {
-                if (region.isSuperRegion()) this.cancelSuperRegion(region);
+                if (region.hasSubRegions()) this.cancelSuperRegion(region);
             }
             checkCommonSuperRegion((Node) event.getSource());
         }

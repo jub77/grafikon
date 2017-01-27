@@ -140,7 +140,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return subRegions;
     }
 
-    public boolean isSuperRegion() {
+    public boolean hasSubRegions() {
         return !subRegions.isEmpty();
     }
 
@@ -165,7 +165,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     }
 
     protected Stream<Node> getNodesImpl() {
-        if (isSuperRegion()) {
+        if (hasSubRegions()) {
             return getSubRegions().stream().flatMap(sr -> sr.getNodesImpl());
         } else {
             return getNodes().stream();
