@@ -139,7 +139,7 @@ public class FreightDestinationPanel extends JPanel {
         if (node != null) {
             FreightAnalyser analyser = new FreightAnalyser(diagram);
 
-            NodeFreight freight = analyser.getFreightNodeRegionsFrom(node);
+            NodeFreight freight = analyser.getNodeFreightFrom(node);
             this.addFreightToNodes(freight);
             this.addFreightToRegions(freight);
             this.addFreightToColors(freight);
@@ -181,7 +181,7 @@ public class FreightDestinationPanel extends JPanel {
     private void addFreightToNodes(NodeFreight nodeFreight) {
         Locale locale = Locale.getDefault();
         Collator collator = Collator.getInstance();
-        List<Tuple<String>> lines = nodeFreight.getDirectConnections().stream()
+        List<Tuple<String>> lines = nodeFreight.getNodeConnections().stream()
                 .filter(e -> e.getTo().isVisible())
                 .map(e -> {
                     String node = util.freightNodeToString(e.getTo(), locale, false);

@@ -16,6 +16,8 @@ public interface Transport {
 
     Set<TimeInterval> getTrains();
 
+    Transport merge(Transport transport);
+
     default boolean isDirect() {
         return getTrains() != null && !getTrains().isEmpty();
     }

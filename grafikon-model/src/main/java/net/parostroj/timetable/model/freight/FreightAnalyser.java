@@ -45,29 +45,25 @@ public class FreightAnalyser {
                 .collect(Collectors.toList());
     }
 
-    public NodeFreight getFreightNodesFrom(Node node) {
-        Map<FreightConnection, Set<TimeInterval>> map = getFreightIntervalsFrom(node).stream()
+    public NodeFreight getNodeFreightFrom(Node node) {
+        // getting direct connections
+        Map<FreightConnection, Set<TimeInterval>> directConnectionMap = getFreightIntervalsFrom(node).stream()
                 .flatMap(i -> diagram.getFreightNet().getFreightToNodes(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
                 .collect(Collectors.groupingBy(p -> p.first, Collectors.mapping(p -> p.second, Collectors.toSet())));
-        Set<FreightConnectionVia> set = map.entrySet().stream()
+        Set<FreightConnectionVia> directConnections = directConnectionMap.entrySet().stream()
                 .map(e -> FreightFactory.createFreightNodeConnection(e.getKey().getFrom(), e.getKey().getTo(),
                         new TransportImpl(null, e.getValue())))
                 .collect(Collectors.toSet());
-        return new NodeFreightImpl(set, Collections.emptySet());
-    }
 
-    public NodeFreight getFreightNodeRegionsFrom(Node node) {
-        return getFreightNodeRegionsFrom(node, getFreightNodesFrom(node));
-    }
-
-    public NodeFreight getFreightNodeRegionsFrom(Node node, NodeFreight nodeTransport) {
         // depending if the node is center of regions or not
-        Collection<NodeConnectionNodes> connections = diagram.getFreightNet().getRegionConnectionNodes();
-        Map<Node, FreightConnectionVia> nodes = nodeTransport.getDirectConnectionsMap();
+        Collection<NodeConnectionNodes> centerConnections = diagram.getFreightNet().getRegionConnectionNodes();
+        Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(directConnections);
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
-            Stream<NodeConnectionNodes> targets = connections.stream().filter(c -> c.getFrom() == node);
+            Stream<NodeConnectionNodes> targets = centerConnections.stream()
+                    .filter(c -> c.getFrom() == node)
+                    .filter(c -> !nodes.containsKey(c.getTo()));
             conns = targets.map(t -> {
                 Node intermediateNode = t.getFirstIntermediateNode();
                 Node endNode = t.getTo();
@@ -77,15 +73,11 @@ public class FreightAnalyser {
                         FreightFactory.createFreightDestination(node, endNode.getCenterRegionHierarchy()), transport);
             });
         } else {
-            // get direct connection map to centers
-            Map<Node, FreightConnectionVia> centers = nodeTransport.getDirectConnections().stream()
-                    .filter(c -> c.getTo().isRegions())
-                    .collect(Collectors.toMap(c -> c.getTo().getNode(), c -> c));
             // filter region connections to connections started from reachable direct connections and
             // do not lead to reachable region
-            Stream<NodeConnectionNodes> targets = connections.stream()
-                    .filter(c -> centers.containsKey(c.getFrom()))
-                    .filter(c -> !centers.containsKey(c.getTo()));
+            Stream<NodeConnectionNodes> targets = centerConnections.stream()
+                    .filter(c -> nodes.containsKey(c.getFrom()))
+                    .filter(c -> !nodes.containsKey(c.getTo()));
             conns = targets.map(t -> {
                 Transport transport = new TransportImpl(nodes.get(t.getFrom()).getTo().getRegions(), null);
                 FreightDestination destination = FreightFactory.createFreightDestination(node,
@@ -94,15 +86,21 @@ public class FreightAnalyser {
                         destination, transport);
                 return createFreightNodeConnection;
             });
-            conns = Stream.concat(conns, centers.values().stream());
+            conns = Stream.concat(conns, nodes.values().stream());
         }
         // filter connections where to regions are the same as via (transport) regions
         conns = conns.filter(fc -> fc.getTransport().isDirect()
                 || !fc.getTransport().getRegions().equals(fc.getTo().getRegions()));
         // filter duplicates
         conns = conns.distinct();
-        Set<FreightConnectionVia> regionSet = conns.collect(Collectors.toSet());
-        return new NodeFreightImpl(nodeTransport.getDirectConnections(), regionSet);
+        Set<FreightConnectionVia> allConnections = Stream.concat(conns, directConnections.stream()).collect(Collectors.toSet());
+        return new NodeFreightImpl(allConnections);
+    }
+
+    private Map<Node, FreightConnectionVia> getToCenterMap(Set<? extends FreightConnectionVia> connections) {
+        return connections.stream()
+                .filter(c -> c.getTo().isRegions())
+                .collect(Collectors.toMap(c -> c.getTo().getNode(), c -> c));
     }
 
     protected int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
@@ -173,83 +171,5 @@ public class FreightAnalyser {
             }
         }
         return colors;
-    }
-
-    private static class NodeFreightImpl implements NodeFreight {
-
-        private final Set<FreightConnectionVia> directConnections;
-        private final Set<FreightConnectionVia> regionConnections;
-        private Map<Node, FreightConnectionVia> directMap;
-        private Set<FreightConnectionVia> freightColorConnections;
-
-        private NodeFreightImpl(Set<FreightConnectionVia> directConnections, Set<FreightConnectionVia> regionConnections) {
-            this.directConnections = directConnections;
-            this.regionConnections = regionConnections;
-        }
-
-        @Override
-        public Set<FreightConnectionVia> getDirectConnections() {
-            return directConnections;
-        }
-
-        @Override
-        public Set<FreightConnectionVia> getRegionConnections() {
-            return regionConnections;
-        }
-
-        @Override
-        public String toString() {
-            return directConnections.toString() + regionConnections.toString();
-        }
-
-        @Override
-        public Map<Node, FreightConnectionVia> getDirectConnectionsMap() {
-            if (directMap == null) {
-                directMap = directConnections.stream()
-                        .filter(c -> c.getTo().isNode())
-                        .collect(Collectors.toMap(t -> t.getTo().getNode(), t -> t));
-            }
-            return directMap;
-        }
-
-        @Override
-        public Set<FreightConnectionVia> getFreightColorConnections() {
-            if (freightColorConnections == null) {
-                // filter direct connections which are not region (they appear also in region list)
-                Stream<FreightConnectionVia> directStream = directConnections.stream()
-                        .filter(c -> !c.getTo().isRegions());
-                // combine region and director connections and filter them for freight colors
-                Stream<FreightConnectionVia> stream = Stream.concat(directStream, regionConnections.stream())
-                        .filter(c -> c.getTo().isFreightColors());
-                freightColorConnections = stream.distinct().collect(Collectors.toSet());
-            }
-            return freightColorConnections;
-        }
-    }
-
-    public static class TransportImpl implements Transport {
-
-        private final Set<Region> regions;
-        private final Set<TimeInterval> trains;
-
-        private TransportImpl(Set<Region> regions, Set<TimeInterval> trains) {
-            this.regions = regions;
-            this.trains = trains;
-        }
-
-        @Override
-        public Set<Region> getRegions() {
-            return regions;
-        }
-
-        @Override
-        public Set<TimeInterval> getTrains() {
-            return trains;
-        }
-
-        @Override
-        public String toString() {
-            return isDirect() ? trains.toString() : regions.toString();
-        }
     }
 }
