@@ -23,7 +23,7 @@ public interface RegionHierarchy {
 
     Region getTopSuperRegion();
 
-    Optional<Region> find(Predicate<Region> predicate);
+    Optional<Region> findInRegions(Predicate<Region> predicate);
 
     void apply(Consumer<Region> consumer);
 

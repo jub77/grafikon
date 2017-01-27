@@ -12,7 +12,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Map<FreightColor, Region> getFreightColorMap() {
         return this
-                .find(r -> r.isFreightColorRegion())
+                .findInRegions(r -> r.isFreightColorRegion())
                 .map(r -> r.getFreightColorMap())
                 .orElse(Collections.emptyMap());
     }
@@ -20,7 +20,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Region getFreightColorRegion() {
         return this
-                .find(r -> r.isFreightColorRegion())
+                .findInRegions(r -> r.isFreightColorRegion())
                 .orElse(null);
     }
 
@@ -46,7 +46,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     }
 
     @Override
-    public Optional<Region> find(Predicate<Region> predicate) {
+    public Optional<Region> findInRegions(Predicate<Region> predicate) {
         Optional<Region> result = getRegions().stream().filter(predicate).findAny();
         if (result.isPresent()) {
             return result;
