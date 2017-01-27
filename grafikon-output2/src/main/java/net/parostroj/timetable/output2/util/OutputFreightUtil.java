@@ -34,18 +34,24 @@ public class OutputFreightUtil {
     }
 
     public List<String> regionsToString(Collection<Region> regions, Locale locale) {
+        return this.regionsToStringImpl(regions, locale).collect(Collectors.toList());
+    }
+
+    private Stream<String> regionsToStringImpl(Collection<Region> regions, Locale locale) {
         Collator collator = Collator.getInstance(locale);
         return regions.stream()
                 .map(r -> r.getName())
-                .sorted((a, b) -> collator.compare(a, b))
-                .collect(Collectors.toList());
+                .sorted((a, b) -> collator.compare(a, b));
     }
 
     public List<String> intervalsToString(TrainDiagram diagram, Collection<TimeInterval> intervals, Locale locale) {
+        return this.intervalsToStringImpl(diagram, intervals, locale).collect(Collectors.toList());
+    }
+
+    private Stream<String> intervalsToStringImpl(TrainDiagram diagram, Collection<TimeInterval> intervals, Locale locale) {
         return intervals.stream()
                 .sorted((a, b) -> Integer.compare(a.getEnd(), b.getEnd()))
-                .map(i -> intervalToString(diagram, i, locale))
-                .collect(Collectors.toList());
+                .map(i -> intervalToString(diagram, i, locale));
     }
 
     public String intervalToString(TrainDiagram diagram, TimeInterval interval, Locale locale) {
@@ -70,11 +76,10 @@ public class OutputFreightUtil {
     }
 
     public List<String> transportToString(TrainDiagram diagram, Transport transport, Locale locale) {
-        if (transport.isDirect()) {
-            return this.intervalsToString(diagram, transport.getTrains(), locale);
-        } else {
-            return this.regionsToString(transport.getRegions(), locale);
-        }
+        return Stream.concat(
+                    this.regionsToStringImpl(transport.getRegions(), locale),
+                    this.intervalsToStringImpl(diagram, transport.getTrains(), locale))
+                .collect(Collectors.toList());
     }
 
     public String freightNodeToString(FreightDestination dest, Locale locale, boolean abbreviation) {

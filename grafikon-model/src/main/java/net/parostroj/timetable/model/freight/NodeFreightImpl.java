@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.RegionHierarchy;
 import net.parostroj.timetable.model.freight.FreightConnectionImpl.RegionsRegionHierarchy;
 
 class NodeFreightImpl implements NodeFreight {
@@ -35,6 +36,29 @@ class NodeFreightImpl implements NodeFreight {
                     .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<FreightConnectionVia> getRegionConnections() {
+        return connections.stream()
+                .filter(c -> c.getTo().isRegions())
+                .collect(Collectors.groupingBy(c -> c.getTo().getRegions()))
+                .values().stream()
+                .map(conns -> merge(conns, c -> FreightFactory.createFreightDestination(c.getFrom(),
+                        RegionHierarchy.from(c.getTo().getRegions()))))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FreightConnectionVia> getFreightColorConnections() {
+        return connections.stream()
+                .filter(c -> c.getTo().isFreightColors())
+                .collect(Collectors.groupingBy(c -> c.getTo().getFreightColors()))
+                .values().stream()
+                    .map(conns -> merge(conns,
+                            c -> FreightFactory.createFreightDestination(c.getFrom(), c.getTo().getNode(),
+                                    new RegionsRegionHierarchy(c.getTo().getRegions()))))
+                    .collect(Collectors.toSet());
+    }
+
     private FreightConnectionVia merge(List<? extends FreightConnectionVia> connections,
             Function<FreightConnection, FreightDestination> destinationCreation) {
         if (connections.size() == 1) {
@@ -52,25 +76,6 @@ class NodeFreightImpl implements NodeFreight {
             Node from = connections.stream().findAny().map(c -> c.getFrom()).get();
             return FreightFactory.createFreightNodeConnection(from, destination, transport);
         }
-    }
-
-    @Override
-    public Set<FreightConnectionVia> getRegionConnections() {
-        return connections.stream()
-                .filter(c -> c.getTo().isRegions())
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<FreightConnectionVia> getFreightColorConnections() {
-        return connections.stream()
-                .filter(c -> c.getTo().isFreightColors())
-                .collect(Collectors.groupingBy(c -> c.getTo().getFreightColors()))
-                .values().stream()
-                    .map(conns -> merge(conns,
-                            c -> FreightFactory.createFreightDestination(c.getFrom(), c.getTo().getNode(),
-                                    new RegionsRegionHierarchy(c.getTo().getRegions()))))
-                    .collect(Collectors.toSet());
     }
 
     @Override
