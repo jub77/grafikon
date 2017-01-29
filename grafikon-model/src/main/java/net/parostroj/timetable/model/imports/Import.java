@@ -78,6 +78,12 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             foundObject = diagram.getObjectById(orig.getId());
         }
+
+        // log if not found
+        if (orig != null && foundObject == null) {
+            log.warn("Couldn't find object with id: {} class: {}", orig.getId(), orig.getClass().getName());
+        }
+
         return foundObject;
     }
 
@@ -283,17 +289,82 @@ public abstract class Import {
         for (Map.Entry<String, Object> entry : orig.entrySet()) {
             if (entry.getValue() instanceof ObjectWithId) {
                 ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
-                if (objectWithId == null) {
-                    log.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId) entry.getValue()).getId(),
-                            entry.getValue().getClass());
-                } else {
+                if (objectWithId != null) {
                     dest.set(entry.getKey(), objectWithId);
+                }
+            } else if (entry.getValue() instanceof Collection
+                    && containsObjectWithId((Collection<?>) entry.getValue())) {
+                Collection<?> collection = getObjectsWithId(
+                        entry.getValue() instanceof Set ? new HashSet<>() : new ArrayList<>(),
+                        (Collection<?>) entry.getValue());
+                if (!collection.isEmpty()) {
+                    dest.set(entry.getKey(), collection);
+                }
+            } else if (entry.getValue() instanceof Map && containsObjectWithId((Map<?, ?>) entry.getValue())) {
+                Map<?,?> map = getObjectsWithId(new HashMap<>(), (Map<?, ?>) entry.getValue());
+                if (!map.isEmpty()) {
+                    dest.set(entry.getKey(), map);
                 }
             } else {
                 dest.set(entry.getKey(), entry.getValue());
             }
         }
         return dest;
+    }
+
+    protected Map<?, ?> getObjectsWithId(Map<Object, Object> dest, Map<?, ?> orig) {
+        for (Map.Entry<?, ?> entry : orig.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            Object newKey = key instanceof ObjectWithId ? this.getObjectWithId((ObjectWithId) key) : key;
+            Object newValue = value instanceof ObjectWithId ? this.getObjectWithId((ObjectWithId) value) : value;
+            if (newValue != null && newKey != null) {
+                dest.put(newKey, newValue);
+            }
+        }
+        return dest;
+    }
+
+    protected Collection<?> getObjectsWithId(Collection<Object> dest, Collection<?> orig) {
+        for (Object object : orig) {
+            if (object instanceof ObjectWithId) {
+                ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) object);
+                if (objectWithId != null) {
+                    dest.add(objectWithId);
+                }
+            } else {
+                dest.add(object);
+            }
+        }
+        return dest;
+    }
+
+    private boolean containsObjectWithId(Map<?,?> map) {
+        boolean hasItems = map != null && !map.isEmpty();
+        boolean containsObjectWithId = false;
+        if (hasItems) {
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getKey() instanceof ObjectWithId || entry.getValue() instanceof ObjectWithId) {
+                    containsObjectWithId = true;
+                    break;
+                }
+            }
+        }
+        return hasItems && containsObjectWithId;
+    }
+
+    private boolean containsObjectWithId(Collection<?> collection) {
+        boolean hasItems = collection != null && !collection.isEmpty();
+        boolean containsObjectWithId = false;
+        if (hasItems) {
+            for (Object o : collection) {
+                if (o instanceof ObjectWithId) {
+                    containsObjectWithId = true;
+                    break;
+                }
+            }
+        }
+        return hasItems && containsObjectWithId;
     }
 
     protected String getId(ObjectWithId oid) {
