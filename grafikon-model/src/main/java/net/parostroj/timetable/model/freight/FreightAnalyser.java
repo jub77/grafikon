@@ -1,12 +1,18 @@
 package net.parostroj.timetable.model.freight;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -32,17 +38,16 @@ public class FreightAnalyser {
 
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
         return StreamSupport.stream(node.spliterator(), true).filter(i -> !i.isTechnological() && i.isFreightFrom())
-                .sorted(this::compareNormalizedStarts).collect(Collectors.toList());
+                .sorted(this::compareNormalizedStarts).collect(toList());
     }
 
     public List<TimeInterval> getFreightTrainUnitIntervals(Node node) {
         return StreamSupport.stream(node.spliterator(), true)
-                .filter(i -> i.isFirst())
+                .filter(TimeInterval::isFirst)
                 .filter(i -> i.getTrain().getCycleItemsForInterval(diagram.getTrainUnitCycleType(), i).stream()
-                        .filter(item -> item.getCycle().getAttributeAsBool(TrainsCycle.ATTR_FREIGHT)).findAny()
-                        .isPresent())
+                        .anyMatch(item -> item.getCycle().getAttributeAsBool(TrainsCycle.ATTR_FREIGHT)))
                 .sorted(this::compareNormalizedStarts)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public NodeFreight getNodeFreightFrom(Node node) {
@@ -50,11 +55,11 @@ public class FreightAnalyser {
         Map<FreightConnection, Set<TimeInterval>> directConnectionMap = getFreightIntervalsFrom(node).stream()
                 .flatMap(i -> diagram.getFreightNet().getFreightToNodes(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
-                .collect(Collectors.groupingBy(p -> p.first, Collectors.mapping(p -> p.second, Collectors.toSet())));
+                .collect(groupingBy(p -> p.first, mapping(p -> p.second, toSet())));
         Set<FreightConnectionVia> directConnections = directConnectionMap.entrySet().stream()
                 .map(e -> FreightFactory.createFreightNodeConnection(e.getKey().getFrom(), e.getKey().getTo(),
                         new TransportImpl(null, e.getValue())))
-                .collect(Collectors.toSet());
+                .collect(toSet());
 
         // depending if the node is center of regions or not
         Collection<NodeConnectionNodes> centerConnections = diagram.getFreightNet().getRegionConnectionNodes();
@@ -89,14 +94,14 @@ public class FreightAnalyser {
         }
         // filter connections where to regions are the same as via (transport) regions
         conns = conns.filter(fc -> !fc.getTransport().getRegions().equals(fc.getTo().getRegions()));
-        Set<FreightConnectionVia> allConnections = Stream.concat(conns, directConnections.stream()).collect(Collectors.toSet());
+        Set<FreightConnectionVia> allConnections = Stream.concat(conns, directConnections.stream()).collect(toSet());
         return new NodeFreightImpl(allConnections);
     }
 
     private Map<Node, FreightConnectionVia> getToCenterMap(Set<? extends FreightConnectionVia> connections) {
         return connections.stream()
                 .filter(c -> c.getTo().isRegions())
-                .collect(Collectors.toMap(c -> c.getTo().getNode(), c -> c));
+                .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
     }
 
     protected int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
@@ -155,14 +160,14 @@ public class FreightAnalyser {
                 Stream<FreightColor> regionColors = toRegions.stream()
                         .flatMap(r -> r.getAllNodes().stream())
                         .flatMap(n -> n.getFreightColors().stream());
-                colors = Stream.concat(regionColors, colors.stream()).collect(Collectors.toSet());
+                colors = Stream.concat(regionColors, colors.stream()).collect(toSet());
             } else {
                 // different freight color regions - get colors from color map
                 if (fromFC != null && toFC != null) {
                     Stream<FreightColor> regionMapColors = fromFC.getFreightColorMap().entrySet().stream()
                             .filter(e -> e.getValue() == toFC)
                             .map(e -> e.getKey());
-                    colors = Stream.concat(regionMapColors, colors.stream()).collect(Collectors.toSet());
+                    colors = Stream.concat(regionMapColors, colors.stream()).collect(toSet());
                 }
             }
         }

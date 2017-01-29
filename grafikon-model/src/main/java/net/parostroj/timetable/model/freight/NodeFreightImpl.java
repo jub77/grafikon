@@ -1,11 +1,12 @@
 package net.parostroj.timetable.model.freight;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.RegionHierarchy;
@@ -16,8 +17,7 @@ class NodeFreightImpl implements NodeFreight {
     private final Set<FreightConnectionVia> connections;
 
     NodeFreightImpl(Set<FreightConnectionVia> connections) {
-        Preconditions.checkNotNull(connections, "Connection cannot be null");
-        this.connections = connections;
+        this.connections = Objects.requireNonNull(connections, "Connection cannot be null");
     }
 
     @Override
@@ -29,34 +29,34 @@ class NodeFreightImpl implements NodeFreight {
     public Set<FreightConnectionVia> getNodeConnections() {
         return connections.stream()
                 .filter(c -> c.getTo().isNode())
-                .collect(Collectors.groupingBy(c -> c.getTo().getNode()))
+                .collect(groupingBy(c -> c.getTo().getNode()))
                 .values().stream()
                     .map(conns -> merge(conns,
                             c -> FreightFactory.createFreightDestination(c.getFrom(), c.getTo().getNode(), null)))
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
     }
 
     @Override
     public Set<FreightConnectionVia> getRegionConnections() {
         return connections.stream()
                 .filter(c -> c.getTo().isRegions())
-                .collect(Collectors.groupingBy(c -> c.getTo().getRegions()))
+                .collect(groupingBy(c -> c.getTo().getRegions()))
                 .values().stream()
                 .map(conns -> merge(conns, c -> FreightFactory.createFreightDestination(c.getFrom(),
                         RegionHierarchy.from(c.getTo().getRegions()))))
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     @Override
     public Set<FreightConnectionVia> getFreightColorConnections() {
         return connections.stream()
                 .filter(c -> c.getTo().isFreightColors())
-                .collect(Collectors.groupingBy(c -> c.getTo().getFreightColors()))
+                .collect(groupingBy(c -> c.getTo().getFreightColors()))
                 .values().stream()
                     .map(conns -> merge(conns,
                             c -> FreightFactory.createFreightDestination(c.getFrom(), c.getTo().getNode(),
                                     new RegionsRegionHierarchy(c.getTo().getRegions()))))
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
     }
 
     private FreightConnectionVia merge(List<? extends FreightConnectionVia> connections,
@@ -67,13 +67,13 @@ class NodeFreightImpl implements NodeFreight {
             // merge
             FreightDestination destination = connections.stream()
                     .findAny()
-                    .map(c -> destinationCreation.apply(c))
+                    .map(destinationCreation)
                     .get();
             Transport transport = connections.stream()
-                    .map(c -> c.getTransport())
-                    .reduce((t1, t2) -> t1.merge(t2))
+                    .map(FreightConnectionVia::getTransport)
+                    .reduce(Transport::merge)
                     .get();
-            Node from = connections.stream().findAny().map(c -> c.getFrom()).get();
+            Node from = connections.stream().findAny().map(FreightConnectionVia::getFrom).get();
             return FreightFactory.createFreightNodeConnection(from, destination, transport);
         }
     }
