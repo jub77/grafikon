@@ -237,7 +237,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     public int getIndexOfObject(T object) {
         int i = 0;
         for (Wrapper<T> wrapper : list) {
-            if (wrapper.getElement().equals(object)) {
+            if (wrapper.getElement() != null && wrapper.getElement().equals(object)) {
                 return i;
             }
             i++;
