@@ -40,7 +40,8 @@ public class NetItemInfo implements NetSelectionListener {
     }
 
     @Override
-    public void selection(Object item) {
+    public void selection(Collection<Object> items) {
+        Object item = items.size() == 1 ? items.iterator().next() : null;
         if (item == null) {
             itemRef = null;
         } else {

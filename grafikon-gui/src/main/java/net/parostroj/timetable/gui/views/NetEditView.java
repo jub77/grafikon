@@ -123,19 +123,23 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // edit line
-            if (netEditModel.getSelectedLine() != null) {
-                Line selectedLine = netEditModel.getSelectedLine();
-                editLineDialog.setLocationRelativeTo(NetEditView.this);
-                editLineDialog.showDialog(selectedLine, model.getProgramSettings().getLengthUnit());
-            }
-            // edit node
-            if (netEditModel.getSelectedNode() != null) {
-                Node selectedNode = netEditModel.getSelectedNode();
-                editNodeDialog.setLocationRelativeTo(NetEditView.this);
-                editNodeDialog.showDialog(selectedNode,
-                        model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()),
-                        model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, SpeedUnit.KMPH));
+            Collection<Object> objects = netEditModel.getSelectedObjects();
+            if (!objects.isEmpty()) {
+                Object selected = objects.iterator().next();
+                // edit line
+                if (selected instanceof Line) {
+                    Line selectedLine = (Line) selected;
+                    editLineDialog.setLocationRelativeTo(NetEditView.this);
+                    editLineDialog.showDialog(selectedLine, model.getProgramSettings().getLengthUnit());
+                }
+                // edit node
+                if (selected instanceof Node) {
+                    Node selectedNode = (Node) selected;
+                    editNodeDialog.setLocationRelativeTo(NetEditView.this);
+                    editNodeDialog.showDialog(selectedNode,
+                            model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()),
+                            model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, SpeedUnit.KMPH));
+                }
             }
         }
     }
@@ -145,35 +149,53 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         @Override
         public void actionPerformed(ActionEvent e) {
             Component comp = NetEditView.this;
-            // delete node
-            if (netEditModel.getSelectedNode() != null) {
-                Node selectedNode = netEditModel.getSelectedNode();
-                if (!selectedNode.isEmpty() || !model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()
-                        || CheckingUtils.checkRoutesForNode(selectedNode, model.getDiagram().getRoutes())) {
-                    if (!selectedNode.isEmpty()) {
-                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
-                    } else if (!model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()) {
-                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.linesexist"), comp);
-                    } else {
-                        GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+            // delete all lines
+            for (Object o : netEditModel.getSelectedObjects()) {
+                if (o instanceof Line) {
+                    if (!deleteLine(comp, (Line) o)) {
+                        return;
                     }
-                } else {
-                    model.getDiagram().getNet().removeNode(selectedNode);
                 }
             }
-            // delete line
-            if (netEditModel.getSelectedLine() != null) {
-                Line selectedLine = netEditModel.getSelectedLine();
-                if (!selectedLine.isEmpty()
-                        || CheckingUtils.checkRoutesForLine(selectedLine, model.getDiagram().getRoutes())) {
-                    if (!selectedLine.isEmpty()) {
-                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
-                    } else {
-                        GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+            // delete all nodes
+            for (Object o : netEditModel.getSelectedObjects()) {
+                if (o instanceof Node) {
+                    if (!deleteNode(comp, (Node) o)) {
+                        return;
                     }
-                } else {
-                    model.getDiagram().getNet().removeLine(selectedLine);
                 }
+            }
+        }
+
+        private boolean deleteNode(Component comp, Node selectedNode) {
+            if (!selectedNode.isEmpty() || !model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()
+                    || CheckingUtils.checkRoutesForNode(selectedNode, model.getDiagram().getRoutes())) {
+                if (!selectedNode.isEmpty()) {
+                    GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
+                } else if (!model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()) {
+                    GuiComponentUtils.showError(ResourceLoader.getString("nl.error.linesexist"), comp);
+                } else {
+                    GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+                }
+                return false;
+            } else {
+                model.getDiagram().getNet().removeNode(selectedNode);
+                return true;
+            }
+        }
+
+        private boolean deleteLine(Component comp, Line selectedLine) {
+            if (!selectedLine.isEmpty()
+                    || CheckingUtils.checkRoutesForLine(selectedLine, model.getDiagram().getRoutes())) {
+                if (!selectedLine.isEmpty()) {
+                    GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
+                } else {
+                    GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+                }
+                return false;
+            } else {
+                model.getDiagram().getNet().removeLine(selectedLine);
+                return true;
             }
         }
     }
@@ -542,14 +564,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     @Override
-    public void selection(Object item) {
-        if (item != null) {
-            editAction.setEnabled(true);
-            deleteAction.setEnabled(true);
-        } else {
-            editAction.setEnabled(false);
-            deleteAction.setEnabled(false);
-        }
+    public void selection(Collection<Object> items) {
+        editAction.setEnabled(items.size() == 1);
+        deleteAction.setEnabled(!items.isEmpty());
     }
 
     private Object getIfSingleSelected() {
