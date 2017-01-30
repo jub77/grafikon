@@ -120,6 +120,9 @@ public class FreightDestinationPanel extends JPanel {
                         nodesModel.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
                         break;
                     case REMOVED:
+                        if (nodesModel.getSelectedObject() == event.getObject()) {
+                            nodesModel.setSelectedItem(EMPTY);
+                        }
                         nodesModel.removeObject((Node) event.getObject());
                         break;
                     default:
