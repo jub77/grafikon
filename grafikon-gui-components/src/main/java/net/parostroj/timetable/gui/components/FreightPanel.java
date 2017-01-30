@@ -16,12 +16,15 @@ import net.parostroj.timetable.model.TrainDiagram;
 public class FreightPanel extends JPanel {
 
     private final FreightDestinationPanel destinationPanel;
+    private final FreightConnectionPanel connectionPanel;
 
     public FreightPanel() {
         destinationPanel = new FreightDestinationPanel();
+        connectionPanel = new FreightConnectionPanel();
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.add(ResourceLoader.getString("freight.destination.title"), destinationPanel);
+        tabs.add(ResourceLoader.getString("freight.connection.title"), connectionPanel);
 
         this.setLayout(new BorderLayout());
         this.add(tabs, BorderLayout.CENTER);
@@ -29,5 +32,6 @@ public class FreightPanel extends JPanel {
 
     public void setDiagram(TrainDiagram diagram) {
         this.destinationPanel.setDiagram(diagram);
+        this.connectionPanel.setDiagram(diagram);
     }
 }

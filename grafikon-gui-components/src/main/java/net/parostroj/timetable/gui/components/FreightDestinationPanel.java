@@ -79,23 +79,10 @@ public class FreightDestinationPanel extends JPanel {
         model = new DestinationTableModel();
         JTable table = new JTable(model);
         table.setTableHeader(null);
-
-        adjustColumnWidth = () -> {
-            int freeSpace = 5;
-            final TableColumnModel columnModel = table.getColumnModel();
-            int width = 0;
-            for (int row = 0; row < table.getRowCount(); row++) {
-                TableCellRenderer renderer = table.getCellRenderer(row, 0);
-                Component comp = table.prepareRenderer(renderer, row, 0);
-                width = Math.max(comp.getPreferredSize().width + 1, width);
-            }
-            columnModel.getColumn(0).setMinWidth(width + freeSpace);
-            columnModel.getColumn(0).setMaxWidth(width + freeSpace);
-            columnModel.getColumn(0).setPreferredWidth(width + freeSpace);
-            columnModel.getColumn(1).setPreferredWidth(table.getWidth() - columnModel.getColumn(0).getPreferredWidth());
-        };
-
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
+        adjustColumnWidth = new ColumnAdjuster(table);
+
 
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), scroll.getBorder()));
@@ -162,7 +149,7 @@ public class FreightDestinationPanel extends JPanel {
                        util.intervalFreightTrainUnitToString(diagram, i).stream().collect(Collectors.joining(", "))))
                 .collect(Collectors.toList());
 
-        addLines(trains);
+        model.addLinesWithEmpty(trains);
     }
 
     private void addFreightTrainsFromNode(Node node, FreightAnalyser analyser) {
@@ -174,7 +161,7 @@ public class FreightDestinationPanel extends JPanel {
                                 .collect(Collectors.joining(", "))))
                 .collect(Collectors.toList());
 
-        addLines(trains);
+        model.addLinesWithEmpty(trains);
     }
 
     private Comparator<? super Tuple<String>> comparator(Collator collator) {
@@ -193,7 +180,7 @@ public class FreightDestinationPanel extends JPanel {
                     return new Tuple<>(node, trains);
                 })
                 .sorted(comparator(collator)).collect(Collectors.toList());
-        model.addLines(lines);
+        model.addLinesWithEmpty(lines);
     }
 
     private void addFreightToRegions(NodeFreight nodeFreight) {
@@ -209,7 +196,7 @@ public class FreightDestinationPanel extends JPanel {
                 })
                 .sorted(comparator(collator))
                 .collect(Collectors.toList());
-        addLines(lines);
+        model.addLinesWithEmpty(lines);
     }
 
     private void addFreightToColors(NodeFreight nodeFreight) {
@@ -223,17 +210,36 @@ public class FreightDestinationPanel extends JPanel {
                     return new Tuple<>(color, transport);
                 })
                 .collect(Collectors.toList());
-        addLines(lines);
+        model.addLinesWithEmpty(lines);
     }
 
-    private void addLines(List<Tuple<String>> lines) {
-        if (model.getRowCount() != 0 && !lines.isEmpty()) {
-            model.addLine("", "");
+    protected static final class ColumnAdjuster implements Runnable {
+
+        private JTable table;
+
+        public ColumnAdjuster(JTable table) {
+            this.table = table;
+            // TODO Auto-generated constructor stub
         }
-        model.addLines(lines);
+
+        @Override
+        public void run() {
+            int freeSpace = 5;
+            final TableColumnModel columnModel = table.getColumnModel();
+            int width = 0;
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, 0);
+                Component comp = table.prepareRenderer(renderer, row, 0);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            columnModel.getColumn(0).setMinWidth(width + freeSpace);
+            columnModel.getColumn(0).setMaxWidth(width + freeSpace);
+            columnModel.getColumn(0).setPreferredWidth(width + freeSpace);
+            columnModel.getColumn(1).setPreferredWidth(table.getWidth() - columnModel.getColumn(0).getPreferredWidth());
+        }
     }
 
-    protected static class DestinationTableModel extends AbstractTableModel {
+    protected static final class DestinationTableModel extends AbstractTableModel {
 
         private List<Tuple<String>> data = new ArrayList<>();
 
@@ -267,6 +273,13 @@ public class FreightDestinationPanel extends JPanel {
             int size = data.size();
             data.addAll(lines);
             this.fireTableRowsInserted(size, data.size() - 1);
+        }
+
+        public void addLinesWithEmpty(Collection<Tuple<String>> lines) {
+            if (this.getRowCount() != 0 && !lines.isEmpty()) {
+                this.addLine("", "");
+            }
+            this.addLines(lines);
         }
     }
 }
