@@ -7,7 +7,6 @@ import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.RegionHierarchy;
-import net.parostroj.timetable.model.TimeInterval;
 
 /**
  * Factory for creating destinations.
@@ -16,12 +15,11 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public class FreightFactory {
 
-    public static FreightConnectionPath createFreightNodeConnection(Node fromNode, Node toNode,
-            TimeInterval timeInterval, List<TimeInterval> path) {
+    public static FreightConnectionPath createFreightNodeConnection(Node fromNode, Node toNode, boolean regionTransfer,
+            List<TrainConnection> path) {
         return new FreightConnectionPathImpl(fromNode,
-                createFreightDestination(fromNode, toNode,
-                        timeInterval.isNoRegionCenterTransfer() ? null : toNode.getCenterRegionHierarchy()),
-                timeInterval, path);
+                createFreightDestination(fromNode, toNode, regionTransfer ? toNode.getCenterRegionHierarchy() : null),
+                path);
     }
 
     public static FreightConnection createFreightNodeConnection(Node fromNode, FreightDestination dest) {
@@ -59,23 +57,15 @@ public class FreightFactory {
 
     private static class FreightConnectionPathImpl extends FreightConnectionImpl implements FreightConnectionPath {
 
-        private final TimeInterval timeInterval;
-        private final List<TimeInterval> path;
+        private final List<TrainConnection> path;
 
-        public FreightConnectionPathImpl(Node from, FreightDestination to, TimeInterval timeInterval,
-                List<TimeInterval> path) {
+        public FreightConnectionPathImpl(Node from, FreightDestination to, List<TrainConnection> path) {
             super(from, to);
-            this.timeInterval = timeInterval;
             this.path = path;
         }
 
         @Override
-        public TimeInterval getTimeInterval() {
-            return timeInterval;
-        }
-
-        @Override
-        public List<TimeInterval> getPath() {
+        public List<TrainConnection> getPath() {
             return path;
         }
     }

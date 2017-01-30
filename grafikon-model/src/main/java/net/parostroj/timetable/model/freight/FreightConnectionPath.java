@@ -2,8 +2,6 @@ package net.parostroj.timetable.model.freight;
 
 import java.util.List;
 
-import net.parostroj.timetable.model.TimeInterval;
-
 /**
  * Freight connection containing information about trains which are to be taken to reach the destination.
  *
@@ -11,7 +9,5 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public interface FreightConnectionPath extends FreightConnection {
 
-    TimeInterval getTimeInterval();
-
-    List<TimeInterval> getPath();
+    List<TrainConnection> getPath();
 }

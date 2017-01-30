@@ -28,6 +28,7 @@ import net.parostroj.timetable.model.freight.FreightFactory;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.model.freight.NodeConnectionNodes;
+import net.parostroj.timetable.model.freight.TrainConnection;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -123,7 +124,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private void moveConnectionImpl(FNConnection conn, int indexFrom, int indexTo) {
         List<FNConnection> connList = this.fromMap.get(conn.getFrom());
         if (indexTo < 0 || indexTo >= connList.size()) {
-            throw new IllegalArgumentException(String.format("Connection moved to illegal place: %d (size %d)", indexTo, connList.size()));
+            throw new IllegalArgumentException(
+                    String.format("Connection moved to illegal place: %d (size %d)", indexTo, connList.size()));
         }
         FNConnection removedConn = connList.remove(indexFrom);
         if (removedConn != null) {
@@ -204,7 +206,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         Map<Train, List<FreightConnectionPath>> result = new LinkedHashMap<>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightConnectionPath> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightConnectionFilterFactory.createEmptyFilter(), true));
+            List<FreightConnectionPath> nodes = this.getFreightToNodesImpl(conn.getTo(),
+                    conn.getFreightDstFilter(FreightConnectionFilterFactory.createEmptyFilter(), true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -219,11 +222,15 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     private List<FreightConnectionPath> getFreightToNodesImpl(TimeInterval fromInterval, FreightConnectionFilter filter) {
         List<FreightConnectionPath> result = new LinkedList<>();
-        this.getFreightToNodesImpl(fromInterval.getOwnerAsNode(), fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
+        this.getFreightToNodesImpl(fromInterval.getOwnerAsNode(), fromInterval,
+                Collections.<TrainConnection>emptyList(), result, new HashSet<FNConnection>(), filter,
+                new FilterContext(fromInterval));
         return result;
     }
 
-    private void getFreightToNodesImpl(Node start, TimeInterval fromInterval, List<TimeInterval> path, List<FreightConnectionPath> result, Set<FNConnection> used, FreightConnectionFilter filter, FilterContext context) {
+    private void getFreightToNodesImpl(Node start, TimeInterval fromInterval, List<TrainConnection> path,
+            List<FreightConnectionPath> result, Set<FNConnection> used, FreightConnectionFilter filter,
+            FilterContext context) {
         FilterResult filterResult = FilterResult.OK;
         Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
         Iterators.find(intervals, interval -> interval == fromInterval);
@@ -232,7 +239,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         while (intervals.hasNext()) {
             TimeInterval i = intervals.next();
             if (i.isFreight()) {
-                FreightConnectionPath newDst = FreightFactory.createFreightNodeConnection(start, i.getOwnerAsNode(), i, path);
+                FreightConnectionPath newDst = FreightFactory.createFreightNodeConnection(start,
+                        i.getOwnerAsNode(), i.isRegionCenterTransfer(), createNewPath(path, fromInterval, i));
                 filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
@@ -247,13 +255,19 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
             for (FNConnection conn : this.getTrainsFrom(i)) {
                 if (!used.contains(conn)) {
                     used.add(conn);
-                    List<TimeInterval> newPath = new ArrayList<>(path.size() + 1);
-                    newPath.addAll(path);
-                    newPath.add(conn.getFrom());
-                    this.getFreightToNodesImpl(start, conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
+                    List<TrainConnection> newPath = createNewPath(path, fromInterval, conn.getFrom());
+                    this.getFreightToNodesImpl(start, conn.getTo(), newPath, result, used,
+                            conn.getFreightDstFilter(filter, false), context);
                 }
             }
         }
+    }
+
+    private List<TrainConnection> createNewPath(List<TrainConnection> path, TimeInterval from, TimeInterval to) {
+        List<TrainConnection> newPath = new ArrayList<>(path.size() + 1);
+        newPath.addAll(path);
+        newPath.add(new FreightRegionGraphDelegate.TrainConnectionImpl(from, to));
+        return newPath;
     }
 
     public List<FNConnection> getTrainsFrom(TimeInterval fromInterval) {
