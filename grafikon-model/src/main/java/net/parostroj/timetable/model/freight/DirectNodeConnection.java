@@ -3,10 +3,10 @@ package net.parostroj.timetable.model.freight;
 import java.util.Collection;
 
 /**
- * Connection between regions.
+ * Connection between nodes containing collection of trains.
  *
  * @author jub
  */
-public interface RegionConnection extends NodeConnection {
+public interface DirectNodeConnection extends NodeConnection {
     Collection<TrainConnection> getConnections();
 }

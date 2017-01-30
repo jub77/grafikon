@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.freight.Connection;
 import net.parostroj.timetable.model.freight.NodeConnection;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.model.freight.NodeConnectionNodes;
-import net.parostroj.timetable.model.freight.RegionConnection;
+import net.parostroj.timetable.model.freight.DirectNodeConnection;
 import net.parostroj.timetable.model.freight.TrainConnection;
 
 class FreightRegionGraphDelegate {
@@ -29,8 +29,8 @@ class FreightRegionGraphDelegate {
         this.diagram = diagram;
     }
 
-    DirectedGraph<Node, RegionConnectionImpl> getRegionGraph() {
-        SimpleDirectedWeightedGraph<Node, RegionConnectionImpl> graph = new SimpleDirectedWeightedGraph<>(RegionConnectionImpl.class);
+    DirectedGraph<Node, DirectNodeConnection> getRegionGraph() {
+        SimpleDirectedWeightedGraph<Node, DirectNodeConnection> graph = new SimpleDirectedWeightedGraph<>(DirectNodeConnection.class);
         diagram.getNet().getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
         for (Node node : graph.vertexSet()) {
             StreamSupport.stream(node.spliterator(), false)
@@ -41,9 +41,9 @@ class FreightRegionGraphDelegate {
                     .forEach(connection -> {
                         Node n1 = connection.getFrom().getOwnerAsNode();
                         Node n2 = connection.getTo().getOwnerAsNode();
-                        RegionConnectionImpl edge = graph.getEdge(n1, n2);
+                        DirectNodeConnectionImpl edge = (DirectNodeConnectionImpl) graph.getEdge(n1, n2);
                         if (edge == null) {
-                            edge = new RegionConnectionImpl(connection);
+                            edge = new DirectNodeConnectionImpl(connection);
                             graph.addEdge(n1, n2, edge);
                         } else {
                             edge.connections.add(connection);
@@ -54,26 +54,26 @@ class FreightRegionGraphDelegate {
     }
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {
-        return this.computeRegionConnectionsImpl(this.getRegionGraph(),
-                (connect, path) -> new NodeConnectionNodesImpl(connect, FluentIterable.from(path.getEdgeList())
-                        .filter(conn -> conn.getTo() != path.getEndVertex())
-                        .transform(RegionConnection::getTo)
-                        .toList()));
+        BiFunction<NodeConnection, GraphPath<Node, DirectNodeConnection>, NodeConnectionNodes> conversion = (connect, path) -> new NodeConnectionNodesImpl(connect, FluentIterable.from(path.getEdgeList())
+                .filter(conn -> conn.getTo() != path.getEndVertex())
+                .transform(DirectNodeConnection::getTo)
+                .toList());
+        return this.computeRegionConnectionsImpl(this.getRegionGraph(), conversion);
     }
 
     Collection<NodeConnectionEdges> getRegionConnectionEdges() {
-        return this.computeRegionConnectionsImpl(this.getRegionGraph(),
-                (connect, path) -> new NodeConnectionEdgesImpl(connect, FluentIterable.from(path.getEdgeList())
-                        .filter(RegionConnection.class)
-                        .toList()));
+        BiFunction<NodeConnection, GraphPath<Node, DirectNodeConnection>, NodeConnectionEdges> conversion = (connect, path) -> new NodeConnectionEdgesImpl(connect, FluentIterable.from(path.getEdgeList())
+                .filter(DirectNodeConnection.class)
+                .toList());
+        return this.computeRegionConnectionsImpl(this.getRegionGraph(), conversion);
     }
 
     protected <T extends NodeConnection> Collection<T> computeRegionConnectionsImpl(
-            DirectedGraph<Node, RegionConnectionImpl> graph,
-            BiFunction<NodeConnection, GraphPath<Node, RegionConnectionImpl>, T> conversion) {
+            DirectedGraph<Node, DirectNodeConnection> graph,
+            BiFunction<NodeConnection, GraphPath<Node, DirectNodeConnection>, T> conversion) {
         Collection<T> connections = new ArrayList<>();
         this.getAllConnectionVariants(graph).forEach(nodeConn -> {
-                    DijkstraShortestPath<Node, RegionConnectionImpl> path = new DijkstraShortestPath<>(graph,
+                    DijkstraShortestPath<Node, DirectNodeConnection> path = new DijkstraShortestPath<>(graph,
                             nodeConn.getFrom(), nodeConn.getTo());
                     if (path.getPath() != null) {
                         connections.add(conversion.apply(nodeConn, path.getPath()));
@@ -82,7 +82,7 @@ class FreightRegionGraphDelegate {
         return connections;
     }
 
-    private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, RegionConnectionImpl> graph) {
+    private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, DirectNodeConnection> graph) {
         return graph.vertexSet().stream().flatMap(nodeFrom -> graph.vertexSet().stream().filter(node -> node != nodeFrom)
                 .map(nodeTo -> new NodeConnectionImpl(nodeFrom, nodeTo)));
     }
@@ -133,9 +133,9 @@ class FreightRegionGraphDelegate {
     static class NodeConnectionEdgesImpl implements NodeConnectionEdges {
 
         private NodeConnection connection;
-        private List<RegionConnection> edges;
+        private List<DirectNodeConnection> edges;
 
-        public NodeConnectionEdgesImpl(NodeConnection connection, List<RegionConnection> edges) {
+        public NodeConnectionEdgesImpl(NodeConnection connection, List<DirectNodeConnection> edges) {
             this.connection = connection;
             this.edges = edges;
         }
@@ -151,7 +151,7 @@ class FreightRegionGraphDelegate {
         }
 
         @Override
-        public List<RegionConnection> getEdges() {
+        public List<DirectNodeConnection> getEdges() {
             return edges;
         }
 
@@ -187,11 +187,11 @@ class FreightRegionGraphDelegate {
         }
     }
 
-    static class RegionConnectionImpl extends DefaultWeightedEdge implements RegionConnection {
+    static class DirectNodeConnectionImpl extends DefaultWeightedEdge implements DirectNodeConnection {
 
         protected final Collection<TrainConnection> connections;
 
-        RegionConnectionImpl(TrainConnection connection) {
+        DirectNodeConnectionImpl(TrainConnection connection) {
             this.connections = new ArrayList<>();
             this.connections.add(connection);
         }
