@@ -31,13 +31,13 @@ class FreightRegionGraphDelegate {
 
     DirectedGraph<Node, RegionConnectionImpl> getRegionGraph() {
         SimpleDirectedWeightedGraph<Node, RegionConnectionImpl> graph = new SimpleDirectedWeightedGraph<>(RegionConnectionImpl.class);
-        diagram.getNet().getNodes().stream().filter(node -> node.isCenterOfRegions())
-                .forEach(node -> graph.addVertex(node));
+        diagram.getNet().getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
         for (Node node : graph.vertexSet()) {
             StreamSupport.stream(node.spliterator(), false)
-                    .filter(interval -> interval.isFreightFrom() && !interval.isLast())
+                    .filter(TimeInterval::isFreightFrom)
                     .flatMap(interval -> interval.getTrain().getIntervals(interval.getTrainInterval(2), null).stream()
-                            .filter(i -> i.isRegionCenterTransfer()).map(i -> new TrainFreightConnection(interval, i)))
+                            .filter(TimeInterval::isRegionCenterTransfer)
+                            .map(i -> new TrainFreightConnection(interval, i)))
                     .forEach(connection -> {
                         Node n1 = connection.getFrom().getOwnerAsNode();
                         Node n2 = connection.getTo().getOwnerAsNode();
@@ -56,13 +56,16 @@ class FreightRegionGraphDelegate {
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {
         return this.computeRegionConnectionsImpl(this.getRegionGraph(),
                 (connect, path) -> new NodeConnectionNodesImpl(connect, FluentIterable.from(path.getEdgeList())
-                        .filter(conn -> conn.getTo() != path.getEndVertex()).transform(conn -> conn.getTo()).toList()));
+                        .filter(conn -> conn.getTo() != path.getEndVertex())
+                        .transform(RegionConnection::getTo)
+                        .toList()));
     }
 
     Collection<NodeConnectionEdges> getRegionConnectionEdges() {
         return this.computeRegionConnectionsImpl(this.getRegionGraph(),
-                (connect, path) -> new NodeConnectionEdgesImpl(connect,
-                        FluentIterable.from(path.getEdgeList()).filter(RegionConnection.class).toList()));
+                (connect, path) -> new NodeConnectionEdgesImpl(connect, FluentIterable.from(path.getEdgeList())
+                        .filter(RegionConnection.class)
+                        .toList()));
     }
 
     protected <T extends NodeConnection> Collection<T> computeRegionConnectionsImpl(
@@ -221,7 +224,9 @@ class FreightRegionGraphDelegate {
             for (TrainConnection connection : connections) {
                 // adding an hour -> simulates penalty for further transfer
                 int connSpeed = connection.getFrom().getTrain().getIntervals(connection.getFrom(), connection.getTo())
-                    .stream().filter(i -> i.isNodeOwner()).collect(Collectors.summingInt(i -> i.getLength())) + TimeInterval.HOUR;
+                    .stream()
+                    .filter(TimeInterval::isNodeOwner)
+                    .collect(Collectors.summingInt(i -> i.getLength())) + TimeInterval.HOUR;
                 if (connSpeed < weight) {
                     weight = connSpeed;
                 }
