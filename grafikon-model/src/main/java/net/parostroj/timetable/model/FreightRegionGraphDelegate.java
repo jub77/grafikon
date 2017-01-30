@@ -37,7 +37,7 @@ class FreightRegionGraphDelegate {
                     .filter(TimeInterval::isFreightFrom)
                     .flatMap(interval -> interval.getTrain().getIntervals(interval.getTrainInterval(2), null).stream()
                             .filter(TimeInterval::isRegionCenterTransfer)
-                            .map(i -> new TrainFreightConnection(interval, i)))
+                            .map(i -> new TrainConnectionImpl(interval, i)))
                     .forEach(connection -> {
                         Node n1 = connection.getFrom().getOwnerAsNode();
                         Node n2 = connection.getTo().getOwnerAsNode();
@@ -84,17 +84,17 @@ class FreightRegionGraphDelegate {
 
     private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, RegionConnectionImpl> graph) {
         return graph.vertexSet().stream().flatMap(nodeFrom -> graph.vertexSet().stream().filter(node -> node != nodeFrom)
-                .map(nodeTo -> new NodeFreightConnection(nodeFrom, nodeTo)));
+                .map(nodeTo -> new NodeConnectionImpl(nodeFrom, nodeTo)));
     }
 
-    static class NodeFreightConnection extends ConnectionImpl<Node, Node> implements NodeConnection {
-        public NodeFreightConnection(Node from, Node to) {
+    static class NodeConnectionImpl extends ConnectionImpl<Node, Node> implements NodeConnection {
+        public NodeConnectionImpl(Node from, Node to) {
             super(from, to);
         }
     }
 
-    static class TrainFreightConnection extends ConnectionImpl<TimeInterval, TimeInterval> implements TrainConnection {
-        public TrainFreightConnection(TimeInterval from, TimeInterval to) {
+    static class TrainConnectionImpl extends ConnectionImpl<TimeInterval, TimeInterval> implements TrainConnection {
+        public TrainConnectionImpl(TimeInterval from, TimeInterval to) {
             super(from, to);
         }
     }
