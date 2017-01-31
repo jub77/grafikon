@@ -36,6 +36,10 @@ public class FreightAnalyser {
         this.diagram = diagram;
     }
 
+    public TrainDiagram getDiagram() {
+        return diagram;
+    }
+
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
         return StreamSupport.stream(node.spliterator(), true).filter(i -> !i.isTechnological() && i.isFreightFrom())
                 .sorted(this::compareNormalizedStarts).collect(toList());
@@ -51,22 +55,22 @@ public class FreightAnalyser {
     }
 
     public NodeFreight getNodeFreightFrom(Node node) {
-        // getting direct connections
-        Map<FreightConnection, Set<TimeInterval>> directConnectionMap = getFreightIntervalsFrom(node).stream()
+        // getting straight connections
+        Map<FreightConnection, Set<TimeInterval>> strainghtConnectionMap = getFreightIntervalsFrom(node).stream()
                 .flatMap(i -> diagram.getFreightNet().getFreightToNodes(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
                 .collect(groupingBy(p -> p.first, mapping(p -> p.second, toSet())));
-        Set<FreightConnectionVia> directConnections = directConnectionMap.entrySet().stream()
+        Set<FreightConnectionVia> straightConnections = strainghtConnectionMap.entrySet().stream()
                 .map(e -> FreightFactory.createFreightNodeConnection(e.getKey().getFrom(), e.getKey().getTo(),
                         new TransportImpl(null, e.getValue())))
                 .collect(toSet());
 
         // depending if the node is center of regions or not
         Collection<NodeConnectionNodes> centerConnections = diagram.getFreightNet().getRegionConnectionNodes();
-        Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(directConnections);
+        Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections);
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
-            // filter out region connections which are not from current node and ends in nodes with direct connection
+            // filter out region connections which are not from current node and ends in nodes with straight connection
             Stream<NodeConnectionNodes> targets = centerConnections.stream()
                     .filter(c -> c.getFrom() == node)
                     .filter(c -> !nodes.containsKey(c.getTo()));
@@ -79,7 +83,7 @@ public class FreightAnalyser {
                 return connection;
             });
         } else {
-            // filter region connections to connections started from reachable direct connections and
+            // filter region connections to connections started from reachable straight connections and
             // do not lead to reachable region
             Stream<NodeConnectionNodes> targets = centerConnections.stream()
                     .filter(c -> nodes.containsKey(c.getFrom()))
@@ -94,8 +98,16 @@ public class FreightAnalyser {
         }
         // filter connections where to regions are the same as via (transport) regions
         conns = conns.filter(fc -> !fc.getTransport().getRegions().equals(fc.getTo().getRegions()));
-        Set<FreightConnectionVia> allConnections = Stream.concat(conns, directConnections.stream()).collect(toSet());
-        return new NodeFreightImpl(allConnections);
+        // concat straight connections and connections via
+        Stream<FreightConnectionVia> allConns = Stream.concat(conns, straightConnections.stream());
+
+        Map<FreightDestination, Transport> allConnsMap = allConns
+                .collect(toMap(FreightConnectionVia::getTo, FreightConnectionVia::getTransport, Transport::merge));
+
+        Set<FreightConnectionVia> allConnections = allConnsMap.entrySet().stream()
+                .map(e -> FreightFactory.createFreightNodeConnection(node, e.getKey(), e.getValue()))
+                .collect(toSet());
+        return new NodeFreightImpl(node, allConnections);
     }
 
     private Map<Node, FreightConnectionVia> getToCenterMap(Set<? extends FreightConnectionVia> connections) {
