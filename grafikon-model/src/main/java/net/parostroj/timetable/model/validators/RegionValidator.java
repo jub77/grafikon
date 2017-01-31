@@ -35,6 +35,7 @@ public class RegionValidator implements TrainDiagramValidator {
     public boolean validate(Event event) {
         if (event.getSource() instanceof Net && event.getType() == Type.REMOVED
                 && event.getObject() instanceof Region) {
+            this.cancelSuperRegion((Region) event.getObject());
             this.removeRegionFromNet((Region) event.getObject());
             return true;
         }
