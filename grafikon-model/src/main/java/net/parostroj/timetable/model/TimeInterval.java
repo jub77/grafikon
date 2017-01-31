@@ -191,9 +191,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         String owner = getOwner() != null ?
                 (isNodeOwner() ? getOwner().toString() : getOwnerAsLine().toString(getDirection()))
                 : "-";
-        return getStart() != getEnd() ? String.format("%s(%s,%s)", owner, converter.convertIntToText(getStart()),
-                converter.convertIntToText(getEnd())) : String.format("%s(%s)", owner,
-                converter.convertIntToText(getStart()));
+        return getStart() != getEnd()
+                ? String.format("%s[%s](%s,%s)", owner, getTrain().getName().translate(),
+                        converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()))
+                : String.format("%s[%s](%s)", owner, getTrain().getName().translate(),
+                        converter.convertIntToText(getStart()));
     }
 
     /**
@@ -263,7 +265,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public Set<TimeInterval> getOverlappingIntervals() {
         if (overlappingIntervals == null) {
-            overlappingIntervals = new HashSet<TimeInterval>();
+            overlappingIntervals = new HashSet<>();
         }
         return overlappingIntervals;
     }
