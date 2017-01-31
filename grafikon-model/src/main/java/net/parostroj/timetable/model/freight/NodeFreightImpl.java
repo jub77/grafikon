@@ -14,10 +14,17 @@ import net.parostroj.timetable.model.freight.FreightConnectionImpl.RegionsRegion
 
 class NodeFreightImpl implements NodeFreight {
 
+    private final Node from;
     private final Set<FreightConnectionVia> connections;
 
-    NodeFreightImpl(Set<FreightConnectionVia> connections) {
+    NodeFreightImpl(Node from, Set<FreightConnectionVia> connections) {
+        this.from = from;
         this.connections = Objects.requireNonNull(connections, "Connection cannot be null");
+    }
+
+    @Override
+    public Node getFrom() {
+        return from;
     }
 
     @Override

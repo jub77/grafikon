@@ -2,12 +2,16 @@ package net.parostroj.timetable.model.freight;
 
 import java.util.Set;
 
+import net.parostroj.timetable.model.Node;
+
 /**
  * Information about freight transportation.
  *
  * @author jub
  */
 public interface NodeFreight {
+
+    Node getFrom();
 
     Set<FreightConnectionVia> getConnections();
 
