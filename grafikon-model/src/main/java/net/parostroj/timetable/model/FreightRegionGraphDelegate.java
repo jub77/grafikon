@@ -225,8 +225,8 @@ class FreightRegionGraphDelegate {
                 // adding an hour -> simulates penalty for further transfer
                 int connSpeed = connection.getFrom().getTrain().getIntervals(connection.getFrom(), connection.getTo())
                     .stream()
-                    .filter(TimeInterval::isNodeOwner)
-                    .collect(Collectors.summingInt(i -> i.getLength())) + TimeInterval.HOUR;
+                    .filter(TimeInterval::isLineOwner)
+                    .collect(Collectors.summingInt(TimeInterval::getLength)) + TimeInterval.HOUR;
                 if (connSpeed < weight) {
                     weight = connSpeed;
                 }
