@@ -189,10 +189,10 @@ class FreightRegionGraphDelegate {
 
     static class DirectNodeConnectionImpl extends DefaultWeightedEdge implements DirectNodeConnection {
 
-        protected final Collection<TrainConnection> connections;
+        protected final Set<TrainConnection> connections;
 
         DirectNodeConnectionImpl(TrainConnection connection) {
-            this.connections = new ArrayList<>();
+            this.connections = new HashSet<>();
             this.connections.add(connection);
         }
 
@@ -212,7 +212,7 @@ class FreightRegionGraphDelegate {
         }
 
         @Override
-        public Collection<TrainConnection> getConnections() {
+        public Set<TrainConnection> getConnections() {
             return connections;
         }
 
