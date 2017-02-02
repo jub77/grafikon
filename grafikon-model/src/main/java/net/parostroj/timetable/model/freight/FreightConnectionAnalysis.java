@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.toSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.freight.NodeFreightConnection.Step;
-import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -114,39 +112,25 @@ class FreightConnectionAnalysis {
     }
 
     void betweenCenters(final Context context) {
-        Set<Region> regions = to.getRegions();
+        Collection<ToRegionConnection> regions = this.getBetweenCenterRegions(context);
         if (regions.isEmpty()) {
             context.stage = Stage.NO_CONNECTION;
         } else {
-            List<Pair<Region, Context>> pairs = new ArrayList<>(regions.size());
-            Iterator<Region> rIterator = regions.iterator();
-            pairs.add(new Pair<>(rIterator.next(), context));
-            while (rIterator.hasNext()) {
-                pairs.add(new Pair<>(rIterator.next(), copyContext(context)));
-            }
-            for (Pair<Region,Context> pair : pairs) {
-                Region region = pair.first;
-                Context nContext = pair.second;
-                Optional<Node> center = region.getAllNodes().stream()
-                        .filter(n -> n.getCenterRegions().contains(region))
+            for (ToRegionConnection pair : regions) {
+                Context nContext = pair.context;
+                Node centerNode = pair.center;
+                Optional<NodeConnectionEdges> regionConn = nContext.getRegionConnections().stream()
+                        .filter(c -> c.getFrom() == nContext.current && c.getTo() == centerNode)
                         .findAny();
-                if (center.isPresent()) {
-                    Node centerNode = center.get();
-                    Optional<NodeConnectionEdges> regionConn = nContext.getRegionConnections().stream()
-                            .filter(c -> c.getFrom() == nContext.current && c.getTo() == centerNode)
-                            .findAny();
-                    if (regionConn.isPresent()) {
-                        NodeConnectionEdges conn = regionConn.get();
-                        conn.getEdges().stream().map(dc -> new StepImpl(dc.getFrom(), dc.getTo(),
-                                dc.getConnections().stream().map(c -> singletonList(c)).collect(toSet())))
-                        .forEach(step -> {
-                            nContext.steps.add(step);
-                        });
-                        nContext.current = centerNode;
-                        nContext.stage = centerNode == to ? Stage.CONNECTION : Stage.TO_NODE;
-                    } else {
-                        nContext.stage = Stage.NO_CONNECTION;
-                    }
+                if (regionConn.isPresent()) {
+                    NodeConnectionEdges conn = regionConn.get();
+                    conn.getEdges().stream().map(dc -> new StepImpl(dc.getFrom(), dc.getTo(),
+                            dc.getConnections().stream().map(c -> singletonList(c)).collect(toSet())))
+                    .forEach(step -> {
+                        nContext.steps.add(step);
+                    });
+                    nContext.current = centerNode;
+                    nContext.stage = centerNode == to ? Stage.CONNECTION : Stage.TO_NODE;
                 } else {
                     nContext.stage = Stage.NO_CONNECTION;
                 }
@@ -184,6 +168,14 @@ class FreightConnectionAnalysis {
                 .map(n -> new ToRegionConnection(source.getContext(), n, false));
 
         return Stream.concat(toRegionConnNode, toRegionConnOther).collect(toList());
+    }
+
+    private Collection<ToRegionConnection> getBetweenCenterRegions(Context context) {
+        ContextSource source = new ContextSource(context);
+        return to.getRegions().stream()
+                .map(Region::getCenterNode)
+                .map(n -> new ToRegionConnection(source.getContext(), n))
+                .collect(toList());
     }
 
     enum Stage {
@@ -239,6 +231,11 @@ class FreightConnectionAnalysis {
                 return connSet;
             }
         }
+
+        @Override
+        public String toString() {
+            return String.format("%s,%s", current, stage);
+        }
     }
 
     static class StepImpl implements Step {
@@ -291,6 +288,10 @@ class FreightConnectionAnalysis {
             this.context = context;
             this.center = center;
             this.transitive = transitive;
+        }
+
+        public ToRegionConnection(Context context, Node center) {
+            this(context, center, false);
         }
 
         @Override
