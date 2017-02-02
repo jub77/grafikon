@@ -160,6 +160,10 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         return nodes;
     }
 
+    public Node getCenterNode() {
+        return nodes.stream().filter(n -> n.getCenterRegions().contains(this)).findAny().orElse(null);
+    }
+
     public Set<Node> getAllNodes() {
         return getNodesImpl().collect(Collectors.toSet());
     }
