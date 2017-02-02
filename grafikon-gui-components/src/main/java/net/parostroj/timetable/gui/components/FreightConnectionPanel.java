@@ -161,12 +161,21 @@ public class FreightConnectionPanel extends JPanel {
 
             ncf.getSteps().forEach(s -> {
                 List<String> list = this.convertStep(s);
-                String node = s.getTo().getName();
+                String node = s.getFrom().getName();
                 for (String item : list) {
                     model.addLine(node, item);
                     node = null;
                 }
             });
+
+            if (ncf.isComplete()) {
+                model.addLine(to.getName(), "");
+            } else {
+                List<Step> steps = ncf.getSteps();
+                if (steps != null && !steps.isEmpty()) {
+                    model.addLine(steps.get(steps.size() - 1).getTo().getName(), "");
+                }
+            }
 
             adjustColumnWidth.run();
         }
