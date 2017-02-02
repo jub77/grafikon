@@ -24,6 +24,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * @author jub
@@ -42,7 +43,7 @@ public class FreightAnalyser {
 
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
         return StreamSupport.stream(node.spliterator(), true).filter(i -> !i.isTechnological() && i.isFreightFrom())
-                .sorted(this::compareNormalizedStarts).collect(toList());
+                .sorted(TimeUtil::compareNormalizedStarts).collect(toList());
     }
 
     public List<TimeInterval> getFreightTrainUnitIntervals(Node node) {
@@ -50,7 +51,7 @@ public class FreightAnalyser {
                 .filter(TimeInterval::isFirst)
                 .filter(i -> i.getTrain().getCycleItemsForInterval(diagram.getTrainUnitCycleType(), i).stream()
                         .anyMatch(item -> item.getCycle().getAttributeAsBool(TrainsCycle.ATTR_FREIGHT)))
-                .sorted(this::compareNormalizedStarts)
+                .sorted(TimeUtil::compareNormalizedStarts)
                 .collect(toList());
     }
 
@@ -67,9 +68,9 @@ public class FreightAnalyser {
 
         // depending if the node is center of regions or not
         Collection<NodeConnectionNodes> centerConnections = diagram.getFreightNet().getRegionConnectionNodes();
-        Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections);
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
+            Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections);
             // filter out region connections which are not from current node and ends in nodes with straight connection
             Stream<NodeConnectionNodes> targets = centerConnections.stream()
                     .filter(c -> c.getFrom() == node)
@@ -83,6 +84,7 @@ public class FreightAnalyser {
                 return connection;
             });
         } else {
+            Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections, node);
             // filter region connections to connections started from reachable straight connections and
             // do not lead to reachable region
             Stream<NodeConnectionNodes> targets = centerConnections.stream()
@@ -110,14 +112,21 @@ public class FreightAnalyser {
         return new NodeFreightImpl(node, allConnections);
     }
 
-    private Map<Node, FreightConnectionVia> getToCenterMap(Set<? extends FreightConnectionVia> connections) {
+    private Map<Node, FreightConnectionVia> getToCenterMap(Set<FreightConnectionVia> connections) {
         return connections.stream()
                 .filter(c -> c.getTo().isRegions())
                 .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
     }
 
-    protected int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
-        return Integer.compare(i1.getInterval().getNormalizedStart(), i2.getInterval().getNormalizedStart());
+    // filter out only centers within the same region as node
+    private Map<Node, FreightConnectionVia> getToCenterMap(Set<FreightConnectionVia> connections, Node node) {
+        return connections.stream()
+                .filter(c -> intersects(node.getRegions(), c.getTo().getRegions()))
+                .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
+    }
+
+    protected <T> boolean intersects(Set<T> a, Set<T> b) {
+        return a.stream().anyMatch(t -> b.contains(t));
     }
 
     /**
