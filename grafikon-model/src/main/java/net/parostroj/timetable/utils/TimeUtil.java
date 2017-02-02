@@ -35,4 +35,22 @@ public class TimeUtil {
     public static boolean isNormalizedTime(int time) {
         return time >= 0 && time < TimeInterval.DAY;
     }
+
+    /**
+     * @param i1 first interval
+     * @param i2 second interval
+     * @return compares normalized starts of the intervals
+     */
+    public static int compareNormalizedStarts(TimeInterval i1, TimeInterval i2) {
+        return Integer.compare(i1.getInterval().getNormalizedStart(), i2.getInterval().getNormalizedStart());
+    }
+
+    /**
+     * @param i1 first interval
+     * @param i2 second interval
+     * @return compares normalized ends of the intervals
+     */
+    public static int compareNormalizedEnds(TimeInterval i1, TimeInterval i2) {
+        return Integer.compare(i1.getInterval().getNormalizedEnd(), i2.getInterval().getNormalizedEnd());
+    }
 }
