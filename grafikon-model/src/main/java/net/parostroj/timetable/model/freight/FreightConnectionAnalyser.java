@@ -60,8 +60,9 @@ public class FreightConnectionAnalyser {
 
         // select shortest connection
         Context resultContext = analysis.getContexts().stream()
+                .filter(c -> c.stage == Stage.CONNECTION)
                 .collect(Collectors.minBy(this::compareLengthOfPath))
-                .get();
+                .orElse(analysis.getContexts().iterator().next());
         return new NodeFreightConnection() {
             @Override
             public Node getFrom() {

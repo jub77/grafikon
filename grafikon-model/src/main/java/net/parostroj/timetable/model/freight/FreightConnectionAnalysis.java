@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.freight;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -84,35 +86,23 @@ class FreightConnectionAnalysis {
     }
 
     void toCenter(final Context context) {
-//        Set<Region> regions = context.current.getRegions();
-        Set<Region> regions = getToCenterRegions(context);
+        Collection<ToRegionConnection> regions = getToCenterRegions(context);
         if (regions.isEmpty()) {
             context.stage = Stage.NO_CONNECTION;
         } else {
-            List<Pair<Region, Context>> pairs = new ArrayList<>(regions.size());
-            Iterator<Region> rIterator = regions.iterator();
-            pairs.add(new Pair<>(rIterator.next(), context));
-            while (rIterator.hasNext()) {
-                pairs.add(new Pair<>(rIterator.next(), copyContext(context)));
-            }
-
-            for (Pair<Region,Context> pair : pairs) {
-                Region region = pair.first;
-                Context nContext = pair.second;
-                Set<Region> currentRegions = context.current.getRegions();
-                Optional<Node> center = region.getAllNodes().stream()
-                        .filter(n -> n.getCenterRegions().contains(region))
-                        .findAny();
-                if (center.isPresent()) {
-                    Node centerNode = center.get();
-                    Set<List<TrainConnection>> set = nContext.getConnectionFromTo(nContext.current, centerNode).stream()
-                            .map(fc -> fc.getPath()).collect(toSet());
-                    if (!set.isEmpty()) {
-                        nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
-                        nContext.current = centerNode;
-                        boolean noDirectConnection = nContext.getConnectionFromTo(nContext.current, to).isEmpty();
-                        boolean sourceRegionCenter = currentRegions.contains(region);
-                        nContext.stage = noDirectConnection && sourceRegionCenter ? Stage.BETWEEN_CENTERS : Stage.TO_NODE;
+            for (ToRegionConnection conn : regions) {
+                Context nContext = conn.context;
+                Node centerNode = conn.center;
+                Set<List<TrainConnection>> set = nContext.getConnectionFromTo(nContext.current, centerNode).stream()
+                        .map(fc -> fc.getPath()).collect(toSet());
+                if (!set.isEmpty()) {
+                    nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
+                    nContext.current = centerNode;
+                    boolean noDirectConnection = nContext.getConnectionFromTo(nContext.current, to).isEmpty();
+                    if (noDirectConnection && conn.transitive) {
+                        nContext.stage = Stage.BETWEEN_CENTERS;
+                    } else if (conn.transitive || FreightAnalyser.intersects(to.getRegions(), centerNode.getCenterRegions())) {
+                        nContext.stage = Stage.TO_NODE;
                     } else {
                         nContext.stage = Stage.NO_CONNECTION;
                     }
@@ -172,16 +162,28 @@ class FreightConnectionAnalysis {
         return allContexts;
     }
 
-    // returns regions - current node and if there is a direct connection to a center of region which is the center
+    // returns regions - for current node and if there is a direct connection to a center of region which is the center
     // of region of destination node
-    private Set<Region> getToCenterRegions(Context context) {
-        Set<Region> regions = context.getConnectionFrom(context.current).stream()
+    private Collection<ToRegionConnection> getToCenterRegions(Context context) {
+        ContextSource source = new ContextSource(context);
+
+        Set<Node> nodeCenters = context.current.getRegions().stream()
+                .map(Region::getCenterNode)
+                .filter(Objects::nonNull)
+                .collect(toSet());
+
+        Stream<Node> otherCenters = context.getConnectionFrom(context.current).stream()
             .map(c -> c.getTo())
-            .filter(d -> d.isRegions())
-            .filter(d -> FreightAnalyser.intersects(to.getRegions(), d.getRegions()))
-            .flatMap(d -> d.getRegions().stream()).collect(toSet());
-        regions.addAll(context.current.getRegions());
-        return regions;
+            .filter(d -> d.isNode() && d.isRegions())
+            .map(d -> d.getNode())
+            .filter(n -> !nodeCenters.contains(n));
+
+        Stream<ToRegionConnection> toRegionConnNode = nodeCenters.stream()
+                .map(n -> new ToRegionConnection(source.getContext(), n, true));
+        Stream<ToRegionConnection> toRegionConnOther = otherCenters
+                .map(n -> new ToRegionConnection(source.getContext(), n, false));
+
+        return Stream.concat(toRegionConnNode, toRegionConnOther).collect(toList());
     }
 
     enum Stage {
@@ -277,6 +279,41 @@ class FreightConnectionAnalysis {
         @Override
         public String toString() {
             return connections.toString();
+        }
+    }
+
+    private static class ToRegionConnection {
+        public final Context context;
+        public final Node center;
+        public final boolean transitive;
+
+        public ToRegionConnection(Context context, Node center, boolean transitive) {
+            this.context = context;
+            this.center = center;
+            this.transitive = transitive;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s,%s,%s", context, center, transitive);
+        }
+    }
+
+    private class ContextSource {
+        private final Context source;
+        private Context current;
+
+        ContextSource(Context source) {
+            this.source = source;
+        }
+
+        synchronized Context getContext() {
+            if (current == null) {
+                current = source;
+            } else {
+                current = copyContext(current);
+            }
+            return current;
         }
     }
 }
