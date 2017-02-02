@@ -125,7 +125,7 @@ public class FreightAnalyser {
                 .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
     }
 
-    protected <T> boolean intersects(Set<T> a, Set<T> b) {
+    public static <T> boolean intersects(Set<T> a, Set<T> b) {
         return a.stream().anyMatch(t -> b.contains(t));
     }
 

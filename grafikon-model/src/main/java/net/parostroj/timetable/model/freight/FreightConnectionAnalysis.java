@@ -59,10 +59,6 @@ class FreightConnectionAnalysis {
         return newContext;
     }
 
-    Collection<Context> getAllContexts() {
-        return allContexts;
-    }
-
     void init(Context context) {
         if(from == to) {
             context.stage = Stage.CONNECTION;
@@ -88,7 +84,8 @@ class FreightConnectionAnalysis {
     }
 
     void toCenter(final Context context) {
-        Set<Region> regions = context.current.getRegions();
+//        Set<Region> regions = context.current.getRegions();
+        Set<Region> regions = getToCenterRegions(context);
         if (regions.isEmpty()) {
             context.stage = Stage.NO_CONNECTION;
         } else {
@@ -103,7 +100,8 @@ class FreightConnectionAnalysis {
                 Region region = pair.first;
                 Context nContext = pair.second;
                 Optional<Node> center = region.getAllNodes().stream()
-                        .filter(n -> n.getCenterRegions().contains(region))
+                        .filter(n -> n.getCenterRegions().contains(region)
+                                || FreightAnalyser.intersects(to.getRegions(), n.getCenterRegions()))
                         .findAny();
                 if (center.isPresent()) {
                     Node centerNode = center.get();
@@ -171,7 +169,19 @@ class FreightConnectionAnalysis {
     }
 
     Collection<Context> getContexts() {
-        return null;
+        return allContexts;
+    }
+
+    // returns regions - current node and if there is a direct connection to a center of region which is the center
+    // of region of destination node
+    private Set<Region> getToCenterRegions(Context context) {
+        Set<Region> regions = context.getConnectionFrom(context.current).stream()
+            .map(c -> c.getTo())
+            .filter(d -> d.isRegions())
+            .filter(d -> FreightAnalyser.intersects(to.getRegions(), d.getRegions()))
+            .flatMap(d -> d.getRegions().stream()).collect(toSet());
+        regions.addAll(context.current.getRegions());
+        return regions;
     }
 
     enum Stage {
