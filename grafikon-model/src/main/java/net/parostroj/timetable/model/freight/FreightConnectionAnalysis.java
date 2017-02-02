@@ -99,9 +99,9 @@ class FreightConnectionAnalysis {
             for (Pair<Region,Context> pair : pairs) {
                 Region region = pair.first;
                 Context nContext = pair.second;
+                Set<Region> currentRegions = context.current.getRegions();
                 Optional<Node> center = region.getAllNodes().stream()
-                        .filter(n -> n.getCenterRegions().contains(region)
-                                || FreightAnalyser.intersects(to.getRegions(), n.getCenterRegions()))
+                        .filter(n -> n.getCenterRegions().contains(region))
                         .findAny();
                 if (center.isPresent()) {
                     Node centerNode = center.get();
@@ -110,9 +110,9 @@ class FreightConnectionAnalysis {
                     if (!set.isEmpty()) {
                         nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
                         nContext.current = centerNode;
-                        nContext.stage = nContext.getConnectionFromTo(nContext.current, to).isEmpty()
-                                ? Stage.BETWEEN_CENTERS
-                                        : Stage.TO_NODE;
+                        boolean noDirectConnection = nContext.getConnectionFromTo(nContext.current, to).isEmpty();
+                        boolean sourceRegionCenter = currentRegions.contains(region);
+                        nContext.stage = noDirectConnection && sourceRegionCenter ? Stage.BETWEEN_CENTERS : Stage.TO_NODE;
                     } else {
                         nContext.stage = Stage.NO_CONNECTION;
                     }
