@@ -1,13 +1,19 @@
 package net.parostroj.timetable.gui.components;
 
+import static java.util.stream.Collectors.toList;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,11 +22,16 @@ import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdju
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.util.OutputFreightUtil;
+import net.parostroj.timetable.model.freight.FreightConnectionAnalyser;
+import net.parostroj.timetable.model.freight.NodeFreightConnection;
+import net.parostroj.timetable.model.freight.NodeFreightConnection.Step;
+import net.parostroj.timetable.model.freight.TrainConnection;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * Panel with freight connection between two nodes.
@@ -38,7 +49,12 @@ public class FreightConnectionPanel extends JPanel {
 
     private TrainDiagram diagram;
 
-    private final OutputFreightUtil util = new OutputFreightUtil();
+    private JLabel stateIconLabel;
+    private ImageIcon okIcon;
+    private ImageIcon errorIcon;
+
+//    TODO put back when used
+//    private final OutputFreightUtil util = new OutputFreightUtil();
 
     public FreightConnectionPanel() {
         JComboBox<Wrapper<Node>> fromComboBox = new JComboBox<>();
@@ -71,6 +87,12 @@ public class FreightConnectionPanel extends JPanel {
         topPanel.add(refreshButton);
 
         refreshButton.addActionListener(e -> this.updateView(fromNode.getSelectedObject(), toNode.getSelectedObject()));
+
+        stateIconLabel = new JLabel();
+        topPanel.add(stateIconLabel);
+
+        okIcon = ResourceLoader.createImageIcon(GuiIcon.OK);
+        errorIcon = ResourceLoader.createImageIcon(GuiIcon.ERROR);
 
         model = new DestinationTableModel();
         JTable table = new JTable(model);
@@ -130,13 +152,55 @@ public class FreightConnectionPanel extends JPanel {
             toNode.setSelectedObject(to);
         }
         model.clear();
+        stateIconLabel.setIcon(null);
         if (from != null && to != null) {
-            util.createAnalyser(diagram);
+            FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
+            NodeFreightConnection ncf = connectionAnalyser.analyse(from, to);
 
-            // TODO write connection
-            model.addLine(from.toString(), to.toString());
+            stateIconLabel.setIcon(ncf.isComplete() ? okIcon : errorIcon);
+
+            ncf.getSteps().forEach(s -> {
+                List<String> list = this.convertStep(s);
+                String node = s.getTo().getName();
+                for (String item : list) {
+                    model.addLine(node, item);
+                    node = null;
+                }
+            });
 
             adjustColumnWidth.run();
         }
+    }
+
+    private List<String> convertStep(Step step) {
+        return step.getConnections().stream()
+                .sorted(this::compareLists)
+                .map(this::convertPath)
+                .collect(toList());
+    }
+
+    private String convertPath(List<TrainConnection> path) {
+        StringBuilder result = new StringBuilder();
+        Iterator<TrainConnection> i = path.iterator();
+        TrainConnection conn = i.next();
+        // first one
+        result.append(convertConnectionTrain(conn));
+        // rest
+        while (i.hasNext()) {
+            conn = i.next();
+            result.append(" > ").append(conn.getFrom().getOwnerAsNode().getName()).append(" > ");
+            result.append(convertConnectionTrain(conn));
+        }
+        return result.toString();
+    }
+
+    private String convertConnectionTrain(TrainConnection connection) {
+        return String.format("%s(%s-%s)", connection.getFrom().getTrain().getName().translate(),
+                diagram.getTimeConverter().convertIntToText(connection.getFrom().getEnd()),
+                diagram.getTimeConverter().convertIntToText(connection.getTo().getStart()));
+    }
+
+    private int compareLists(List<TrainConnection> a, List<TrainConnection> b) {
+        return TimeUtil.compareNormalizedEnds(a.get(0).getFrom(), b.get(0).getFrom());
     }
 }
