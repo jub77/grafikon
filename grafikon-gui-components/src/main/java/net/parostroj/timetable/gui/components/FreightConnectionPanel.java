@@ -53,9 +53,6 @@ public class FreightConnectionPanel extends JPanel {
     private ImageIcon okIcon;
     private ImageIcon errorIcon;
 
-//    TODO put back when used
-//    private final OutputFreightUtil util = new OutputFreightUtil();
-
     public FreightConnectionPanel() {
         JComboBox<Wrapper<Node>> fromComboBox = new JComboBox<>();
         JComboBox<Wrapper<Node>> toComboBox = new JComboBox<>();
@@ -153,7 +150,7 @@ public class FreightConnectionPanel extends JPanel {
         }
         model.clear();
         stateIconLabel.setIcon(null);
-        if (from != null && to != null) {
+        if (from != null && to != null && from != to) {
             FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
             NodeFreightConnection ncf = connectionAnalyser.analyse(from, to);
 
