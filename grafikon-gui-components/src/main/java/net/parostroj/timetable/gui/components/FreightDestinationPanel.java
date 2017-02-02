@@ -219,7 +219,6 @@ public class FreightDestinationPanel extends JPanel {
 
         public ColumnAdjuster(JTable table) {
             this.table = table;
-            // TODO Auto-generated constructor stub
         }
 
         @Override
