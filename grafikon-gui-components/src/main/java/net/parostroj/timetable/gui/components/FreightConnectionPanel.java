@@ -201,7 +201,7 @@ public class FreightConnectionPanel extends JPanel {
     }
 
     private String convertConnectionTrain(TrainConnection connection) {
-        return String.format("%s(%s-%s)", connection.getFrom().getTrain().getName().translate(),
+        return String.format("%s (%s-%s)", connection.getFrom().getTrain().getName().translate(),
                 diagram.getTimeConverter().convertIntToText(connection.getFrom().getEnd()),
                 diagram.getTimeConverter().convertIntToText(connection.getTo().getStart()));
     }
