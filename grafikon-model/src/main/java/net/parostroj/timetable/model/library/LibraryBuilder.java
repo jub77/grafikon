@@ -63,6 +63,7 @@ public class LibraryBuilder {
         this.copyFactory = new CopyFactory(factory);
         this.items = new LinkedHashMap<>();
     }
+
     public LibraryItem addObject(ObjectWithId object) {
         return this.addImpl(object, LibraryItemType.getByItemClass(object.getClass()));
     }
@@ -77,6 +78,7 @@ public class LibraryBuilder {
             case OUTPUT_TEMPLATE: item = this.importOutputTemplate((OutputTemplate) object); break;
             case TRAIN_TYPE: item = this.importTrainType((TrainType) object); break;
             case TRAIN_TYPE_CATEGORY: item = this.importTrainTypeCategory((TrainTypeCategory) object); break;
+            default: throw new IllegalArgumentException("Unknown type of the object: " + object);
         }
         return item;
     }
