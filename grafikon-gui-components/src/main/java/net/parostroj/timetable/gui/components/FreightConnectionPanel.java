@@ -27,6 +27,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalyser;
 import net.parostroj.timetable.model.freight.NodeFreightConnection;
 import net.parostroj.timetable.model.freight.NodeFreightConnection.Step;
@@ -126,21 +127,40 @@ public class FreightConnectionPanel extends JPanel {
                     Node node = (Node) event.getObject();
                     switch (event.getType()) {
                     case ADDED:
-                        if (node.getType().isFreight()) {
-                            nodesModel.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
-                        }
+                        addNode(nodesModel, node);
                         break;
                     case REMOVED:
-                        if (nodesModel.getSelectedObject() == event.getObject()) {
-                            nodesModel.setSelectedItem(EMPTY);
-                        }
-                        nodesModel.removeObject((Node) event.getObject());
+                        removeNode(nodesModel, node);
                         break;
                     default:
                         // nothing
                     }
                 }
             });
+            diagram.getNet().addAllEventListener(e -> {
+                if (e.getSource() instanceof Node && e.getType() == Type.ATTRIBUTE
+                        && e.getAttributeChange().checkName(Node.ATTR_TYPE)) {
+                    Node node = (Node) e.getSource();
+                    if (node.getType().isFreight()) {
+                        addNode(nodesModel, node);
+                    } else {
+                        removeNode(nodesModel, node);
+                    }
+                }
+            });
+        }
+    }
+
+    private void removeNode(WrapperListModel<Node> nodesModel, Node node) {
+        if (nodesModel.getSelectedObject() == node) {
+            nodesModel.setSelectedItem(EMPTY);
+        }
+        nodesModel.removeObject(node);
+    }
+
+    private void addNode(WrapperListModel<Node> nodesModel, Node node) {
+        if (node.getType().isFreight()) {
+            nodesModel.addWrapper(Wrapper.getWrapper(node));
         }
     }
 
