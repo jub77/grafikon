@@ -5,6 +5,12 @@
  */
 package net.parostroj.timetable.model;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Type of the node.
  *
@@ -48,6 +54,12 @@ public enum NodeType {
         return null;
     }
 
+    public static Set<NodeType> filteredOf(Predicate<NodeType> predicate) {
+        return Stream.of(values())
+                .filter(predicate)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(NodeType.class)));
+    }
+
     public boolean isStation() {
         return this == STATION || this == STATION_BRANCH || this == STATION_FREIGHT || this == STATION_HIDDEN;
     }
@@ -58,6 +70,11 @@ public enum NodeType {
 
     public boolean isPassenger() {
         return this == STATION || this == STATION_BRANCH || this == STOP;
+    }
+
+    public boolean isFreight() {
+        return this == STATION || this == STATION_BRANCH || this == STATION_FREIGHT || this == STATION_HIDDEN
+                || this == STOP_WITH_FREIGHT;
     }
 
     public boolean isHidden() {
