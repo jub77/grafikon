@@ -9,7 +9,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -37,6 +39,7 @@ import net.parostroj.timetable.output2.gt.GTDraw;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
 import net.parostroj.timetable.output2.gt.GTOrientation;
 import net.parostroj.timetable.output2.gt.RegionCollector;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 /**
  * Graphical timetable view - with interaction.
@@ -65,8 +68,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        public Collection<FreightConnectionPath> getFreight(TimeInterval interval);
-        public Map<Train, List<FreightConnectionPath>> getPassedFreight(TimeInterval interval);
+        public Collection<String> getFreight(TimeInterval interval);
+        public Map<Train, List<String>> getPassedFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -75,6 +78,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
     private final Map<String, Object> toolTipformattingMap = new HashMap<>();
+
+    private OutputFreightUtil freightUtil = new OutputFreightUtil();
 
     public GraphicalTimetableView() {
         this.initComponents();
@@ -101,20 +106,23 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
 
             @Override
-            public Collection<FreightConnectionPath> getFreight(TimeInterval interval) {
+            public Collection<String> getFreight(TimeInterval interval) {
                 if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    return diagram.getFreightNet().getFreightToNodes(interval);
+                    List<FreightConnectionPath> fConns = diagram.getFreightNet().getFreightToNodes(interval);
+                    return freightUtil.freightListToString(fConns, Locale.getDefault());
                 } else {
                     return Collections.emptyList();
                 }
             }
 
             @Override
-            public Map<Train, List<FreightConnectionPath>> getPassedFreight(TimeInterval interval) {
+            public Map<Train, List<String>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    return diagram.getFreightNet().getFreightPassedInNode(interval);
+                    return diagram.getFreightNet().getFreightPassedInNode(interval).entrySet().stream()
+                            .collect(Collectors.toMap(e -> e.getKey(),
+                                    e -> freightUtil.freightListToString(e.getValue(), Locale.getDefault())));
                 } else {
                     return Collections.emptyMap();
                 }
