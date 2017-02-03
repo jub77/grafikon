@@ -46,6 +46,8 @@ public class FreightDestinationPanel extends JPanel {
 
     private static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
 
+    private static final int COMBO_BOX_LIST_SIZE = 12;
+
     private final WrapperListModel<Node> nodesModel;
     private final DestinationTableModel model;
     private final Runnable adjustColumnWidth;
@@ -58,6 +60,7 @@ public class FreightDestinationPanel extends JPanel {
         JComboBox<Wrapper<Node>> nodesComboBox = new JComboBox<>();
         nodesModel = new WrapperListModel<>(true);
         nodesComboBox.setModel(nodesModel);
+        nodesComboBox.setMaximumRowCount(COMBO_BOX_LIST_SIZE);
 
         setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();

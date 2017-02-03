@@ -43,6 +43,8 @@ public class FreightConnectionPanel extends JPanel {
 
     private static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
 
+    private static final int COMBO_BOX_LIST_SIZE = 12;
+
     private final WrapperListModel<Node> fromNode;
     private final WrapperListModel<Node> toNode;
     private final DestinationTableModel model;
@@ -61,6 +63,8 @@ public class FreightConnectionPanel extends JPanel {
         toNode = new WrapperListModel<>(true);
         fromComboBox.setModel(fromNode);
         toComboBox.setModel(toNode);
+        fromComboBox.setMaximumRowCount(COMBO_BOX_LIST_SIZE);
+        toComboBox.setMaximumRowCount(COMBO_BOX_LIST_SIZE);
 
         setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
