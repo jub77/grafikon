@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
+import static java.util.stream.Collectors.toList;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -95,16 +97,20 @@ public class FreightDestinationPanel extends JPanel {
         this.diagram = diagram;
         nodesModel.clear();
         if (diagram != null) {
-            nodesModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getNet().getNodes()));
+            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
+                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
         }
         nodesModel.addWrapper(EMPTY);
         nodesModel.setSelectedItem(EMPTY);
         if (diagram != null) {
             diagram.getNet().addListener(event -> {
                 if (event.getObject() instanceof Node) {
+                    Node node = (Node) event.getObject();
                     switch (event.getType()) {
                     case ADDED:
-                        nodesModel.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
+                        if (node.getType().isFreight()) {
+                            nodesModel.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
+                        }
                         break;
                     case REMOVED:
                         if (nodesModel.getSelectedObject() == event.getObject()) {

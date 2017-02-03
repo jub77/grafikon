@@ -112,25 +112,29 @@ public class FreightConnectionPanel extends JPanel {
         initializeNodeSelection(diagram, toNode);
     }
 
-    private void initializeNodeSelection(TrainDiagram diagram, WrapperListModel<Node> node) {
-        node.clear();
+    private void initializeNodeSelection(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
+        nodesModel.clear();
         if (diagram != null) {
-            node.setListOfWrappers(Wrapper.getWrapperList(diagram.getNet().getNodes()));
+            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
+                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
         }
-        node.addWrapper(EMPTY);
-        node.setSelectedItem(EMPTY);
+        nodesModel.addWrapper(EMPTY);
+        nodesModel.setSelectedItem(EMPTY);
         if (diagram != null) {
             diagram.getNet().addListener(event -> {
                 if (event.getObject() instanceof Node) {
+                    Node node = (Node) event.getObject();
                     switch (event.getType()) {
                     case ADDED:
-                        node.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
+                        if (node.getType().isFreight()) {
+                            nodesModel.addWrapper(Wrapper.getWrapper((Node) event.getObject()));
+                        }
                         break;
                     case REMOVED:
-                        if (node.getSelectedObject() == event.getObject()) {
-                            node.setSelectedItem(EMPTY);
+                        if (nodesModel.getSelectedObject() == event.getObject()) {
+                            nodesModel.setSelectedItem(EMPTY);
                         }
-                        node.removeObject((Node) event.getObject());
+                        nodesModel.removeObject((Node) event.getObject());
                         break;
                     default:
                         // nothing
