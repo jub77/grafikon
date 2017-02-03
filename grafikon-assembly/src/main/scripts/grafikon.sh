@@ -1,3 +1,3 @@
 #!/bin/sh
 
-javaw -jar grafikon.jar $*
+java -jar grafikon.jar $*
