@@ -17,14 +17,17 @@ public class FreightPanel extends JPanel {
 
     private final FreightDestinationPanel destinationPanel;
     private final FreightConnectionPanel connectionPanel;
+    private final FreightCheckPanel checkPanel;
 
     public FreightPanel() {
         destinationPanel = new FreightDestinationPanel();
         connectionPanel = new FreightConnectionPanel();
+        checkPanel = new FreightCheckPanel();
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.add(ResourceLoader.getString("freight.destination.title"), destinationPanel);
         tabs.add(ResourceLoader.getString("freight.connection.title"), connectionPanel);
+        tabs.add(ResourceLoader.getString("freight.check.title"), checkPanel);
 
         this.setLayout(new BorderLayout());
         this.add(tabs, BorderLayout.CENTER);
@@ -33,5 +36,6 @@ public class FreightPanel extends JPanel {
     public void setDiagram(TrainDiagram diagram) {
         this.destinationPanel.setDiagram(diagram);
         this.connectionPanel.setDiagram(diagram);
+        this.checkPanel.setDiagram(diagram);
     }
 }
