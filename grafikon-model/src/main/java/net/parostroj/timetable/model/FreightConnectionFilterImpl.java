@@ -65,11 +65,11 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
     }
 
     private boolean isInNodeList(FreightConnection dst, List<Node> nodes) {
-        return nodes != null && nodes.contains(dst.getTo());
+        return nodes != null && nodes.contains(dst.getTo().getNode());
     }
 
     private boolean isNotInNodeList(FreightConnection dst, List<Node> nodes) {
-        return nodes != null && !nodes.contains(dst.getTo());
+        return nodes != null && !nodes.contains(dst.getTo().getNode());
     }
 
     private boolean isNotInNodeList(TimeInterval interval, List<Node> nodes) {
