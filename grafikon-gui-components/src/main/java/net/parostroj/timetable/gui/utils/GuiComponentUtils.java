@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.utils;
 
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Window;
 
@@ -67,6 +68,10 @@ public class GuiComponentUtils {
         button.setIcon(ResourceLoader.createImageIcon(icon));
         button.setMargin(new Insets(margin, margin, margin, margin));
         return button;
+    }
+
+    public static ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
+        return new ImageIcon(icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
 
     public static Component getTopLevelComponent(Object component) {
