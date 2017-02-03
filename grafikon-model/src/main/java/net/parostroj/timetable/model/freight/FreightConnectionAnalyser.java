@@ -24,6 +24,10 @@ public class FreightConnectionAnalyser {
         this.analyser = new FreightAnalyser(diagram);
     }
 
+    FreightConnectionAnalyser(FreightAnalyser analyser) {
+        this.analyser = analyser;
+    }
+
     /**
      * Returns shortest freight connection between stations - if one exists.
      *
