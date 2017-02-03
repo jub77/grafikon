@@ -53,4 +53,9 @@ public class ExportImportSelection {
     public void setImportMatch(ImportMatch importMatch) {
         this.importMatch = importMatch;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s", importMatch, importOverwrite, objects);
+    }
 }
