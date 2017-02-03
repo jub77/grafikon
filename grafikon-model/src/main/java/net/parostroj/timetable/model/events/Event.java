@@ -89,6 +89,6 @@ public class Event {
 
     @Override
     public String toString() {
-        return String.format("%s(%s)%s", source, type, attributeChange != null ? ": " + attributeChange : "");
+        return String.format("%s(%s)%s", source, type, attributeChange != null ? ":" + attributeChange : "");
     }
 }
