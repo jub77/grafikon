@@ -109,22 +109,26 @@ public class OutputFreightUtil {
 
     public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
         return list.stream().map(c -> c.getTo()).map(d -> {
-            StringBuilder result = new StringBuilder();
-            if (d.isNode() && d.isVisible()) {
-                result.append(freightNodeToString(d, locale, true));
-            }
-            if (d.isFreightColors()) {
-                result.append('[').append(freightColorsToString(d, locale).stream().collect(Collectors.joining(",")))
-                        .append(']');
-            }
-            if (d.isRegions()) {
-                boolean empty = result.length() == 0;
-                if (!empty) result.append('(');
-                result.append(freightRegionsToString(d, locale).stream().collect(Collectors.joining(",")));
-                if (!empty) result.append(')');
-            }
-            return result.toString();
+            return freightToString(d, locale);
         }).collect(Collectors.toList());
+    }
+
+    public String freightToString(FreightDestination dest, Locale locale) {
+        StringBuilder result = new StringBuilder();
+        if (dest.isNode() && dest.isVisible()) {
+            result.append(freightNodeToString(dest, locale, true));
+        }
+        if (dest.isFreightColors()) {
+            result.append('[').append(freightColorsToString(dest, locale).stream().collect(Collectors.joining(",")))
+                    .append(']');
+        }
+        if (dest.isRegions()) {
+            boolean empty = result.length() == 0;
+            if (!empty) result.append('(');
+            result.append(freightRegionsToString(dest, locale).stream().collect(Collectors.joining(",")));
+            if (!empty) result.append(')');
+        }
+        return result.toString();
     }
 
     public static List<FreightColor> sortFreightColors(Collection<FreightColor> colors) {
