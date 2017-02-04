@@ -41,14 +41,13 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class FreightConnectionPanel extends JPanel {
 
-    private static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
-
     private static final int COMBO_BOX_LIST_SIZE = 12;
 
     private final WrapperListModel<Node> fromNode;
     private final WrapperListModel<Node> toNode;
     private final DestinationTableModel model;
     private final Runnable adjustColumnWidth;
+    private final FreightComboBoxHelper helper;
 
     private TrainDiagram diagram;
 
@@ -103,6 +102,7 @@ public class FreightConnectionPanel extends JPanel {
 
         adjustColumnWidth = new ColumnAdjuster(table);
 
+        helper = new FreightComboBoxHelper();
 
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), scroll.getBorder()));
@@ -113,59 +113,8 @@ public class FreightConnectionPanel extends JPanel {
 
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
-        initializeNodeSelection(diagram, fromNode);
-        initializeNodeSelection(diagram, toNode);
-    }
-
-    private void initializeNodeSelection(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
-        nodesModel.clear();
-        if (diagram != null) {
-            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
-                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
-        }
-        nodesModel.addWrapper(EMPTY);
-        nodesModel.setSelectedItem(EMPTY);
-        if (diagram != null) {
-            diagram.getNet().addListener(event -> {
-                if (event.getObject() instanceof Node) {
-                    Node node = (Node) event.getObject();
-                    switch (event.getType()) {
-                    case ADDED:
-                        addNode(nodesModel, node);
-                        break;
-                    case REMOVED:
-                        removeNode(nodesModel, node);
-                        break;
-                    default:
-                        // nothing
-                    }
-                }
-            });
-            diagram.getNet().addAllEventListener(e -> {
-                if (e.getSource() instanceof Node && e.getType() == Type.ATTRIBUTE
-                        && e.getAttributeChange().checkName(Node.ATTR_TYPE)) {
-                    Node node = (Node) e.getSource();
-                    if (node.getType().isFreight()) {
-                        addNode(nodesModel, node);
-                    } else {
-                        removeNode(nodesModel, node);
-                    }
-                }
-            });
-        }
-    }
-
-    private void removeNode(WrapperListModel<Node> nodesModel, Node node) {
-        if (nodesModel.getSelectedObject() == node) {
-            nodesModel.setSelectedItem(EMPTY);
-        }
-        nodesModel.removeObject(node);
-    }
-
-    private void addNode(WrapperListModel<Node> nodesModel, Node node) {
-        if (node.getType().isFreight()) {
-            nodesModel.addWrapper(Wrapper.getWrapper(node));
-        }
+        helper.initializeNodeSelection(diagram, fromNode);
+        helper.initializeNodeSelection(diagram, toNode);
     }
 
     public void updateView(Node from, Node to) {
@@ -236,5 +185,65 @@ public class FreightConnectionPanel extends JPanel {
 
     private int compareLists(List<TrainConnection> a, List<TrainConnection> b) {
         return TimeUtil.compareNormalizedEnds(a.get(0).getFrom(), b.get(0).getFrom());
+    }
+}
+
+class FreightComboBoxHelper {
+
+    static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
+
+    public void initializeNodeSelection(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
+        nodesModel.clear();
+        if (diagram != null) {
+            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
+                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
+        }
+        nodesModel.addWrapper(EMPTY);
+        nodesModel.setSelectedItem(EMPTY);
+        if (diagram != null) {
+            installListeners(diagram, nodesModel);
+        }
+    }
+
+    private void installListeners(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
+        diagram.getNet().addListener(event -> {
+            if (event.getObject() instanceof Node) {
+                Node node = (Node) event.getObject();
+                switch (event.getType()) {
+                case ADDED:
+                    addNode(nodesModel, node);
+                    break;
+                case REMOVED:
+                    removeNode(nodesModel, node);
+                    break;
+                default:
+                    // nothing
+                }
+            }
+        });
+        diagram.getNet().addAllEventListener(e -> {
+            if (e.getSource() instanceof Node && e.getType() == Type.ATTRIBUTE
+                    && e.getAttributeChange().checkName(Node.ATTR_TYPE)) {
+                Node node = (Node) e.getSource();
+                if (node.getType().isFreight()) {
+                    addNode(nodesModel, node);
+                } else {
+                    removeNode(nodesModel, node);
+                }
+            }
+        });
+    }
+
+    private static void removeNode(WrapperListModel<Node> nodesModel, Node node) {
+        if (nodesModel.getSelectedObject() == node) {
+            nodesModel.setSelectedItem(EMPTY);
+        }
+        nodesModel.removeObject(node);
+    }
+
+    private static void addNode(WrapperListModel<Node> nodesModel, Node node) {
+        if (node.getType().isFreight()) {
+            nodesModel.addWrapper(Wrapper.getWrapper(node));
+        }
     }
 }

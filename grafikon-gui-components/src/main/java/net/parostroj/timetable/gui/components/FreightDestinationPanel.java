@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import static java.util.stream.Collectors.toList;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -31,7 +29,6 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.NodeFreight;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
@@ -44,13 +41,12 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class FreightDestinationPanel extends JPanel {
 
-    private static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
-
     private static final int COMBO_BOX_LIST_SIZE = 12;
 
     private final WrapperListModel<Node> nodesModel;
     private final DestinationTableModel model;
     private final Runnable adjustColumnWidth;
+    private final FreightComboBoxHelper helper;
 
     private TrainDiagram diagram;
 
@@ -89,6 +85,7 @@ public class FreightDestinationPanel extends JPanel {
 
         adjustColumnWidth = new ColumnAdjuster(table);
 
+        helper = new FreightComboBoxHelper();
 
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), scroll.getBorder()));
@@ -99,54 +96,7 @@ public class FreightDestinationPanel extends JPanel {
 
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
-        nodesModel.clear();
-        if (diagram != null) {
-            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
-                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
-        }
-        nodesModel.addWrapper(EMPTY);
-        nodesModel.setSelectedItem(EMPTY);
-        if (diagram != null) {
-            diagram.getNet().addListener(event -> {
-                if (event.getObject() instanceof Node) {
-                    Node node = (Node) event.getObject();
-                    switch (event.getType()) {
-                    case ADDED:
-                        addNode(node);
-                        break;
-                    case REMOVED:
-                        removeNode(node);
-                        break;
-                    default:
-                        // nothing
-                    }
-                }
-            });
-            diagram.getNet().addAllEventListener(e -> {
-                if (e.getSource() instanceof Node && e.getType() == Type.ATTRIBUTE
-                        && e.getAttributeChange().checkName(Node.ATTR_TYPE)) {
-                    Node node = (Node) e.getSource();
-                    if (node.getType().isFreight()) {
-                        addNode(node);
-                    } else {
-                        removeNode(node);
-                    }
-                }
-            });
-        }
-    }
-
-    private void removeNode(Node node) {
-        if (nodesModel.getSelectedObject() == node) {
-            nodesModel.setSelectedItem(EMPTY);
-        }
-        nodesModel.removeObject(node);
-    }
-
-    private void addNode(Node node) {
-        if (node.getType().isFreight()) {
-            nodesModel.addWrapper(Wrapper.getWrapper(node));
-        }
+        this.helper.initializeNodeSelection(diagram, nodesModel);
     }
 
     public void updateView(Node node) {
