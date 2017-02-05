@@ -226,15 +226,15 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     private void checkDrawType(GTViewSettings settings) {
-        Collection<?> allowed = (Collection<?>) settings.get(GTViewSettings.Key.TYPE_LIST);
+        Collection<?> allowed = (Collection<?>) settings.get(Key.TYPE_LIST);
         GTDraw.Type type = settings.getGTDrawType();
         if (allowed != null && !allowed.isEmpty() && !allowed.contains(type)) {
-            settings.set(GTViewSettings.Key.TYPE, allowed.iterator().next());
+            settings.set(Key.TYPE, allowed.iterator().next());
         }
     }
 
     private void updateTypesMenu(GTViewSettings settings) {
-        final Collection<?> allowedTypes = (Collection<?>) settings.get(GTViewSettings.Key.TYPE_LIST);
+        final Collection<?> allowedTypes = (Collection<?>) settings.get(Key.TYPE_LIST);
         final GTDraw.Type selected = settings.getGTDrawType();
         if (allowedTypes == null || allowedTypes.isEmpty()) {
             typesMenu.setAllItemsVisible(true);
