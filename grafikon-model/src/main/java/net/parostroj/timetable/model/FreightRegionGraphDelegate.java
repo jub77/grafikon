@@ -1,10 +1,11 @@
 package net.parostroj.timetable.model;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.StreamSupport.stream;
+
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.GraphPath;
@@ -19,6 +20,7 @@ import net.parostroj.timetable.model.freight.NodeConnection;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.model.freight.NodeConnectionNodes;
 import net.parostroj.timetable.model.freight.DirectNodeConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.TrainConnection;
 
 class FreightRegionGraphDelegate {
@@ -33,24 +35,27 @@ class FreightRegionGraphDelegate {
         SimpleDirectedWeightedGraph<Node, DirectNodeConnection> graph = new SimpleDirectedWeightedGraph<>(DirectNodeConnection.class);
         diagram.getNet().getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
         for (Node node : graph.vertexSet()) {
-            StreamSupport.stream(node.spliterator(), false)
-                    .filter(TimeInterval::isFreightFrom)
-                    .flatMap(interval -> interval.getTrain().getIntervals(interval.getTrainInterval(2), null).stream()
-                            .filter(TimeInterval::isRegionCenterTransfer)
-                            .map(i -> new TrainConnectionImpl(interval, i)))
-                    .forEach(connection -> {
-                        Node n1 = connection.getFrom().getOwnerAsNode();
-                        Node n2 = connection.getTo().getOwnerAsNode();
-                        DirectNodeConnectionImpl edge = (DirectNodeConnectionImpl) graph.getEdge(n1, n2);
-                        if (edge == null) {
-                            edge = new DirectNodeConnectionImpl(connection);
-                            graph.addEdge(n1, n2, edge);
-                        } else {
-                            edge.connections.add(connection);
-                        }
-                    });
+            getRegionConnections(node).forEach(connection -> {
+                Node n1 = connection.getFrom();
+                Node n2 = connection.getTo().getNode();
+                DirectNodeConnectionImpl edge = (DirectNodeConnectionImpl) graph.getEdge(n1, n2);
+                if (edge == null) {
+                    edge = new DirectNodeConnectionImpl(connection.getPath());
+                    graph.addEdge(n1, n2, edge);
+                } else {
+                    edge.connections.add(connection.getPath());
+                }
+            });
         }
         return graph;
+    }
+
+    Stream<FreightConnectionPath> getRegionConnections(Node node) {
+        Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
+                .filter(TimeInterval::isFreightFrom)
+                .map(i -> diagram.getFreightNet().getFreightToNodes(i))
+                .flatMap(l -> l.stream().filter(d -> d.getTo().isRegions()));
+        return list;
     }
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {
@@ -189,9 +194,9 @@ class FreightRegionGraphDelegate {
 
     static class DirectNodeConnectionImpl extends DefaultWeightedEdge implements DirectNodeConnection {
 
-        protected final Set<TrainConnection> connections;
+        protected final Set<List<TrainConnection>> connections;
 
-        DirectNodeConnectionImpl(TrainConnection connection) {
+        DirectNodeConnectionImpl(List<TrainConnection> connection) {
             this.connections = new HashSet<>();
             this.connections.add(connection);
         }
@@ -212,7 +217,7 @@ class FreightRegionGraphDelegate {
         }
 
         @Override
-        public Set<TrainConnection> getConnections() {
+        public Set<List<TrainConnection>> getConnections() {
             return connections;
         }
 
@@ -221,14 +226,12 @@ class FreightRegionGraphDelegate {
          */
         private int computeWeight() {
             int weight = Integer.MAX_VALUE;
-            for (TrainConnection connection : connections) {
+            for (List<TrainConnection> connection : connections) {
                 // adding an hour -> simulates penalty for further transfer
-                int connSpeed = connection.getFrom().getTrain().getIntervals(connection.getFrom(), connection.getTo())
-                    .stream()
-                    .filter(TimeInterval::isLineOwner)
-                    .collect(Collectors.summingInt(TimeInterval::getLength)) + TimeInterval.HOUR;
-                if (connSpeed < weight) {
-                    weight = connSpeed;
+                int time = connection.get(connection.size() - 1).getTo().getStart()
+                        - connection.get(0).getFrom().getEnd() + TimeInterval.HOUR;
+                if (time < weight) {
+                    weight = time;
                 }
             }
             return weight;
@@ -237,7 +240,11 @@ class FreightRegionGraphDelegate {
         @Override
         public String toString() {
             return String.format("%s->%s:%d:%s", getSource(), getTarget(), computeWeight(),
-                    connections.stream().map(i -> i.getFrom().getTrain().toString()).collect(Collectors.joining(",")));
+                    connections.stream().map(cl -> getTrains(cl)).collect(joining(",")));
+        }
+
+        private String getTrains(List<TrainConnection> conn) {
+            return conn.stream().map(c -> c.getFrom().getTrain().toString()).collect(joining(",", "[", "]"));
         }
     }
 }

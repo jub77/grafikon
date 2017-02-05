@@ -28,9 +28,9 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.events.Event.Type;
+import net.parostroj.timetable.model.freight.DirectNodeConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalyser;
 import net.parostroj.timetable.model.freight.NodeFreightConnection;
-import net.parostroj.timetable.model.freight.NodeFreightConnection.Step;
 import net.parostroj.timetable.model.freight.TrainConnection;
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -145,7 +145,7 @@ public class FreightConnectionPanel extends JPanel {
             if (ncf.isComplete()) {
                 model.addLine(to.getName(), "");
             } else {
-                List<Step> steps = ncf.getSteps();
+                List<DirectNodeConnection> steps = ncf.getSteps();
                 if (steps != null && !steps.isEmpty()) {
                     model.addLine(steps.get(steps.size() - 1).getTo().getName(), "");
                 }
@@ -155,7 +155,7 @@ public class FreightConnectionPanel extends JPanel {
         }
     }
 
-    private List<String> convertStep(Step step) {
+    private List<String> convertStep(DirectNodeConnection step) {
         return step.getConnections().stream()
                 .sorted(this::compareLists)
                 .map(this::convertPath)

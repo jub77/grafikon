@@ -79,8 +79,8 @@ public class FreightConnectionAnalyser {
             }
 
             @Override
-            public List<Step> getSteps() {
-                return resultContext.steps.stream().map(c -> (Step) c).collect(toList());
+            public List<DirectNodeConnection> getSteps() {
+                return resultContext.steps.stream().map(c -> (DirectNodeConnection) c).collect(toList());
             }
 
             @Override

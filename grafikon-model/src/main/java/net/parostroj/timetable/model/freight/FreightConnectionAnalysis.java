@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.freight;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -18,7 +17,6 @@ import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.model.freight.NodeFreightConnection.Step;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -125,7 +123,7 @@ class FreightConnectionAnalysis {
                 if (regionConn.isPresent()) {
                     NodeConnectionEdges conn = regionConn.get();
                     conn.getEdges().stream().map(dc -> new StepImpl(dc.getFrom(), dc.getTo(),
-                            dc.getConnections().stream().map(c -> singletonList(c)).collect(toSet())))
+                            dc.getConnections()))
                     .forEach(step -> {
                         nContext.steps.add(step);
                     });
@@ -238,7 +236,7 @@ class FreightConnectionAnalysis {
         }
     }
 
-    static class StepImpl implements Step {
+    static class StepImpl implements DirectNodeConnection {
         public final Node from;
         public final Node to;
         public final Set<List<TrainConnection>> connections;
