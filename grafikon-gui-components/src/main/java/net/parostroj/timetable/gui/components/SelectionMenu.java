@@ -32,7 +32,7 @@ public class SelectionMenu<T> extends JMenu {
         super(text);
         this.buttonGroup = new ButtonGroup();
         this.items = HashBiMap.create();
-        this.listeners = new ArrayList<Listener<T>>();
+        this.listeners = new ArrayList<>();
         this.itemListener = new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -61,6 +61,23 @@ public class SelectionMenu<T> extends JMenu {
     public T getSelected() {
         ButtonModel selection = this.buttonGroup.getSelection();
         return selection == null ? null : this.items.inverse().get(selection);
+    }
+
+    public void setAllItemsVisible(boolean visible) {
+        for (int i = 0; i < getItemCount(); i++) {
+            this.getItem(i).setVisible(visible);
+        }
+    }
+
+    public void setItemVisible(T value, boolean visible) {
+        for (int i = 0; i < getItemCount(); i++) {
+            ButtonModel itemModel = items.get(value);
+            JMenuItem item = this.getItem(i);
+            if (item.getModel() == itemModel) {
+                item.setVisible(visible);
+                break;
+            }
+        }
     }
 
     public void addItem(String text, T value) {

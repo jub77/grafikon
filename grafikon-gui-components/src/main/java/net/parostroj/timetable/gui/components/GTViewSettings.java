@@ -1,10 +1,13 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.output2.gt.*;
+import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.GTDrawSettings;
+import net.parostroj.timetable.output2.gt.GTOrientation;
 
 /**
  * Settings for graphical timetable view.
@@ -31,7 +34,8 @@ public class GTViewSettings {
         TO_TRAIN_CHANGE_ROUTE(Boolean.class, null),
         ORIENTATION(GTOrientation.class, GTDrawSettings.Key.ORIENTATION),
         ORIENTATION_MENU(Boolean.class, null),
-        TRAIN_ENDS(Boolean.class, GTDrawSettings.Key.TRAIN_ENDS);
+        TRAIN_ENDS(Boolean.class, GTDrawSettings.Key.TRAIN_ENDS),
+        TYPE_LIST(List.class, null);
 
         private Class<?> valueClass;
         private GTDrawSettings.Key drawKey;
@@ -53,11 +57,11 @@ public class GTViewSettings {
     protected Map<Key, Object> preferences;
 
     public GTViewSettings() {
-        preferences = new EnumMap<Key, Object>(Key.class);
+        preferences = new EnumMap<>(Key.class);
     }
 
     public GTViewSettings(GTViewSettings copied) {
-        preferences = new EnumMap<Key, Object>(copied.preferences);
+        preferences = new EnumMap<>(copied.preferences);
     }
 
     public GTViewSettings set(Key key, Object value) {

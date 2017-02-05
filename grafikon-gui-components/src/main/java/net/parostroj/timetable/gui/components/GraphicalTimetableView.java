@@ -36,7 +36,6 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.output2.gt.GTDraw;
-import net.parostroj.timetable.output2.gt.GTDraw.Type;
 import net.parostroj.timetable.output2.gt.GTOrientation;
 import net.parostroj.timetable.output2.gt.RegionCollector;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
@@ -48,20 +47,28 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
  */
 public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
+    public static String MOUSE_OVER_HANDLER_KEY = "mouse.over.handler";
+
     private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableView.class);
 
     private final static int SELECTION_RADIUS = 5;
     private final static int ROUTE_COUNT = 20;
+
+    private enum MouseAction { ENTER, EXIT, MOVE }
 
     static {
         ToolTipManager.sharedInstance().setReshowDelay(0);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
 
-    public static interface GTViewListener {
+    public interface GTViewListener {
         public void routeSelected(Route route);
         public void diagramChanged(TrainDiagram diagram);
         public void settingsChanged(GTViewSettings settings);
+    }
+
+    public interface MouseOverHandler {
+        void mouseOverIntervals(Collection<TimeInterval> intervals);
     }
 
     private interface ToolTipHelper {
@@ -218,6 +225,29 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         orientationMenu.setVisible(add);
     }
 
+    private void checkDrawType(GTViewSettings settings) {
+        Collection<?> allowed = (Collection<?>) settings.get(GTViewSettings.Key.TYPE_LIST);
+        GTDraw.Type type = settings.getGTDrawType();
+        if (allowed != null && !allowed.isEmpty() && !allowed.contains(type)) {
+            settings.set(GTViewSettings.Key.TYPE, allowed.iterator().next());
+        }
+    }
+
+    private void updateTypesMenu(GTViewSettings settings) {
+        final Collection<?> allowedTypes = (Collection<?>) settings.get(GTViewSettings.Key.TYPE_LIST);
+        final GTDraw.Type selected = settings.getGTDrawType();
+        if (allowedTypes == null || allowedTypes.isEmpty()) {
+            typesMenu.setAllItemsVisible(true);
+        } else {
+            typesMenu.setAllItemsVisible(false);
+            for (Object typeObject : allowedTypes) {
+                GTDraw.Type type = (GTDraw.Type) typeObject;
+                typesMenu.setItemVisible(type, true);
+            }
+        }
+        typesMenu.setSelectedItem(selected, true);
+    }
+
     @Override
     public void setTrainDiagram(TrainDiagram diagram) {
         super.setTrainDiagram(diagram);
@@ -342,6 +372,36 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 repaint();
             }
         });
+        java.awt.event.MouseAdapter motionListener = new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                handle(e, MouseAction.EXIT);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                handle(e, MouseAction.ENTER);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                handle(e, MouseAction.MOVE);
+            }
+
+            private void handle(MouseEvent e, MouseAction action) {
+                MouseOverHandler moh = gtStorage.getParameter(MOUSE_OVER_HANDLER_KEY, MouseOverHandler.class);
+                if (moh != null) {
+                    RegionCollector<TimeInterval> collector = getRegionCollector(TimeInterval.class);
+                    if (collector != null) {
+                        List<TimeInterval> items = collector.getItemsForPointRadiuses(e.getX(), e.getY(), 2, SELECTION_RADIUS);
+                        moh.mouseOverIntervals(items);
+                    }
+                }
+            }
+        };
+
+        addMouseListener(motionListener);
+        addMouseMotionListener(motionListener);
         setLayout(null);
     }
 
@@ -365,9 +425,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     @Override
     public void setSettings(GTViewSettings settings) {
+        this.checkDrawType(settings);
         super.setSettings(settings);
 
-        typesMenu.setSelectedItem(settings.getGTDrawType(), true);
+        this.updateTypesMenu(settings);
 
         Integer size = settings.get(Key.VIEW_SIZE, Integer.class);
         sizesMenu.setSelectedItem(size, true);
@@ -435,7 +496,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     protected javax.swing.JPopupMenu popupMenu;
     private SelectionMenu<Route> routesMenu;
     private SelectionMenu<Integer> sizesMenu;
-    private SelectionMenu<Type> typesMenu;
+    private SelectionMenu<GTDraw.Type> typesMenu;
     private SelectionMenu<GTOrientation> orientationMenu;
     private ChoicesMenu<Key> preferencesMenu;
     private final javax.swing.JMenuItem routesMenuItem;

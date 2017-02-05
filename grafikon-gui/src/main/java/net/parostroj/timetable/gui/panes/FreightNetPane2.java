@@ -1,23 +1,16 @@
 package net.parostroj.timetable.gui.panes;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
-import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.components.*;
-import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
-import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Event;
-import net.parostroj.timetable.output2.gt.*;
-import net.parostroj.timetable.utils.Tuple;
-import net.parostroj.timetable.visitors.AbstractEventVisitor;
+import javax.swing.JTextField;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -26,7 +19,33 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import javax.swing.JTextField;
+import net.parostroj.timetable.gui.AppPreferences;
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.components.GTLayeredPane2;
+import net.parostroj.timetable.gui.components.GTViewSettings;
+import net.parostroj.timetable.gui.components.GraphicalTimetableView;
+import net.parostroj.timetable.gui.components.GraphicalTimetableView.MouseOverHandler;
+import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
+import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.model.FNConnection;
+import net.parostroj.timetable.model.FreightNet;
+import net.parostroj.timetable.model.TimeConverter;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.EventProcessing;
+import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.HighlightedTrains;
+import net.parostroj.timetable.output2.gt.ManagedFreightGTDraw;
+import net.parostroj.timetable.output2.gt.ManagedFreightGTDrawFactory;
+import net.parostroj.timetable.output2.gt.RegionCollectorAdapter;
+import net.parostroj.timetable.output2.gt.RegionSelector;
+import net.parostroj.timetable.output2.gt.SelectorUtils;
+import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
@@ -167,7 +186,13 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     public FreightNetPane2() {
         setLayout(new BorderLayout());
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().set(GTViewSettings.Key.ORIENTATION_MENU, false));
+        graphicalTimetableView
+                .setSettings(graphicalTimetableView.getSettings()
+                        .set(GTViewSettings.Key.ORIENTATION_MENU, false)
+                        .set(GTViewSettings.Key.TYPE_LIST,
+                                Arrays.asList(
+                                        GTDraw.Type.CLASSIC_STATION_STOPS,
+                                        GTDraw.Type.WITH_TRACKS)));
         selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory());
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.HIGHLIGHT, selector);
@@ -189,6 +214,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         collector.setSelector(selector);
         graphicalTimetableView.addRegionCollector(FNConnection.class, collector);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
+        // change cursor to hand if the stop interval can be selected
+        graphicalTimetableView.setParameter(GraphicalTimetableView.MOUSE_OVER_HANDLER_KEY,
+                (MouseOverHandler) intervals -> {
+                    if (!intervals.isEmpty() && intervals.stream().anyMatch(i -> i.isStop())) {
+                        scrollPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    } else {
+                        scrollPane.setCursor(null);
+                    }
+                });
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
