@@ -428,13 +428,13 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    updateActions(event.getModel());
-                }
                 switch (event.getType()) {
                     case SET_DIAGRAM_CHANGED:
+                        netEditModel.clearSelection();
+                        updateActions(event.getModel());
                         if (event.getModel().getDiagram() != null) {
                             setNet(event.getModel());
+
                         }
                         break;
                     default:

@@ -61,4 +61,8 @@ public class NetSelectionModel implements mxIEventListener {
     public Collection<Object> getSelectedObjects() {
         return selectedObjects;
     }
+
+    public void clearSelection() {
+        this.callListeners(Collections.emptyList());
+    }
 }
