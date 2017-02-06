@@ -17,13 +17,13 @@ public class FreightPanel extends JPanel {
 
     private final FreightDestinationPanel destinationPanel;
     private final FreightConnectionPanel connectionPanel;
-    private final FreightOneConnectionPanel oneConnectionPanel;
+    private final FreightTrainPathPanel oneConnectionPanel;
     private final FreightCheckPanel checkPanel;
 
     public FreightPanel() {
         destinationPanel = new FreightDestinationPanel();
         connectionPanel = new FreightConnectionPanel();
-        oneConnectionPanel = new FreightOneConnectionPanel();
+        oneConnectionPanel = new FreightTrainPathPanel();
         checkPanel = new FreightCheckPanel();
 
         JTabbedPane tabs = new JTabbedPane();

@@ -35,13 +35,13 @@ import net.parostroj.timetable.model.freight.TrainPath;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
- * Panel with freight connection between two nodes.
+ * Panel with freight connection between two nodes - one train path.
  *
  * @author jub
  */
-public class FreightOneConnectionPanel extends JPanel {
+public class FreightTrainPathPanel extends JPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(FreightOneConnectionPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(FreightTrainPathPanel.class);
 
     private static final int COLUMNS_SHUNT_DURATION = 4;
     private static final int COMBO_BOX_LIST_SIZE = 12;
@@ -63,7 +63,7 @@ public class FreightOneConnectionPanel extends JPanel {
     private ImageIcon okIcon;
     private ImageIcon errorIcon;
 
-    public FreightOneConnectionPanel() {
+    public FreightTrainPathPanel() {
         JComboBox<Wrapper<Node>> fromComboBox = new JComboBox<>();
         JComboBox<Wrapper<Node>> toComboBox = new JComboBox<>();
         fromNode = new WrapperListModel<>(true);
@@ -90,8 +90,11 @@ public class FreightOneConnectionPanel extends JPanel {
         topPanel.setLayout(topLayout);
         topPanel.add(fromComboBox);
         topPanel.add(toComboBox);
+        topPanel.add(new JLabel(ResourceLoader.getString("freight.trainpath.start"))); // NOI18N
         topPanel.add(startTimeTextField);
+        topPanel.add(new JLabel(ResourceLoader.getString("freight.trainpath.shunting"))); // NOI18N
         topPanel.add(shuntDurationTextField);
+        topPanel.add(new JLabel("min"));
 
         ItemListener nodeListener = event -> {
             if (event.getStateChange() == ItemEvent.SELECTED) {
