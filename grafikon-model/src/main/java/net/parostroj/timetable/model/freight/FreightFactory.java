@@ -1,6 +1,9 @@
 package net.parostroj.timetable.model.freight;
 
-import java.util.List;
+import static java.util.stream.Collectors.toCollection;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 import net.parostroj.timetable.model.FreightColor;
@@ -16,10 +19,18 @@ import net.parostroj.timetable.model.RegionHierarchy;
 public class FreightFactory {
 
     public static FreightConnectionPath createFreightNodeConnection(Node fromNode, Node toNode, boolean regionTransfer,
-            List<TrainConnection> path) {
+            Collection<? extends TrainConnection> path) {
         return new FreightConnectionPathImpl(fromNode,
                 createFreightDestination(fromNode, toNode, regionTransfer ? toNode.getCenterRegionHierarchy() : null),
-                path);
+                createTrainPath(path));
+    }
+
+    public static FreightConnectionPath createFreightNodeConnection(Node fromNode, FreightDestination dest, TrainPath path) {
+        return new FreightConnectionPathImpl(fromNode, dest, path);
+    }
+
+    public static TrainPath createTrainPath(Collection<? extends TrainConnection> collection) {
+        return collection.stream().collect(toCollection(TrainPathImpl::new));
     }
 
     public static FreightConnection createFreightNodeConnection(Node fromNode, FreightDestination dest) {
@@ -57,16 +68,21 @@ public class FreightFactory {
 
     private static class FreightConnectionPathImpl extends FreightConnectionImpl implements FreightConnectionPath {
 
-        private final List<TrainConnection> path;
+        private final TrainPath path;
 
-        public FreightConnectionPathImpl(Node from, FreightDestination to, List<TrainConnection> path) {
+        public FreightConnectionPathImpl(Node from, FreightDestination to, TrainPath path) {
             super(from, to);
             this.path = path;
         }
 
         @Override
-        public List<TrainConnection> getPath() {
+        public TrainPath getPath() {
             return path;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s via %s", super.toString(), path);
         }
     }
 
@@ -89,4 +105,6 @@ public class FreightFactory {
             return String.format("%s to %s via (%s)", getFrom(), getTo(), transport);
         }
     }
+
+    private static class TrainPathImpl extends ArrayList<TrainConnection> implements TrainPath {}
 }

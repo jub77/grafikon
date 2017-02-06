@@ -1,15 +1,22 @@
 package net.parostroj.timetable.model.freight;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
+import java.util.AbstractList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Context;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Stage;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.StepImpl;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * Analyser for freight connections between stations.
@@ -29,13 +36,13 @@ public class FreightConnectionAnalyser {
     }
 
     /**
-     * Returns shortest freight connection between stations - if one exists.
+     * Returns freight connections between stations - if some exists.
      *
      * @param from start node
      * @param to end node
      * @return shortest freight connection
      */
-    public NodeFreightConnection analyse(Node from, Node to) {
+    public Set<NodeFreightConnection> analyse(Node from, Node to) {
         FreightConnectionAnalysis analysis = new FreightConnectionAnalysis(analyser, from, to);
         Context context = analysis.createContext();
 
@@ -62,12 +69,10 @@ public class FreightConnectionAnalyser {
             }
         }
 
-        // select shortest connection
-        Context resultContext = analysis.getContexts().stream()
-                .filter(c -> c.stage == Stage.CONNECTION)
-                .collect(Collectors.minBy(this::compareLengthOfPath))
-                .orElse(analysis.getContexts().iterator().next());
-        return new NodeFreightConnection() {
+        return analysis.getContexts().stream().<NodeFreightConnection>map(ctx -> new NodeFreightConnection() {
+
+            private Integer weight;
+
             @Override
             public Node getFrom() {
                 return from;
@@ -80,21 +85,78 @@ public class FreightConnectionAnalyser {
 
             @Override
             public List<DirectNodeConnection> getSteps() {
-                return resultContext.steps.stream().map(c -> (DirectNodeConnection) c).collect(toList());
+                return ctx.steps.stream().map(c -> (DirectNodeConnection) c).collect(toList());
             }
 
             @Override
             public boolean isComplete() {
-                return resultContext.stage == Stage.CONNECTION;
+                return ctx.stage == Stage.CONNECTION;
             }
-        };
+
+            @Override
+            public int getLength() {
+                if (weight == null) {
+                    weight = getLengthOfPath(ctx.steps);
+                }
+                return weight.intValue();
+            }
+
+            private int getLengthOfPath(List<StepImpl> steps) {
+                return steps.stream().mapToInt(StepImpl::getWeight).sum();
+            }
+        }).collect(toSet());
     }
 
-    private int compareLengthOfPath(Context a, Context b) {
-        return Integer.compare(getLengthOfPath(a.steps), getLengthOfPath(b.steps));
+    public TrainPath getTrainPath(Collection<? extends NodeFreightConnection> connections, int start, int shunt) {
+        ConnectionFinder finder = new ConnectionFinder(start, shunt);
+        Stream<TrainPath> list = connections.stream().filter(NodeFreightConnection::isComplete).map(finder::find);
+        return list.min(shortest()).orElse(EMPTY_PATH);
     }
 
-    private int getLengthOfPath(List<StepImpl> steps) {
-        return steps.stream().mapToInt(StepImpl::getWeight).sum();
+    private Comparator<TrainPath> shortest() {
+        return Comparator.comparingInt(TrainPath::getLength);
+    }
+
+    private static class ConnectionFinder {
+
+        private final int start;
+        private final int shunt;
+
+        public ConnectionFinder(int start, int shunt) {
+            this.start = start;
+            this.shunt = shunt;
+        }
+
+        public TrainPath find(NodeFreightConnection connection) {
+            int current = start;
+            TrainPath result = FreightFactory.createTrainPath(Collections.emptyList());
+            for (DirectNodeConnection dnc : connection.getSteps()) {
+                TrainPath selected = getClosest(current, dnc);
+                current = selected.getEndTime() + shunt;
+                result.addAll(selected);
+            }
+            return result;
+        }
+
+        private TrainPath getClosest(int time, DirectNodeConnection dnc) {
+            return dnc.getConnections().stream()
+                    .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())))
+                    .orElse(null);
+        }
+    }
+
+    private static TrainPath EMPTY_PATH = new EmptyPath();
+
+    private static class EmptyPath extends AbstractList<TrainConnection> implements TrainPath {
+        @Override
+        public TrainConnection get(int index) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
     }
 }

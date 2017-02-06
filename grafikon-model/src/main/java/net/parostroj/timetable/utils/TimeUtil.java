@@ -37,6 +37,17 @@ public class TimeUtil {
     }
 
     /**
+     * Returns normalized time difference.
+     *
+     * @param startTime start time
+     * @param endTime end time
+     * @return normalized difference
+     */
+    public static int difference(int startTime, int endTime) {
+        return normalizeTime(endTime - startTime);
+    }
+
+    /**
      * @param i1 first interval
      * @param i2 second interval
      * @return compares normalized starts of the intervals

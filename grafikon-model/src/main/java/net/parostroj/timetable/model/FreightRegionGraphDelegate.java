@@ -22,6 +22,7 @@ import net.parostroj.timetable.model.freight.NodeConnectionNodes;
 import net.parostroj.timetable.model.freight.DirectNodeConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.TrainConnection;
+import net.parostroj.timetable.model.freight.TrainPath;
 
 class FreightRegionGraphDelegate {
 
@@ -194,9 +195,9 @@ class FreightRegionGraphDelegate {
 
     static class DirectNodeConnectionImpl extends DefaultWeightedEdge implements DirectNodeConnection {
 
-        protected final Set<List<TrainConnection>> connections;
+        protected final Set<TrainPath> connections;
 
-        DirectNodeConnectionImpl(List<TrainConnection> connection) {
+        DirectNodeConnectionImpl(TrainPath connection) {
             this.connections = new HashSet<>();
             this.connections.add(connection);
         }
@@ -217,7 +218,7 @@ class FreightRegionGraphDelegate {
         }
 
         @Override
-        public Set<List<TrainConnection>> getConnections() {
+        public Set<TrainPath> getConnections() {
             return connections;
         }
 

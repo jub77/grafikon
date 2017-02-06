@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,9 @@ public class FreightChecker {
 
         return allConns.stream()
                 .<ConnectionState<NodeFreightConnection>>map(t -> {
-                    NodeFreightConnection fc = connAnalyser.analyse(t.first, t.second);
+                    NodeFreightConnection fc = connAnalyser.analyse(t.first, t.second).stream()
+                            .filter(NodeFreightConnection::isComplete)
+                            .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
                     return fc.isComplete()
                             ? new ConnectionImpl<>(t.first, t.second, fc)
                             : new ConnectionImpl<>(t.first, t.second);

@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.freight;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,5 +9,5 @@ import java.util.Set;
  */
 public interface DirectNodeConnection extends NodeConnection {
 
-    Set<List<TrainConnection>> getConnections();
+    Set<TrainPath> getConnections();
 }

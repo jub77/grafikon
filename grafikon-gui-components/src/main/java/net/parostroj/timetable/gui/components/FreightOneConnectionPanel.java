@@ -1,14 +1,10 @@
 package net.parostroj.timetable.gui.components;
 
-import static java.util.stream.Collectors.toList;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -18,6 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
@@ -28,11 +28,10 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.events.Event.Type;
-import net.parostroj.timetable.model.freight.DirectNodeConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalyser;
 import net.parostroj.timetable.model.freight.NodeFreightConnection;
 import net.parostroj.timetable.model.freight.TrainConnection;
+import net.parostroj.timetable.model.freight.TrainPath;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
@@ -40,12 +39,20 @@ import net.parostroj.timetable.utils.TimeUtil;
  *
  * @author jub
  */
-public class FreightConnectionPanel extends JPanel {
+public class FreightOneConnectionPanel extends JPanel {
 
+    private static final Logger log = LoggerFactory.getLogger(FreightOneConnectionPanel.class);
+
+    private static final int COLUMNS_SHUNT_DURATION = 4;
     private static final int COMBO_BOX_LIST_SIZE = 12;
+    private static final int INITIAL_SHUNT_VALUE = 120;
+    private static final int COLUMNS_START_TIME = 5;
+    private static final String INITIAL_START_TIME = "7:00";
 
     private final WrapperListModel<Node> fromNode;
     private final WrapperListModel<Node> toNode;
+    private final JTextField startTimeTextField;
+    private final JTextField shuntDurationTextField;
     private final DestinationTableModel model;
     private final Runnable adjustColumnWidth;
     private final FreightComboBoxHelper helper;
@@ -56,7 +63,7 @@ public class FreightConnectionPanel extends JPanel {
     private ImageIcon okIcon;
     private ImageIcon errorIcon;
 
-    public FreightConnectionPanel() {
+    public FreightOneConnectionPanel() {
         JComboBox<Wrapper<Node>> fromComboBox = new JComboBox<>();
         JComboBox<Wrapper<Node>> toComboBox = new JComboBox<>();
         fromNode = new WrapperListModel<>(true);
@@ -66,6 +73,15 @@ public class FreightConnectionPanel extends JPanel {
         fromComboBox.setMaximumRowCount(COMBO_BOX_LIST_SIZE);
         toComboBox.setMaximumRowCount(COMBO_BOX_LIST_SIZE);
 
+        shuntDurationTextField = new JTextField(COLUMNS_SHUNT_DURATION);
+        shuntDurationTextField.setHorizontalAlignment(JTextField.RIGHT);
+        shuntDurationTextField.setText(Integer.toString(INITIAL_SHUNT_VALUE));
+
+        startTimeTextField = new JTextField(COLUMNS_START_TIME);
+        startTimeTextField.setHorizontalAlignment(JTextField.RIGHT);
+        startTimeTextField.setText(INITIAL_START_TIME);
+
+
         setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
         add(topPanel, BorderLayout.NORTH);
@@ -74,12 +90,14 @@ public class FreightConnectionPanel extends JPanel {
         topPanel.setLayout(topLayout);
         topPanel.add(fromComboBox);
         topPanel.add(toComboBox);
+        topPanel.add(startTimeTextField);
+        topPanel.add(shuntDurationTextField);
 
         ItemListener nodeListener = event -> {
             if (event.getStateChange() == ItemEvent.SELECTED) {
                 Node from = fromNode.getSelectedObject();
                 Node to = toNode.getSelectedObject();
-                updateView(from, to);
+                updateView(from, to, getCenterShuntValue(), getStartTimeValue());
             }
         };
         fromComboBox.addItemListener(nodeListener);
@@ -88,7 +106,11 @@ public class FreightConnectionPanel extends JPanel {
         JButton refreshButton = GuiComponentUtils.createButton(GuiIcon.REFRESH, 1);
         topPanel.add(refreshButton);
 
-        refreshButton.addActionListener(e -> this.updateView(fromNode.getSelectedObject(), toNode.getSelectedObject()));
+        refreshButton.addActionListener(e -> this.updateView(
+                fromNode.getSelectedObject(),
+                toNode.getSelectedObject(),
+                getCenterShuntValue(),
+                getStartTimeValue()));
 
         stateIconLabel = new JLabel();
         topPanel.add(stateIconLabel);
@@ -112,13 +134,37 @@ public class FreightConnectionPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
     }
 
+    private int getCenterShuntValue() {
+        int shunt = INITIAL_SHUNT_VALUE;
+        try {
+            shunt = Integer.parseInt(shuntDurationTextField.getText());
+        } catch (NumberFormatException e) {
+            log.warn("Error parsing shunt value: " + shuntDurationTextField.getText());
+            shuntDurationTextField.setText(Integer.toString(shunt));
+        }
+        return shunt * 60;
+    }
+
+    private int getStartTimeValue() {
+        if (diagram == null) {
+            return 0;
+        }
+        String timeText = startTimeTextField.getText();
+        int startTime = diagram.getTimeConverter().convertTextToInt(timeText);
+        if (startTime == -1) {
+            startTime = 0;
+        }
+        startTimeTextField.setText(diagram.getTimeConverter().convertIntToText(startTime));
+        return startTime;
+    }
+
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
         helper.initializeNodeSelection(diagram, fromNode);
         helper.initializeNodeSelection(diagram, toNode);
     }
 
-    public void updateView(Node from, Node to) {
+    public void updateView(Node from, Node to, int shuntDuration, int startTime) {
         // update selection
         if (fromNode.getSelectedObject() != from) {
             fromNode.setSelectedObject(from);
@@ -126,127 +172,40 @@ public class FreightConnectionPanel extends JPanel {
         if (toNode.getSelectedObject() != to) {
             toNode.setSelectedObject(to);
         }
+
         model.clear();
         stateIconLabel.setIcon(null);
         if (from != null && to != null && from != to) {
             FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
-            NodeFreightConnection ncf = connectionAnalyser.analyse(from, to).stream()
-                    .filter(NodeFreightConnection::isComplete)
-                    .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
+            Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
+            TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
 
-            stateIconLabel.setIcon(ncf.isComplete() ? okIcon : errorIcon);
+            stateIconLabel.setIcon(!trainPath.isEmpty() ? okIcon : errorIcon);
 
-            ncf.getSteps().forEach(s -> {
-                List<String> list = this.convertStep(s);
-                String node = s.getFrom().getName();
-                for (String item : list) {
-                    model.addLine(node, item);
-                    node = null;
+            Integer time = null;
+
+            for(TrainConnection tc : trainPath) {
+                String right = convertConnectionTrain(tc);
+                String left = tc.getFrom().getOwnerAsNode().getName();
+                if (time != null) {
+                    left = String.format("%s [%smin]", left, diagram.getTimeConverter()
+                            .convertIntToMinutesText(TimeUtil.difference(time, tc.getStartTime())));
                 }
-            });
+                time = tc.getEndTime();
+                model.addLine(left, right);
+            }
 
-            if (ncf.isComplete()) {
+            if (!trainPath.isEmpty()) {
                 model.addLine(to.getName(), "");
-            } else {
-                List<DirectNodeConnection> steps = ncf.getSteps();
-                if (steps != null && !steps.isEmpty()) {
-                    model.addLine(steps.get(steps.size() - 1).getTo().getName(), "");
-                }
             }
 
             adjustColumnWidth.run();
         }
     }
 
-    private List<String> convertStep(DirectNodeConnection step) {
-        return step.getConnections().stream()
-                .sorted(this::compareLists)
-                .map(this::convertPath)
-                .collect(toList());
-    }
-
-    private String convertPath(List<TrainConnection> path) {
-        StringBuilder result = new StringBuilder();
-        Iterator<TrainConnection> i = path.iterator();
-        TrainConnection conn = i.next();
-        // first one
-        result.append(convertConnectionTrain(conn));
-        // rest
-        while (i.hasNext()) {
-            conn = i.next();
-            result.append(" > ").append(conn.getFrom().getOwnerAsNode().getName()).append(" > ");
-            result.append(convertConnectionTrain(conn));
-        }
-        return result.toString();
-    }
-
     private String convertConnectionTrain(TrainConnection connection) {
         return String.format("%s (%s-%s)", connection.getFrom().getTrain().getName().translate(),
                 diagram.getTimeConverter().convertIntToText(connection.getFrom().getEnd()),
                 diagram.getTimeConverter().convertIntToText(connection.getTo().getStart()));
-    }
-
-    private int compareLists(List<TrainConnection> a, List<TrainConnection> b) {
-        return TimeUtil.compareNormalizedEnds(a.get(0).getFrom(), b.get(0).getFrom());
-    }
-}
-
-class FreightComboBoxHelper {
-
-    static final Wrapper<Node> EMPTY = Wrapper.getEmptyWrapper("-");
-
-    public void initializeNodeSelection(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
-        nodesModel.clear();
-        if (diagram != null) {
-            nodesModel.setListOfWrappers(Wrapper.getWrapperList(
-                    diagram.getNet().getNodes().stream().filter(n -> n.getType().isFreight()).collect(toList())));
-        }
-        nodesModel.addWrapper(EMPTY);
-        nodesModel.setSelectedItem(EMPTY);
-        if (diagram != null) {
-            installListeners(diagram, nodesModel);
-        }
-    }
-
-    private void installListeners(TrainDiagram diagram, WrapperListModel<Node> nodesModel) {
-        diagram.getNet().addListener(event -> {
-            if (event.getObject() instanceof Node) {
-                Node node = (Node) event.getObject();
-                switch (event.getType()) {
-                case ADDED:
-                    addNode(nodesModel, node);
-                    break;
-                case REMOVED:
-                    removeNode(nodesModel, node);
-                    break;
-                default:
-                    // nothing
-                }
-            }
-        });
-        diagram.getNet().addAllEventListener(e -> {
-            if (e.getSource() instanceof Node && e.getType() == Type.ATTRIBUTE
-                    && e.getAttributeChange().checkName(Node.ATTR_TYPE)) {
-                Node node = (Node) e.getSource();
-                if (node.getType().isFreight()) {
-                    addNode(nodesModel, node);
-                } else {
-                    removeNode(nodesModel, node);
-                }
-            }
-        });
-    }
-
-    private static void removeNode(WrapperListModel<Node> nodesModel, Node node) {
-        if (nodesModel.getSelectedObject() == node) {
-            nodesModel.setSelectedItem(EMPTY);
-        }
-        nodesModel.removeObject(node);
-    }
-
-    private static void addNode(WrapperListModel<Node> nodesModel, Node node) {
-        if (node.getType().isFreight()) {
-            nodesModel.addWrapper(Wrapper.getWrapper(node));
-        }
     }
 }

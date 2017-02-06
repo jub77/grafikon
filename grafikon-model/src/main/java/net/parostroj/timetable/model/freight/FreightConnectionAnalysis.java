@@ -37,8 +37,8 @@ class FreightConnectionAnalysis {
         this.to = to;
     }
 
-    private final Map<Tuple<Node>, Set<FreightConnectionPath>> cache = new HashMap<>();
-    private final Map<Node, Set<FreightConnectionPath>> cacheF = new HashMap<>();
+    private final Map<Tuple<Node>, List<FreightConnectionPath>> cache = new HashMap<>();
+    private final Map<Node, List<FreightConnectionPath>> cacheF = new HashMap<>();
     private Collection<NodeConnectionEdges> cachedNet;
 
     private final Collection<Context> allContexts = new ArrayList<>();
@@ -62,7 +62,7 @@ class FreightConnectionAnalysis {
             context.stage = Stage.CONNECTION;
             return;
         }
-        Set<FreightConnectionPath> conns = context.getConnectionFromTo(from, to);
+        List<FreightConnectionPath> conns = context.getConnectionFromTo(from, to);
         if (!conns.isEmpty()) {
             context.stage = Stage.TO_NODE;
         } else {
@@ -71,7 +71,7 @@ class FreightConnectionAnalysis {
     }
 
     void toNode(Context context) {
-        Set<List<TrainConnection>> set = context.getConnectionFromTo(context.current, to).stream()
+        Set<TrainPath> set = context.getConnectionFromTo(context.current, to).stream()
                 .map(fc -> fc.getPath()).collect(toSet());
         if (!set.isEmpty()) {
             context.steps.add(new StepImpl(context.current, to, set));
@@ -89,7 +89,7 @@ class FreightConnectionAnalysis {
             for (ToRegionConnection conn : regions) {
                 Context nContext = conn.context;
                 Node centerNode = conn.center;
-                Set<List<TrainConnection>> set = nContext.getConnectionFromTo(nContext.current, centerNode).stream()
+                Set<TrainPath> set = nContext.getConnectionFromTo(nContext.current, centerNode).stream()
                         .map(fc -> fc.getPath()).collect(toSet());
                 if (!set.isEmpty()) {
                     nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
@@ -206,25 +206,25 @@ class FreightConnectionAnalysis {
             return cachedNet;
         }
 
-        public Set<FreightConnectionPath> getConnectionFrom(Node node) {
+        public List<FreightConnectionPath> getConnectionFrom(Node node) {
             if (cacheF.containsKey(node)) {
                 return cacheF.get(node);
             } else {
                 Stream<FreightConnectionPath> connections = analyser.getFreightIntervalsFrom(node).stream()
                         .flatMap(i -> analyser.getDiagram().getFreightNet().getFreightToNodes(i).stream());
-                Set<FreightConnectionPath> connSet = connections.collect(toSet());
+                List<FreightConnectionPath> connSet = connections.collect(toList());
                 cacheF.put(node, connSet);
                 return connSet;
             }
         }
 
-        public Set<FreightConnectionPath> getConnectionFromTo(Node node, Node target) {
+        public List<FreightConnectionPath> getConnectionFromTo(Node node, Node target) {
             Tuple<Node> fromTo = new Tuple<>(node, target);
             if (cache.containsKey(fromTo)) {
                 return cache.get(fromTo);
             } else {
-                Set<FreightConnectionPath> connSet = getConnectionFrom(node).stream()
-                        .filter(c -> c.getTo().getNode() == target).collect(toSet());
+                List<FreightConnectionPath> connSet = getConnectionFrom(node).stream()
+                        .filter(c -> c.getTo().getNode() == target).collect(toList());
                 cache.put(fromTo, connSet);
                 return connSet;
             }
@@ -239,16 +239,16 @@ class FreightConnectionAnalysis {
     static class StepImpl implements DirectNodeConnection {
         public final Node from;
         public final Node to;
-        public final Set<List<TrainConnection>> connections;
+        public final Set<TrainPath> connections;
 
-        public StepImpl(Node from, Node to, Set<List<TrainConnection>> connections) {
+        public StepImpl(Node from, Node to, Set<TrainPath> connections) {
             this.from = from;
             this.to = to;
             this.connections = connections;
         }
 
         @Override
-        public Set<List<TrainConnection>> getConnections() {
+        public Set<TrainPath> getConnections() {
             return connections;
         }
 

@@ -18,4 +18,9 @@ public interface NodeFreightConnection extends NodeConnection {
      * @return if the connection exist and is complete
      */
     boolean isComplete();
+
+    /**
+     * @return length of the connection
+     */
+    int getLength();
 }
