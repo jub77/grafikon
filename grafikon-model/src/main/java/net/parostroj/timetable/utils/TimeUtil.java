@@ -44,7 +44,12 @@ public class TimeUtil {
      * @return normalized difference
      */
     public static int difference(int startTime, int endTime) {
-        return normalizeTime(endTime - startTime);
+        int start = normalizeTime(startTime);
+        int end = normalizeTime(endTime);
+        if (end < start) {
+            end += TimeInterval.DAY;
+        }
+        return end - start;
     }
 
     /**
