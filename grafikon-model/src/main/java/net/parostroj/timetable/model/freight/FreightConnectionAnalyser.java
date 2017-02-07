@@ -96,7 +96,7 @@ public class FreightConnectionAnalyser {
             @Override
             public int getLength() {
                 if (weight == null) {
-                    weight = getLengthOfPath(ctx.steps);
+                    weight = isComplete() ? getLengthOfPath(ctx.steps) : Integer.MAX_VALUE;
                 }
                 return weight.intValue();
             }

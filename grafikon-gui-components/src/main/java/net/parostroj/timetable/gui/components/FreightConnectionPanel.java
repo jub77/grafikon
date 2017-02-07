@@ -131,7 +131,6 @@ public class FreightConnectionPanel extends JPanel {
         if (from != null && to != null && from != to) {
             FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
             NodeFreightConnection ncf = connectionAnalyser.analyse(from, to).stream()
-                    .filter(NodeFreightConnection::isComplete)
                     .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
 
             stateIconLabel.setIcon(ncf.isComplete() ? okIcon : errorIcon);
