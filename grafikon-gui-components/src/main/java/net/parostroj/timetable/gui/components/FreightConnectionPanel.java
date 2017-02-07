@@ -137,7 +137,7 @@ public class FreightConnectionPanel extends JPanel {
 
             ncf.getSteps().forEach(s -> {
                 List<String> list = this.convertStep(s);
-                String node = s.getFrom().getName();
+                String node = convertNode(s.getFrom());
                 for (String item : list) {
                     model.addLine(node, item);
                     node = null;
@@ -145,15 +145,23 @@ public class FreightConnectionPanel extends JPanel {
             });
 
             if (ncf.isComplete()) {
-                model.addLine(to.getName(), "");
+                model.addLine(convertNode(to), "");
             } else {
                 List<DirectNodeConnection> steps = ncf.getSteps();
                 if (steps != null && !steps.isEmpty()) {
-                    model.addLine(steps.get(steps.size() - 1).getTo().getName(), "");
+                    model.addLine(convertNode(steps.get(steps.size() - 1).getTo()), "");
                 }
             }
 
             adjustColumnWidth.run();
+        }
+    }
+
+    private String convertNode(Node node) {
+        if (node.isCenterOfRegions()) {
+            return String.format("<html><b>%s</b></html>", node.getName());
+        } else {
+            return node.getName();
         }
     }
 
