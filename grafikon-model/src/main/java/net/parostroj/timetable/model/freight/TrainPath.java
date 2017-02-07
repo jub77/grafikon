@@ -14,12 +14,12 @@ public interface TrainPath extends List<TrainConnection> {
 
     default int getStartTime() {
         if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
-        return getFirst().getStartTime();
+        return getFirst().getFrom().getEnd();
     }
 
     default int getEndTime() {
         if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
-        return getLast().getStartTime();
+        return getLast().getTo().getStart();
     }
 
     default int getLength() {
