@@ -602,6 +602,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     private boolean isFreightCommon() {
-        return this.getTrain().isManagedFreight() && !this.isNotManagedFreight();
+        return this.getTrain().isManagedFreight() && !this.isNotManagedFreight() && !this.isTechnological();
     }
 }

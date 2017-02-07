@@ -40,8 +40,8 @@ public class FreightChecker {
                 .<ConnectionState<NodeFreightConnection>>map(t -> {
                     NodeFreightConnection fc = connAnalyser.analyse(t.first, t.second).stream()
                             .filter(NodeFreightConnection::isComplete)
-                            .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
-                    return fc.isComplete()
+                            .min(Comparator.comparingInt(NodeFreightConnection::getLength)).orElse(null);
+                    return fc != null && fc.isComplete()
                             ? new ConnectionImpl<>(t.first, t.second, fc)
                             : new ConnectionImpl<>(t.first, t.second);
                 })
