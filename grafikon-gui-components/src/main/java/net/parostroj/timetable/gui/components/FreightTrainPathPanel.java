@@ -189,21 +189,30 @@ public class FreightTrainPathPanel extends JPanel {
 
             for(TrainConnection tc : trainPath) {
                 String right = convertConnectionTrain(tc);
-                String left = tc.getFrom().getOwnerAsNode().getName();
-                if (time != null) {
-                    left = String.format("%s [%smin]", left, diagram.getTimeConverter()
-                            .convertIntToMinutesText(TimeUtil.difference(time, tc.getStartTime())));
-                }
+                String left = convertNode(tc.getFrom().getOwnerAsNode(), time == null ? null : TimeUtil.difference(time, tc.getStartTime()));
                 time = tc.getEndTime();
                 model.addLine(left, right);
             }
 
             if (!trainPath.isEmpty()) {
-                model.addLine(to.getName(), "");
+                model.addLine(convertNode(to, null), "");
             }
 
             adjustColumnWidth.run();
         }
+    }
+
+    private String convertNode(Node node, Integer difference) {
+        String result = null;
+        if (node.isCenterOfRegions()) {
+            result = String.format("<b>%s</b>", node.getName());
+        } else {
+            result = node.getName();
+        }
+        if (difference != null) {
+            result = String.format("%s [%smin]", result, diagram.getTimeConverter().convertIntToMinutesText(difference));
+        }
+        return node.isCenterOfRegions() ? String.format("<html>%s</html>", result) : result;
     }
 
     private String convertConnectionTrain(TrainConnection connection) {
