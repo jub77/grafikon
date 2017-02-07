@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.freight;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -12,16 +13,26 @@ import net.parostroj.timetable.utils.TimeUtil;
 public interface TrainPath extends List<TrainConnection> {
 
     default int getStartTime() {
-        if (isEmpty()) { throw new IllegalStateException("Path is empty"); }
-        return get(0).getStartTime();
+        if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
+        return getFirst().getStartTime();
     }
 
     default int getEndTime() {
-        if (isEmpty()) { throw new IllegalStateException("Path is empty"); }
-        return get(size() - 1).getStartTime();
+        if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
+        return getLast().getStartTime();
     }
 
     default int getLength() {
         return isEmpty() ? 0 : TimeUtil.difference(getStartTime(), getEndTime());
+    }
+
+    default TrainConnection getFirst() {
+        if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
+        return get(0);
+    }
+
+    default TrainConnection getLast() {
+        if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
+        return get(size() - 1);
     }
 }
