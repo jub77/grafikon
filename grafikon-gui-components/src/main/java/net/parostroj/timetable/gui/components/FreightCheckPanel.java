@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.joining;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +39,7 @@ import net.parostroj.timetable.model.freight.FreightChecker.ConnectionState;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.output2.util.OutputUtil;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Checking if the freight is complete.
@@ -111,24 +113,25 @@ public class FreightCheckPanel extends JPanel {
         initializeStyles();
         textPane.setText("");
         if (diagram != null) {
+            TextBuffer buffer = new TextBuffer();
             // check
             FreightChecker checker = new FreightChecker(diagram);
             // check all centers
-            appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
+            buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
             diagram.getNet().getNodes().stream().filter(n -> n.isCenterOfRegions()).forEach(n -> {
                 Set<Node> noConnToNodes = checker.getNoConnectionsToNodes(n, notFreightTypes);
                 Set<Node> noConnToCenter = checker.getNoConnectionToCenter(n, notFreightTypes);
-                appendText("-", noConnToCenter.isEmpty() && noConnToNodes.isEmpty() ? okStyle : errorStyle);
-                appendText(String.format("  %s\n", nodeWithRegionToString(n)), null);
+                buffer.appendText("-", noConnToCenter.isEmpty() && noConnToNodes.isEmpty() ? okStyle : errorStyle);
+                buffer.appendText(String.format("  %s\n", nodeWithRegionToString(n)), null);
                 for (Node ncNode : noConnToNodes) {
-                    appendText(String.format("   %s → %s\n", n.getName(), ncNode.getName()), null);
+                    buffer.appendText(String.format("   %s → %s\n", n.getName(), ncNode.getName()), null);
                 }
                 for (Node ncNode : noConnToCenter) {
-                    appendText(String.format("   %s → %s\n", ncNode.getName(), n.getName()), null);
+                    buffer.appendText(String.format("   %s → %s\n", ncNode.getName(), n.getName()), null);
                 }
             });
 
-            appendText(ResourceLoader.getString("freight.check.center.connections") + ":\n", boldUnderlineStyle);
+            buffer.appendText(ResourceLoader.getString("freight.check.center.connections") + ":\n", boldUnderlineStyle);
             Map<Node, List<ConnectionState<NodeConnectionEdges>>> centerConnMap =
                     checker.analyseCenterConnections().stream().collect(Collectors.groupingBy(c -> c.getFrom()));
 
@@ -136,23 +139,24 @@ public class FreightCheckPanel extends JPanel {
                 .sorted(Comparator.comparing(e -> e.getKey().getName(), comparator))
                 .forEach(c -> {
                     boolean exists = c.getValue().stream().allMatch(ConnectionState::exists);
-                    appendText("-", exists ? okStyle : errorStyle);
-                    appendText(String.format("  %s\n", nodeWithRegionToString(c.getKey())), null);
+                    buffer.appendText("-", exists ? okStyle : errorStyle);
+                    buffer.appendText(String.format("  %s\n", nodeWithRegionToString(c.getKey())), null);
                     c.getValue().stream().filter(cx -> !cx.exists()).forEach(cx -> {
-                            appendText(String.format("   %s → %s\n", cx.getFrom().getName(),
+                        buffer.appendText(String.format("   %s → %s\n", cx.getFrom().getName(),
                                     nodeWithRegionToString(cx.getTo())), null);
                         });
                 });
 
-            appendText(ResourceLoader.getString("freight.check.node.connections") + ":\n", boldUnderlineStyle);
+            buffer.appendText(ResourceLoader.getString("freight.check.node.connections") + ":\n", boldUnderlineStyle);
             checker.analyseNodeConnections(notFreightTypes).stream()
                 .filter(c -> !c.exists())
                 .sorted(this.compareConnections())
                 .forEach(c -> {
-                    appendText("-", errorStyle);
-                    appendText(String.format("  %s → %s\n", c.getFrom().getName(), c.getTo().getName()), null);
+                    buffer.appendText("-", errorStyle);
+                    buffer.appendText(String.format("  %s → %s\n", c.getFrom().getName(), c.getTo().getName()), null);
                 });
 
+            buffer.fillPane();
             textPane.setCaretPosition(0);
         }
     }
@@ -167,7 +171,7 @@ public class FreightCheckPanel extends JPanel {
         return String.format("%s (%s)", node.getName(), util.regionsToString(node.getCenterRegions(), Locale.getDefault()).stream().collect(joining(", ")));
     }
 
-    private void appendText(String text, AttributeSet style) {
+    private void appendTextToPane(String text, AttributeSet style) {
         try {
             textPane.getDocument().insertString(textPane.getDocument().getLength(), text, style);
         } catch (BadLocationException e) {
@@ -178,5 +182,19 @@ public class FreightCheckPanel extends JPanel {
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
         this.textPane.setText("");
+    }
+
+    private class TextBuffer {
+        private List<Pair<String, AttributeSet>> data = new ArrayList<>();
+
+        public void appendText(String text, AttributeSet set) {
+            data.add(new Pair<>(text, set));
+        }
+
+        public void fillPane() {
+            for (Pair<String, AttributeSet> item : data) {
+                appendTextToPane(item.first, item.second);
+            }
+        }
     }
 }
