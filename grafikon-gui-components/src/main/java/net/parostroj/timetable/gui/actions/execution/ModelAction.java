@@ -17,4 +17,13 @@ public interface ModelAction extends Runnable {
             }
         };
     }
+
+    static ModelAction newEdtAction(final ActionContext context, final Runnable action) {
+        return new EventDispatchModelAction(context) {
+            @Override
+            protected void eventDispatchAction() {
+                action.run();
+            }
+        };
+    }
 }
