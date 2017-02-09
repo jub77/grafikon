@@ -28,6 +28,9 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -114,51 +117,71 @@ public class FreightCheckPanel extends JPanel {
         textPane.setText("");
         if (diagram != null) {
             TextBuffer buffer = new TextBuffer();
-            // check
-            FreightChecker checker = new FreightChecker(diagram);
-            // check all centers
-            buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
-            diagram.getNet().getNodes().stream().filter(n -> n.isCenterOfRegions()).forEach(n -> {
-                Set<Node> noConnToNodes = checker.getNoConnectionsToNodes(n, notFreightTypes);
-                Set<Node> noConnToCenter = checker.getNoConnectionToCenter(n, notFreightTypes);
-                buffer.appendText("-", noConnToCenter.isEmpty() && noConnToNodes.isEmpty() ? okStyle : errorStyle);
-                buffer.appendText(String.format("  %s\n", nodeWithRegionToString(n)), null);
-                for (Node ncNode : noConnToNodes) {
-                    buffer.appendText(String.format("   %s → %s\n", n.getName(), ncNode.getName()), null);
+
+            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
+            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
+                @Override
+                protected void backgroundAction() {
+                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                    setWaitDialogVisible(true);
+                    try {
+                        checkFreight(buffer);
+                    } finally {
+                        setWaitDialogVisible(false);
+                    }
                 }
-                for (Node ncNode : noConnToCenter) {
-                    buffer.appendText(String.format("   %s → %s\n", ncNode.getName(), n.getName()), null);
+
+                @Override
+                protected void eventDispatchActionAfter() {
+                    buffer.fillPane();
+                    textPane.setCaretPosition(0);
                 }
             });
-
-            buffer.appendText(ResourceLoader.getString("freight.check.center.connections") + ":\n", boldUnderlineStyle);
-            Map<Node, List<ConnectionState<NodeConnectionEdges>>> centerConnMap =
-                    checker.analyseCenterConnections().stream().collect(Collectors.groupingBy(c -> c.getFrom()));
-
-            centerConnMap.entrySet().stream()
-                .sorted(Comparator.comparing(e -> e.getKey().getName(), comparator))
-                .forEach(c -> {
-                    boolean exists = c.getValue().stream().allMatch(ConnectionState::exists);
-                    buffer.appendText("-", exists ? okStyle : errorStyle);
-                    buffer.appendText(String.format("  %s\n", nodeWithRegionToString(c.getKey())), null);
-                    c.getValue().stream().filter(cx -> !cx.exists()).forEach(cx -> {
-                        buffer.appendText(String.format("   %s → %s\n", cx.getFrom().getName(),
-                                    nodeWithRegionToString(cx.getTo())), null);
-                        });
-                });
-
-            buffer.appendText(ResourceLoader.getString("freight.check.node.connections") + ":\n", boldUnderlineStyle);
-            checker.analyseNodeConnections(notFreightTypes).stream()
-                .filter(c -> !c.exists())
-                .sorted(this.compareConnections())
-                .forEach(c -> {
-                    buffer.appendText("-", errorStyle);
-                    buffer.appendText(String.format("  %s → %s\n", c.getFrom().getName(), c.getTo().getName()), null);
-                });
-
-            buffer.fillPane();
-            textPane.setCaretPosition(0);
         }
+    }
+
+    private void checkFreight(TextBuffer buffer) {
+        // check
+        FreightChecker checker = new FreightChecker(diagram);
+        // check all centers
+        buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
+        diagram.getNet().getNodes().stream().filter(n -> n.isCenterOfRegions()).forEach(n -> {
+            Set<Node> noConnToNodes = checker.getNoConnectionsToNodes(n, notFreightTypes);
+            Set<Node> noConnToCenter = checker.getNoConnectionToCenter(n, notFreightTypes);
+            buffer.appendText("-", noConnToCenter.isEmpty() && noConnToNodes.isEmpty() ? okStyle : errorStyle);
+            buffer.appendText(String.format("  %s\n", nodeWithRegionToString(n)), null);
+            for (Node ncNode : noConnToNodes) {
+                buffer.appendText(String.format("   %s → %s\n", n.getName(), ncNode.getName()), null);
+            }
+            for (Node ncNode : noConnToCenter) {
+                buffer.appendText(String.format("   %s → %s\n", ncNode.getName(), n.getName()), null);
+            }
+        });
+
+        buffer.appendText(ResourceLoader.getString("freight.check.center.connections") + ":\n", boldUnderlineStyle);
+        Map<Node, List<ConnectionState<NodeConnectionEdges>>> centerConnMap =
+                checker.analyseCenterConnections().stream().collect(Collectors.groupingBy(c -> c.getFrom()));
+
+        centerConnMap.entrySet().stream()
+        .sorted(Comparator.comparing(e -> e.getKey().getName(), comparator))
+        .forEach(c -> {
+            boolean exists = c.getValue().stream().allMatch(ConnectionState::exists);
+            buffer.appendText("-", exists ? okStyle : errorStyle);
+            buffer.appendText(String.format("  %s\n", nodeWithRegionToString(c.getKey())), null);
+            c.getValue().stream().filter(cx -> !cx.exists()).forEach(cx -> {
+                buffer.appendText(String.format("   %s → %s\n", cx.getFrom().getName(),
+                        nodeWithRegionToString(cx.getTo())), null);
+            });
+        });
+
+        buffer.appendText(ResourceLoader.getString("freight.check.node.connections") + ":\n", boldUnderlineStyle);
+        checker.analyseNodeConnections(notFreightTypes).stream()
+        .filter(c -> !c.exists())
+        .sorted(compareConnections())
+        .forEach(c -> {
+            buffer.appendText("-", errorStyle);
+            buffer.appendText(String.format("  %s → %s\n", c.getFrom().getName(), c.getTo().getName()), null);
+        });
     }
 
     private <T> Comparator<ConnectionState<T>> compareConnections() {
