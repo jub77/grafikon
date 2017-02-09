@@ -19,7 +19,11 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
+import net.parostroj.timetable.gui.components.FreightDestinationPanel.DataModel;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -53,7 +57,7 @@ public class FreightTrainPathPanel extends JPanel {
     private final WrapperListModel<Node> toNode;
     private final JTextField startTimeTextField;
     private final JTextField shuntDurationTextField;
-    private final DestinationTableModel model;
+    private final DestinationTableModel tableModel;
     private final Runnable adjustColumnWidth;
     private final FreightComboBoxHelper helper;
 
@@ -121,8 +125,8 @@ public class FreightTrainPathPanel extends JPanel {
         okIcon = ResourceLoader.createImageIcon(GuiIcon.OK);
         errorIcon = ResourceLoader.createImageIcon(GuiIcon.ERROR);
 
-        model = new DestinationTableModel();
-        JTable table = new JTable(model);
+        tableModel = new DestinationTableModel();
+        JTable table = new JTable(tableModel);
         table.setTableHeader(null);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
@@ -176,29 +180,48 @@ public class FreightTrainPathPanel extends JPanel {
             toNode.setSelectedObject(to);
         }
 
-        model.clear();
+        tableModel.clear();
         stateIconLabel.setIcon(null);
         if (from != null && to != null && from != to) {
-            FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
-            Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
-            TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
+            DataModel model = new DataModel();
+            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
+            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
+                @Override
+                protected void backgroundAction() {
+                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                    setWaitDialogVisible(true);
+                    try {
+                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
+                        Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
+                        TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
 
-            stateIconLabel.setIcon(!trainPath.isEmpty() ? okIcon : errorIcon);
+                        stateIconLabel.setIcon(!trainPath.isEmpty() ? okIcon : errorIcon);
 
-            Integer time = null;
+                        Integer time = null;
 
-            for(TrainConnection tc : trainPath) {
-                String right = convertConnectionTrain(tc);
-                String left = convertNode(tc.getFrom().getOwnerAsNode(), time == null ? null : TimeUtil.difference(time, tc.getStartTime()));
-                time = tc.getEndTime();
-                model.addLine(left, right);
-            }
+                        for(TrainConnection tc : trainPath) {
+                            String right = convertConnectionTrain(tc);
+                            String left = convertNode(
+                                    tc.getFrom().getOwnerAsNode(),
+                                    time == null ? null : TimeUtil.difference(time, tc.getStartTime()));
+                            time = tc.getEndTime();
+                            model.addLine(left, right);
+                        }
 
-            if (!trainPath.isEmpty()) {
-                model.addLine(convertNode(to, null), "");
-            }
+                        if (!trainPath.isEmpty()) {
+                            model.addLine(convertNode(to, null), "");
+                        }
+                    } finally {
+                        setWaitDialogVisible(false);
+                    }
+                }
 
-            adjustColumnWidth.run();
+                @Override
+                protected void eventDispatchActionAfter() {
+                    tableModel.addLines(model);
+                    adjustColumnWidth.run();
+                }
+            });
         }
     }
 
