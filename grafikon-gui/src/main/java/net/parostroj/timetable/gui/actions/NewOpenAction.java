@@ -136,28 +136,37 @@ public class NewOpenAction extends AbstractAction {
                     }
                 } finally {
                     log.debug("Loaded in {}ms", System.currentTimeMillis() - time);
-                    setWaitDialogVisible(false);
                 }
             }
 
             @Override
             protected void eventDispatchActionAfter() {
-                if (retVal != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-                if (diagram != null) {
-                    model.setDiagram(diagram);
-                } else {
-                    String text = errorMessage + " " + selectedFile.getName();
-                    if (errorException != null) {
-                        text = text + "\n(" + errorException.getMessage() + ")";
+                try {
+                    if (retVal != JFileChooser.APPROVE_OPTION) {
+                        return;
                     }
-                    GuiComponentUtils.showError(text, parent);
-                    model.setDiagram(null);
+                    if (diagram != null) {
+                        model.setDiagram(diagram);
+                    } else {
+                        String text = errorMessage + " " + selectedFile.getName();
+                        if (errorException != null) {
+                            text = text + "\n(" + errorException.getMessage() + ")";
+                        }
+                        context.setAttribute("error", text);
+                        model.setDiagram(null);
+                    }
+                } finally {
+                    setWaitDialogVisible(false);
                 }
             }
         };
         ActionHandler.getInstance().execute(openAction);
+        ActionHandler.getInstance().execute(ModelAction.newEdtAction(context, () -> {
+            // show error
+            if (context.getAttribute("error") != null) {
+                GuiComponentUtils.showError((String) context.getAttribute("error"), parent);
+            }
+        }));
     }
 
     private void create(final Component parent) {
