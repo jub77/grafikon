@@ -12,4 +12,10 @@
         <language>GROOVY</language>
         <location>check_duplicate_train_numbers.groovy</location>
     </script>
+    <script>
+        <id>add_managed_freight_select</id>
+        <name>Add trains to managed freight (selection)</name>
+        <language>GROOVY</language>
+        <location>add_managed_freight_select.groovy</location>
+    </script>
 </scripts>
