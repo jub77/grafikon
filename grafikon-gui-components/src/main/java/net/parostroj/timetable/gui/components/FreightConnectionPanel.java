@@ -19,7 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
+import net.parostroj.timetable.gui.components.FreightDestinationPanel.DataModel;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -46,7 +50,7 @@ public class FreightConnectionPanel extends JPanel {
 
     private final WrapperListModel<Node> fromNode;
     private final WrapperListModel<Node> toNode;
-    private final DestinationTableModel model;
+    private final DestinationTableModel tableModel;
     private final Runnable adjustColumnWidth;
     private final FreightComboBoxHelper helper;
 
@@ -96,8 +100,8 @@ public class FreightConnectionPanel extends JPanel {
         okIcon = ResourceLoader.createImageIcon(GuiIcon.OK);
         errorIcon = ResourceLoader.createImageIcon(GuiIcon.ERROR);
 
-        model = new DestinationTableModel();
-        JTable table = new JTable(model);
+        tableModel = new DestinationTableModel();
+        JTable table = new JTable(tableModel);
         table.setTableHeader(null);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
@@ -126,34 +130,52 @@ public class FreightConnectionPanel extends JPanel {
         if (toNode.getSelectedObject() != to) {
             toNode.setSelectedObject(to);
         }
-        model.clear();
+        tableModel.clear();
         stateIconLabel.setIcon(null);
         if (from != null && to != null && from != to) {
-            FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
-            NodeFreightConnection ncf = connectionAnalyser.analyse(from, to).stream()
-                    .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
 
-            stateIconLabel.setIcon(ncf.isComplete() ? okIcon : errorIcon);
+            DataModel model = new DataModel();
+            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
+            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
+                @Override
+                protected void backgroundAction() {
+                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                    setWaitDialogVisible(true);
+                    try {
+                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
+                        NodeFreightConnection ncf = connectionAnalyser.analyse(from, to).stream()
+                                .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
 
-            ncf.getSteps().forEach(s -> {
-                List<String> list = this.convertStep(s);
-                String node = convertNode(s.getFrom());
-                for (String item : list) {
-                    model.addLine(node, item);
-                    node = null;
+                        stateIconLabel.setIcon(ncf.isComplete() ? okIcon : errorIcon);
+
+                        ncf.getSteps().forEach(s -> {
+                            List<String> list = convertStep(s);
+                            String node = convertNode(s.getFrom());
+                            for (String item : list) {
+                                model.addLine(node, item);
+                                node = null;
+                            }
+                        });
+
+                        if (ncf.isComplete()) {
+                            model.addLine(convertNode(to), "");
+                        } else {
+                            List<DirectNodeConnection> steps = ncf.getSteps();
+                            if (steps != null && !steps.isEmpty()) {
+                                model.addLine(convertNode(steps.get(steps.size() - 1).getTo()), "");
+                            }
+                        }
+                    } finally {
+                        setWaitDialogVisible(false);
+                    }
+                }
+
+                @Override
+                protected void eventDispatchActionAfter() {
+                    tableModel.addLines(model);
+                    adjustColumnWidth.run();
                 }
             });
-
-            if (ncf.isComplete()) {
-                model.addLine(convertNode(to), "");
-            } else {
-                List<DirectNodeConnection> steps = ncf.getSteps();
-                if (steps != null && !steps.isEmpty()) {
-                    model.addLine(convertNode(steps.get(steps.size() - 1).getTo()), "");
-                }
-            }
-
-            adjustColumnWidth.run();
         }
     }
 
