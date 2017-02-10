@@ -303,6 +303,14 @@ public class TrainDiagram
         return id;
     }
 
+    public int getSaveVersion() {
+        return getAttribute(ATTR_SAVE_VERSION, Integer.class, 0);
+    }
+
+    public void setSaveVersion(int version) {
+        setAttribute(ATTR_SAVE_VERSION, version);
+    }
+
     @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);

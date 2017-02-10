@@ -197,6 +197,9 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             this.createMetadata(METADATA_KEY_MODEL_VERSION).store(zipOutput, null);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
 
+            // increase save version (increment by one)
+            diagram.setSaveVersion(diagram.getSaveVersion() + 1);
+
             // save train diagram
             this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
             // save net
