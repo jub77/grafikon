@@ -58,13 +58,20 @@ public class ModelUtils {
             }
         }
         LSFile ls = LSFileFactory.getInstance().createForSave();
-        ls.save(model.getDiagram(), file);
+        TrainDiagram diagram = model.getDiagram();
+        boolean originalSkip = diagram.getAttributes().isSkipListeners();
+        diagram.getAttributes().setSkipListeners(true);
+        ls.save(diagram, file);
+        diagram.getAttributes().setSkipListeners(originalSkip);
     }
 
     public static void saveLibraryData(final Library library, File file) throws LSException, IOException {
         LSLibrary ls = LSLibraryFactory.getInstance().createForSave();
         try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
+            boolean originalSkip = library.getAttributes().isSkipListeners();
+            library.getAttributes().setSkipListeners(true);
             ls.save(library, os);
+            library.getAttributes().setSkipListeners(originalSkip);
         }
     }
 
