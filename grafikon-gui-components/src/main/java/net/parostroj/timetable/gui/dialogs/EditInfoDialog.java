@@ -49,23 +49,18 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
     private void initComponents() {
         Font font = new JTextField().getFont();
 
-        java.awt.GridBagConstraints gridBagConstraints;
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         ActionListener closeListener = evt -> setVisible(false);
 
         setTitle(ResourceLoader.getString("info.title")); // NOI18N
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
-        gbc_tabbedPane.fill = GridBagConstraints.BOTH;
-        gbc_tabbedPane.insets = new Insets(0, 0, 5, 0);
-        gbc_tabbedPane.gridx = 0;
-        gbc_tabbedPane.gridy = 0;
-        getContentPane().add(tabbedPane, gbc_tabbedPane);
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
         javax.swing.JPanel dataPanel = createDataPanel();
 
@@ -84,11 +79,8 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         cancelButton.addActionListener(closeListener);
         buttonsPanel.add(cancelButton);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        getContentPane().add(buttonsPanel, gridBagConstraints);
+        getContentPane().add(buttonsPanel, BorderLayout.SOUTH);
+
         okButton.setModelProvider(provider);
         okButton.setPath(new Path("ok"));
 
@@ -120,7 +112,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gbc_scrollPane.weighty = 1.0;
         gbc_scrollPane.weightx = 1.0;
         gbc_scrollPane.anchor = GridBagConstraints.WEST;
-        gbc_scrollPane.insets = new Insets(3, 3, 5, 3);
+        gbc_scrollPane.insets = new Insets(0, 5, 5, 5);
         gbc_scrollPane.fill = GridBagConstraints.BOTH;
         gbc_scrollPane.gridx = 0;
         gbc_scrollPane.gridy = 1;
@@ -139,7 +131,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new Insets(0, 3, 5, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
         dataPanel.add(new javax.swing.JLabel(ResourceLoader.getString("info.validity")), gridBagConstraints);
         BnTextField validityTextField = new BnTextField();
 
@@ -150,7 +142,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gridBagConstraints_4.gridx = 0;
         gridBagConstraints_4.gridy = 3;
         gridBagConstraints_4.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints_4.insets = new Insets(0, 3, 5, 3);
+        gridBagConstraints_4.insets = new Insets(0, 5, 5, 5);
         dataPanel.add(validityTextField, gridBagConstraints_4);
         infoTextArea.setFont(validityTextField.getFont());
 
@@ -169,44 +161,53 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routePanel.setLayout(gbl_routePanel);
         JLabel label = new JLabel(ResourceLoader.getString("info.route.number"));
         GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.WEST;
-        gbc_label.insets = new Insets(0, 0, 0, 5);
+        gbc_label.anchor = GridBagConstraints.NORTHWEST;
+        gbc_label.insets = new Insets(0, 5, 0, 5);
         gbc_label.gridx = 0;
         gbc_label.gridy = 0;
         routePanel.add(label, gbc_label);
-        BnTextAreaGrey routeNumberTextArea = new BnTextAreaGrey();
 
+        BnTextAreaGrey routeNumberTextArea = new BnTextAreaGrey();
         routeNumberTextArea.setColumns(35);
         routeNumberTextArea.setRows(3);
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         GridBagConstraints gbc_scrollPane1 = new GridBagConstraints();
-        gbc_scrollPane1.insets = new Insets(0, 0, 0, 5);
+        gbc_scrollPane1.anchor = GridBagConstraints.NORTHWEST;
+        gbc_scrollPane1.insets = new Insets(0, 5, 0, 5);
         gbc_scrollPane1.gridx = 0;
         gbc_scrollPane1.gridy = 1;
+        gbc_scrollPane1.weightx = 1.0;
+        gbc_scrollPane1.fill = GridBagConstraints.HORIZONTAL;
         routePanel.add(scrollPane1, gbc_scrollPane1);
         scrollPane1.setViewportView(routeNumberTextArea);
-
         routeNumberTextArea.setFont(font);
-        routeNumberTextArea.setModelProvider(provider);
-        routeNumberTextArea.setPath(new Path("routeNumbers"));
+
         JLabel label_1 = new JLabel(ResourceLoader.getString("info.routes"));
         GridBagConstraints gbc_label_1 = new GridBagConstraints();
-        gbc_label_1.anchor = GridBagConstraints.WEST;
-        gbc_label_1.insets = new Insets(0, 0, 0, 5);
+        gbc_label_1.anchor = GridBagConstraints.NORTHWEST;
+        gbc_label_1.insets = new Insets(0, 5, 0, 5);
         gbc_label_1.gridx = 0;
         gbc_label_1.gridy = 2;
         routePanel.add(label_1, gbc_label_1);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         GridBagConstraints gbc_scrollPane2 = new GridBagConstraints();
+        gbc_scrollPane2.weighty = 1.0;
+        gbc_scrollPane2.insets = new Insets(0, 5, 5, 5);
+        gbc_scrollPane2.anchor = GridBagConstraints.NORTHWEST;
         gbc_scrollPane2.gridx = 0;
         gbc_scrollPane2.gridy = 3;
+        gbc_scrollPane2.weightx = 1.0;
+        gbc_scrollPane2.fill = GridBagConstraints.BOTH;
         routePanel.add(scrollPane2, gbc_scrollPane2);
-        BnTextAreaGrey routesTextArea = new BnTextAreaGrey();
 
+        BnTextAreaGrey routesTextArea = new BnTextAreaGrey();
         routesTextArea.setColumns(35);
         routesTextArea.setRows(5);
         scrollPane2.setViewportView(routesTextArea);
         routesTextArea.setFont(font);
+
+        routeNumberTextArea.setModelProvider(provider);
+        routeNumberTextArea.setPath(new Path("routeNumbers"));
         routesTextArea.setModelProvider(provider);
         routesTextArea.setPath(new Path("routeNodes"));
         return routePanel;
