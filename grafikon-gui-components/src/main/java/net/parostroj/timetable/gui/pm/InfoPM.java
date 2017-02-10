@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -8,6 +9,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.OnChange;
 import org.beanfabrics.support.Operation;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Model of information about diagram.
@@ -21,15 +24,20 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
     final TextPM routeNodes = new TextPM();
     final TextPM validity = new TextPM();
     final BooleanPM isRouteInfo = new BooleanPM();
+    final TextPM saveVersion = new TextPM();
+    final TextPM saveTimestamp = new TextPM();
 
     final OperationPM ok = new OperationPM();
 
     private WeakReference<TrainDiagram> diagramRef;
 
+    private DateTimeFormatter format = DateTimeFormat.mediumDateTime();
+
     public InfoPM() {
         PMManager.setup(this);
     }
 
+    @Override
     public void init(TrainDiagram diagram) {
         this.diagramRef = new WeakReference<>(diagram);
         String numbers = diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class);
@@ -40,6 +48,9 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         this.routeNodes.setText(nodes);
         this.validity.setText(diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
         this.info.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
+        this.saveVersion.setText(Integer.toString(diagram.getSaveVersion()));
+        Date timestamp = diagram.getSaveTimestamp();
+        this.saveTimestamp.setText(timestamp == null ? "" : format.print(timestamp.getTime()));
         this.checkRouteInfo();
     }
 

@@ -21,6 +21,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Dialog for editing additional information - routes, validity.
@@ -122,7 +123,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routeInfoCheckBox.setText(ResourceLoader.getString("info.route.enabled")); // NOI18N
         GridBagConstraints gbc_routeInfoCheckBox = new GridBagConstraints();
         gbc_routeInfoCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_routeInfoCheckBox.insets = new Insets(0, 0, 5, 0);
+        gbc_routeInfoCheckBox.insets = new Insets(0, 0, 3, 0);
         gbc_routeInfoCheckBox.gridx = 0;
         gbc_routeInfoCheckBox.gridy = 4;
         dataPanel.add(routeInfoCheckBox, gbc_routeInfoCheckBox);
@@ -146,12 +147,33 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         dataPanel.add(validityTextField, gridBagConstraints_4);
         infoTextArea.setFont(validityTextField.getFont());
 
+        java.awt.GridBagConstraints gridBagConstraints_5 = new java.awt.GridBagConstraints();
+        gridBagConstraints_5.weightx = 1.0;
+        gridBagConstraints_5.gridx = 0;
+        gridBagConstraints_5.gridy = 5;
+        gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints_5.insets = new Insets(0, 3, 5, 5);
+        JPanel versionPanel = new JPanel();
+        versionPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        versionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        dataPanel.add(versionPanel, gridBagConstraints_5);
+        BnLabel timeLabel = new BnLabel();
+        JLabel commaLabel = new JLabel(" - ");
+        BnLabel versionLabel = new BnLabel();
+        versionPanel.add(versionLabel);
+        versionPanel.add(commaLabel);
+        versionPanel.add(timeLabel);
+
         infoTextArea.setModelProvider(provider);
         infoTextArea.setPath(new Path("info"));
         routeInfoCheckBox.setModelProvider(provider);
         routeInfoCheckBox.setPath(new Path("isRouteInfo"));
         validityTextField.setModelProvider(provider);
         validityTextField.setPath(new Path("validity"));
+        timeLabel.setModelProvider(provider);
+        timeLabel.setPath(new Path("saveTimestamp"));
+        versionLabel.setModelProvider(provider);
+        versionLabel.setPath(new Path("saveVersion"));
         return dataPanel;
     }
 
