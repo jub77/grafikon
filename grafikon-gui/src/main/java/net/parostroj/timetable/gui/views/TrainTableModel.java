@@ -333,7 +333,8 @@ class TrainTableModel extends AbstractTableModel {
                 if (aValue != null) {
                     int addedTime;
                     try {
-                        addedTime = converter.convertMinutesTextToInt((String) aValue);
+                    addedTime = ObjectsUtil.isEmpty((String) aValue) ? 0
+                            : converter.convertMinutesTextToInt((String) aValue);
                     } catch (ParseException e) {
                         // wrong conversion doesn't change anything
                         addedTime = -1;
