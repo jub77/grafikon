@@ -311,6 +311,15 @@ public class TrainDiagram
         setAttribute(ATTR_SAVE_VERSION, version);
     }
 
+    public Date getSaveTimestamp() {
+        Long timestamp = getAttribute(ATTR_SAVE_TIMESTAMP, Long.class, null);
+        return timestamp == null ? null : new Date(timestamp);
+    }
+
+    public void setSaveTimestamp(Date date) {
+        setRemoveAttribute(ATTR_SAVE_TIMESTAMP, date == null ? null : date.getTime());
+    }
+
     @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
