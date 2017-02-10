@@ -310,6 +310,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             } else {
                 title += " - " + model.getOpenedFile().getName();
             }
+            title += " [" + model.getDiagram().getSaveVersion() + "]";
             if (b) {
                 title += " *";
             }

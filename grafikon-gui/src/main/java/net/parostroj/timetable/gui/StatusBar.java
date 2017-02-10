@@ -8,8 +8,12 @@ package net.parostroj.timetable.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 import javax.swing.Timer;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
@@ -26,9 +30,15 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class StatusBar extends javax.swing.JPanel implements ApplicationModelListener {
 
+    private static final int LEFT_SIDE_COLUMNS = 24;
+    private static final int RIGHT_SIDE_COLUMNS = 34;
+
     private static final int TIMEOUT = 20000;
 
     private final Timer timer;
+
+    private boolean changed;
+    private DateTimeFormatter format = DateTimeFormat.mediumDateTime();
 
     /** Creates new form StatusBar */
     public StatusBar() {
@@ -71,10 +81,15 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 switch (event.getType()) {
                     case ADDED: case REMOVED:
                         if (event.getObject() instanceof TrainsCycle) {
-                            updateCirculations(diagram);
+                            updateTrainsAndCirculations(diagram);
                         }
                         if (event.getObject() instanceof Train) {
-                            updateTrainCount(diagram);
+                            updateTrainsAndCirculations(diagram);
+                        }
+                        break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(TrainDiagram.ATTR_SAVE_VERSION, TrainDiagram.ATTR_SAVE_TIMESTAMP)) {
+                            updateVersionAndTimestamp(diagram);
                         }
                         break;
                     default:
@@ -120,19 +135,20 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
-        // left
+        TrainDiagram diagram = event.getModel().getDiagram();
         switch (event.getType()) {
             case SET_DIAGRAM_CHANGED:
-                this.updateTrainCount(event.getModel().getDiagram());
+                changed = false;
+                this.updateTrainsAndCirculations(diagram);
+                this.updateVersionAndTimestamp(diagram);
                 break;
-            default:
-                // nothing
+            case MODEL_SAVED:
+                changed = false;
+                this.updateVersionAndTimestamp(diagram);
                 break;
-        }
-        // right
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                this.updateCirculations(event.getModel().getDiagram());
+            case MODEL_CHANGED:
+                changed = true;
+                this.updateVersionAndTimestamp(diagram);
                 break;
             default:
                 // nothing
@@ -140,40 +156,51 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         }
     }
 
-    private void updateCirculations(TrainDiagram diagram) {
+    private void updateTrainsAndCirculations(TrainDiagram diagram) {
         if (diagram == null) {
-            updateLeft("");
+            updateRight("");
         } else {
             int drivers = diagram.getDriverCycleType().getCycles().size();
             int engines = diagram.getEngineCycleType().getCycles().size();
             int trainUnits = diagram.getTrainUnitCycleType().getCycles().size();
-            String text = String.format("%s: %d, %s: %d, %s: %d",
+            String text = String.format("%s %d, %s: %d, %s: %d, %s: %d",
+                    ResourceLoader.getString("status.bar.trains"), diagram.getTrains().size(),
                     ResourceLoader.getString("sbar.engines"), engines,
                     ResourceLoader.getString("sbar.train.units"), trainUnits,
                     ResourceLoader.getString("sbar.drivers"), drivers);
-            updateLeft(text);
+            updateRight(text);
         }
     }
 
-    private void updateTrainCount(TrainDiagram diagram) {
+    private void updateVersionAndTimestamp(TrainDiagram diagram) {
         if (diagram == null) {
-            updateRight("");
+            updateLeft("");
         } else {
-            updateRight(ResourceLoader.getString("status.bar.trains") + " " + diagram.getTrains().size());
+            Date timestamp = diagram.getSaveTimestamp();
+            String text = String.format("%s [%d]",
+                    timestamp != null ? format.print(timestamp.getTime()) : "-",
+                    diagram.getSaveVersion());
+            if (changed) {
+                text += " *";
+            }
+            updateLeft(text);
         }
     }
 
     private void updateLeft(String text) {
         left.setText(text);
+        left.setCaretPosition(0);
     }
 
     private void updateRight(String text) {
         right.setText(text);
+        right.setCaretPosition(0);
     }
 
     private void updateCenter(String text) {
         text = ObjectsUtil.checkAndTrim(text);
         center.setText(text);
+        center.setCaretPosition(0);
         if (text != null) {
             // start timer
             if (timer != null) {
@@ -186,16 +213,17 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
 
     private void initComponents() {
         left = new javax.swing.JTextField();
-        left.setColumns(25);
+        left.setColumns(LEFT_SIDE_COLUMNS);
         center = new javax.swing.JTextField();
         right = new javax.swing.JTextField();
-        right.setColumns(10);
+        right.setColumns(RIGHT_SIDE_COLUMNS);
 
         left.setEditable(false);
 
         center.setEditable(false);
 
         right.setEditable(false);
+        right.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         setLayout(new BorderLayout(0, 0));
         add(left, BorderLayout.WEST);
         add(center, BorderLayout.CENTER);
