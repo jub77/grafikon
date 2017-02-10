@@ -559,6 +559,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param time starting time
      */
     public void move(int time) {
+        if (time == timeIntervalList.get(0).getStart()) {
+            return;
+        }
     	timeIntervalList.get(0).move(time);
     	this.recalculateImpl(0);
         this.listenerSupport.fireEvent(new Event(this, new SpecialTrainTimeIntervalList(
