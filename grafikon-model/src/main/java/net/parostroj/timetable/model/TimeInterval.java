@@ -525,7 +525,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     public boolean isInnerStop() {
-        return isNodeOwner() && getLength() != 0;
+        return isNodeOwner() && getLength() != 0 && !isTechnological();
     }
 
     public boolean isFirst() {
