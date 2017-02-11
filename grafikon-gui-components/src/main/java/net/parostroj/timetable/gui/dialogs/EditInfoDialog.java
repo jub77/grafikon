@@ -21,7 +21,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
 
 /**
  * Dialog for editing additional information - routes, validity.
@@ -153,16 +152,8 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gridBagConstraints_5.gridy = 5;
         gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints_5.insets = new Insets(0, 3, 5, 5);
-        JPanel versionPanel = new JPanel();
-        versionPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        versionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        dataPanel.add(versionPanel, gridBagConstraints_5);
-        BnLabel timeLabel = new BnLabel();
-        JLabel commaLabel = new JLabel(" - ");
         BnLabel versionLabel = new BnLabel();
-        versionPanel.add(versionLabel);
-        versionPanel.add(commaLabel);
-        versionPanel.add(timeLabel);
+        dataPanel.add(versionLabel, gridBagConstraints_5);
 
         infoTextArea.setModelProvider(provider);
         infoTextArea.setPath(new Path("info"));
@@ -170,10 +161,8 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         routeInfoCheckBox.setPath(new Path("isRouteInfo"));
         validityTextField.setModelProvider(provider);
         validityTextField.setPath(new Path("validity"));
-        timeLabel.setModelProvider(provider);
-        timeLabel.setPath(new Path("saveTimestamp"));
         versionLabel.setModelProvider(provider);
-        versionLabel.setPath(new Path("saveVersion"));
+        versionLabel.setPath(new Path("version"));
         return dataPanel;
     }
 
