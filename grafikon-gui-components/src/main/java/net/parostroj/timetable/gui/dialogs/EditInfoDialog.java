@@ -104,8 +104,6 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
 
         BnTextArea infoTextArea = new BnTextArea();
-        infoTextArea.setColumns(35);
-        infoTextArea.setRows(4);
         scrollPane.setViewportView(infoTextArea);
 
         GridBagConstraints gbc_scrollPane = new GridBagConstraints();

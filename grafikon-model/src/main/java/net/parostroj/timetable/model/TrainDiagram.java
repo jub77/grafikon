@@ -320,6 +320,14 @@ public class TrainDiagram
         setRemoveAttribute(ATTR_SAVE_TIMESTAMP, date == null ? null : date.getTime());
     }
 
+    public String getSaveUser() {
+        return getAttribute(ATTR_SAVE_USER, String.class);
+    }
+
+    public void setSaveUser(String user) {
+        setRemoveAttribute(ATTR_SAVE_USER, user);
+    }
+
     @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);

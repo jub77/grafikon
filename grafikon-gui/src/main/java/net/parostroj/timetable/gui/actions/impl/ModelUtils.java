@@ -43,24 +43,28 @@ public class ModelUtils {
 
     public static void saveModelData(final ApplicationModel model, File file) throws LSException {
         // update author and date before save
-        final ChangesTracker tracker = model.getDiagram().getChangesTracker();
+        TrainDiagram diagram = model.getDiagram();
+        boolean originalSkip = diagram.getAttributes().isSkipListeners();
+        diagram.getAttributes().setSkipListeners(true);
+        String user = model.getProgramSettings().getUserNameOrSystemUser();
+        diagram.setSaveUser(user);
+
+        final ChangesTracker tracker = diagram.getChangesTracker();
         final DiagramChangeSet set = tracker.getCurrentChangeSet();
         if (set != null && tracker.isTrackingEnabled()) {
             try {
                 // do the update in event dispatch thread (because of events)
                 SwingUtilities.invokeAndWait(() -> {
                     tracker.updateCurrentChangeSet(set.getVersion(),
-                            model.getProgramSettings().getUserNameOrSystemUser(),
+                            user,
                             Calendar.getInstance());
                 });
             } catch (Exception e) {
                 log.warn("Error updating values for current diagram change set.", e);
             }
         }
+
         LSFile ls = LSFileFactory.getInstance().createForSave();
-        TrainDiagram diagram = model.getDiagram();
-        boolean originalSkip = diagram.getAttributes().isSkipListeners();
-        diagram.getAttributes().setSkipListeners(true);
         ls.save(diagram, file);
         diagram.getAttributes().setSkipListeners(originalSkip);
     }
