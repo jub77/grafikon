@@ -177,9 +177,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
             updateLeft("");
         } else {
             Date timestamp = diagram.getSaveTimestamp();
-            String text = String.format("%s [%d]",
-                    timestamp != null ? format.print(timestamp.getTime()) : "-",
-                    diagram.getSaveVersion());
+            String text = timestamp != null
+                    ? String.format("%s [%d]", format.print(timestamp.getTime()), diagram.getSaveVersion())
+                    : String.format("[%d]", diagram.getSaveVersion());
             if (changed) {
                 text += " *";
             }

@@ -47,9 +47,11 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         this.routeNodes.setText(nodes);
         this.validity.setText(diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
         this.info.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
+        String versionText = "[" + diagram.getSaveVersion() + "]";
         Date timestamp = diagram.getSaveTimestamp();
-        String versionText = timestamp == null ? "-" : format.print(timestamp.getTime());
-        versionText += " [" + diagram.getSaveVersion() + "]";
+        if (timestamp != null) {
+            versionText = format.print(timestamp.getTime()) + " " + versionText;
+        }
         String user = diagram.getSaveUser();
         if (user != null) {
             versionText += " " + user;
