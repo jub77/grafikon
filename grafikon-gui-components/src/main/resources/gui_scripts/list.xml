@@ -18,4 +18,10 @@
         <language>GROOVY</language>
         <location>add_managed_freight_select.groovy</location>
     </script>
+    <script>
+        <id>copy_output_templates_to_outputs_select</id>
+        <name>Copy output templates to outputs (selection)</name>
+        <language>GROOVY</language>
+        <location>copy_output_templates_to_outputs_select.groovy</location>
+    </script>
 </scripts>
