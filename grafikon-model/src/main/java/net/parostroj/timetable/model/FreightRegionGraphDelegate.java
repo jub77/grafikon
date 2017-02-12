@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
@@ -79,10 +79,10 @@ class FreightRegionGraphDelegate {
             BiFunction<NodeConnection, GraphPath<Node, DirectNodeConnection>, T> conversion) {
         Collection<T> connections = new ArrayList<>();
         this.getAllConnectionVariants(graph).forEach(nodeConn -> {
-                    DijkstraShortestPath<Node, DirectNodeConnection> path = new DijkstraShortestPath<>(graph,
-                            nodeConn.getFrom(), nodeConn.getTo());
-                    if (path.getPath() != null) {
-                        connections.add(conversion.apply(nodeConn, path.getPath()));
+                    DijkstraShortestPath<Node, DirectNodeConnection> shortestPath = new DijkstraShortestPath<>(graph);
+                    GraphPath<Node, DirectNodeConnection> path = shortestPath.getPath(nodeConn.getFrom(), nodeConn.getTo());
+                    if (path != null) {
+                        connections.add(conversion.apply(nodeConn, path));
                     }
                 });
         return connections;

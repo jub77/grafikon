@@ -11,7 +11,8 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 import org.jgrapht.Graph;
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.ListenableUndirectedGraph;
 
 /**
@@ -125,7 +126,8 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     }
 
     public List<Line> getRoute(Node from, Node to) {
-        return DijkstraShortestPath.findPathBetween(netDelegate, from, to);
+        GraphPath<Node, Line> path = DijkstraShortestPath.findPathBetween(netDelegate, from, to);
+        return path == null ? null : path.getEdgeList();
     }
 
     public ItemWithIdList<LineClass> getLineClasses() {
