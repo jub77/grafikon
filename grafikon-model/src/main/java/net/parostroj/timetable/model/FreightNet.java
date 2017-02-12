@@ -26,6 +26,7 @@ import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.model.freight.FreightFactory;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
+import net.parostroj.timetable.model.freight.FreightDataSource;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.model.freight.NodeConnectionNodes;
 import net.parostroj.timetable.model.freight.TrainConnection;
@@ -37,7 +38,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart {
+public class FreightNet
+        implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart, FreightDataSource {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -199,6 +201,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return this.attributes;
     }
 
+    @Override
     public Map<Train, List<FreightConnectionPath>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
@@ -213,6 +216,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return result;
     }
 
+    @Override
     public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
@@ -278,10 +282,12 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     	return toMap.get(toInterval);
     }
 
+    @Override
     public Collection<NodeConnectionNodes> getRegionConnectionNodes() {
         return regionConnections.getRegionConnectionNodes();
     }
 
+    @Override
     public Collection<NodeConnectionEdges> getRegionConnectionEdges() {
         return regionConnections.getRegionConnectionEdges();
     }
