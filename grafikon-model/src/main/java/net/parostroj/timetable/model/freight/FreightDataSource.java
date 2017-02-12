@@ -21,4 +21,8 @@ public interface FreightDataSource {
     Collection<NodeConnectionEdges> getRegionConnectionEdges();
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes();
+
+    static FreightDataSource createCached(FreightDataSource source) {
+        return new CachedFreightDataSource(source);
+    }
 }
