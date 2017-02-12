@@ -142,7 +142,7 @@ public class FreightCheckPanel extends JPanel {
 
     private void checkFreight(TextBuffer buffer) {
         // check
-        FreightChecker checker = new FreightChecker(diagram);
+        FreightChecker checker = new FreightChecker(diagram.getFreightNet());
         // check all centers
         buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
         diagram.getNet().getNodes().stream().filter(n -> n.isCenterOfRegions()).forEach(n -> {
@@ -160,7 +160,7 @@ public class FreightCheckPanel extends JPanel {
 
         buffer.appendText(ResourceLoader.getString("freight.check.center.connections") + ":\n", boldUnderlineStyle);
         Map<Node, List<ConnectionState<NodeConnectionEdges>>> centerConnMap =
-                checker.analyseCenterConnections().stream().collect(Collectors.groupingBy(c -> c.getFrom()));
+                checker.analyseCenterConnections(diagram.getNet()).stream().collect(Collectors.groupingBy(c -> c.getFrom()));
 
         centerConnMap.entrySet().stream()
         .sorted(Comparator.comparing(e -> e.getKey().getName(), comparator))
@@ -175,7 +175,7 @@ public class FreightCheckPanel extends JPanel {
         });
 
         buffer.appendText(ResourceLoader.getString("freight.check.node.connections") + ":\n", boldUnderlineStyle);
-        checker.analyseNodeConnections(notFreightTypes).stream()
+        checker.analyseNodeConnections(diagram.getNet(), notFreightTypes).stream()
         .filter(c -> !c.exists())
         .sorted(compareConnections())
         .forEach(c -> {

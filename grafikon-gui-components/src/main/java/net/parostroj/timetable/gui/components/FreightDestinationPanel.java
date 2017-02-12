@@ -119,7 +119,7 @@ public class FreightDestinationPanel extends JPanel {
                     setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     setWaitDialogVisible(true);
                     try {
-                        FreightAnalyser analyser = new FreightAnalyser(diagram);
+                        FreightAnalyser analyser = new FreightAnalyser(diagram.getFreightNet());
 
                         NodeFreight freight = analyser.getNodeFreightFrom(node);
                         this.addFreightToNodes(freight);

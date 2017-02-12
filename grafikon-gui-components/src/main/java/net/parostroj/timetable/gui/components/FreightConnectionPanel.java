@@ -142,7 +142,7 @@ public class FreightConnectionPanel extends JPanel {
                     setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     setWaitDialogVisible(true);
                     try {
-                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram);
+                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram.getFreightNet());
                         NodeFreightConnection ncf = connectionAnalyser.analyse(from, to).stream()
                                 .min(Comparator.comparingInt(NodeFreightConnection::getLength)).get();
 

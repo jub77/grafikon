@@ -201,7 +201,7 @@ class FreightConnectionAnalysis {
 
         public Collection<NodeConnectionEdges> getRegionConnections() {
             if (cachedNet == null) {
-                cachedNet = analyser.getDiagram().getFreightNet().getRegionConnectionEdges();
+                cachedNet = analyser.getSource().getRegionConnectionEdges();
             }
             return cachedNet;
         }
@@ -211,7 +211,7 @@ class FreightConnectionAnalysis {
                 return cacheF.get(node);
             } else {
                 Stream<FreightConnectionPath> connections = analyser.getFreightIntervalsFrom(node).stream()
-                        .flatMap(i -> analyser.getDiagram().getFreightNet().getFreightToNodes(i).stream());
+                        .flatMap(i -> analyser.getSource().getFreightToNodes(i).stream());
                 List<FreightConnectionPath> connSet = connections.collect(toList());
                 cacheF.put(node, connSet);
                 return connSet;

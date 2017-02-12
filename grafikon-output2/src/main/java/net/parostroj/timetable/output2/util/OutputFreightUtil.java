@@ -30,7 +30,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 public class OutputFreightUtil {
 
     public FreightAnalyser createAnalyser(TrainDiagram diagram) {
-        return new FreightAnalyser(diagram);
+        return new FreightAnalyser(diagram.getFreightNet());
     }
 
     public List<String> regionsToString(Collection<Region> regions, Locale locale) {

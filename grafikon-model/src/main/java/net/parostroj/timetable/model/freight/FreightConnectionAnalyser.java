@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Context;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Stage;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.StepImpl;
@@ -27,8 +26,8 @@ public class FreightConnectionAnalyser {
 
     private final FreightAnalyser analyser;
 
-    public FreightConnectionAnalyser(TrainDiagram diagram) {
-        this.analyser = new FreightAnalyser(diagram);
+    public FreightConnectionAnalyser(final FreightDataSource source) {
+        this.analyser = new FreightAnalyser(source);
     }
 
     FreightConnectionAnalyser(FreightAnalyser analyser) {

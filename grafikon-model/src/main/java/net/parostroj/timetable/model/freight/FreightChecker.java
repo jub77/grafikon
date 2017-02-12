@@ -12,9 +12,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -25,16 +25,18 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class FreightChecker {
 
+    private final FreightDataSource source;
     private final FreightAnalyser analyser;
     private final FreightConnectionAnalyser connAnalyser;
 
-    public FreightChecker(TrainDiagram diagram) {
-        this.analyser = new FreightAnalyser(diagram);
+    public FreightChecker(final FreightDataSource source) {
+        this.source = source;
+        this.analyser = new FreightAnalyser(source);
         this.connAnalyser = new FreightConnectionAnalyser(this.analyser);
     }
 
-    public Set<ConnectionState<NodeFreightConnection>> analyseNodeConnections(Collection<NodeType> skipTypes) {
-        Collection<Tuple<Node>> allConns = this.getNodePermutation(skipTypes);
+    public Set<ConnectionState<NodeFreightConnection>> analyseNodeConnections(Net net, Collection<NodeType> skipTypes) {
+        Collection<Tuple<Node>> allConns = this.getNodePermutation(net, skipTypes);
 
         return allConns.stream()
                 .<ConnectionState<NodeFreightConnection>>map(t -> {
@@ -48,9 +50,9 @@ public class FreightChecker {
                 .collect(toSet());
     }
 
-    public Set<ConnectionState<NodeConnectionEdges>> analyseCenterConnections() {
-        Collection<Tuple<Node>> allConns = this.getCenterPermutation();
-        Collection<NodeConnectionEdges> conns = analyser.getDiagram().getFreightNet().getRegionConnectionEdges();
+    public Set<ConnectionState<NodeConnectionEdges>> analyseCenterConnections(Net net) {
+        Collection<Tuple<Node>> allConns = this.getCenterPermutation(net);
+        Collection<NodeConnectionEdges> conns = source.getRegionConnectionEdges();
         Map<Tuple<Node>, NodeConnectionEdges> map = conns.stream()
                 .collect(Collectors.toMap(c -> new Tuple<>(c.getFrom(), c.getTo()), Function.identity()));
 
@@ -101,11 +103,11 @@ public class FreightChecker {
 
     private Stream<FreightConnectionPath> getConnectionsFrom(Node node) {
         return analyser.getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> analyser.getDiagram().getFreightNet().getFreightToNodes(i).stream());
+                .flatMap(i -> source.getFreightToNodes(i).stream());
     }
 
-    private Collection<Tuple<Node>> getCenterPermutation() {
-        List<Node> centers = analyser.getDiagram().getNet().getNodes().stream()
+    private Collection<Tuple<Node>> getCenterPermutation(Net net) {
+        List<Node> centers = net.getNodes().stream()
                 .filter(Node::isCenterOfRegions)
                 .collect(toList());
 
@@ -116,9 +118,9 @@ public class FreightChecker {
                 .collect(toSet());
     }
 
-    private Collection<Tuple<Node>> getNodePermutation(Collection<NodeType> skipTypes) {
+    private Collection<Tuple<Node>> getNodePermutation(Net net, Collection<NodeType> skipTypes) {
         // filter nodes
-        List<Node> nodes = analyser.getDiagram().getNet().getNodes().stream()
+        List<Node> nodes = net.getNodes().stream()
                 .filter(n -> !skipTypes.contains(n.getType()))
                 .collect(toList());
 

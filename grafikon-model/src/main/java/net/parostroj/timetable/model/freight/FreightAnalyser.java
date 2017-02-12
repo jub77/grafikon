@@ -21,8 +21,8 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.RegionHierarchy;
 import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -31,14 +31,14 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class FreightAnalyser {
 
-    private final TrainDiagram diagram;
+    private final FreightDataSource source;
 
-    public FreightAnalyser(final TrainDiagram diagram) {
-        this.diagram = diagram;
+    public FreightAnalyser(final FreightDataSource source) {
+        this.source = source;
     }
 
-    public TrainDiagram getDiagram() {
-        return diagram;
+    public FreightDataSource getSource() {
+        return source;
     }
 
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
@@ -46,10 +46,11 @@ public class FreightAnalyser {
                 .sorted(TimeUtil::compareNormalizedStarts).collect(toList());
     }
 
-    public List<TimeInterval> getFreightTrainUnitIntervals(Node node) {
+    public List<TimeInterval> getFreightTrainUnitIntervals(final Node node) {
+        final TrainsCycleType type = node.getDiagram().getTrainUnitCycleType();
         return StreamSupport.stream(node.spliterator(), true)
                 .filter(TimeInterval::isFirst)
-                .filter(i -> i.getTrain().getCycleItemsForInterval(diagram.getTrainUnitCycleType(), i).stream()
+                .filter(i -> i.getTrain().getCycleItemsForInterval(type, i).stream()
                         .anyMatch(item -> item.getCycle().getAttributeAsBool(TrainsCycle.ATTR_FREIGHT)))
                 .sorted(TimeUtil::compareNormalizedStarts)
                 .collect(toList());
@@ -58,7 +59,7 @@ public class FreightAnalyser {
     public NodeFreight getNodeFreightFrom(Node node) {
         // getting straight connections
         Map<FreightConnection, Set<TimeInterval>> strainghtConnectionMap = getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> diagram.getFreightNet().getFreightToNodes(i).stream()
+                .flatMap(i -> source.getFreightToNodes(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
                 .collect(groupingBy(p -> p.first, mapping(p -> p.second, toSet())));
         Set<FreightConnectionVia> straightConnections = strainghtConnectionMap.entrySet().stream()
@@ -67,7 +68,7 @@ public class FreightAnalyser {
                 .collect(toSet());
 
         // depending if the node is center of regions or not
-        Collection<NodeConnectionNodes> centerConnections = diagram.getFreightNet().getRegionConnectionNodes();
+        Collection<NodeConnectionNodes> centerConnections = source.getRegionConnectionNodes();
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
             Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections);
