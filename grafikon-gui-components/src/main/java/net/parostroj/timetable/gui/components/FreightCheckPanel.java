@@ -28,8 +28,6 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Stopwatch;
-
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
@@ -145,7 +143,6 @@ public class FreightCheckPanel extends JPanel {
 
     private void checkFreight(TextBuffer buffer) {
         // check
-        Stopwatch sw = Stopwatch.createStarted();
         FreightChecker checker = new FreightChecker(FreightDataSource.createCached(diagram.getFreightNet()));
         // check all centers
         buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
@@ -186,7 +183,6 @@ public class FreightCheckPanel extends JPanel {
             buffer.appendText("-", errorStyle);
             buffer.appendText(String.format("  %s → %s\n", c.getFrom().getName(), c.getTo().getName()), null);
         });
-        System.out.println(sw);
     }
 
     private <T> Comparator<ConnectionState<T>> compareConnections() {
