@@ -40,20 +40,18 @@ public class FreightChecker {
 
         return allConns.stream()
                 .<ConnectionState<NodeFreightConnection>>map(t -> {
-                    NodeFreightConnection fc = connAnalyser.analyse(t.first, t.second).stream()
+                    return connAnalyser.analyse(t.first, t.second).stream()
                             .filter(NodeFreightConnection::isComplete)
-                            .min(Comparator.comparingInt(NodeFreightConnection::getLength)).orElse(null);
-                    return fc != null && fc.isComplete()
-                            ? new ConnectionImpl<>(t.first, t.second, fc)
-                            : new ConnectionImpl<>(t.first, t.second);
+                            .min(Comparator.comparingInt(NodeFreightConnection::getLength))
+                            .map(fc -> new ConnectionImpl<>(t.first, t.second, fc))
+                            .orElse(new ConnectionImpl<>(t.first, t.second));
                 })
                 .collect(toSet());
     }
 
     public Set<ConnectionState<NodeConnectionEdges>> analyseCenterConnections(Net net) {
         Collection<Tuple<Node>> allConns = this.getCenterPermutation(net);
-        Collection<NodeConnectionEdges> conns = source.getRegionConnectionEdges();
-        Map<Tuple<Node>, NodeConnectionEdges> map = conns.stream()
+        Map<Tuple<Node>, NodeConnectionEdges> map = source.getRegionConnectionEdges().stream()
                 .collect(Collectors.toMap(c -> new Tuple<>(c.getFrom(), c.getTo()), Function.identity()));
 
         return allConns.stream()
