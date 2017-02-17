@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JOptionPane;
 import javax.swing.GroupLayout;
-import javax.swing.ListModel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
@@ -42,8 +41,6 @@ import javax.swing.SwingConstants;
  * @author jub
  */
 public class EditNodeDialog extends javax.swing.JDialog {
-
-    private static class TrackModel extends javax.swing.DefaultListModel<EditTrack> {};
 
     private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
     private static final BigDecimal DEFAULT_STRAIGHT_SPEED = new BigDecimal(100);
@@ -184,12 +181,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
         this.setBoxValue(sSpeedEditBox, sSpeedCheckBox, sSpeed, SpeedUnit.KMPH, BigDecimal.ZERO);
 
         // get node tracks
-        TrackModel listModel = new TrackModel();
+        tracks = new javax.swing.DefaultListModel<>();
         for (NodeTrack track : node.getTracks()) {
-            listModel.addElement(new EditTrack(track));
+            tracks.addElement(new EditTrack(track));
         }
-        trackList.setModel(listModel);
-        if (!listModel.isEmpty()) {
+        trackList.setModel(tracks);
+        if (!tracks.isEmpty()) {
             trackList.setSelectedIndex(0);
         }
 
@@ -272,9 +269,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 node.removeTrack(ret.track);
         }
         // add/modify new/existing
-        ListModel<?> m = trackList.getModel();
-        for (int i = 0; i < m.getSize(); i++) {
-            EditTrack t = (EditTrack) m.getElementAt(i);
+        for (int i = 0; i < tracks.getSize(); i++) {
+            EditTrack t = tracks.getElementAt(i);
             // modify value
             t.writeValuesBack();
             // add new track
@@ -612,7 +608,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             if (nodeType.isPassenger()) {
                 track.setPlatform(true);
             }
-            ((TrackModel) trackList.getModel()).addElement(new EditTrack(track));
+            tracks.addElement(new EditTrack(track));
         }
     }
 
@@ -632,10 +628,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (!trackList.isSelectionEmpty()) {
             EditTrack track = trackList.getSelectedValue();
             // test node track
-            if (!track.track.isEmpty() || trackList.getModel().getSize() == 1) {
+            if (!track.track.isEmpty() || tracks.getSize() == 1) {
                 JOptionPane.showMessageDialog(this, ResourceLoader.getString("nl.error.notempty"), null, JOptionPane.ERROR_MESSAGE);
             } else {
-                ((TrackModel) trackList.getModel()).removeElement(track);
+                tracks.removeElement(track);
                 // add to removed
                 removed.add(track);
             }
@@ -724,6 +720,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox sSpeedCheckBox;
 
     private WrapperListModel<Company> companies;
+    private javax.swing.DefaultListModel<EditTrack> tracks;
     private Set<Region> regions;
     private Set<Region> centerRegions;
 }
