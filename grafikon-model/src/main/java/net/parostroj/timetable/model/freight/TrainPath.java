@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.freight;
 
+import java.util.AbstractList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -34,5 +35,21 @@ public interface TrainPath extends List<TrainConnection> {
     default TrainConnection getLast() {
         if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
         return get(size() - 1);
+    }
+
+    static TrainPath empty() {
+        class EmptyPath extends AbstractList<TrainConnection> implements TrainPath {
+            @Override
+            public TrainConnection get(int index) {
+                throw new ArrayIndexOutOfBoundsException();
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+
+        }
+        return new EmptyPath();
     }
 }

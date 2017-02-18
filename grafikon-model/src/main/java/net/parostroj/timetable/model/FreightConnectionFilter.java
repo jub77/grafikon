@@ -10,7 +10,11 @@ import net.parostroj.timetable.model.freight.FreightConnection;
 public interface FreightConnectionFilter {
 
     public enum FilterResult {
-        OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE
+        OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE;
+
+        public boolean isStop() {
+            return this == STOP_EXCLUDE || this == STOP_INCLUDE;
+        }
     }
 
     public static class FilterContext {

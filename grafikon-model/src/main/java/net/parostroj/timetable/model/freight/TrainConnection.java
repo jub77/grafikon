@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.freight;
 
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
 
 /**
  * Connection from node to node with specific train.
@@ -8,6 +9,10 @@ import net.parostroj.timetable.model.TimeInterval;
  * @author jub
  */
 public interface TrainConnection extends Connection<TimeInterval, TimeInterval> {
+
+    default Train getTrain() {
+        return getFrom().getTrain();
+    }
 
     default int getStartTime() {
         TimeInterval interval = getFrom();

@@ -218,10 +218,15 @@ public class FreightNet
 
     @Override
     public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval) {
+        return this.getFreightToNodes(fromInterval, FreightConnectionFilterFactory.createEmptyFilter());
+    }
+
+    @Override
+    public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        return this.getFreightToNodesImpl(fromInterval, FreightConnectionFilterFactory.createEmptyFilter());
+        return this.getFreightToNodesImpl(fromInterval, filter);
     }
 
     private List<FreightConnectionPath> getFreightToNodesImpl(TimeInterval fromInterval, FreightConnectionFilter filter) {

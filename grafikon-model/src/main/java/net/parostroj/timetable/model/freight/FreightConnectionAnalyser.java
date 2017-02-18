@@ -3,15 +3,16 @@ package net.parostroj.timetable.model.freight;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Context;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.Stage;
 import net.parostroj.timetable.model.freight.FreightConnectionAnalysis.StepImpl;
@@ -108,8 +109,9 @@ public class FreightConnectionAnalyser {
 
     public TrainPath getTrainPath(Collection<? extends NodeFreightConnection> connections, int start, int shunt) {
         ConnectionFinder finder = new ConnectionFinder(start, shunt);
-        Stream<TrainPath> list = connections.stream().filter(NodeFreightConnection::isComplete).map(finder::find);
-        return list.min(shortest()).orElse(EMPTY_PATH);
+        Stream<TrainPath> list = connections.stream().filter(NodeFreightConnection::isComplete)
+                .map(finder::find);
+        return list.min(shortest()).orElseGet(TrainPath::empty);
     }
 
     private Comparator<TrainPath> shortest() {
@@ -129,33 +131,36 @@ public class FreightConnectionAnalyser {
         public TrainPath find(NodeFreightConnection connection) {
             int current = start;
             TrainPath result = FreightFactory.createTrainPath(Collections.emptyList());
-            for (DirectNodeConnection dnc : connection.getSteps()) {
-                TrainPath selected = getClosest(current, dnc);
+            TrainPath last = null;
+            for (DirectNodeConnection currentSet : connection.getSteps()) {
+                final int currentStart = current;
+                TrainPath selected = getSame(last, currentSet)
+                        .orElseGet(() -> getClosest(currentStart, currentSet)
+                                .orElse(null));
+                if (selected == null) {
+                    throw new IllegalArgumentException("Only complete connections allowed.");
+                }
                 current = selected.getEndTime() + shunt;
                 result.addAll(selected);
+                last = selected;
             }
             return result;
         }
 
-        private TrainPath getClosest(int time, DirectNodeConnection dnc) {
+        private Optional<TrainPath> getSame(TrainPath last, DirectNodeConnection currentSet) {
+            if (last == null) {
+                return Optional.empty();
+            } else {
+                Train lastTrain = last.getLast().getTrain();
+                return currentSet.getConnections().stream()
+                        .filter(c -> c.getFirst().getTrain() == lastTrain)
+                        .findAny();
+            }
+        }
+
+        private Optional<TrainPath> getClosest(int time, DirectNodeConnection dnc) {
             return dnc.getConnections().stream()
-                    .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())))
-                    .orElse(null);
+                    .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())));
         }
-    }
-
-    private static TrainPath EMPTY_PATH = new EmptyPath();
-
-    private static class EmptyPath extends AbstractList<TrainConnection> implements TrainPath {
-        @Override
-        public TrainConnection get(int index) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
     }
 }

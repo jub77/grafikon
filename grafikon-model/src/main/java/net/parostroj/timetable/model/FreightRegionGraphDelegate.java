@@ -3,7 +3,11 @@ package net.parostroj.timetable.model;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -15,12 +19,15 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import com.google.common.collect.FluentIterable;
 
+import net.parostroj.timetable.model.FreightConnectionFilter.FilterContext;
+import net.parostroj.timetable.model.FreightConnectionFilter.FilterResult;
 import net.parostroj.timetable.model.freight.Connection;
+import net.parostroj.timetable.model.freight.DirectNodeConnection;
+import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.NodeConnection;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.model.freight.NodeConnectionNodes;
-import net.parostroj.timetable.model.freight.DirectNodeConnection;
-import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.TrainConnection;
 import net.parostroj.timetable.model.freight.TrainPath;
 
@@ -54,9 +61,17 @@ class FreightRegionGraphDelegate {
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
         Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
-                .map(i -> diagram.getFreightNet().getFreightToNodes(i))
-                .flatMap(l -> l.stream().filter(d -> d.getTo().isRegions()));
+                .map(i -> diagram.getFreightNet().getFreightToNodes(i, this::stopAtRegion))
+                .flatMap(this::toDirectRegionConnections);
         return list;
+    }
+
+    private FilterResult stopAtRegion(FilterContext context, FreightConnection dst, int level) {
+        return dst.getTo().isRegions() ? FilterResult.STOP_INCLUDE : FilterResult.OK;
+    }
+
+    private Stream<FreightConnectionPath> toDirectRegionConnections(List<FreightConnectionPath> l) {
+        return l.stream().filter(d -> d.getTo().isRegions());
     }
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.parostroj.timetable.model.FreightConnectionFilter;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 
@@ -48,6 +49,12 @@ class CachedFreightDataSource implements FreightDataSource {
         } else {
             return freightToNodes.get(fromInterval);
         }
+    }
+
+    @Override
+    public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter) {
+        // no caching available
+        return source.getFreightToNodes(fromInterval, filter);
     }
 
     @Override

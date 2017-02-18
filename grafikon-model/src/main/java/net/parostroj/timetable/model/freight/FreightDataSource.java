@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.parostroj.timetable.model.FreightConnectionFilter;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 
@@ -17,6 +18,8 @@ public interface FreightDataSource {
     Map<Train, List<FreightConnectionPath>> getFreightPassedInNode(TimeInterval fromInterval);
 
     List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval);
+
+    List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter);
 
     Collection<NodeConnectionEdges> getRegionConnectionEdges();
 
