@@ -172,6 +172,7 @@ class FreightConnectionAnalysis {
         ContextSource source = new ContextSource(context);
         return to.getRegions().stream()
                 .map(Region::getCenterNode)
+                .filter(Objects::nonNull)
                 .map(n -> new ToRegionConnection(source.getContext(), n))
                 .collect(toList());
     }
