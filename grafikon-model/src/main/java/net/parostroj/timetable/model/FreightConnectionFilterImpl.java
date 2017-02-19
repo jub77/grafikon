@@ -1,5 +1,10 @@
 package net.parostroj.timetable.model;
 
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.IGNORE;
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.OK;
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.STOP_EXCLUDE;
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.STOP_INCLUDE;
+
 import java.util.List;
 
 import net.parostroj.timetable.model.freight.FreightConnection;
@@ -46,22 +51,39 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
     @Override
     public FilterResult accepted(FilterContext context, FreightConnection dst, int level) {
         if (transitionLimit != null && transitionLimit < level) {
-            return FilterResult.STOP_EXCLUDE;
+            return STOP_EXCLUDE;
         }
         FilterResult parentResult = parent.accepted(context, dst, level + 1);
-        if (parentResult != FilterResult.OK) {
-            return parentResult;
+        FilterResult currentResult = getCurrentResult(context, dst);
+        FilterResult result = OK;
+        switch (parentResult) {
+            case OK:
+                result = currentResult;
+                break;
+            case IGNORE:
+                result = currentResult.isStop() ? STOP_EXCLUDE : IGNORE;
+                break;
+            case STOP_EXCLUDE:
+                result = STOP_EXCLUDE;
+                break;
+            case STOP_INCLUDE:
+                result = currentResult == STOP_EXCLUDE || currentResult == IGNORE ? STOP_EXCLUDE : STOP_INCLUDE;
+                break;
         }
+        return result;
+    }
+
+    private FilterResult getCurrentResult(FilterContext context, FreightConnection dst) {
         if (isInNodeList(dst, stopNodesExclude) || isNotInNodeList(context.getStartInterval(), fromNodes)) {
-            return FilterResult.STOP_EXCLUDE;
+            return STOP_EXCLUDE;
         }
         if (isInNodeList(dst, stopNodes)) {
-            return FilterResult.STOP_INCLUDE;
+            return STOP_INCLUDE;
         }
         if (isNotInNodeList(dst, toNodes)) {
-            return FilterResult.IGNORE;
+            return IGNORE;
         }
-        return FilterResult.OK;
+        return OK;
     }
 
     private boolean isInNodeList(FreightConnection dst, List<Node> nodes) {
