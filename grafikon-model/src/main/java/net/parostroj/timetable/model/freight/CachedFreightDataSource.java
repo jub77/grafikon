@@ -8,6 +8,7 @@ import java.util.Map;
 import net.parostroj.timetable.model.FreightConnectionFilter;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Wrapper which caches the data from data source.
@@ -21,11 +22,13 @@ class CachedFreightDataSource implements FreightDataSource {
     private Collection<NodeConnectionNodes> connNodes;
     private Collection<NodeConnectionEdges> connEdges;
     private final Map<TimeInterval, List<FreightConnectionPath>> freightToNodes;
+    private final Map<Pair<TimeInterval, FreightConnectionFilter>, List<FreightConnectionPath>> freightToNodesFilter;
     private final Map<TimeInterval, Map<Train, List<FreightConnectionPath>>> passedInNode;
 
     public CachedFreightDataSource(FreightDataSource source) {
         this.source = source;
         this.freightToNodes = new HashMap<>();
+        this.freightToNodesFilter = new HashMap<>();
         this.passedInNode = new HashMap<>();
     }
 
@@ -53,8 +56,14 @@ class CachedFreightDataSource implements FreightDataSource {
 
     @Override
     public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter) {
-        // no caching available
-        return source.getFreightToNodes(fromInterval, filter);
+        Pair<TimeInterval, FreightConnectionFilter> key = new Pair<>(fromInterval, filter);
+        if (!freightToNodesFilter.containsKey(key)) {
+            List<FreightConnectionPath> ftn = source.getFreightToNodes(fromInterval, filter);
+            freightToNodesFilter.put(key, ftn);
+            return ftn;
+        } else {
+            return freightToNodesFilter.get(key);
+        }
     }
 
     @Override
