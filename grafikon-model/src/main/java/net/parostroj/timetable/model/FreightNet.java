@@ -210,7 +210,7 @@ public class FreightNet
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
             List<FreightConnectionPath> nodes = this.getFreightToNodesImpl(conn.getTo(),
-                    conn.getFreightDstFilter(FreightConnectionFilterFactory.createEmptyFilter(), true));
+                    conn.getFreightDstFilter(FreightConnectionFilter::empty, true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -218,7 +218,7 @@ public class FreightNet
 
     @Override
     public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval) {
-        return this.getFreightToNodes(fromInterval, FreightConnectionFilterFactory.createEmptyFilter());
+        return this.getFreightToNodes(fromInterval, FreightConnectionFilter::empty);
     }
 
     @Override

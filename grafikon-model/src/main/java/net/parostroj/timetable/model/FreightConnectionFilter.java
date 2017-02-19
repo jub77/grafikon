@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model;
 
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.OK;
+import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.STOP_INCLUDE;
+
 import net.parostroj.timetable.model.freight.FreightConnection;
 
 /**
@@ -7,6 +10,7 @@ import net.parostroj.timetable.model.freight.FreightConnection;
  *
  * @author jub
  */
+@FunctionalInterface
 public interface FreightConnectionFilter {
 
     public enum FilterResult {
@@ -31,4 +35,12 @@ public interface FreightConnectionFilter {
     }
 
     FilterResult accepted(FilterContext context, FreightConnection dst, int level);
+
+    static FilterResult empty(FilterContext context, FreightConnection dst, int level) {
+        return OK;
+    }
+
+    static FilterResult regionTransferStop(FilterContext context, FreightConnection dst, int level) {
+        return dst.getTo().isRegions() ? STOP_INCLUDE : OK;
+    }
 }

@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.FreightConnectionFilter.FilterResult;
-
 /**
  * Filter factory.
  *
@@ -9,9 +7,7 @@ import net.parostroj.timetable.model.FreightConnectionFilter.FilterResult;
  */
 public class FreightConnectionFilterFactory {
 
-    public static FreightConnectionFilter createEmptyFilter() {
-        return (context, dst, limit) -> FilterResult.OK;
-    }
+    private FreightConnectionFilterFactory() {}
 
     public static FreightConnectionFilter createFilter(FreightConnectionFilter currentFilter, FNConnection connection, boolean ignoreFrom) {
         FreightConnectionFilterImpl filter = new FreightConnectionFilterImpl(currentFilter);
@@ -24,5 +20,4 @@ public class FreightConnectionFilterFactory {
         filter.setToNodes(connection.getAsList(FNConnection.ATTR_TO_NODES, Node.class));
         return filter;
     }
-
 }

@@ -19,11 +19,8 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import com.google.common.collect.FluentIterable;
 
-import net.parostroj.timetable.model.FreightConnectionFilter.FilterContext;
-import net.parostroj.timetable.model.FreightConnectionFilter.FilterResult;
 import net.parostroj.timetable.model.freight.Connection;
 import net.parostroj.timetable.model.freight.DirectNodeConnection;
-import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.NodeConnection;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
@@ -61,13 +58,9 @@ class FreightRegionGraphDelegate {
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
         Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
-                .map(i -> diagram.getFreightNet().getFreightToNodes(i, this::stopAtRegion))
+                .map(i -> diagram.getFreightNet().getFreightToNodes(i, FreightConnectionFilter::regionTransferStop))
                 .flatMap(this::toDirectRegionConnections);
         return list;
-    }
-
-    private FilterResult stopAtRegion(FilterContext context, FreightConnection dst, int level) {
-        return dst.getTo().isRegions() ? FilterResult.STOP_INCLUDE : FilterResult.OK;
     }
 
     private Stream<FreightConnectionPath> toDirectRegionConnections(List<FreightConnectionPath> l) {
