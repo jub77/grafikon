@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.freight;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static net.parostroj.timetable.utils.ObjectsUtil.intersects;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,7 +98,7 @@ class FreightConnectionAnalysis {
                     boolean noDirectConnection = nContext.getConnectionFromTo(nContext.current, to).isEmpty();
                     if (noDirectConnection && conn.transitive) {
                         nContext.stage = Stage.BETWEEN_CENTERS;
-                    } else if (conn.transitive || FreightAnalyser.intersects(to.getRegions(), centerNode.getCenterRegions())) {
+                    } else if (conn.transitive || intersects(to.getRegions(), centerNode.getCenterRegions())) {
                         nContext.stage = Stage.TO_NODE;
                     } else {
                         nContext.stage = Stage.NO_CONNECTION;

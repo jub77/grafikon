@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static net.parostroj.timetable.utils.ObjectsUtil.intersects;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -124,10 +125,6 @@ public class FreightAnalyser {
         return connections.stream()
                 .filter(c -> intersects(node.getRegions(), c.getTo().getRegions()))
                 .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
-    }
-
-    public static <T> boolean intersects(Set<T> a, Set<T> b) {
-        return a.stream().anyMatch(t -> b.contains(t));
     }
 
     /**

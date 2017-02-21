@@ -81,6 +81,17 @@ public class ObjectsUtil {
     }
 
     /**
+     * Checks if the two collections intersects.
+     *
+     * @param a first collection
+     * @param b second collection
+     * @return if the two collections intersect
+     */
+    public static boolean intersects(Collection<?> a, Collection<?> b) {
+        return a.stream().anyMatch(t -> b.contains(t));
+    }
+
+    /**
      * Returns new list of given type. It checks if the source collection contains elements of
      * given type.
      *
