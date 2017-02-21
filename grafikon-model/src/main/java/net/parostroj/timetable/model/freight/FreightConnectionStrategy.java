@@ -36,12 +36,12 @@ public interface FreightConnectionStrategy {
     List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval);
 
     /**
-     * Returns full list of connections with given time interval.
+     * Returns list of connections with given time interval limited for analysis purposes.
      *
      * @param fromInterval time interval of train for which connections are computed.
      * @return list of connections
      */
-    List<FreightConnectionPath> getFullFreightToNodes(TimeInterval fromInterval);
+    List<FreightConnectionPath> getFreightToNodesNet(TimeInterval fromInterval);
 
     /**
      * @return collection of connections between regions (with edges through region centers)

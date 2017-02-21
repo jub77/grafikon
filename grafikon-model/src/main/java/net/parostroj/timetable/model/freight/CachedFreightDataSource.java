@@ -20,13 +20,13 @@ class CachedConnectionStrategy implements FreightConnectionStrategy {
     private Collection<NodeConnectionNodes> connNodes;
     private Collection<NodeConnectionEdges> connEdges;
     private final Map<TimeInterval, List<FreightConnectionPath>> freightToNodes;
-    private final Map<TimeInterval, List<FreightConnectionPath>> trainFreightToNodes;
+    private final Map<TimeInterval, List<FreightConnectionPath>> freightToNodesNet;
     private final Map<TimeInterval, Map<Train, List<FreightConnectionPath>>> passedInNode;
 
     public CachedConnectionStrategy(FreightConnectionStrategy strategy) {
         this.source = strategy;
         this.freightToNodes = new HashMap<>();
-        this.trainFreightToNodes = new HashMap<>();
+        this.freightToNodesNet = new HashMap<>();
         this.passedInNode = new HashMap<>();
     }
 
@@ -53,13 +53,13 @@ class CachedConnectionStrategy implements FreightConnectionStrategy {
     }
 
     @Override
-    public List<FreightConnectionPath> getFullFreightToNodes(TimeInterval fromInterval) {
-        if (!trainFreightToNodes.containsKey(fromInterval)) {
+    public List<FreightConnectionPath> getFreightToNodesNet(TimeInterval fromInterval) {
+        if (!freightToNodesNet.containsKey(fromInterval)) {
             List<FreightConnectionPath> ftn = source.getFreightToNodes(fromInterval);
-            trainFreightToNodes.put(fromInterval, ftn);
+            freightToNodesNet.put(fromInterval, ftn);
             return ftn;
         } else {
-            return trainFreightToNodes.get(fromInterval);
+            return freightToNodesNet.get(fromInterval);
         }
     }
 

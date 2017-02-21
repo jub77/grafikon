@@ -58,7 +58,7 @@ class BaseConnectionStrategy implements FreightConnectionStrategy {
     }
 
     @Override
-    public List<FreightConnectionPath> getFullFreightToNodes(TimeInterval fromInterval) {
+    public List<FreightConnectionPath> getFreightToNodesNet(TimeInterval fromInterval) {
         return this.getFreightToNodes(fromInterval, FreightConnectionFilter::empty);
     }
 
