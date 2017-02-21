@@ -40,6 +40,8 @@ public class FreightNet
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
+    private FreightConnectionStrategy _strategy;
+
     FreightNet(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
@@ -187,7 +189,7 @@ public class FreightNet
     }
 
     public FreightConnectionStrategy getConnectionStrategy() {
-        return FreightConnectionStrategy.create(FreightConnectionStrategy.Type.BASE, diagram);
+        return getStrategyImpl();
     }
 
     public List<FNConnection> getTrainsFrom(TimeInterval fromInterval) {
@@ -201,5 +203,12 @@ public class FreightNet
     @Override
     public String toString() {
         return String.format("FreightNet[connections=%d]", fromMap.size());
+    }
+
+    private FreightConnectionStrategy getStrategyImpl() {
+        if (_strategy == null) {
+            _strategy = FreightConnectionStrategy.create(FreightConnectionStrategy.Type.BASE, diagram);
+        }
+        return _strategy;
     }
 }
