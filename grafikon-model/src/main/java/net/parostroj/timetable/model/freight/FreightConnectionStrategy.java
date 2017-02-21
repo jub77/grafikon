@@ -70,6 +70,13 @@ public interface FreightConnectionStrategy {
         return strategy;
     }
 
+    /**
+     * Creates wrapper around original strategy which caches the values from original strategy. The values in the cache
+     * are not refreshed when the diagram changes. So it is useful only in the mean time until next diagram change,
+     *
+     * @param strategy original strategy
+     * @return cached strategy
+     */
     static FreightConnectionStrategy createCached(FreightConnectionStrategy strategy) {
         return new CachedConnectionStrategy(strategy);
     }
