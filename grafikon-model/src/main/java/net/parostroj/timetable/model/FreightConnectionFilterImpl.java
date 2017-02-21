@@ -67,7 +67,7 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
                 result = STOP_EXCLUDE;
                 break;
             case STOP_INCLUDE:
-                result = currentResult == STOP_EXCLUDE || currentResult == IGNORE ? STOP_EXCLUDE : STOP_INCLUDE;
+                result = !currentResult.isIncluded() ? STOP_EXCLUDE : STOP_INCLUDE;
                 break;
         }
         return result;

@@ -19,6 +19,10 @@ public interface FreightConnectionFilter {
         public boolean isStop() {
             return this == STOP_EXCLUDE || this == STOP_INCLUDE;
         }
+
+        public boolean isIncluded() {
+            return this == STOP_INCLUDE || this == OK;
+        }
     }
 
     public static class FilterContext {
