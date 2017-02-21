@@ -17,6 +17,7 @@ import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.freight.ConnectionStrategyType;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -27,7 +28,7 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class FreightNet
-        implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart {
+        implements Visitable, ObjectWithId, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -51,6 +52,10 @@ public class FreightNet
             if (attributes instanceof FNConnection) {
                 event = new Event(FreightNet.this, attributes, change);
             } else {
+                // clean cached strategy object in case strategy changes
+                if (change.checkName(CONNECTION_STRATEGY_TYPE)) {
+                    _strategy = null;
+                }
                 event = new Event(FreightNet.this, change);
             }
             listenerSupport.fireEvent(event);
@@ -200,6 +205,15 @@ public class FreightNet
     	return toMap.get(toInterval);
     }
 
+    public ConnectionStrategyType getConnectionStrategyType() {
+        String strategyKey = getAttribute(CONNECTION_STRATEGY_TYPE, String.class, ConnectionStrategyType.BASE.getKey());
+        return ConnectionStrategyType.fromString(strategyKey);
+    }
+
+    public void setConnectionStrategyType(ConnectionStrategyType strategyType) {
+        setAttribute(CONNECTION_STRATEGY_TYPE, strategyType != null ? strategyType.getKey() : null);
+    }
+
     @Override
     public String toString() {
         return String.format("FreightNet[connections=%d]", fromMap.size());
@@ -207,7 +221,7 @@ public class FreightNet
 
     private FreightConnectionStrategy getStrategyImpl() {
         if (_strategy == null) {
-            _strategy = FreightConnectionStrategy.create(FreightConnectionStrategy.Type.BASE, diagram);
+            _strategy = FreightConnectionStrategy.create(getConnectionStrategyType(), diagram);
         }
         return _strategy;
     }

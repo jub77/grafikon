@@ -14,11 +14,6 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 public interface FreightConnectionStrategy {
-
-    enum Type {
-        BASE, REGION;
-    }
-
     /**
      * Returns map with connections passed in the node for given time interval of train.
      *
@@ -60,7 +55,7 @@ public interface FreightConnectionStrategy {
      * @param diagram train diagram
      * @return strategy
      */
-    static FreightConnectionStrategy create(Type type, TrainDiagram diagram) {
+    static FreightConnectionStrategy create(ConnectionStrategyType type, TrainDiagram diagram) {
         // TODO add other types
         return new BaseConnectionStrategy(diagram);
     }
