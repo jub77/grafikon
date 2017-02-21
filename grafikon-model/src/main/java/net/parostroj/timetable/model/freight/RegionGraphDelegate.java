@@ -55,7 +55,7 @@ class RegionGraphDelegate {
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
         Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
-                .map(i -> strategy.getFreightToNodes(i))
+                .map(i -> strategy.getFreightToNodesNet(i))
                 .flatMap(this::toDirectRegionConnections);
         return list;
     }

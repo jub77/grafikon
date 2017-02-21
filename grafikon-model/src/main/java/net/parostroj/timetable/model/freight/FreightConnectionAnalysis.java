@@ -212,7 +212,7 @@ class FreightConnectionAnalysis {
                 return cacheF.get(node);
             } else {
                 Stream<FreightConnectionPath> connections = analyser.getFreightIntervalsFrom(node).stream()
-                        .flatMap(i -> analyser.getConnectionStrategy().getFreightToNodes(i).stream());
+                        .flatMap(i -> analyser.getConnectionStrategy().getFreightToNodesNet(i).stream());
                 List<FreightConnectionPath> connSet = connections.collect(toList());
                 cacheF.put(node, connSet);
                 return connSet;

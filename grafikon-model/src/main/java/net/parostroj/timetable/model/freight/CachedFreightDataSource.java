@@ -55,7 +55,7 @@ class CachedConnectionStrategy implements FreightConnectionStrategy {
     @Override
     public List<FreightConnectionPath> getFreightToNodesNet(TimeInterval fromInterval) {
         if (!freightToNodesNet.containsKey(fromInterval)) {
-            List<FreightConnectionPath> ftn = source.getFreightToNodes(fromInterval);
+            List<FreightConnectionPath> ftn = source.getFreightToNodesNet(fromInterval);
             freightToNodesNet.put(fromInterval, ftn);
             return ftn;
         } else {

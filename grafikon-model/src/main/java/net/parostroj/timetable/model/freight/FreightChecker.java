@@ -101,7 +101,7 @@ public class FreightChecker {
 
     private Stream<FreightConnectionPath> getConnectionsFrom(Node node) {
         return analyser.getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> strategy.getFreightToNodes(i).stream());
+                .flatMap(i -> strategy.getFreightToNodesNet(i).stream());
     }
 
     private Collection<Tuple<Node>> getCenterPermutation(Net net) {

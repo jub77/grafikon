@@ -59,7 +59,7 @@ public class FreightAnalyser {
     public NodeFreight getNodeFreightFrom(Node node) {
         // getting straight connections
         Map<FreightConnection, Set<TimeInterval>> strainghtConnectionMap = getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> strategy.getFreightToNodes(i).stream()
+                .flatMap(i -> strategy.getFreightToNodesNet(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
                 .collect(groupingBy(p -> p.first, mapping(p -> p.second, toSet())));
         Set<FreightConnectionVia> straightConnections = strainghtConnectionMap.entrySet().stream()
