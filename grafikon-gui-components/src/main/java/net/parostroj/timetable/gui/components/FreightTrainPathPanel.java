@@ -191,7 +191,8 @@ public class FreightTrainPathPanel extends JPanel {
                     setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     setWaitDialogVisible(true);
                     try {
-                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(diagram.getFreightNet());
+                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(
+                                diagram.getFreightNet().getConnectionStrategy());
                         Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
                         TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
 

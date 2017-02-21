@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.FreightConnection;
-import net.parostroj.timetable.model.freight.FreightDataSource;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.freight.FreightDestination;
 import net.parostroj.timetable.model.freight.Transport;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -31,7 +31,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 public class OutputFreightUtil {
 
     public FreightAnalyser createAnalyser(TrainDiagram diagram) {
-        return new FreightAnalyser(FreightDataSource.createCached(diagram.getFreightNet()));
+        return new FreightAnalyser(FreightConnectionStrategy.createCached(diagram.getFreightNet().getConnectionStrategy()));
     }
 
     public List<String> regionsToString(Collection<Region> regions, Locale locale) {

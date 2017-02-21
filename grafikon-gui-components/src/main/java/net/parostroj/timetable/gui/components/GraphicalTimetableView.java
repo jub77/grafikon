@@ -116,7 +116,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             public Collection<String> getFreight(TimeInterval interval) {
                 if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    List<FreightConnectionPath> fConns = diagram.getFreightNet().getFreightToNodes(interval);
+                    List<FreightConnectionPath> fConns = diagram.getFreightNet().getConnectionStrategy().getFreightToNodes(interval);
                     return freightUtil.freightListToString(fConns, Locale.getDefault());
                 } else {
                     return Collections.emptyList();
@@ -127,7 +127,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             public Map<Train, List<String>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    return diagram.getFreightNet().getFreightPassedInNode(interval).entrySet().stream()
+                    return diagram.getFreightNet().getConnectionStrategy().getFreightPassedInNode(interval).entrySet().stream()
                             .collect(Collectors.toMap(e -> e.getKey(),
                                     e -> freightUtil.freightListToString(e.getValue(), Locale.getDefault())));
                 } else {

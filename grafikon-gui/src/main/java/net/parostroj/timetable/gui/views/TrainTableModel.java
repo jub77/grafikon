@@ -14,7 +14,6 @@ import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.model.FreightNet;
 import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Node;
@@ -26,6 +25,7 @@ import net.parostroj.timetable.model.Track;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
@@ -235,17 +235,17 @@ class TrainTableModel extends AbstractTableModel {
                 }
                 break;
             case FREIGHT_TO_STATIONS:
-                FreightNet freightNet = train.getDiagram().getFreightNet();
+                FreightConnectionStrategy strategy = train.getDiagram().getFreightNet().getConnectionStrategy();
                 if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<FreightConnectionPath>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
+                    Map<Train, List<FreightConnectionPath>> passedCargoDst = strategy.getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<FreightConnectionPath>> entry : passedCargoDst.entrySet()) {
                         List<FreightConnectionPath> mList = entry.getValue();
                         result.append('(').append(freightUtil.freightListToString(mList, Locale.getDefault()));
                         result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
-                        List<FreightConnectionPath> cargoDst = freightNet.getFreightToNodes(interval);
+                        List<FreightConnectionPath> cargoDst = strategy.getFreightToNodes(interval);
                         List<FreightConnectionPath> mList = cargoDst;
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');

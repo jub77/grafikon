@@ -30,6 +30,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.TranslatedString;
 import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -47,6 +48,7 @@ public class StationTimetablesExtractor {
     private final boolean techTime;
     private final boolean adjacentSessions;
     private final Locale locale;
+    private final FreightConnectionStrategy strategy;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, boolean adjacentSessions, Locale locale) {
         this.diagram = diagram;
@@ -55,6 +57,7 @@ public class StationTimetablesExtractor {
         this.adjacentSessions = adjacentSessions;
         this.locale = locale;
         this.converter = diagram.getTimeConverter();
+        this.strategy = diagram.getFreightNet().getConnectionStrategy();
     }
 
     public List<StationTimetable> getStationTimetables() {
@@ -143,7 +146,7 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreight()) {
-            List<? extends FreightConnection> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
+            List<? extends FreightConnection> freightDests = strategy.getFreightToNodes(interval);
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
                 for (FreightConnection dst : freightDests) {
@@ -153,7 +156,7 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreightConnection()) {
-            Map<Train, List<FreightConnectionPath>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
+            Map<Train, List<FreightConnectionPath>> passedCargoDst = strategy.getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<>();
                 for (Map.Entry<Train, List<FreightConnectionPath>> entry : passedCargoDst.entrySet()) {

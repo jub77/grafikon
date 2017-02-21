@@ -1,4 +1,4 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.freight;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
@@ -19,26 +19,23 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import com.google.common.collect.FluentIterable;
 
-import net.parostroj.timetable.model.freight.Connection;
-import net.parostroj.timetable.model.freight.DirectNodeConnection;
-import net.parostroj.timetable.model.freight.FreightConnectionPath;
-import net.parostroj.timetable.model.freight.NodeConnection;
-import net.parostroj.timetable.model.freight.NodeConnectionEdges;
-import net.parostroj.timetable.model.freight.NodeConnectionNodes;
-import net.parostroj.timetable.model.freight.TrainConnection;
-import net.parostroj.timetable.model.freight.TrainPath;
+import net.parostroj.timetable.model.Net;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TimeInterval;
 
-class FreightRegionGraphDelegate {
+class RegionGraphDelegate {
 
-    private TrainDiagram diagram;
+    private final Net net;
+    private final FreightConnectionStrategy strategy;
 
-    FreightRegionGraphDelegate(TrainDiagram diagram) {
-        this.diagram = diagram;
+    RegionGraphDelegate(Net net, FreightConnectionStrategy strategy) {
+        this.net = net;
+        this.strategy = strategy;
     }
 
     DirectedGraph<Node, DirectNodeConnection> getRegionGraph() {
         SimpleDirectedWeightedGraph<Node, DirectNodeConnection> graph = new SimpleDirectedWeightedGraph<>(DirectNodeConnection.class);
-        diagram.getNet().getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
+        net.getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
         for (Node node : graph.vertexSet()) {
             getRegionConnections(node).forEach(connection -> {
                 Node n1 = connection.getFrom();
@@ -58,7 +55,7 @@ class FreightRegionGraphDelegate {
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
         Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
-                .map(i -> diagram.getFreightNet().getFreightToNodes(i, FreightConnectionFilter::regionTransferStop))
+                .map(i -> strategy.getFreightToNodes(i))
                 .flatMap(this::toDirectRegionConnections);
         return list;
     }

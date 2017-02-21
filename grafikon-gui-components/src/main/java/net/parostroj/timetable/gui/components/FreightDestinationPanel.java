@@ -119,7 +119,7 @@ public class FreightDestinationPanel extends JPanel {
                     setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     setWaitDialogVisible(true);
                     try {
-                        FreightAnalyser analyser = new FreightAnalyser(diagram.getFreightNet());
+                        FreightAnalyser analyser = new FreightAnalyser(diagram.getFreightNet().getConnectionStrategy());
 
                         NodeFreight freight = analyser.getNodeFreightFrom(node);
                         this.addFreightToNodes(freight);
@@ -156,7 +156,7 @@ public class FreightDestinationPanel extends JPanel {
                     List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
                     List<Tuple<String>> trains = intervalsFrom.stream()
                             .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
-                                    util.freightListToString(diagram.getFreightNet().getFreightToNodes(i), locale)
+                                    util.freightListToString(analyser.getConnectionStrategy().getFreightToNodes(i), locale)
                                             .stream().collect(Collectors.joining(", "))))
                             .collect(Collectors.toList());
 

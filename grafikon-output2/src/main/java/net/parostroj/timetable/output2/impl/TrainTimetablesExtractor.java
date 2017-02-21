@@ -1,12 +1,36 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import net.parostroj.timetable.actions.*;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.actions.ElementSort;
+import net.parostroj.timetable.actions.TrainComparator;
+import net.parostroj.timetable.actions.TrainsHelper;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.NodeType;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TextTemplate;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TranslatedString;
 import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.Pair;
@@ -24,6 +48,7 @@ public class TrainTimetablesExtractor {
     private final TrainsCycle cycle;
     private final Map<Pair<Line, Node>, Double> cachedRoutePositions;
     private final Locale locale;
+    private final FreightConnectionStrategy strategy;
 
     public TrainTimetablesExtractor(TrainDiagram diagram, Collection<Train> trains, Collection<Route> routes, TrainsCycle cycle, Locale locale) {
         this.diagram = diagram;
@@ -32,6 +57,7 @@ public class TrainTimetablesExtractor {
         this.cycle = cycle;
         this.locale = locale;
         this.cachedRoutePositions = new HashMap<>();
+        this.strategy = diagram.getFreightNet().getConnectionStrategy();
     }
 
     public TrainTimetables getTrainTimetables() {
@@ -231,7 +257,7 @@ public class TrainTimetablesExtractor {
 
             // freight
             if (nodeI.isFirst() && nodeI.isFreight()) {
-                List<? extends FreightConnection> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
+                List<? extends FreightConnection> freightDests = strategy.getFreightToNodes(nodeI);
                 if (!freightDests.isEmpty()) {
                     ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
                     for (FreightConnection dst : freightDests) {

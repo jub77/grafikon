@@ -27,8 +27,8 @@ public class FreightConnectionAnalyser {
 
     private final FreightAnalyser analyser;
 
-    public FreightConnectionAnalyser(final FreightDataSource source) {
-        this.analyser = new FreightAnalyser(source);
+    public FreightConnectionAnalyser(final FreightConnectionStrategy strategy) {
+        this.analyser = new FreightAnalyser(strategy);
     }
 
     FreightConnectionAnalyser(FreightAnalyser analyser) {

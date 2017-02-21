@@ -4,32 +4,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
-import net.parostroj.timetable.model.FreightConnectionFilter.FilterContext;
-import net.parostroj.timetable.model.FreightConnectionFilter.FilterResult;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.Observable;
-import net.parostroj.timetable.model.freight.FreightFactory;
-import net.parostroj.timetable.model.freight.FreightConnectionPath;
-import net.parostroj.timetable.model.freight.FreightDataSource;
-import net.parostroj.timetable.model.freight.NodeConnectionEdges;
-import net.parostroj.timetable.model.freight.NodeConnectionNodes;
-import net.parostroj.timetable.model.freight.TrainConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -39,7 +27,7 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class FreightNet
-        implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart, FreightDataSource {
+        implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -52,12 +40,9 @@ public class FreightNet
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
-    private final FreightRegionGraphDelegate regionConnections;
-
     FreightNet(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.regionConnections = new FreightRegionGraphDelegate(diagram);
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
             Event event = null;
@@ -201,82 +186,8 @@ public class FreightNet
         return this.attributes;
     }
 
-    @Override
-    public Map<Train, List<FreightConnectionPath>> getFreightPassedInNode(TimeInterval fromInterval) {
-        if (!fromInterval.isNodeOwner()) {
-            throw new IllegalArgumentException("Only node intervals allowed.");
-        }
-        Map<Train, List<FreightConnectionPath>> result = new LinkedHashMap<>();
-        List<FNConnection> connections = this.getTrainsFrom(fromInterval);
-        for (FNConnection conn : connections) {
-            List<FreightConnectionPath> nodes = this.getFreightToNodesImpl(conn.getTo(),
-                    conn.getFreightDstFilter(FreightConnectionFilter::empty, true));
-            result.put(conn.getTo().getTrain(), nodes);
-        }
-        return result;
-    }
-
-    @Override
-    public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval) {
-        return this.getFreightToNodes(fromInterval, FreightConnectionFilter::empty);
-    }
-
-    @Override
-    public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter) {
-        if (!fromInterval.isNodeOwner()) {
-            throw new IllegalArgumentException("Only node intervals allowed.");
-        }
-        return this.getFreightToNodesImpl(fromInterval, filter);
-    }
-
-    private List<FreightConnectionPath> getFreightToNodesImpl(TimeInterval fromInterval, FreightConnectionFilter filter) {
-        List<FreightConnectionPath> result = new LinkedList<>();
-        this.getFreightToNodesImpl(fromInterval.getOwnerAsNode(), fromInterval,
-                Collections.<TrainConnection>emptyList(), result, new HashSet<FNConnection>(), filter,
-                new FilterContext(fromInterval));
-        return result;
-    }
-
-    private void getFreightToNodesImpl(Node start, TimeInterval fromInterval, List<TrainConnection> path,
-            List<FreightConnectionPath> result, Set<FNConnection> used, FreightConnectionFilter filter,
-            FilterContext context) {
-        FilterResult filterResult = FilterResult.OK;
-        Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
-        Iterators.find(intervals, interval -> interval == fromInterval);
-        intervals = Iterators.filter(intervals,
-                interval -> interval.isNodeOwner() && (interval.isFreightTo() || interval.isFreightConnection()));
-        while (intervals.hasNext()) {
-            TimeInterval i = intervals.next();
-            if (i.isFreight()) {
-                FreightConnectionPath newDst = FreightFactory.createFreightNodeConnection(start,
-                        i.getOwnerAsNode(), i.isRegionCenterTransfer(), createNewPath(path, fromInterval, i));
-                filterResult = filter.accepted(context, newDst, 0);
-                if (filterResult == FilterResult.STOP_EXCLUDE) {
-                    break;
-                }
-                if (filterResult != FilterResult.IGNORE) {
-                    result.add(newDst);
-                }
-                if (filterResult == FilterResult.STOP_INCLUDE) {
-                    break;
-                }
-            }
-            for (FNConnection conn : this.getTrainsFrom(i)) {
-                if (!used.contains(conn)) {
-                    used.add(conn);
-                    List<TrainConnection> newPath = createNewPath(path, fromInterval, conn.getFrom());
-                    this.getFreightToNodesImpl(start, conn.getTo(), newPath, result, used,
-                            conn.getFreightDstFilter(filter, false), context);
-                }
-            }
-        }
-    }
-
-    private List<TrainConnection> createNewPath(List<TrainConnection> path, TimeInterval from, TimeInterval to) {
-        List<TrainConnection> newPath = new ArrayList<>(path.size() + 1);
-        newPath.addAll(path);
-        newPath.add(new FreightRegionGraphDelegate.TrainConnectionImpl(from, to));
-        return newPath;
+    public FreightConnectionStrategy getConnectionStrategy() {
+        return FreightConnectionStrategy.create(FreightConnectionStrategy.Type.BASE, diagram);
     }
 
     public List<FNConnection> getTrainsFrom(TimeInterval fromInterval) {
@@ -285,16 +196,6 @@ public class FreightNet
 
     public List<FNConnection> getTrainsTo(TimeInterval toInterval) {
     	return toMap.get(toInterval);
-    }
-
-    @Override
-    public Collection<NodeConnectionNodes> getRegionConnectionNodes() {
-        return regionConnections.getRegionConnectionNodes();
-    }
-
-    @Override
-    public Collection<NodeConnectionEdges> getRegionConnectionEdges() {
-        return regionConnections.getRegionConnectionEdges();
     }
 
     @Override

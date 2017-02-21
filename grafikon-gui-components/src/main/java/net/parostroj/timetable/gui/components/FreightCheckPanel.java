@@ -39,7 +39,7 @@ import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.freight.FreightChecker;
 import net.parostroj.timetable.model.freight.FreightChecker.ConnectionState;
-import net.parostroj.timetable.model.freight.FreightDataSource;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.freight.NodeConnectionEdges;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.output2.util.OutputUtil;
@@ -142,8 +142,10 @@ public class FreightCheckPanel extends JPanel {
     }
 
     private void checkFreight(TextBuffer buffer) {
+        FreightConnectionStrategy strategy = FreightConnectionStrategy
+                .createCached(diagram.getFreightNet().getConnectionStrategy());
         // check
-        FreightChecker checker = new FreightChecker(FreightDataSource.createCached(diagram.getFreightNet()));
+        FreightChecker checker = new FreightChecker(strategy);
         // check all centers
         buffer.appendText(ResourceLoader.getString("freight.check.centers") + ":\n", boldUnderlineStyle);
         diagram.getNet().getNodes().stream().filter(n -> n.isCenterOfRegions()).forEach(n -> {

@@ -5,30 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.parostroj.timetable.model.FreightConnectionFilter;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.utils.Pair;
 
 /**
- * Wrapper which caches the data from data source.
+ * Wrapper which caches the data from connection strategy.
  *
  * @author jub
  */
-class CachedFreightDataSource implements FreightDataSource {
+class CachedConnectionStrategy implements FreightConnectionStrategy {
 
-    private final FreightDataSource source;
+    private final FreightConnectionStrategy source;
 
     private Collection<NodeConnectionNodes> connNodes;
     private Collection<NodeConnectionEdges> connEdges;
     private final Map<TimeInterval, List<FreightConnectionPath>> freightToNodes;
-    private final Map<Pair<TimeInterval, FreightConnectionFilter>, List<FreightConnectionPath>> freightToNodesFilter;
+    private final Map<TimeInterval, List<FreightConnectionPath>> trainFreightToNodes;
     private final Map<TimeInterval, Map<Train, List<FreightConnectionPath>>> passedInNode;
 
-    public CachedFreightDataSource(FreightDataSource source) {
-        this.source = source;
+    public CachedConnectionStrategy(FreightConnectionStrategy strategy) {
+        this.source = strategy;
         this.freightToNodes = new HashMap<>();
-        this.freightToNodesFilter = new HashMap<>();
+        this.trainFreightToNodes = new HashMap<>();
         this.passedInNode = new HashMap<>();
     }
 
@@ -55,14 +53,13 @@ class CachedFreightDataSource implements FreightDataSource {
     }
 
     @Override
-    public List<FreightConnectionPath> getFreightToNodes(TimeInterval fromInterval, FreightConnectionFilter filter) {
-        Pair<TimeInterval, FreightConnectionFilter> key = new Pair<>(fromInterval, filter);
-        if (!freightToNodesFilter.containsKey(key)) {
-            List<FreightConnectionPath> ftn = source.getFreightToNodes(fromInterval, filter);
-            freightToNodesFilter.put(key, ftn);
+    public List<FreightConnectionPath> getFullFreightToNodes(TimeInterval fromInterval) {
+        if (!trainFreightToNodes.containsKey(fromInterval)) {
+            List<FreightConnectionPath> ftn = source.getFreightToNodes(fromInterval);
+            trainFreightToNodes.put(fromInterval, ftn);
             return ftn;
         } else {
-            return freightToNodesFilter.get(key);
+            return trainFreightToNodes.get(fromInterval);
         }
     }
 

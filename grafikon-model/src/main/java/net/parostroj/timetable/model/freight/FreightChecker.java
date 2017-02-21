@@ -25,13 +25,13 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class FreightChecker {
 
-    private final FreightDataSource source;
+    private final FreightConnectionStrategy strategy;
     private final FreightAnalyser analyser;
     private final FreightConnectionAnalyser connAnalyser;
 
-    public FreightChecker(final FreightDataSource source) {
-        this.source = source;
-        this.analyser = new FreightAnalyser(source);
+    public FreightChecker(final FreightConnectionStrategy strategy) {
+        this.strategy = strategy;
+        this.analyser = new FreightAnalyser(strategy);
         this.connAnalyser = new FreightConnectionAnalyser(this.analyser);
     }
 
@@ -51,7 +51,7 @@ public class FreightChecker {
 
     public Set<ConnectionState<NodeConnectionEdges>> analyseCenterConnections(Net net) {
         Collection<Tuple<Node>> allConns = this.getCenterPermutation(net);
-        Map<Tuple<Node>, NodeConnectionEdges> map = source.getRegionConnectionEdges().stream()
+        Map<Tuple<Node>, NodeConnectionEdges> map = strategy.getRegionConnectionEdges().stream()
                 .collect(Collectors.toMap(c -> new Tuple<>(c.getFrom(), c.getTo()), Function.identity()));
 
         return allConns.stream()
@@ -101,7 +101,7 @@ public class FreightChecker {
 
     private Stream<FreightConnectionPath> getConnectionsFrom(Node node) {
         return analyser.getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> source.getFreightToNodes(i).stream());
+                .flatMap(i -> strategy.getFreightToNodes(i).stream());
     }
 
     private Collection<Tuple<Node>> getCenterPermutation(Net net) {

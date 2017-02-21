@@ -31,14 +31,14 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class FreightAnalyser {
 
-    private final FreightDataSource source;
+    private final FreightConnectionStrategy strategy;
 
-    public FreightAnalyser(final FreightDataSource source) {
-        this.source = source;
+    public FreightAnalyser(final FreightConnectionStrategy strategy) {
+        this.strategy = strategy;
     }
 
-    public FreightDataSource getSource() {
-        return source;
+    public FreightConnectionStrategy getConnectionStrategy() {
+        return strategy;
     }
 
     public List<TimeInterval> getFreightIntervalsFrom(Node node) {
@@ -59,7 +59,7 @@ public class FreightAnalyser {
     public NodeFreight getNodeFreightFrom(Node node) {
         // getting straight connections
         Map<FreightConnection, Set<TimeInterval>> strainghtConnectionMap = getFreightIntervalsFrom(node).stream()
-                .flatMap(i -> source.getFreightToNodes(i).stream()
+                .flatMap(i -> strategy.getFreightToNodes(i).stream()
                         .map(d -> new Pair<>(FreightFactory.createFreightNodeConnection(d.getFrom(), d.getTo()), i)))
                 .collect(groupingBy(p -> p.first, mapping(p -> p.second, toSet())));
         Set<FreightConnectionVia> straightConnections = strainghtConnectionMap.entrySet().stream()
@@ -68,7 +68,7 @@ public class FreightAnalyser {
                 .collect(toSet());
 
         // depending if the node is center of regions or not
-        Collection<NodeConnectionNodes> centerConnections = source.getRegionConnectionNodes();
+        Collection<NodeConnectionNodes> centerConnections = strategy.getRegionConnectionNodes();
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
             Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections);
