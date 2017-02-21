@@ -56,8 +56,18 @@ public interface FreightConnectionStrategy {
      * @return strategy
      */
     static FreightConnectionStrategy create(ConnectionStrategyType type, TrainDiagram diagram) {
-        // TODO add other types
-        return new BaseConnectionStrategy(diagram);
+        FreightConnectionStrategy strategy = null;
+        switch (type) {
+            case BASE:
+                strategy = new BaseConnectionStrategy(diagram);
+                break;
+            case REGION:
+                strategy = new RegionToConnectionStrategy(diagram);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported type: " + type);
+        }
+        return strategy;
     }
 
     static FreightConnectionStrategy createCached(FreightConnectionStrategy strategy) {
