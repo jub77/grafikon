@@ -30,6 +30,8 @@ import net.parostroj.timetable.visitors.Visitable;
 public class FreightNet
         implements Visitable, ObjectWithId, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
 
+    private static final ConnectionStrategyType DEFAULT_STRATEGY = ConnectionStrategyType.BASE;
+
     private final String id;
     private final TrainDiagram diagram;
     private final Attributes attributes;
@@ -206,12 +208,14 @@ public class FreightNet
     }
 
     public ConnectionStrategyType getConnectionStrategyType() {
-        String strategyKey = getAttribute(CONNECTION_STRATEGY_TYPE, String.class, ConnectionStrategyType.BASE.getKey());
-        return ConnectionStrategyType.fromString(strategyKey);
+        String strategyKey = getAttribute(CONNECTION_STRATEGY_TYPE, String.class, DEFAULT_STRATEGY.getKey());
+        ConnectionStrategyType strategyType = ConnectionStrategyType.fromString(strategyKey);
+        return strategyType == null ? DEFAULT_STRATEGY : strategyType;
     }
 
     public void setConnectionStrategyType(ConnectionStrategyType strategyType) {
-        setAttribute(CONNECTION_STRATEGY_TYPE, strategyType != null ? strategyType.getKey() : null);
+        setAttribute(CONNECTION_STRATEGY_TYPE,
+                strategyType != null && strategyType != DEFAULT_STRATEGY ? strategyType.getKey() : null);
     }
 
     @Override

@@ -11,16 +11,17 @@ import java.text.ParseException;
 import java.util.Arrays;
 
 import javax.swing.Box;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.NumberTextField;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.freight.ConnectionStrategyType;
 import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
@@ -109,6 +110,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             d += 0.5;
         }
 
+        strategyTypeModel.addWrapper(Wrapper.getWrapper(ConnectionStrategyType.BASE));
+        strategyTypeModel.addWrapper(Wrapper.getWrapper(ConnectionStrategyType.REGION));
+
         pack();
     }
 
@@ -169,6 +173,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             SpeedUnit sUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class);
             unitComboBox.setSelectedItem(lUnit != null ? lUnit : NO_UNIT);
             speedUnitComboBox.setSelectedItem(sUnit != null ? sUnit : NO_UNIT);
+
+            strategyTypeModel.setSelectedObject(diagram.getFreightNet().getConnectionStrategyType());
         }
     }
 
@@ -212,9 +218,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         JTabbedPane tabbedPane = new JTabbedPane();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
-        JPanel dataPanel = new JPanel();
+        javax.swing.JPanel dataPanel = new javax.swing.JPanel();
         tabbedPane.addTab(ResourceLoader.getString("modelinfo.tab.config"), dataPanel); // NOI18N
-        JPanel scriptPanel = new JPanel();
+        javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
         tabbedPane.addTab(ResourceLoader.getString("modelinfo.tab.script"), scriptPanel); // NOI18N
 
 
@@ -265,7 +271,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
-        dataPanel.setLayout(new java.awt.GridBagLayout());
+        dataPanel.setLayout(new GridBagLayout());
 
         jLabel1.setText(ResourceLoader.getString("modelinfo.scales")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -503,7 +509,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         javax.swing.JPanel unitsPanel = new javax.swing.JPanel();
         unitsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         gridBagConstraints_5 = new java.awt.GridBagConstraints();
-        gridBagConstraints_5.insets = new Insets(0, 0, 5, 0);
+        gridBagConstraints_5.insets = new Insets(0, 0, 0, 0);
         gridBagConstraints_5.gridx = 0;
         gridBagConstraints_5.gridy = 14;
         gridBagConstraints_5.gridwidth = 3;
@@ -512,15 +518,30 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         dataPanel.add(unitsPanel, gridBagConstraints_5);
 
         unitsPanel.add(new javax.swing.JLabel(ResourceLoader.getString("modelinfo.unit")));
-        unitComboBox = new JComboBox<>();
+        unitComboBox = new javax.swing.JComboBox<>();
         unitsPanel.add(unitComboBox);
         unitsPanel.add(new javax.swing.JLabel(ResourceLoader.getString("modelinfo.speed.unit")));
-        speedUnitComboBox = new JComboBox<>();
+        speedUnitComboBox = new javax.swing.JComboBox<>();
         unitsPanel.add(speedUnitComboBox);
+
+        javax.swing.JPanel freightStrategyPanel = new javax.swing.JPanel(new FlowLayout(FlowLayout.LEFT));
+        GridBagConstraints gbc_panel = new GridBagConstraints();
+        gbc_panel.gridwidth = 3;
+        gbc_panel.insets = new Insets(0, 0, 5, 5);
+        gbc_panel.fill = GridBagConstraints.BOTH;
+        gbc_panel.gridx = 0;
+        gbc_panel.gridy = 15;
+        dataPanel.add(freightStrategyPanel, gbc_panel);
+
+        freightStrategyPanel.add(new JLabel(ResourceLoader.getString("modelinfo.freight.connection.strategy") + ":"));
+        strategyTypeModel = new WrapperListModel<>(true);
+        javax.swing.JComboBox<Wrapper<ConnectionStrategyType>> strategyType = new javax.swing.JComboBox<>();
+        strategyType.setModel(strategyTypeModel);
+        freightStrategyPanel.add(strategyType);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -708,6 +729,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, unitObject == NO_UNIT ? null : unitObject);
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, speedUnitObject == NO_UNIT ? null : speedUnitObject);
 
+        diagram.getFreightNet().setConnectionStrategyType(strategyTypeModel.getSelectedObject());
+
         this.updateValues();
 
         this.setVisible(false);
@@ -761,4 +784,6 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private javax.swing.JTextField toTimeTextField;
     private javax.swing.JComboBox<Object> unitComboBox;
     private javax.swing.JComboBox<Object> speedUnitComboBox;
+
+    private WrapperListModel<ConnectionStrategyType> strategyTypeModel;
 }
