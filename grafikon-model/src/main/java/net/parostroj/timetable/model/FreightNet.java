@@ -208,8 +208,8 @@ public class FreightNet
     }
 
     public ConnectionStrategyType getConnectionStrategyType() {
-        String strategyKey = getAttribute(CONNECTION_STRATEGY_TYPE, String.class, DEFAULT_STRATEGY.getKey());
-        ConnectionStrategyType strategyType = ConnectionStrategyType.fromString(strategyKey);
+        ConnectionStrategyType strategyType = ConnectionStrategyType
+                .fromString(getAttribute(CONNECTION_STRATEGY_TYPE, String.class));
         return strategyType == null ? DEFAULT_STRATEGY : strategyType;
     }
 
