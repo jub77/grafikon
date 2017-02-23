@@ -13,7 +13,13 @@ import net.parostroj.timetable.model.freight.FreightConnection;
 public interface FreightConnectionFilter {
 
     public enum FilterResult {
-        OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE;
+        OK("ok"), STOP_INCLUDE("stop_include"), STOP_EXCLUDE("stop_exclude"), IGNORE("ignore");
+
+        private String key;
+
+        private FilterResult(String key) {
+            this.key = key;
+        }
 
         public boolean isStop() {
             return this == STOP_EXCLUDE || this == STOP_INCLUDE;
@@ -21,6 +27,26 @@ public interface FreightConnectionFilter {
 
         public boolean isIncluded() {
             return this == STOP_INCLUDE || this == OK;
+        }
+
+        /**
+         * @return converts from string key to FilterResult, in case of unknown key, it returns OK.
+         */
+        public static FilterResult fromString(String key) {
+            if (key == null) {
+                return OK;
+            } else {
+                for (FilterResult result : values()) {
+                    if (result.key.equals(key)) {
+                        return result;
+                    }
+                }
+                return OK;
+            }
+        }
+
+        public String getKey() {
+            return key;
         }
     }
 

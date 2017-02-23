@@ -55,7 +55,7 @@ public class FreightNet
                 event = new Event(FreightNet.this, attributes, change);
             } else {
                 // clean cached strategy object in case strategy changes
-                if (change.checkName(ATTR_CONNECTION_STRATEGY_TYPE)) {
+                if (change.checkName(ATTR_CONNECTION_STRATEGY_TYPE, ATTR_CUSTOM_CONNECTION_FILTER)) {
                     _strategy = null;
                 }
                 event = new Event(FreightNet.this, change);

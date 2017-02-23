@@ -110,8 +110,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             d += 0.5;
         }
 
-        strategyTypeModel.addWrapper(Wrapper.getWrapper(ConnectionStrategyType.BASE));
-        strategyTypeModel.addWrapper(Wrapper.getWrapper(ConnectionStrategyType.REGION));
+        for (ConnectionStrategyType sType : ConnectionStrategyType.values()) {
+            strategyTypeModel.addWrapper(Wrapper.getWrapper(sType));
+        }
 
         pack();
     }

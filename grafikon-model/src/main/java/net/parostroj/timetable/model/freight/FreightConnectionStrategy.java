@@ -64,6 +64,9 @@ public interface FreightConnectionStrategy {
             case REGION:
                 strategy = new RegionToConnectionStrategy(diagram);
                 break;
+            case CUSTOM_CONNECTION_FILTER:
+                strategy = new CustomNetFilterConnectionStrategy(diagram);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported type: " + type);
         }

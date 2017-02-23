@@ -6,7 +6,7 @@ package net.parostroj.timetable.model.freight;
  * @author jub
  */
 public enum ConnectionStrategyType {
-    BASE("base"), REGION("region");
+    BASE("base"), REGION("region"), CUSTOM_CONNECTION_FILTER("custom.connection.filter");
 
     private final String key;
 
