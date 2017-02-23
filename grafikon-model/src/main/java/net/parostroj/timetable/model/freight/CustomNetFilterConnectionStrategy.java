@@ -41,8 +41,8 @@ class CustomNetFilterConnectionStrategy extends BaseConnectionStrategy {
         Builder builder = new Builder();
         Map<String, Object> mapping = new HashMap<>();
         mapping.put("builder", builder);
-        for (FilterResult r : FilterResult.values()) {
-            mapping.put(r.getKey(), r);
+        for (FilterResult filterResult : FilterResult.values()) {
+            mapping.put(filterResult.getKey(), filterResult);
         }
         script.evaluateWithException(mapping);
         this.netFilter = builder.netFilter;

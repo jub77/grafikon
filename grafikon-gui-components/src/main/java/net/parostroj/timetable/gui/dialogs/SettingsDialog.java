@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -23,6 +24,7 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.freight.ConnectionStrategyType;
 import net.parostroj.timetable.model.units.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.awt.event.ItemEvent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -175,7 +178,12 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             unitComboBox.setSelectedItem(lUnit != null ? lUnit : NO_UNIT);
             speedUnitComboBox.setSelectedItem(sUnit != null ? sUnit : NO_UNIT);
 
-            strategyTypeModel.setSelectedObject(diagram.getFreightNet().getConnectionStrategyType());
+            ConnectionStrategyType strategyType = diagram.getFreightNet().getConnectionStrategyType();
+            strategyTypeModel.setSelectedObject(strategyType);
+            if (strategyType == ConnectionStrategyType.CUSTOM_CONNECTION_FILTER) {
+                filterScriptEditBox.setScript(
+                        diagram.getFreightNet().getAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, Script.class));
+            }
         }
     }
 
@@ -223,7 +231,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         tabbedPane.addTab(ResourceLoader.getString("modelinfo.tab.config"), dataPanel); // NOI18N
         javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
         tabbedPane.addTab(ResourceLoader.getString("modelinfo.tab.script"), scriptPanel); // NOI18N
-
+        javax.swing.JPanel freightPanel = new javax.swing.JPanel();
+        tabbedPane.addTab(ResourceLoader.getString("modelinfo.tab.freight"), freightPanel); // NOI18N
 
         java.awt.GridBagConstraints gridBagConstraints;
 
@@ -525,30 +534,43 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         speedUnitComboBox = new javax.swing.JComboBox<>();
         unitsPanel.add(speedUnitComboBox);
 
-        javax.swing.JPanel freightStrategyPanel = new javax.swing.JPanel(new FlowLayout(FlowLayout.LEFT));
-        GridBagConstraints gbc_panel = new GridBagConstraints();
-        gbc_panel.gridwidth = 3;
-        gbc_panel.insets = new Insets(0, 0, 5, 5);
-        gbc_panel.fill = GridBagConstraints.BOTH;
-        gbc_panel.gridx = 0;
-        gbc_panel.gridy = 15;
-        dataPanel.add(freightStrategyPanel, gbc_panel);
-
-        freightStrategyPanel.add(new JLabel(ResourceLoader.getString("modelinfo.freight.connection.strategy") + ":"));
-        strategyTypeModel = new WrapperListModel<>(true);
-        javax.swing.JComboBox<Wrapper<ConnectionStrategyType>> strategyType = new javax.swing.JComboBox<>();
-        strategyType.setModel(strategyTypeModel);
-        freightStrategyPanel.add(strategyType);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         dataPanel.add(Box.createVerticalGlue(), gridBagConstraints);
+
+        freightPanel.setLayout(new BorderLayout());
+        javax.swing.JPanel freightStrategyPanel = new javax.swing.JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        freightStrategyPanel.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
+        freightPanel.add(freightStrategyPanel, BorderLayout.NORTH);
+
+        freightStrategyPanel.add(new JLabel(ResourceLoader.getString("modelinfo.freight.connection.strategy") + ": "));
+        strategyTypeModel = new WrapperListModel<>(true);
+        javax.swing.JComboBox<Wrapper<ConnectionStrategyType>> strategyType = new javax.swing.JComboBox<>();
+        strategyType.setModel(strategyTypeModel);
+        freightStrategyPanel.add(strategyType);
+
+        strategyType.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                ConnectionStrategyType sType = strategyTypeModel.getSelectedObject();
+                if (sType == ConnectionStrategyType.CUSTOM_CONNECTION_FILTER) {
+                    filterScriptEditBox.setEnabled(true);
+                } else {
+                    filterScriptEditBox.setScript(null);
+                    filterScriptEditBox.setEnabled(false);
+                }
+            }
+        });
+
+        filterScriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
+        filterScriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+
+        freightPanel.add(filterScriptEditBox, BorderLayout.CENTER);
 
         scriptPanel.setLayout(new GridBagLayout());
 
@@ -561,7 +583,6 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         gridBagConstraints.insets = new Insets(5, 5, 0, 0);
         scriptPanel.add(jLabel11, gridBagConstraints);
 
-        scriptEditBox.setColumns(80);
         scriptEditBox.setRows(8);
         scriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         GridBagConstraints gridBagConstraints_6 = new java.awt.GridBagConstraints();
@@ -576,21 +597,11 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         scriptPanel.add(scriptEditBox, gridBagConstraints_6);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         buttonPanel.add(okButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
         buttonPanel.add(cancelButton);
 
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -731,6 +742,11 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, speedUnitObject == NO_UNIT ? null : speedUnitObject);
 
         diagram.getFreightNet().setConnectionStrategyType(strategyTypeModel.getSelectedObject());
+        Script script = filterScriptEditBox.getScript();
+        if (ObjectsUtil.isEmpty(script.getSourceCode())) {
+            script = null;
+        }
+        diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, script);
 
         this.updateValues();
 
@@ -787,4 +803,5 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private javax.swing.JComboBox<Object> speedUnitComboBox;
 
     private WrapperListModel<ConnectionStrategyType> strategyTypeModel;
+    private net.parostroj.timetable.gui.components.ScriptEditBox filterScriptEditBox;
 }
