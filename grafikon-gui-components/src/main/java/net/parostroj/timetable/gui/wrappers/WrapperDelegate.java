@@ -10,7 +10,8 @@ import java.util.Comparator;
 public interface WrapperDelegate<T> extends WrapperConversion<T> {
 
     default String toCompareString(T element) {
-        return "";
+        String string = element == null ? "" : toString(element);
+        return string == null ? "" : string;
     }
 
     default Comparator<? super T> getComparator() {
