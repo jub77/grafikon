@@ -36,8 +36,11 @@ class CustomNetFilterConnectionStrategy extends BaseConnectionStrategy {
     }
 
     public CustomNetFilterConnectionStrategy(TrainDiagram diagram) {
+        this(diagram, diagram.getFreightNet().getAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, Script.class));
+    }
+
+    public CustomNetFilterConnectionStrategy(TrainDiagram diagram, Script script) {
         super(diagram);
-        Script script = diagram.getFreightNet().getAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, Script.class);
         Builder builder = new Builder();
         Map<String, Object> mapping = new HashMap<>();
         mapping.put("builder", builder);

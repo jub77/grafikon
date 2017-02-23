@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -69,6 +70,18 @@ public interface FreightConnectionStrategy {
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported type: " + type);
+        }
+        return strategy;
+    }
+
+    static FreightConnectionStrategy create(ConnectionStrategyType type, TrainDiagram diagram, Script script) {
+        FreightConnectionStrategy strategy = null;
+        switch (type) {
+            case CUSTOM_CONNECTION_FILTER:
+                strategy = new CustomNetFilterConnectionStrategy(diagram, script);
+                break;
+            default:
+                throw new IllegalArgumentException("Type " + type + " does not have script");
         }
         return strategy;
     }
