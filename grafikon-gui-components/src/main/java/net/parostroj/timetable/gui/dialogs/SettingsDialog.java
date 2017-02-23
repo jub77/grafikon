@@ -23,6 +23,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.freight.ConnectionStrategyType;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
@@ -745,8 +746,18 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         Script script = filterScriptEditBox.getScript();
         if (ObjectsUtil.isEmpty(script.getSourceCode())) {
             script = null;
+        } else {
+            // check script
+            try {
+                FreightConnectionStrategy.create(strategyTypeModel.getSelectedObject(), diagram, script);
+                diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, script);
+            } catch (GrafikonException e) {
+                // log and fallback
+                log.warn("Error using script for strategy: " + e.getMessage());
+                diagram.getFreightNet().setConnectionStrategyType(ConnectionStrategyType.BASE);
+                diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, null);
+            }
         }
-        diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, script);
 
         this.updateValues();
 
