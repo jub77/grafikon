@@ -55,7 +55,7 @@ public class FreightNet
                 event = new Event(FreightNet.this, attributes, change);
             } else {
                 // clean cached strategy object in case strategy changes
-                if (change.checkName(CONNECTION_STRATEGY_TYPE)) {
+                if (change.checkName(ATTR_CONNECTION_STRATEGY_TYPE)) {
                     _strategy = null;
                 }
                 event = new Event(FreightNet.this, change);
@@ -209,12 +209,12 @@ public class FreightNet
 
     public ConnectionStrategyType getConnectionStrategyType() {
         ConnectionStrategyType strategyType = ConnectionStrategyType
-                .fromString(getAttribute(CONNECTION_STRATEGY_TYPE, String.class));
+                .fromString(getAttribute(ATTR_CONNECTION_STRATEGY_TYPE, String.class));
         return strategyType == null ? DEFAULT_STRATEGY : strategyType;
     }
 
     public void setConnectionStrategyType(ConnectionStrategyType strategyType) {
-        setAttribute(CONNECTION_STRATEGY_TYPE,
+        setAttribute(ATTR_CONNECTION_STRATEGY_TYPE,
                 strategyType != null && strategyType != DEFAULT_STRATEGY ? strategyType.getKey() : null);
     }
 
