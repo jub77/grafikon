@@ -2,17 +2,17 @@ package net.parostroj.timetable.model;
 
 /**
  * Exception.
- * 
+ *
  * @author jub
  */
-public class GrafikonException extends Exception {
+public class GrafikonException extends RuntimeException {
 
     public static enum Type {
         TEXT_TEMPLATE, SCRIPT;
     }
 
     private Type type;
-    
+
     public GrafikonException() {
         super();
     }
@@ -20,7 +20,7 @@ public class GrafikonException extends Exception {
     public GrafikonException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     public GrafikonException(String message, Throwable cause, Type type) {
         super(message, cause);
         this.type = type;
@@ -34,7 +34,7 @@ public class GrafikonException extends Exception {
         super(message);
         this.type = type;
     }
-    
+
     public Type getType() {
         return type;
     }
