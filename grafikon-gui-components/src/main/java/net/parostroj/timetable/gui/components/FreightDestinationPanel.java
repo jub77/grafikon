@@ -156,7 +156,7 @@ public class FreightDestinationPanel extends JPanel {
                     List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
                     List<Tuple<String>> trains = intervalsFrom.stream()
                             .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
-                                    util.freightListToString(analyser.getConnectionStrategy().getFreightToNodesNet(i), locale)
+                                    util.freightListToString(analyser.getConnectionStrategy().getFreightToNodes(i), locale)
                                             .stream().collect(Collectors.joining(", "))))
                             .collect(Collectors.toList());
 
