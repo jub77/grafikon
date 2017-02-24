@@ -30,7 +30,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class FreightNet
         implements Visitable, ObjectWithId, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
 
-    private static final ConnectionStrategyType DEFAULT_STRATEGY = ConnectionStrategyType.BASE;
+    private static final ConnectionStrategyType DEFAULT_STRATEGY = ConnectionStrategyType.REGION;
 
     private final String id;
     private final TrainDiagram diagram;
