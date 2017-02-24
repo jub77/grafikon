@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -39,7 +40,7 @@ public class EditLineDialog extends javax.swing.JDialog {
     private static class LTModel extends javax.swing.DefaultListModel<LineTrack> {}
 
     private Line line;
-    private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
+    private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
     private List<LineTrack> removed;
@@ -121,12 +122,12 @@ public class EditLineDialog extends javax.swing.JDialog {
     }
 
     private void updateTracks() {
-        removed = new LinkedList<LineTrack>();
+        removed = new LinkedList<>();
         connections.clear();
         LTModel listModel = new LTModel();
         for (LineTrack track : line.getTracks()) {
             listModel.addElement(track);
-            connections.put(track, new Tuple<NodeTrack>(track.getFromStraightTrack(), track.getToStraightTrack()));
+            connections.put(track, new Tuple<>(track.getFromStraightTrack(), track.getToStraightTrack()));
         }
         trackList.setModel(listModel);
         if (!listModel.isEmpty()) {
@@ -218,27 +219,28 @@ public class EditLineDialog extends javax.swing.JDialog {
         unlimitedSpeedCheckBox = new javax.swing.JCheckBox();
         speedTextField = new javax.swing.JTextField();
         speedTextField.setColumns(30);
+        speedTextField.setHorizontalAlignment(JTextField.RIGHT);
         controlledCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        fromDirectTrackComboBox = new javax.swing.JComboBox<NodeTrack>();
-        toDirectTrackComboBox = new javax.swing.JComboBox<NodeTrack>();
+        fromDirectTrackComboBox = new javax.swing.JComboBox<>();
+        toDirectTrackComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        trackList = new javax.swing.JList<LineTrack>();
+        trackList = new javax.swing.JList<>();
         newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
         deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
-        lineClassComboBox = new javax.swing.JComboBox<LineClass>();
+        lineClassComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         fromToLabel = new javax.swing.JLabel();
         lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
-        lineClassBackComboBox = new javax.swing.JComboBox<LineClass>();
+        lineClassBackComboBox = new javax.swing.JComboBox<>();
 
         setTitle(ResourceLoader.getString("editline.title")); // NOI18N
         setResizable(false);
