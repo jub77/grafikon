@@ -54,6 +54,8 @@ public class ScriptEditBox extends javax.swing.JPanel {
         scrollPane.setBorder(border);
         scriptTextArea.setTabsEmulated(true);
         scriptTextArea.setTabSize(4);
+
+        languageChange = true;
     }
 
     public void addComponentToEditBox(Component component) {
@@ -67,13 +69,21 @@ public class ScriptEditBox extends javax.swing.JPanel {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        languageComboBox.setEnabled(enabled);
+        languageComboBox.setEnabled(enabled && languageChange);
         scriptTextArea.setEnabled(enabled);
         scriptTextArea.setEditable(enabled);
         scriptTextArea.setHighlightCurrentLine(enabled);
         scrollPane.setEnabled(enabled);
         scrollPane.getVerticalScrollBar().setEnabled(enabled);
         scrollPane.getHorizontalScrollBar().setEnabled(enabled);
+    }
+
+    public void setLanguageChange(boolean languageChange) {
+        this.languageChange = languageChange;
+    }
+
+    public boolean isLanguageChange() {
+        return languageChange;
     }
 
     public void setColumns(int columns) {
@@ -204,4 +214,6 @@ public class ScriptEditBox extends javax.swing.JPanel {
     private javax.swing.JPanel panel;
 
     private SearchDialog searchDialog;
+
+    private boolean languageChange;
 }

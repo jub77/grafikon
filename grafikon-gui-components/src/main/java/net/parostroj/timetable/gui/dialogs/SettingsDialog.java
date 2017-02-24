@@ -561,6 +561,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
                 ConnectionStrategyType sType = strategyTypeModel.getSelectedObject();
                 if (sType == ConnectionStrategyType.CUSTOM_CONNECTION_FILTER) {
                     filterScriptEditBox.setEnabled(true);
+                    filterScriptEditBox.setScriptText("builder.netFilter = { context, dest, level -> ok }\nbuilder.trainFilter = { context, dest, level -> ok }");
                 } else {
                     filterScriptEditBox.setScript(null);
                     filterScriptEditBox.setEnabled(false);
@@ -570,6 +571,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         filterScriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
         filterScriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        // allow only groovy script language for the filter
+        filterScriptEditBox.setScriptLanguage(Script.Language.GROOVY);
+        filterScriptEditBox.setLanguageChange(false);
 
         freightPanel.add(filterScriptEditBox, BorderLayout.CENTER);
 
