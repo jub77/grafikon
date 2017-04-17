@@ -193,7 +193,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         types.setSelectedObject(node.getType());
 
         // company
-        this.companies = new WrapperListModel<>(false);
+        this.companies = new WrapperListModel<>(true);
         this.companies.addWrapper(EMPTY_COMPANY);
         TrainDiagram diagram = node.getDiagram();
         for (Company company : diagram.getCompanies()) {

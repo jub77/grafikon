@@ -30,6 +30,11 @@ public class EngineClassWrapperDelegate extends BasicWrapperDelegate<EngineClass
     }
 
     private int compare(EngineClass o1, EngineClass o2) {
+        if (o1 == null) {
+            if (o2 == null) return 0;
+            else return -1;
+        }
+        if (o2 == null) return 1;
         String groupKey1 = o1.getGroupKey();
         String groupKey2 = o2.getGroupKey();
         int result = getCollator().compare(groupKey1 == null ? "" : groupKey1, groupKey2 == null ? "" : groupKey2);
