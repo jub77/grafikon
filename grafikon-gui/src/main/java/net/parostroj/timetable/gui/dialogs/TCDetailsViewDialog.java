@@ -28,7 +28,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private static final Logger log = LoggerFactory.getLogger(TCDetailsViewDialog.class);
 
     private TCDelegate delegate;
-    private static final EngineClass noneEngineClass = new EngineClass(null, ResourceLoader.getString("ec.details.engineclass.none"));
+    private static final Wrapper<EngineClass> NO_ENGINE = Wrapper.getEmptyWrapper("-");
     private static final String noLevel = "-";
 
     public TCDetailsViewDialog() {
@@ -57,11 +57,13 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         boolean isDriverCycle = delegate.getType().isDriverType();
         boolean isTrainUnitCycle = delegate.getType().isTrainUnitType();
         if (isEngineType) {
-            this.engineClassComboBox.removeAllItems();
-            this.engineClassComboBox.addItem(noneEngineClass);
+            this.engines = new WrapperListModel<>(true);
+            this.engines.addWrapper(NO_ENGINE);
             for (EngineClass c : diagram.getEngineClasses()) {
-                this.engineClassComboBox.addItem(c);
+                this.engines.addWrapper(Wrapper.getWrapper(c));
             }
+            this.engineClassComboBox.setModel(engines);
+            this.engineClassComboBox.setSelectedItem(clazz != null ? Wrapper.getWrapper(clazz) : NO_ENGINE);
         }
         if (isDriverCycle) {
             Integer level = cycle.getAttribute(TrainsCycle.ATTR_LEVEL, Integer.class);
@@ -81,14 +83,13 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         this.engineClassLabel.setVisible(isEngineType);
         this.freightCheckBox.setVisible(isTrainUnitCycle);
         this.freightLabel.setVisible(isTrainUnitCycle);
-        this.companies = new WrapperListModel<>(false);
+        this.companies = new WrapperListModel<>(true);
         Wrapper<Company> emptyCompany = Wrapper.<Company>getEmptyWrapper("-");
         this.companies.addWrapper(emptyCompany);
         for (Company company : diagram.getCompanies()) {
             this.companies.addWrapper(Wrapper.getWrapper(company));
         }
         attributesPanel.startEditing(new Attributes(cycle.getAttributes()));
-        this.engineClassComboBox.setSelectedItem(clazz != null ? clazz : noneEngineClass);
         this.companyComboBox.setModel(companies);
         this.companyComboBox.setSelectedItem(selCompany != null ? Wrapper.getWrapper(selCompany) : emptyCompany);
         pack();
@@ -211,10 +212,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 
         if (delegate.getType().isEngineType()) {
             // write back engine class
-            EngineClass selEngineClass = (EngineClass) engineClassComboBox.getSelectedItem();
-            if (selEngineClass == noneEngineClass) {
-                selEngineClass = null;
-            }
+            EngineClass selEngineClass = engines.getSelectedObject();
             cycle.getAttributes().setRemove(TrainsCycle.ATTR_ENGINE_CLASS, selEngineClass);
         }
         if (delegate.getType().isDriverType()) {
@@ -247,7 +245,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 
     private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;
     private javax.swing.JTextField descTextField;
-    private javax.swing.JComboBox<EngineClass> engineClassComboBox;
+    private javax.swing.JComboBox<Wrapper<EngineClass>> engineClassComboBox;
     private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
     private javax.swing.JComboBox<Object> levelComboBox;
     private javax.swing.JTextField nameTextField;
@@ -257,4 +255,5 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox freightCheckBox;
 
     private WrapperListModel<Company> companies;
+    private WrapperListModel<EngineClass> engines;
 }
