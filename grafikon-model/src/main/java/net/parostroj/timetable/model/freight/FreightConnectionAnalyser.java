@@ -85,7 +85,7 @@ public class FreightConnectionAnalyser {
 
             @Override
             public List<DirectNodeConnection> getSteps() {
-                return ctx.steps.stream().map(c -> (DirectNodeConnection) c).collect(toList());
+                return ctx.steps.stream().collect(toList());
             }
 
             @Override

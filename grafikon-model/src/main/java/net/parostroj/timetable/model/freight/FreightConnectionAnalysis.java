@@ -123,11 +123,9 @@ class FreightConnectionAnalysis {
                         .findAny();
                 if (regionConn.isPresent()) {
                     NodeConnectionEdges conn = regionConn.get();
-                    conn.getEdges().stream().map(dc -> new StepImpl(dc.getFrom(), dc.getTo(),
-                            dc.getConnections()))
-                    .forEach(step -> {
-                        nContext.steps.add(step);
-                    });
+                    conn.getEdges().stream()
+                        .map(this::createStep)
+                        .forEach(nContext.steps::add);
                     nContext.current = centerNode;
                     nContext.stage = centerNode == to ? Stage.CONNECTION : Stage.TO_NODE;
                 } else {
@@ -143,6 +141,10 @@ class FreightConnectionAnalysis {
 
     Collection<Context> getContexts() {
         return allContexts;
+    }
+
+    private StepImpl createStep(DirectNodeConnection conn) {
+        return new StepImpl(conn.getFrom(), conn.getTo(), conn.getConnections());
     }
 
     // returns regions - for current node and if there is a direct connection to a center of region which is the center
