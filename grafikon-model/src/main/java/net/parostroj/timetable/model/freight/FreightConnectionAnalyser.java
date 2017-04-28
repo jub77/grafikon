@@ -43,7 +43,10 @@ public class FreightConnectionAnalyser {
      * @return shortest freight connection
      */
     public Set<NodeFreightConnection> analyse(Node from, Node to) {
-        FreightConnectionAnalysis analysis = new FreightConnectionAnalysis(analyser, from, to);
+        FreightConnectionAnalysis analysis = new FreightConnectionAnalysis(
+                new FreightConnectionFinder(analyser),
+                from,
+                to);
         Context context = analysis.createContext();
 
         while (context != null) {

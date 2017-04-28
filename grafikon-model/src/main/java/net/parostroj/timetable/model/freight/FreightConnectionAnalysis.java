@@ -6,10 +6,8 @@ import static net.parostroj.timetable.utils.ObjectsUtil.intersects;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -18,7 +16,6 @@ import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Analysis of freight connection between two stations. It produces path and information
@@ -28,19 +25,15 @@ import net.parostroj.timetable.utils.Tuple;
  */
 class FreightConnectionAnalysis {
 
-    private final FreightAnalyser analyser;
     private final Node from;
     private final Node to;
+    private final FreightConnectionFinder finder;
 
-    FreightConnectionAnalysis(FreightAnalyser analyser, Node from, Node to) {
-        this.analyser = analyser;
+    FreightConnectionAnalysis(FreightConnectionFinder finder, Node from, Node to) {
+        this.finder = finder;
         this.from = from;
         this.to = to;
     }
-
-    private final Map<Tuple<Node>, List<FreightConnectionPath>> cache = new HashMap<>();
-    private final Map<Node, List<FreightConnectionPath>> cacheF = new HashMap<>();
-    private Collection<NodeConnectionEdges> cachedNet;
 
     private final Collection<Context> allContexts = new ArrayList<>();
     private final Queue<Context> notFinishedContexts = new LinkedList<>();
@@ -63,7 +56,7 @@ class FreightConnectionAnalysis {
             context.stage = Stage.CONNECTION;
             return;
         }
-        List<FreightConnectionPath> conns = context.getConnectionFromTo(from, to);
+        List<FreightConnectionPath> conns = finder.getConnectionFromTo(from, to);
         if (!conns.isEmpty()) {
             context.stage = Stage.TO_NODE;
         } else {
@@ -72,7 +65,7 @@ class FreightConnectionAnalysis {
     }
 
     void toNode(Context context) {
-        Set<TrainPath> set = context.getConnectionFromTo(context.current, to).stream()
+        Set<TrainPath> set = finder.getConnectionFromTo(context.current, to).stream()
                 .map(fc -> fc.getPath()).collect(toSet());
         if (!set.isEmpty()) {
             context.steps.add(new StepImpl(context.current, to, set));
@@ -90,12 +83,12 @@ class FreightConnectionAnalysis {
             for (ToRegionConnection conn : regions) {
                 Context nContext = conn.context;
                 Node centerNode = conn.center;
-                Set<TrainPath> set = nContext.getConnectionFromTo(nContext.current, centerNode).stream()
+                Set<TrainPath> set = finder.getConnectionFromTo(nContext.current, centerNode).stream()
                         .map(fc -> fc.getPath()).collect(toSet());
                 if (!set.isEmpty()) {
                     nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
                     nContext.current = centerNode;
-                    boolean noDirectConnection = nContext.getConnectionFromTo(nContext.current, to).isEmpty();
+                    boolean noDirectConnection = finder.getConnectionFromTo(nContext.current, to).isEmpty();
                     if (noDirectConnection && conn.transitive) {
                         nContext.stage = Stage.BETWEEN_CENTERS;
                     } else if (conn.transitive || intersects(to.getRegions(), centerNode.getCenterRegions())) {
@@ -118,7 +111,7 @@ class FreightConnectionAnalysis {
             for (ToRegionConnection pair : regions) {
                 Context nContext = pair.context;
                 Node centerNode = pair.center;
-                Optional<NodeConnectionEdges> regionConn = nContext.getRegionConnections().stream()
+                Optional<NodeConnectionEdges> regionConn = finder.getRegionConnections().stream()
                         .filter(c -> c.getFrom() == nContext.current && c.getTo() == centerNode)
                         .findAny();
                 if (regionConn.isPresent()) {
@@ -153,7 +146,7 @@ class FreightConnectionAnalysis {
                 .filter(Objects::nonNull)
                 .collect(toSet());
 
-        Stream<Node> otherCenters = context.getConnectionFrom(context.current).stream()
+        Stream<Node> otherCenters = finder.getConnectionFrom(context.current).stream()
             .map(c -> c.getTo())
             .filter(d -> d.isNode() && d.isRegions())
             .map(d -> d.getNode())
@@ -197,37 +190,6 @@ class FreightConnectionAnalysis {
             context.stage = stage;
             context.steps.addAll(steps);
             return context;
-        }
-
-        public Collection<NodeConnectionEdges> getRegionConnections() {
-            if (cachedNet == null) {
-                cachedNet = analyser.getConnectionStrategy().getRegionConnectionEdges();
-            }
-            return cachedNet;
-        }
-
-        public List<FreightConnectionPath> getConnectionFrom(Node node) {
-            if (cacheF.containsKey(node)) {
-                return cacheF.get(node);
-            } else {
-                Stream<FreightConnectionPath> connections = analyser.getFreightIntervalsFrom(node).stream()
-                        .flatMap(i -> analyser.getConnectionStrategy().getFreightToNodesNet(i).stream());
-                List<FreightConnectionPath> connSet = connections.collect(toList());
-                cacheF.put(node, connSet);
-                return connSet;
-            }
-        }
-
-        public List<FreightConnectionPath> getConnectionFromTo(Node node, Node target) {
-            Tuple<Node> fromTo = new Tuple<>(node, target);
-            if (cache.containsKey(fromTo)) {
-                return cache.get(fromTo);
-            } else {
-                List<FreightConnectionPath> connSet = getConnectionFrom(node).stream()
-                        .filter(c -> c.getTo().getNode() == target).collect(toList());
-                cache.put(fromTo, connSet);
-                return connSet;
-            }
         }
 
         @Override
