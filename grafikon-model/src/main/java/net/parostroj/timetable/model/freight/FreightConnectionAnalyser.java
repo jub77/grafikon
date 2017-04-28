@@ -1,10 +1,10 @@
 package net.parostroj.timetable.model.freight;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -109,9 +109,12 @@ public class FreightConnectionAnalyser {
 
     public TrainPath getTrainPath(Collection<? extends NodeFreightConnection> connections, int start, int shunt) {
         ConnectionFinder finder = new ConnectionFinder(start, shunt);
-        Stream<TrainPath> list = connections.stream().filter(NodeFreightConnection::isComplete)
+        Stream<TrainPath> stream = connections.stream()
+                .filter(NodeFreightConnection::isComplete)
                 .map(finder::find);
-        return list.min(shortest()).orElseGet(TrainPath::empty);
+        return stream
+                .min(shortest())
+                .orElseGet(TrainPath::empty);
     }
 
     private Comparator<TrainPath> shortest() {
@@ -130,7 +133,7 @@ public class FreightConnectionAnalyser {
 
         public TrainPath find(NodeFreightConnection connection) {
             int current = start;
-            TrainPath result = FreightFactory.createTrainPath(Collections.emptyList());
+            TrainPath result = FreightFactory.createTrainPath(emptyList());
             TrainPath last = null;
             for (DirectNodeConnection currentSet : connection.getSteps()) {
                 final int currentStart = current;
@@ -140,6 +143,7 @@ public class FreightConnectionAnalyser {
                 if (selected == null) {
                     throw new IllegalArgumentException("Only complete connections allowed.");
                 }
+                // increase the time for with shunt time
                 current = selected.getEndTime() + shunt;
                 result.addAll(selected);
                 last = selected;
@@ -147,6 +151,9 @@ public class FreightConnectionAnalyser {
             return result;
         }
 
+        /**
+         * @return the same train (if the same train can be used for the next part, shunt time is ignored)
+         */
         private Optional<TrainPath> getSame(TrainPath last, DirectNodeConnection currentSet) {
             if (last == null) {
                 return Optional.empty();
@@ -158,6 +165,9 @@ public class FreightConnectionAnalyser {
             }
         }
 
+        /**
+         * @return train which is closest the the time specified
+         */
         private Optional<TrainPath> getClosest(int time, DirectNodeConnection dnc) {
             return dnc.getConnections().stream()
                     .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())));
