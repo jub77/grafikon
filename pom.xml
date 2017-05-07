@@ -242,6 +242,10 @@
                 <version>${fop.version}</version>
                 <exclusions>
                     <exclusion>
+                        <groupId>org.apache.pdfbox</groupId>
+                        <artifactId>fontbox</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <artifactId>avalon-framework-api</artifactId>
                         <groupId>org.apache.avalon.framework</groupId>
                     </exclusion>
