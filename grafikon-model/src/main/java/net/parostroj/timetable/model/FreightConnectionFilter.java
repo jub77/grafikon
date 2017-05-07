@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import static net.parostroj.timetable.model.FreightConnectionFilter.FilterResult.OK;
-
 import net.parostroj.timetable.model.freight.FreightConnection;
 
 /**
@@ -48,6 +46,31 @@ public interface FreightConnectionFilter {
         public String getKey() {
             return key;
         }
+
+        /**
+         * Combines current filter result with previous one.
+         *
+         * @param previous previous filter result
+         * @return combined result
+         */
+        public FilterResult combine(FilterResult previous) {
+            FilterResult result = OK;
+            switch (previous) {
+                case OK:
+                    result = this;
+                    break;
+                case IGNORE:
+                    result = this.isStop() ? STOP_EXCLUDE : IGNORE;
+                    break;
+                case STOP_EXCLUDE:
+                    result = STOP_EXCLUDE;
+                    break;
+                case STOP_INCLUDE:
+                    result = !this.isIncluded() ? STOP_EXCLUDE : STOP_INCLUDE;
+                    break;
+            }
+            return result;
+        }
     }
 
     public static class FilterContext {
@@ -65,7 +88,10 @@ public interface FreightConnectionFilter {
 
     FilterResult accepted(FilterContext context, FreightConnection dst, int level);
 
+    /**
+     * @return always returns OK as result of a filter
+     */
     static FilterResult empty(FilterContext context, FreightConnection dst, int level) {
-        return OK;
+        return FilterResult.OK;
     }
 }

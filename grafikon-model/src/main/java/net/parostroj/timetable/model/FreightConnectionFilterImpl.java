@@ -55,21 +55,7 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
         }
         FilterResult parentResult = parent.accepted(context, dst, level + 1);
         FilterResult currentResult = getCurrentResult(context, dst);
-        FilterResult result = OK;
-        switch (parentResult) {
-            case OK:
-                result = currentResult;
-                break;
-            case IGNORE:
-                result = currentResult.isStop() ? STOP_EXCLUDE : IGNORE;
-                break;
-            case STOP_EXCLUDE:
-                result = STOP_EXCLUDE;
-                break;
-            case STOP_INCLUDE:
-                result = !currentResult.isIncluded() ? STOP_EXCLUDE : STOP_INCLUDE;
-                break;
-        }
+        FilterResult result = currentResult.combine(parentResult);
         return result;
     }
 
