@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Set;
  *
  * @author jub
  */
-public class TimeIntervalResult {
+public final class TimeIntervalResult {
 
     /**
      * Test result status.
@@ -19,22 +20,18 @@ public class TimeIntervalResult {
         OK, OVERLAPPING
     }
 
-    private Status status;
-
-    private Set<TimeInterval> overlappingIntervals;
+    private final Status status;
+    private final Set<TimeInterval> overlappingIntervals;
 
     /**
-     * Constructor.
-     *
      * @param status status
      */
     public TimeIntervalResult(Status status) {
         this.status = status;
+        this.overlappingIntervals = Collections.emptySet();
     }
 
     /**
-     * Constructor.
-     *
      * @param status status
      * @param overlappingIntervals overlapping intervals
      */
@@ -51,23 +48,9 @@ public class TimeIntervalResult {
     }
 
     /**
-     * @param overlappingIntervals the overlappingIntervals to set
-     */
-    public void setOverlappingIntervals(Set<TimeInterval> overlappingIntervals) {
-        this.overlappingIntervals = overlappingIntervals;
-    }
-
-    /**
      * @return the status
      */
     public Status getStatus() {
         return status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(Status status) {
-        this.status = status;
     }
 }
