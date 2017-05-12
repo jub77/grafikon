@@ -34,7 +34,6 @@ public abstract class OutputFactory {
      * creates factory.
      *
      * @param type type of the factory
-     * @param locale locale
      * @return factory
      */
     public static OutputFactory newInstance(String type) {

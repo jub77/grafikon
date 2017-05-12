@@ -33,7 +33,7 @@ public class GroupsComboBox extends JComboBox<Wrapper<Group>> {
      * updates combobox. No group means none.
      *
      * @param diagram diagram
-     * @param selection selected group (null -> none)
+     * @param selection selected group (null -&gt; none)
      */
     public void updateGroups(TrainDiagram diagram, Group selection) {
         updateGroups(diagram, selection == null ? new GroupSelect(Type.NONE) : new GroupSelect(Type.GROUP, selection));
@@ -43,8 +43,7 @@ public class GroupsComboBox extends JComboBox<Wrapper<Group>> {
      * updates combobox.
      *
      * @param diagram diagram
-     * @param type type
-     * @param selection selected group (depends on type)
+     * @param groupSelect selected group (depends on type)
      */
     public void updateGroups(TrainDiagram diagram, GroupSelect groupSelect) {
         if (groupSelect.getType() == Type.ALL && !allOption)

@@ -30,8 +30,6 @@ public class GuiComponentUtils {
      * @param icon icon
      * @param margin margin
      * @return button
-     *
-     * @wbp.factory
      */
     public static JButton createButton(GuiIcon icon, int margin) {
         return createButton(new JButton(), icon, margin);
@@ -44,8 +42,6 @@ public class GuiComponentUtils {
      * @param margin margin
      * @param action action
      * @return button
-     *
-     * @wbp.factory
      */
     public static JButton createButton(GuiIcon icon, int margin, Action action) {
         return createButton(new JButton(action), icon, margin);
@@ -57,8 +53,6 @@ public class GuiComponentUtils {
      * @param icon icon
      * @param margin margin
      * @return button
-     *
-     * @wbp.factory
      */
     public static JToggleButton createToggleButton(GuiIcon icon, int margin) {
         return createButton(new JToggleButton(), icon, margin);

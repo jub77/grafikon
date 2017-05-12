@@ -17,7 +17,7 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 /**
- * Region - for station attributes -> freight net support.
+ * Region - for station attributes -&gt; freight net support.
  *
  * @author jub
  */

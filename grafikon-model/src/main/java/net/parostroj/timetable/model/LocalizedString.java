@@ -34,7 +34,7 @@ public interface LocalizedString extends TranslatedString {
 
     /**
      * @param locale locale
-     * @return text for given locale or <code>null</null> if the locale is not present
+     * @return text for given locale or <code>null</code> if the locale is not present
      */
     default String getLocalizedString(final Locale locale) {
         StringWithLocale stringWithLocale = this.getLocalizedStringWithLocale(locale);

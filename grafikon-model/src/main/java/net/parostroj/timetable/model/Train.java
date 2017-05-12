@@ -573,7 +573,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      *
      * @param nodeInterval node interval
      * @param length length of the stop
-     * @param info model info
      */
     public void changeStopTime(TimeInterval nodeInterval, int length) {
         // check time

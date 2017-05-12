@@ -87,7 +87,7 @@ public class RoutesExtractor {
     /**
      * returns list of infos about routes for the lines.
      *
-     * @param trains collection of lines
+     * @param lines collection of lines
      * @return list of routes
      */
     public List<NetPartRouteInfo> getRouteInfosForLines(Collection<Line> lines) {

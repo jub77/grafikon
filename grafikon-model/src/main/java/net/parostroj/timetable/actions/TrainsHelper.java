@@ -177,7 +177,6 @@ public class TrainsHelper {
      * converts weight to length based on conversion ratio and state of the train empty/loaded.
      *
      * @param train train
-     * @param diagram trains diagram
      * @param weight weight
      * @return length
      */
@@ -351,7 +350,6 @@ public class TrainsHelper {
      * returns list of lengths.
      *
      * @param train train
-     * @param diagram trains diagram
      * @return list of lengths
      */
     public static List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> getLengthList(Train train) {
@@ -373,7 +371,7 @@ public class TrainsHelper {
      *
      * @param node starting node
      * @param train train
-     * @param next type
+     * @param nextType type
      * @return next node and available weight
      */
     public static Pair<Node, Integer> getNextLength(Node node, Train train, NextType nextType) {
