@@ -17,11 +17,11 @@ Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa an
 
 ## Webstart
 ### Release
-http://jub.parostroj.net/grafikon/1.2/grafikon.jnlp
-### Pre-release
 http://jub.parostroj.net/grafikon/2.0/grafikon.jnlp
 ### Development
 http://jub.parostroj.net/grafikon/dev/grafikon.jnlp
+### Previous release
+http://jub.parostroj.net/grafikon/1.2/grafikon.jnlp
 
 Grafikon is signed with self-signed certificate, so there is a need to add site `http://jub.parostroj.net` to security
 *Exception Site List* (in *Java Control Panel*) and lower the security level to *High*.
