@@ -26,4 +26,6 @@ http://jub.parostroj.net/grafikon/1.2/grafikon.jnlp
 Grafikon is signed with self-signed certificate, so there is a need to add site `http://jub.parostroj.net` to security
 *Exception Site List* (in *Java Control Panel*) and lower the security level to *High*.
 
+Output templates and outputs can be added from menu (downloaded from web): *File > Import > Import and replace templates (web)*.
+
 ![Grafikon](http://jub.parostroj.net/grafikon/grafikon.png)
