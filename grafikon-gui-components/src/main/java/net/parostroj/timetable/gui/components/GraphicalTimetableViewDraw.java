@@ -184,7 +184,10 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     private Route getFirstRoute() {
         Collator collator = Collator.getInstance();
-        return diagram.getRoutes().stream().sorted((a, b) -> collator.compare(a.getName(), b.getName())).findFirst().orElse(null);
+        return diagram.getRoutes().stream()
+                .sorted((o1, o2) -> collator.compare(o1.toString(), o2.toString()))
+                .findFirst()
+                .orElse(null);
     }
 
     public <T> void setRegionSelector(RegionSelector<T> selector, Class<T> clazz) {
