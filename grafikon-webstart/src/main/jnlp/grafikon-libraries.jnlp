@@ -55,6 +55,9 @@
         <jar href="proxy-vole-${proxy-vole.version}.jar" download="eager"/>
         <jar href="jna-${jna.version}.jar" download="eager"/>
         <jar href="jna-platform-${jna.version}.jar" download="eager"/>
+        <jar href="rxjava-${rxjava.version}.jar" download="eager"/>
+        <jar href="reactive-streams-${reactive-streams.version}.jar" download="eager"/>
+        <jar href="rxjava2-swing-${rxjava2-swing.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>
