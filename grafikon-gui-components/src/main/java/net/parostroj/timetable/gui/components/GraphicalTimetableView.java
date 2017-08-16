@@ -4,6 +4,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,7 +196,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         routesMenu.removeAll();
         // sort routes
         List<Route> routes = new ArrayList<>(routesCollection);
-        Collections.sort(routes, (o1, o2) -> o1.toString().compareTo(o2.toString()));
+        Collator collator = Collator.getInstance();
+        Collections.sort(routes, (o1, o2) -> collator.compare(o1.toString(), o2.toString()));
         int i = 0;
         for (Route lRoute : routes) {
             if (i++ >= ROUTE_COUNT) {
