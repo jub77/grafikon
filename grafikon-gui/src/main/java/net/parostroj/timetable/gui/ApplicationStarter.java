@@ -83,7 +83,7 @@ public class ApplicationStarter<T extends JFrame> {
     }
 
     private void startOriginal() throws ApplicationStarterException {
-        log.debug("Using Java 1.6 splash screen.");
+        log.info("Using Java 1.6 splash screen.");
         SplashScreen splash = SplashScreen.getSplashScreen();
         SplashScreenInfoOrig info = new SplashScreenInfoOrig(splash, x, y);
         final T frm = this.getApplicationInstance(info);
@@ -98,7 +98,7 @@ public class ApplicationStarter<T extends JFrame> {
     }
 
     private void startFrame() throws ApplicationStarterException {
-        log.debug("Showing JFrame splash screen.");
+        log.info("Showing JFrame splash screen.");
         final SplashScreenFrame spl = new SplashScreenFrame(x, y, image);
         spl.setVisible(true);
         log.trace("Splash initialized.");

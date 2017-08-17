@@ -34,7 +34,7 @@ class LSCache<T extends LSVersions> {
         ServiceLoader<T> loader = ServiceLoader.load(clazz);
         for (T fls : loader) {
             List<ModelVersion> versions = fls.getLoadVersions();
-            log.debug("[{}] Registered: {}", clazz.getSimpleName(), fls.getClass().getName());
+            log.info("[{}] Registered: {}", clazz.getSimpleName(), fls.getClass().getName());
             for (ModelVersion version : versions) {
                 cacheLoad.put(version, fls.getClass());
             }
@@ -43,7 +43,7 @@ class LSCache<T extends LSVersions> {
             }
         }
         ModelVersion latest = getLatestSaveVersion();
-        log.debug("[{}] Latest: {}", clazz.getSimpleName(), latest == null ? "<none>" : latest);
+        log.info("[{}] Latest: {}", clazz.getSimpleName(), latest == null ? "<none>" : latest);
     }
 
     public ModelVersion getLatestSaveVersion() {

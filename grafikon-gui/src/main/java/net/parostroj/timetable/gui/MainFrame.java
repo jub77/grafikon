@@ -81,7 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
-        log.debug("Version: {}", versionInfo.getVersion().toCompleteString());
+        log.info("Version: {}", versionInfo.getVersion().toCompleteString());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -112,11 +112,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             Class.forName("javax.jnlp.ServiceManager");
             // JNLP service manager does exists - running from webstart
             // do not set proxy-vole (it is preventing url connections from webstart)
-            log.debug("Running as webstart");
+            log.info("Running as webstart");
         } catch (Exception e) {
             // JNLP service manager does not exist - running from desktop
             // setting up proxy-vole (for proxy.pac scripts)
-            log.debug("Running from desktop");
+            log.info("Running from desktop");
             ProxySearch search = ProxySearch.getDefaultProxySearch();
             ProxySelector.setDefault(search.getProxySelector());
         }

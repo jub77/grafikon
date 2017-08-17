@@ -64,6 +64,7 @@ public class ModelUtils {
             }
         }
 
+        log.info("Saving: {}", file);
         LSFile ls = LSFileFactory.getInstance().createForSave();
         ls.save(diagram, file);
         diagram.getAttributes().setSkipListeners(originalSkip);
@@ -74,6 +75,7 @@ public class ModelUtils {
         try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
             boolean originalSkip = library.getAttributes().isSkipListeners();
             library.getAttributes().setSkipListeners(true);
+            log.info("Saving: {}", file);
             ls.save(library, os);
             library.getAttributes().setSkipListeners(originalSkip);
         }
