@@ -28,9 +28,7 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -117,27 +115,19 @@ public class FreightCheckPanel extends JPanel {
         initializeStyles();
         textPane.setText("");
         if (diagram != null) {
-            TextBuffer buffer = new TextBuffer();
-
-            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
-            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
-                @Override
-                protected void backgroundAction() {
-                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
-                    setWaitDialogVisible(true);
-                    try {
-                        checkFreight(buffer);
-                    } finally {
-                        setWaitDialogVisible(false);
-                    }
-                }
-
-                @Override
-                protected void eventDispatchActionAfter() {
-                    buffer.fillPane();
-                    textPane.setCaretPosition(0);
-                }
-            });
+            RxActionHandler.getInstance()
+                .newBuilder("freight_check", GuiComponentUtils.getTopLevelComponent(this), new TextBuffer())
+                    .onBackground()
+                    .addConsumer((c, b) -> {
+                        c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                        c.setWaitDialogVisible(true);
+                        checkFreight(b);
+                    })
+                    .onEdt()
+                    .addConsumer((c, b) -> {
+                        b.fillPane();
+                        textPane.setCaretPosition(0);
+                    }).execute();
         }
     }
 

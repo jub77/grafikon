@@ -19,9 +19,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DataModel;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
@@ -184,45 +182,43 @@ public class FreightTrainPathPanel extends JPanel {
         stateIconLabel.setIcon(null);
         if (from != null && to != null && from != to) {
             DataModel model = new DataModel();
-            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
-            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
-                @Override
-                protected void backgroundAction() {
-                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
-                    setWaitDialogVisible(true);
-                    try {
-                        FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(
-                                diagram.getFreightNet().getConnectionStrategy());
-                        Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
-                        TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
 
-                        stateIconLabel.setIcon(!trainPath.isEmpty() ? okIcon : errorIcon);
+            RxActionHandler.getInstance()
+                .newBuilder("freight_path", GuiComponentUtils.getTopLevelComponent(this), diagram)
+                .addConsumer((c, diagram) -> {
+                    c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                    c.setWaitDialogVisible(true);
+                })
+                .onBackground()
+                .addConsumer((c, diagram) -> {
+                    FreightConnectionAnalyser connectionAnalyser = new FreightConnectionAnalyser(
+                            diagram.getFreightNet().getConnectionStrategy());
+                    Set<NodeFreightConnection> conns = connectionAnalyser.analyse(from, to);
+                    TrainPath trainPath = connectionAnalyser.getTrainPath(conns, startTime, shuntDuration);
 
-                        Integer time = null;
+                    stateIconLabel.setIcon(!trainPath.isEmpty() ? okIcon : errorIcon);
 
-                        for(TrainConnection tc : trainPath) {
-                            String right = convertConnectionTrain(tc);
-                            String left = convertNode(
-                                    tc.getFrom().getOwnerAsNode(),
-                                    time == null ? null : TimeUtil.difference(time, tc.getStartTime()));
-                            time = tc.getEndTime();
-                            model.addLine(left, right);
-                        }
+                    Integer time = null;
 
-                        if (!trainPath.isEmpty()) {
-                            model.addLine(convertNode(to, null), "");
-                        }
-                    } finally {
-                        setWaitDialogVisible(false);
+                    for(TrainConnection tc : trainPath) {
+                        String right = convertConnectionTrain(tc);
+                        String left = convertNode(
+                                tc.getFrom().getOwnerAsNode(),
+                                time == null ? null : TimeUtil.difference(time, tc.getStartTime()));
+                        time = tc.getEndTime();
+                        model.addLine(left, right);
                     }
-                }
 
-                @Override
-                protected void eventDispatchActionAfter() {
+                    if (!trainPath.isEmpty()) {
+                        model.addLine(convertNode(to, null), "");
+                    }
+                })
+                .onEdt()
+                .addConsumer((c, diagram) -> {
                     tableModel.addLines(model);
                     adjustColumnWidth.run();
-                }
-            });
+                })
+                .execute();
         }
     }
 

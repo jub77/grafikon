@@ -22,9 +22,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -112,107 +110,104 @@ public class FreightDestinationPanel extends JPanel {
         if (node != null) {
 
             DataModel model = new DataModel();
-            ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
-            ActionHandler.getInstance().execute(new EventDispatchAfterModelAction(context) {
-                @Override
-                protected void backgroundAction() {
-                    setWaitMessage(ResourceLoader.getString("wait.message.processing"));
-                    setWaitDialogVisible(true);
-                    try {
-                        FreightAnalyser analyser = new FreightAnalyser(diagram.getFreightNet().getConnectionStrategy());
 
-                        NodeFreight freight = analyser.getNodeFreightFrom(node);
-                        this.addFreightToNodes(freight);
-                        this.addFreightToRegions(freight);
-                        this.addFreightToColors(freight);
+            RxActionHandler.createInstance()
+                .newBuilder("freight_dest", GuiComponentUtils.getTopLevelComponent(this), diagram)
+                .addConsumer((c, diagram) -> {
+                    c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
+                    c.setWaitDialogVisible(true);
+                })
+                .onBackground()
+                .addConsumer((c, diagram) -> {
+                    FreightAnalyser analyser = new FreightAnalyser(diagram.getFreightNet().getConnectionStrategy());
 
-                        this.addFreightTrainsFromNode(node, analyser);
-                        this.addFreightTrainUnitsFromNode(node, analyser);
-                    } finally {
-                        setWaitDialogVisible(false);
-                    }
-                }
+                    NodeFreight freight = analyser.getNodeFreightFrom(node);
+                    addFreightToNodes(model, freight);
+                    addFreightToRegions(model, freight);
+                    addFreightToColors(model, freight);
 
-                @Override
-                protected void eventDispatchActionAfter() {
+                    addFreightTrainsFromNode(model, node, analyser);
+                    addFreightTrainUnitsFromNode(model, node, analyser);
+                })
+                .addConsumer((c, diagram) -> {
                     tableModel.addLines(model);
                     adjustColumnWidth.run();
-                }
-
-                private void addFreightTrainUnitsFromNode(Node node, FreightAnalyser analyser) {
-                    Locale locale = Locale.getDefault();
-                    List<TimeInterval> intervals = analyser.getFreightTrainUnitIntervals(node);
-                    List<Tuple<String>> trains = intervals.stream()
-                            .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
-                                    util.intervalFreightTrainUnitToString(diagram, i).stream()
-                                            .collect(Collectors.joining(", "))))
-                            .collect(Collectors.toList());
-
-                    model.addLinesWithEmpty(trains);
-                }
-
-                private void addFreightTrainsFromNode(Node node, FreightAnalyser analyser) {
-                    Locale locale = Locale.getDefault();
-                    List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
-                    List<Tuple<String>> trains = intervalsFrom.stream()
-                            .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
-                                    util.freightListToString(analyser.getConnectionStrategy().getFreightToNodes(i), locale)
-                                            .stream().collect(Collectors.joining(", "))))
-                            .collect(Collectors.toList());
-
-                    model.addLinesWithEmpty(trains);
-                }
-
-                private void addFreightToNodes(NodeFreight nodeFreight) {
-                    Locale locale = Locale.getDefault();
-                    Collator collator = Collator.getInstance();
-                    List<Tuple<String>> lines = nodeFreight.getNodeConnections().stream()
-                            .filter(e -> e.getTo().isVisible())
-                            .map(e -> {
-                                String node = util.freightNodeToString(e.getTo(), locale, false);
-                                String trains = util.intervalsToString(diagram, e.getTransport().getTrains(), locale)
-                                        .stream().collect(Collectors.joining(", "));
-                                return new Tuple<>(node, trains);
-                            })
-                            .sorted(comparator(collator)).collect(Collectors.toList());
-                    model.addLinesWithEmpty(lines);
-                }
-
-                private void addFreightToRegions(NodeFreight nodeFreight) {
-                    Locale locale = Locale.getDefault();
-                    Collator collator = Collator.getInstance();
-                    List<Tuple<String>> lines = nodeFreight.getRegionConnections().stream()
-                            .map(e -> {
-                                String region = util.freightRegionsToString(e.getTo(), locale).stream()
-                                        .collect(Collectors.joining(", "));
-                                String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
-                                        .collect(Collectors.joining(", "));
-                                return new Tuple<>(region, transport);
-                            })
-                            .sorted(comparator(collator))
-                            .collect(Collectors.toList());
-                    model.addLinesWithEmpty(lines);
-                }
-
-                private void addFreightToColors(NodeFreight nodeFreight) {
-                    Locale locale = Locale.getDefault();
-                    List<Tuple<String>> lines = nodeFreight.getFreightColorConnections().stream()
-                            .map(e -> {
-                                String color = util.freightColorsToString(e.getTo(), locale).stream()
-                                        .collect(Collectors.joining(", "));
-                                String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
-                                        .collect(Collectors.joining(", "));
-                                return new Tuple<>(color, transport);
-                            })
-                            .collect(Collectors.toList());
-                    model.addLinesWithEmpty(lines);
-                }
-            });
+                })
+                .execute();
         }
     }
 
     private Comparator<? super Tuple<String>> comparator(Collator collator) {
         return (a, b) -> collator.compare(a.first, b.first);
+    }
+
+    private void addFreightTrainUnitsFromNode(DataModel model, Node node, FreightAnalyser analyser) {
+        Locale locale = Locale.getDefault();
+        List<TimeInterval> intervals = analyser.getFreightTrainUnitIntervals(node);
+        List<Tuple<String>> trains = intervals.stream()
+                .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
+                        util.intervalFreightTrainUnitToString(diagram, i).stream()
+                                .collect(Collectors.joining(", "))))
+                .collect(Collectors.toList());
+
+        model.addLinesWithEmpty(trains);
+    }
+
+    private void addFreightTrainsFromNode(DataModel model, Node node, FreightAnalyser analyser) {
+        Locale locale = Locale.getDefault();
+        List<TimeInterval> intervalsFrom = analyser.getFreightIntervalsFrom(node);
+        List<Tuple<String>> trains = intervalsFrom.stream()
+                .map(i -> new Tuple<>(util.intervalToString(diagram, i, locale),
+                        util.freightListToString(analyser.getConnectionStrategy().getFreightToNodes(i), locale)
+                                .stream().collect(Collectors.joining(", "))))
+                .collect(Collectors.toList());
+
+        model.addLinesWithEmpty(trains);
+    }
+
+    private void addFreightToNodes(DataModel model, NodeFreight nodeFreight) {
+        Locale locale = Locale.getDefault();
+        Collator collator = Collator.getInstance();
+        List<Tuple<String>> lines = nodeFreight.getNodeConnections().stream()
+                .filter(e -> e.getTo().isVisible())
+                .map(e -> {
+                    String node = util.freightNodeToString(e.getTo(), locale, false);
+                    String trains = util.intervalsToString(diagram, e.getTransport().getTrains(), locale)
+                            .stream().collect(Collectors.joining(", "));
+                    return new Tuple<>(node, trains);
+                })
+                .sorted(comparator(collator)).collect(Collectors.toList());
+        model.addLinesWithEmpty(lines);
+    }
+
+    private void addFreightToRegions(DataModel model, NodeFreight nodeFreight) {
+        Locale locale = Locale.getDefault();
+        Collator collator = Collator.getInstance();
+        List<Tuple<String>> lines = nodeFreight.getRegionConnections().stream()
+                .map(e -> {
+                    String region = util.freightRegionsToString(e.getTo(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    return new Tuple<>(region, transport);
+                })
+                .sorted(comparator(collator))
+                .collect(Collectors.toList());
+        model.addLinesWithEmpty(lines);
+    }
+
+    private void addFreightToColors(DataModel model, NodeFreight nodeFreight) {
+        Locale locale = Locale.getDefault();
+        List<Tuple<String>> lines = nodeFreight.getFreightColorConnections().stream()
+                .map(e -> {
+                    String color = util.freightColorsToString(e.getTo(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    String transport = util.transportToString(diagram, e.getTransport(), locale).stream()
+                            .collect(Collectors.joining(", "));
+                    return new Tuple<>(color, transport);
+                })
+                .collect(Collectors.toList());
+        model.addLinesWithEmpty(lines);
     }
 
     protected static final class ColumnAdjuster implements Runnable {
