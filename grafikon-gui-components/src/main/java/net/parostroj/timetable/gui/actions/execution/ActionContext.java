@@ -31,31 +31,50 @@ public class ActionContext {
     private int progress;
     private String progressDescription;
     private boolean cancelled;
+    private final String id;
+    private long startTime;
 
-    public ActionContext() {
+    public ActionContext(String id, Component locationComponent) {
         this.support = new PropertyChangeSupport(this);
         this.state = WaitDialogState.HIDE;
         this.delay = DEFAULT_DELAY;
         this.showProgress = false;
         this.attributes = new HashMap<>();
         this.cancelled = false;
-    }
-
-    public ActionContext(Component locationComponent) {
-        this();
+        this.id = id;
         this.locationComponent = locationComponent;
     }
 
-    public void setState(WaitDialogState state) {
+    public ActionContext() {
+        this((Component) null);
+    }
+
+    public ActionContext(Component locationComponent) {
+        this("unknown", locationComponent);
+    }
+
+    protected void setState(WaitDialogState state) {
         WaitDialogState oldState = this.state;
         this.state = state;
         this.fireEventInEDT("state", oldState, state);
     }
 
-    public void setDescription(String description) {
+    public void setWaitDialogVisible(boolean visible) {
+        this.setState(visible ? WaitDialogState.SHOW : WaitDialogState.HIDE);
+    }
+
+    protected void setDescription(String description) {
         String oldDescription = this.description;
         this.description = description;
         this.fireEventInEDT("description", oldDescription, description);
+    }
+
+    public void setWaitMessage(String message) {
+        this.setDescription(message);
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setProgressDescription(String progressDescription) {
@@ -90,11 +109,11 @@ public class ActionContext {
         return locationComponent;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    protected void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    protected void removePropertyChangeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
     }
 
@@ -136,5 +155,17 @@ public class ActionContext {
 
     private void fireEventInEDT(final String name, final Object oldValue, final Object newValue) {
         GuiComponentUtils.runLaterInEDT(() -> support.firePropertyChange(name, oldValue, newValue));
+    }
+
+    protected void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    protected long getStartTime() {
+        return startTime;
+    }
+
+    public String getId() {
+        return id;
     }
 }
