@@ -54,13 +54,17 @@ public class RxActionHandler {
                         ((RxActionHandlerException) exception).getText(),
                         context.getLocationComponent());
             }
-            log.info("Action {} finished in {}ms with an exception",
+            log.warn("Action {} finished in {}ms with an exception",
                     context.getId(),
                     System.currentTimeMillis() - context.getStartTime(),
                     toLog);
         }, () -> {
             context.setWaitDialogVisible(false);
-            log.info("Action {} finished in {}ms", context.getId(), System.currentTimeMillis() - context.getStartTime());
+            if (context.isLogTime()) {
+                log.debug("Action {} finished in {}ms",
+                        context.getId(),
+                        System.currentTimeMillis() - context.getStartTime());
+            }
         });
     }
 

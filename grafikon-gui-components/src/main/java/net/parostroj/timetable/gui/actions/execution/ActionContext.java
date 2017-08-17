@@ -33,6 +33,7 @@ public class ActionContext {
     private boolean cancelled;
     private final String id;
     private long startTime;
+    private boolean logTime;
 
     public ActionContext(String id, Component locationComponent) {
         this.support = new PropertyChangeSupport(this);
@@ -167,5 +168,13 @@ public class ActionContext {
 
     public String getId() {
         return id;
+    }
+
+    public void setLogTime(boolean logTime) {
+        this.logTime = logTime;
+    }
+
+    public boolean isLogTime() {
+        return logTime;
     }
 }
