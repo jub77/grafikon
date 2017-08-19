@@ -68,54 +68,54 @@ public class RxActionHandler {
         });
     }
 
-    public <T> Builder<T> newBuilder(String id, Component component, T object) {
-        return new Builder<>(new ActionContext(id, component), Observable.just(object));
+    public <T> RxActionHandlerBuilder<T> newBuilder(String id, Component component, T object) {
+        return new RxActionHandlerBuilder<>(new ActionContext(id, component), Observable.just(object));
     }
 
-    public <T> Builder<T> newBuilder(ActionContext context, T object) {
-        return new Builder<>(context, Observable.just(object));
+    public <T> RxActionHandlerBuilder<T> newBuilder(ActionContext context, T object) {
+        return new RxActionHandlerBuilder<>(context, Observable.just(object));
     }
 
-    public class Builder<T> {
+    public class RxActionHandlerBuilder<T> {
 
         private final ActionContext context;
         private final Observable<T> observable;
 
-        private Builder(ActionContext context, Observable<T> observable) {
+        private RxActionHandlerBuilder(ActionContext context, Observable<T> observable) {
             this.context = context;
             this.observable = observable;
         }
 
-        public Builder<T> addConsumer(BiConsumer<ActionContext, T> consumer) {
-            return new Builder<>(context, observable.filter(item -> !context.isCancelled()).doOnNext(t -> {
+        public RxActionHandlerBuilder<T> addConsumer(BiConsumer<ActionContext, T> consumer) {
+            return new RxActionHandlerBuilder<>(context, observable.filter(item -> !context.isCancelled()).doOnNext(t -> {
                 consumer.accept(context, t);
             }));
         }
 
-        public <U> Builder<U> addAction(BiFunction<ActionContext, T, U> function) {
-            return new Builder<>(context, observable.filter(item -> !context.isCancelled()).map(t -> {
+        public <U> RxActionHandlerBuilder<U> addAction(BiFunction<ActionContext, T, U> function) {
+            return new RxActionHandlerBuilder<>(context, observable.filter(item -> !context.isCancelled()).map(t -> {
                 return function.apply(context, t);
             }));
         }
 
-        public <U> Builder<U> addSplitAction(BiFunction<ActionContext, T, ? extends Iterable<U>> function) {
-            return new Builder<>(context, observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> {
+        public <U> RxActionHandlerBuilder<U> addSplitAction(BiFunction<ActionContext, T, ? extends Iterable<U>> function) {
+            return new RxActionHandlerBuilder<>(context, observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> {
                 return function.apply(context, t);
             }));
         }
 
-        public <U> Builder<U> addSplitObservable(BiFunction<ActionContext, T, Observable<U>> function) {
-            return new Builder<>(context, observable.filter(item -> !context.isCancelled()).flatMap(t -> {
+        public <U> RxActionHandlerBuilder<U> addSplitObservable(BiFunction<ActionContext, T, Observable<U>> function) {
+            return new RxActionHandlerBuilder<>(context, observable.filter(item -> !context.isCancelled()).flatMap(t -> {
                 return function.apply(context, t);
             }));
         }
 
-        public Builder<T> onEdt() {
-            return new Builder<>(context, observable.observeOn(SwingSchedulers.edt()));
+        public RxActionHandlerBuilder<T> onEdt() {
+            return new RxActionHandlerBuilder<>(context, observable.observeOn(SwingSchedulers.edt()));
         }
 
-        public Builder<T> onBackground() {
-            return new Builder<>(context, observable.observeOn(Schedulers.computation()));
+        public RxActionHandlerBuilder<T> onBackground() {
+            return new RxActionHandlerBuilder<>(context, observable.observeOn(Schedulers.computation()));
         }
 
         public void execute() {
