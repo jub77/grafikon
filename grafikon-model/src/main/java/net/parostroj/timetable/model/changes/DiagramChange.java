@@ -39,7 +39,7 @@ public class DiagramChange {
     }
 
     public static enum Action {
-        ADDED("added"), REMOVED("removed"), MODIFIED("modified");
+        ADDED("added"), REMOVED("removed"), MODIFIED("modified"), MOVED("moved");
 
         private String key;
 
