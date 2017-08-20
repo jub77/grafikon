@@ -25,7 +25,7 @@ class EventToChangeConvert {
     }
 
     private static Map<Class<?>, DiagramChange.Type> getTypes() {
-        Map<Class<?>, DiagramChange.Type> map = new HashMap<Class<?>, DiagramChange.Type>();
+        Map<Class<?>, DiagramChange.Type> map = new HashMap<>();
         map.put(EngineClass.class, DiagramChange.Type.ENGINE_CLASS);
         map.put(TimetableImage.class, DiagramChange.Type.IMAGE);
         map.put(Line.class, DiagramChange.Type.LINE);
@@ -48,29 +48,31 @@ class EventToChangeConvert {
     }
 
     private static Map<Event.Type, DiagramChange.Action> getActions() {
-        Map<Event.Type, DiagramChange.Action> map = new EnumMap<Event.Type, DiagramChange.Action>(Event.Type.class);
+        Map<Event.Type, DiagramChange.Action> map = new EnumMap<>(Event.Type.class);
         map.put(Event.Type.ATTRIBUTE, DiagramChange.Action.MODIFIED);
         map.put(Event.Type.OBJECT_ATTRIBUTE, DiagramChange.Action.MODIFIED);
         map.put(Event.Type.SPECIAL, DiagramChange.Action.MODIFIED);
         map.put(Event.Type.ADDED, DiagramChange.Action.ADDED);
         map.put(Event.Type.REMOVED, DiagramChange.Action.REMOVED);
         map.put(Event.Type.REPLACED, DiagramChange.Action.MODIFIED);
+        map.put(Event.Type.MOVED, DiagramChange.Action.MOVED);
         return map;
     }
 
     private static Map<Event.Type, String> getDescs() {
-        Map<Event.Type, String> map = new EnumMap<Event.Type, String>(Event.Type.class);
+        Map<Event.Type, String> map = new EnumMap<>(Event.Type.class);
         map.put(Event.Type.ATTRIBUTE, "attribute");
         map.put(Event.Type.OBJECT_ATTRIBUTE, "object_attribute");
         map.put(Event.Type.ADDED, "object_added");
         map.put(Event.Type.REMOVED, "object_removed");
         map.put(Event.Type.REPLACED, "object_replaced");
+        map.put(Event.Type.MOVED, "object_moved");
         map.put(Event.Type.SPECIAL, "special");
         return map;
     }
 
     private static Map<SpecialTrainTimeIntervalList.Type, String> getTilDescs() {
-        Map<SpecialTrainTimeIntervalList.Type, String> map = new EnumMap<SpecialTrainTimeIntervalList.Type, String>(
+        Map<SpecialTrainTimeIntervalList.Type, String> map = new EnumMap<>(
                 SpecialTrainTimeIntervalList.Type.class);
         map.put(SpecialTrainTimeIntervalList.Type.ADDED, null); // nothing
         map.put(SpecialTrainTimeIntervalList.Type.MOVED, "train_moved");
