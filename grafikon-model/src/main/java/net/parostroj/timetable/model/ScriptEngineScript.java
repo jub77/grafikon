@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ScriptEngineScript extends Script {
 
-    private static final Logger log = LoggerFactory.getLogger(ScriptEngineScript.class);
+    static final Logger log = LoggerFactory.getLogger(ScriptEngineScript.class);
 
     private CompiledScript script;
 
@@ -32,16 +32,6 @@ public final class ScriptEngineScript extends Script {
             script = cEngine.compile(this.getSourceCode());
         } catch (ScriptException e) {
             throw new GrafikonException("Couldn't create script.", e, GrafikonException.Type.SCRIPT);
-        }
-    }
-
-    @Override
-    public Object evaluate(Map<String, Object> binding) {
-        try {
-            return this.evaluateWithException(binding);
-        } catch (GrafikonException e) {
-            log.error(e.getMessage(), e);
-            return null;
         }
     }
 

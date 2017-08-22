@@ -2,12 +2,17 @@ package net.parostroj.timetable.model;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Script.
  *
  * @author jub
  */
 public abstract class Script {
+
+    private static final Logger log = LoggerFactory.getLogger(Script.class);
 
     public static enum Language {
         GROOVY, JAVASCRIPT;
@@ -28,7 +33,14 @@ public abstract class Script {
         return language;
     }
 
-    public abstract Object evaluate(Map<String, Object> binding);
+    public Object evaluate(Map<String, Object> binding) {
+        try {
+            return this.evaluateWithException(binding);
+        } catch (GrafikonException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
     public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
