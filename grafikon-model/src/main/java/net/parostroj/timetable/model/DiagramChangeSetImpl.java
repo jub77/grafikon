@@ -27,7 +27,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         this.version = version;
         this.author = author;
         this.date = date;
-        this.changes = new LinkedList<DiagramChange>();
+        this.changes = new LinkedList<>();
     }
 
     List<Pair<DiagramChange, ChangesTrackerEvent.Type>> addChange(DiagramChange change) {
@@ -35,7 +35,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         // TODO implementation of logic missing
         // look for existing changes
         List<DiagramChange> existing = getChangesForId(change.getObjectId());
-        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> returning = new LinkedList<Pair<DiagramChange, ChangesTrackerEvent.Type>>();
+        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> returning = new LinkedList<>();
         boolean shouldAdd = true;
         DiagramChange addTo = null;
         if (existing != null) {
@@ -49,21 +49,21 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
                 shouldAdd &= add;
                 if (shouldRemove(change, ex)) {
                     changes.remove(ex);
-                    returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(ex, ChangesTrackerEvent.Type.CHANGE_REMOVED));
+                    returning.add(new Pair<>(ex, ChangesTrackerEvent.Type.CHANGE_REMOVED));
                 }
             }
         }
         if (shouldAdd) {
             if (addTo == null) {
                 changes.add(change);
-                returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(change, ChangesTrackerEvent.Type.CHANGE_ADDED));
+                returning.add(new Pair<>(change, ChangesTrackerEvent.Type.CHANGE_ADDED));
             } else {
                 addTo.setObject(change.getObject());
                 if (change.getDescriptions() != null) {
                     for (DiagramChangeDescription d : change.getDescriptions()) {
                         addTo.addDescriptionUnique(d);
                     }
-                    returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(addTo, ChangesTrackerEvent.Type.CHANGE_MODIFIED));
+                    returning.add(new Pair<>(addTo, ChangesTrackerEvent.Type.CHANGE_MODIFIED));
                 }
             }
         }
@@ -78,6 +78,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
             case MODIFIED:
                 return existingAction != DiagramChange.Action.ADDED;
             case REMOVED:
+                return existingAction != DiagramChange.Action.ADDED;
+            case MOVED:
                 return existingAction != DiagramChange.Action.ADDED;
         }
         return false;
@@ -101,7 +103,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         for (DiagramChange change : changes) {
             if (change.getObjectId().equals(id)) {
                 if (result == null)
-                    result = new LinkedList<DiagramChange>();
+                    result = new LinkedList<>();
                 result.add(change);
             }
         }
