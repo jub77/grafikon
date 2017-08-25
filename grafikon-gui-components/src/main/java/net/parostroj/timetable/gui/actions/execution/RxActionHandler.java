@@ -6,6 +6,7 @@ import java.awt.Frame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.akarnokd.rxjava2.swing.SwingObservable;
 import hu.akarnokd.rxjava2.swing.SwingSchedulers;
 import io.reactivex.Observable;
 import io.reactivex.functions.BiConsumer;
@@ -111,7 +112,7 @@ public class RxActionHandler {
         }
 
         public RxActionHandlerBuilder<T> onEdt() {
-            return new RxActionHandlerBuilder<>(context, observable.observeOn(SwingSchedulers.edt()));
+            return new RxActionHandlerBuilder<>(context, observable.compose(SwingObservable.observeOnEdt()));
         }
 
         public RxActionHandlerBuilder<T> onBackground() {
