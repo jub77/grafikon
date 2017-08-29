@@ -52,7 +52,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                 log.error(e.getMessage(), e);
                 errorMessage = e.getMessage();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn(e.getMessage(), e);
             errorMessage = ResourceLoader.getString("ot.message.error");
         } finally {
