@@ -4,7 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.TrainsCycle;
 
 /**
  * Driver cycle.
@@ -21,6 +24,7 @@ public class DriverCycle {
     private List<DriverCycleRow> rows;
     private CompanyInfo company;
     private Integer level;
+    private TrainsCycle ref;
 
     public String getDescription() {
         return description;
@@ -83,5 +87,14 @@ public class DriverCycle {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @XmlTransient
+    public TrainsCycle getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainsCycle ref) {
+        this.ref = ref;
     }
 }

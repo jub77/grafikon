@@ -40,6 +40,7 @@ public class DriverCyclesExtractor {
 
     public DriverCycle createCycle(TrainsCycle cycle) {
         DriverCycle outputCycle = new DriverCycle();
+        outputCycle.setRef(cycle);
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
         for (TrainsCycleItem item : cycle.getItems()) {
@@ -65,6 +66,7 @@ public class DriverCyclesExtractor {
     private DriverCycleRow createRow(TrainsCycleItem item) {
     	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         DriverCycleRow row = new DriverCycleRow();
+        row.setRef(item);
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
         row.setToTime(c.convertIntToXml(item.getEndTime()));

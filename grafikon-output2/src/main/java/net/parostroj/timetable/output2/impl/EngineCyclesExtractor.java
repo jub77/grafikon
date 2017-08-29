@@ -56,6 +56,7 @@ public class EngineCyclesExtractor {
 
     private EngineCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, EngineCycle> map) {
         EngineCycle outputCycle = new EngineCycle();
+        outputCycle.setRef(cycle);
         outputCycle.setId(this.getNextId());
         map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
@@ -79,6 +80,7 @@ public class EngineCyclesExtractor {
     private EngineCycleRow createRow(TrainsCycleItem current, TrainsCycleItem previous) {
     	TimeConverter c = current.getTrain().getDiagram().getTimeConverter();
         EngineCycleRow row = new EngineCycleRow();
+        row.setRef(current);
         row.setTrainName(current.getTrain().getName());
         row.setFromTime(c.convertIntToXml(current.getStartTime()));
         row.setToTime(c.convertIntToXml(current.getEndTime()));

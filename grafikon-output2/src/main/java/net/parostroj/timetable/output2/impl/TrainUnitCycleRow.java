@@ -3,10 +3,12 @@ package net.parostroj.timetable.output2.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TranslatedString;
 
 /**
@@ -24,6 +26,7 @@ public class TrainUnitCycleRow {
     private String toAbbr;
     private LocalizedString comment;
     private List<TrainUnitCustomCycle> cycle;
+    private TrainsCycleItem ref;
 
     @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
     public LocalizedString getComment() {
@@ -83,5 +86,14 @@ public class TrainUnitCycleRow {
 
     public void setCycle(List<TrainUnitCustomCycle> cycle) {
         this.cycle = cycle;
+    }
+
+    @XmlTransient
+    public TrainsCycleItem getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainsCycleItem ref) {
+        this.ref = ref;
     }
 }

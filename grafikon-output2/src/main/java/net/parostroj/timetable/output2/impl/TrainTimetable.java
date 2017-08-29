@@ -3,9 +3,11 @@ package net.parostroj.timetable.output2.impl;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TranslatedString;
 
 /**
@@ -28,6 +30,7 @@ public class TrainTimetable {
     private List<WeightDataRow> weightData;
     private LengthData lengthData;
     private List<TrainTimetableRow> rows;
+    private Train ref;
 
     public TrainTimetable() {}
 
@@ -128,5 +131,14 @@ public class TrainTimetable {
 
     public void setCategoryKey(String categoryKey) {
         this.categoryKey = categoryKey;
+    }
+
+    @XmlTransient
+    public Train getRef() {
+        return ref;
+    }
+
+    public void setRef(Train ref) {
+        this.ref = ref;
     }
 }

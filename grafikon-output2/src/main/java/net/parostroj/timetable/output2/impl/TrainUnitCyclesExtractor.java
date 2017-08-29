@@ -54,6 +54,7 @@ public class TrainUnitCyclesExtractor {
 
     private TrainUnitCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, TrainUnitCycle> map) {
         TrainUnitCycle outputCycle = new TrainUnitCycle();
+        outputCycle.setRef(outputCycle);
         outputCycle.setId(this.getNextId());
         map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
@@ -72,6 +73,7 @@ public class TrainUnitCyclesExtractor {
     private TrainUnitCycleRow createRow(TrainsCycleItem item) {
     	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         TrainUnitCycleRow row = new TrainUnitCycleRow();
+        row.setRef(item);
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
         row.setToTime(c.convertIntToXml(item.getEndTime()));

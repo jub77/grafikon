@@ -2,10 +2,13 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TranslatedString;
 
 /**
@@ -34,6 +37,7 @@ public class StationTimetableRow {
     private List<CycleFromTo> engine;
     private List<CycleFromTo> trainUnit;
     private List<CycleWithTypeFromTo> cycle;
+    private TimeInterval ref;
 
     private LengthInfo length;
 
@@ -203,5 +207,14 @@ public class StationTimetableRow {
 
     public void setLength(LengthInfo length) {
         this.length = length;
+    }
+
+    @XmlTransient
+    public TimeInterval getRef() {
+        return ref;
+    }
+
+    public void setRef(TimeInterval ref) {
+        this.ref = ref;
     }
 }

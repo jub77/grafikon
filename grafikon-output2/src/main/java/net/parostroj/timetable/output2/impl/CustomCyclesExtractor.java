@@ -54,6 +54,7 @@ public class CustomCyclesExtractor {
 
     private CustomCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, CustomCycle> map) {
         CustomCycle outputCycle = new CustomCycle();
+        outputCycle.setRef(cycle);
         outputCycle.setId(this.getNextId());
         map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
@@ -79,6 +80,7 @@ public class CustomCyclesExtractor {
     private CustomCycleRow createRow(TrainsCycleItem current, TrainsCycleItem previous) {
     	TimeConverter c = current.getTrain().getDiagram().getTimeConverter();
         CustomCycleRow row = new CustomCycleRow();
+        row.setRef(current);
         row.setTrainName(current.getTrain().getName());
         row.setFromTime(c.convertIntToXml(current.getStartTime()));
         row.setToTime(c.convertIntToXml(current.getEndTime()));

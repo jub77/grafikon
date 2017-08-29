@@ -109,6 +109,7 @@ public class TrainTimetablesExtractor {
 
     private TrainTimetable createTimetable(Train train) {
         TrainTimetable timetable = new TrainTimetable();
+        timetable.setRef(train);
         timetable.setName(train.getName());
         timetable.setCompleteName(train.getCompleteName());
         this.extractRouteInfo(train, timetable);
@@ -179,6 +180,7 @@ public class TrainTimetablesExtractor {
             }
 
             TrainTimetableRow row = new TrainTimetableRow();
+            row.setRef(nodeI);
 
             if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_CONTROL_STATION)) {
                 row.setControlStation(true);

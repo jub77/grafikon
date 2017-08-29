@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TrainsCycle;
 
 /**
  * Custom cycle.
@@ -25,6 +26,7 @@ public class CustomCycle {
     private List<CustomCycleRow> rows;
     private CustomCycle next;
     private CompanyInfo company;
+    private TrainsCycle ref;
 
     @XmlID
     @XmlAttribute
@@ -72,7 +74,7 @@ public class CustomCycle {
     @XmlElement(name = "row")
     public List<CustomCycleRow> getRows() {
         if (rows == null)
-            rows = new LinkedList<CustomCycleRow>();
+            rows = new LinkedList<>();
         return rows;
     }
 
@@ -105,5 +107,14 @@ public class CustomCycle {
 
     public void setCompany(CompanyInfo company) {
         this.company = company;
+    }
+
+    @XmlTransient
+    public TrainsCycle getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainsCycle ref) {
+        this.ref = ref;
     }
 }

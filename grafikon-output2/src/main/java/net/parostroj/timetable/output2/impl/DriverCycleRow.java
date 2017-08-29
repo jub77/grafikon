@@ -1,9 +1,11 @@
 package net.parostroj.timetable.output2.impl;
 
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TranslatedString;
 
 /**
@@ -25,6 +27,7 @@ public class DriverCycleRow {
     private LocalizedString comment;
     private Integer setupTime;
     private Integer technologicalTime;
+    private TrainsCycleItem ref;
 
     public String getFromAbbr() {
         return fromAbbr;
@@ -106,5 +109,14 @@ public class DriverCycleRow {
 
     public void setTechnologicalTime(Integer technologicalTime) {
         this.technologicalTime = technologicalTime;
+    }
+
+    @XmlTransient
+    public TrainsCycleItem getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainsCycleItem ref) {
+        this.ref = ref;
     }
 }

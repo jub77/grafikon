@@ -121,6 +121,7 @@ public class StationTimetablesExtractor {
         StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         row.setStop(interval.getLength());
         this.addOtherData(interval, row);
+        row.setRef(interval);
         return row;
     }
 

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.*;
 
+import net.parostroj.timetable.model.TrainsCycle;
+
 /**
  * Engine cycle.
  *
@@ -20,6 +22,7 @@ public class EngineCycle {
     private List<EngineCycleRow> rows;
     private EngineCycle next;
     private CompanyInfo company;
+    private TrainsCycle ref;
 
     @XmlID
     @XmlAttribute
@@ -50,7 +53,7 @@ public class EngineCycle {
     @XmlElement(name = "row")
     public List<EngineCycleRow> getRows() {
         if (rows == null)
-            rows = new LinkedList<EngineCycleRow>();
+            rows = new LinkedList<>();
         return rows;
     }
 
@@ -83,5 +86,14 @@ public class EngineCycle {
 
     public void setCompany(CompanyInfo company) {
         this.company = company;
+    }
+
+    @XmlTransient
+    public TrainsCycle getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainsCycle ref) {
+        this.ref = ref;
     }
 }

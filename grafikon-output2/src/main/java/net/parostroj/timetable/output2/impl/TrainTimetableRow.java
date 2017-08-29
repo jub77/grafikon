@@ -3,10 +3,12 @@ package net.parostroj.timetable.output2.impl;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TranslatedString;
 
 /**
@@ -44,6 +46,7 @@ public class TrainTimetableRow {
     private Double routePositionOut;
     private Integer lineTracks;
     private List<FreightDestinationInfo> freightDest;
+    private TimeInterval ref;
 
     public String getArrival() {
         return arrival;
@@ -233,5 +236,14 @@ public class TrainTimetableRow {
     @XmlElementWrapper(name="freight")
     public List<FreightDestinationInfo> getFreightDest() {
         return freightDest;
+    }
+
+    @XmlTransient
+    public TimeInterval getRef() {
+        return ref;
+    }
+
+    public void setRef(TimeInterval ref) {
+        this.ref = ref;
     }
 }

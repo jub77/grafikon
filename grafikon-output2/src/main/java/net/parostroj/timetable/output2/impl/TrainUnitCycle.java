@@ -20,6 +20,7 @@ public class TrainUnitCycle {
     private List<TrainUnitCycleRow> rows;
     private TrainUnitCycle next;
     private CompanyInfo company;
+    private TrainUnitCycle ref;
 
     @XmlID
     @XmlAttribute
@@ -50,7 +51,7 @@ public class TrainUnitCycle {
     @XmlElement(name = "row")
     public List<TrainUnitCycleRow> getRows() {
         if (rows == null)
-            rows = new LinkedList<TrainUnitCycleRow>();
+            rows = new LinkedList<>();
         return rows;
     }
 
@@ -83,5 +84,14 @@ public class TrainUnitCycle {
 
     public void setCompany(CompanyInfo company) {
         this.company = company;
+    }
+
+    @XmlTransient
+    public TrainUnitCycle getRef() {
+        return ref;
+    }
+
+    public void setRef(TrainUnitCycle ref) {
+        this.ref = ref;
     }
 }
