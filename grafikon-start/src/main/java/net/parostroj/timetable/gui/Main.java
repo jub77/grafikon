@@ -2,10 +2,14 @@ package net.parostroj.timetable.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.*;
 
 import javax.swing.RepaintManager;
 import javax.swing.UIManager;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationStarter.AfterStartAction;
 import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
@@ -17,32 +21,14 @@ import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
  */
 public class Main {
 
-    private static final Logger netParostrojLogger = Logger.getLogger("net.parostroj");
-    private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%6$s%n";
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    static {
-        initializeLogging();
+    public static void setLoggingLevel(org.slf4j.event.Level level) {
+        setLoggingLevelImpl(Level.toLevel(level.toString(), Level.DEBUG));
     }
 
-    public static void initializeLogging() {
-        Logger.getLogger("").setLevel(Level.WARNING);
-        netParostrojLogger.setLevel(Level.FINE);
-        Logger.getLogger("").getHandlers()[0].setLevel(Level.ALL);
-        Logger.getLogger("").getHandlers()[0].setFormatter(new LogFormatter(FORMAT));
-
-        // add file output to logging
-        try {
-            File file = new File(System.getProperty("java.io.tmpdir"), "grafikon.log");
-            Handler handler = new FileHandler(file.getCanonicalPath());
-            handler.setFormatter(new LogFormatter(FORMAT));
-            Logger.getLogger("").addHandler(handler);
-        } catch (IOException e) {
-            netParostrojLogger.log(Level.WARNING, "Cannot initialize logging file.", e);
-        }
-    }
-
-    public static void setLoggingLevel(Level level) {
-        netParostrojLogger.setLevel(level);
+    private static void setLoggingLevelImpl(Level level) {
+        Configurator.setLevel("net.parostroj", level);
     }
 
     public static void main(final String[] args) throws Exception {
@@ -50,7 +36,8 @@ public class Main {
             setDebug();
         }
         setLookAndFeel();
-        ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"));
+        ApplicationStarter<MainFrame> starter = new ApplicationStarter<>(
+                MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"));
         starter.setAction(new AfterStartAction<MainFrame>() {
 
             @Override
@@ -59,10 +46,10 @@ public class Main {
                     // trying to load file
                     File file = new File(args[0]);
                     if (file.exists()) {
-                        netParostrojLogger.log(Level.FINE, "Loading: " + file.getName());
+                        log.info("Loading: {}", file.getName());
                         frame.forceLoad(file);
                     } else {
-                        netParostrojLogger.log(Level.FINE, "File " + file.getPath() + " doesn't exist");
+                        log.warn("File {} doesn't exist", file.getPath());
                     }
                 }
             }
@@ -74,8 +61,9 @@ public class Main {
         if (AppPreferences.getSection("debug").get("debug.edt", Boolean.class, false)) {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         }
-        Level level = Level.parse(AppPreferences.getSection("debug").get("debug.level", "FINEST"));
-        setLoggingLevel(level);
+        String levelName = AppPreferences.getSection("debug").get("debug.log4j.level", "DEBUG");
+        Level level = Level.toLevel(levelName, Level.DEBUG);
+        setLoggingLevelImpl(level);
     }
 
     private static void setLookAndFeel() throws IOException {
@@ -87,7 +75,7 @@ public class Main {
                 UIManager.setLookAndFeel(laf);
             }
         } catch (Exception e) {
-            netParostrojLogger.log(Level.WARNING, "Error setting up look and feel.", e);
+            log.warn("Error setting up look and feel.", e);
         }
     }
 }

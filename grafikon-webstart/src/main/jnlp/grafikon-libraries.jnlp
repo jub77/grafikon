@@ -44,7 +44,6 @@
         <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
         <jar href="slf4j-api-${slf4j.version}.jar" download="eager"/>
-        <jar href="slf4j-jdk14-${slf4j.version}.jar" download="eager"/>
         <jar href="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" download="eager"/>
         <jar href="jxlayer-${jxlayer.version}.jar" download="eager"/>
         <jar href="joda-time-${jodatime.version}.jar" download="eager"/>
@@ -60,6 +59,9 @@
         <jar href="rxjava-${rxjava.version}.jar" download="eager"/>
         <jar href="reactive-streams-${reactive-streams.version}.jar" download="eager"/>
         <jar href="rxjava2-swing-${rxjava2-swing.version}.jar" download="eager"/>
+        <jar href="log4j-slf4j-impl-${log4j2.version}.jar" download="eager"/>
+        <jar href="log4j-core-${log4j2.version}.jar" download="eager"/>
+        <jar href="log4j-api-${log4j2.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>
