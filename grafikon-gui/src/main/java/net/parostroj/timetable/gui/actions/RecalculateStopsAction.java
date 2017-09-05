@@ -95,9 +95,16 @@ public class RecalculateStopsAction extends AbstractAction {
             }
         };
 
-        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(event.getSource()));
-        ModelAction recalculateAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
-                trainAction, ResourceLoader.getString("wait.message.recalculate"), "Recalculate stops");
-        ActionHandler.getInstance().execute(recalculateAction);
+
+        RxActionHandler.getInstance().newExecution("recalculate_stops",
+                GuiComponentUtils.getTopLevelComponent(event.getSource()),
+                model.getDiagram())
+            .onBackground()
+            .logTime()
+            .setMessage(ResourceLoader.getString("wait.message.recalculate"))
+            .split(d -> d.getTrains(), 10)
+            .addEdtBatchConsumer((context, train) -> {
+                trainAction.execute(train);
+            }).execute();
     }
 }

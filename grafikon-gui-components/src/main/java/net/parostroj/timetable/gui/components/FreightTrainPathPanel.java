@@ -184,7 +184,7 @@ public class FreightTrainPathPanel extends JPanel {
             DataModel model = new DataModel();
 
             RxActionHandler.getInstance()
-                .newBuilder("freight_path", GuiComponentUtils.getTopLevelComponent(this), diagram)
+                .newExecution("freight_path", GuiComponentUtils.getTopLevelComponent(this), diagram)
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     c.setWaitDialogVisible(true);

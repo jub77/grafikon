@@ -24,9 +24,7 @@ import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.actions.*;
-import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.ModelAction;
+import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
@@ -587,17 +585,23 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         settingsDialog.showDialog(model.getDiagram());
         settingsDialog.dispose();
         // check if recalculate should be executed
-        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
         if (settingsDialog.isRecalculate()) {
-            ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), train -> {
-                train.recalculate();
-                // round correctly stops
-                TimeConverter converter = train.getDiagram().getTimeConverter();
-                for (TimeInterval interval : train.getNodeIntervals()) {
-                    train.changeStopTime(interval, converter.round(interval.getLength()));
-                }
-            }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
-            ActionHandler.getInstance().execute(action);
+
+            RxActionHandler.getInstance()
+                .newExecution("settings_recalculate", GuiComponentUtils.getTopLevelComponent(this), model.get())
+                    .onBackground()
+                    .logTime()
+                    .setMessage(ResourceLoader.getString("wait.message.recalculate"))
+                    .split(TrainDiagram::getTrains, 10)
+                    .addEdtBatchConsumer((context, train) -> {
+                        train.recalculate();
+                        // round correctly stops
+                        TimeConverter converter = train.getDiagram().getTimeConverter();
+                        for (TimeInterval interval : train.getNodeIntervals()) {
+                            train.changeStopTime(interval, converter.round(interval.getLength()));
+                        }
+                    })
+                    .execute();
         }
     }
 

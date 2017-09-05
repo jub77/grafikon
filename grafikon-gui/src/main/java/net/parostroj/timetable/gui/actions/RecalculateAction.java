@@ -1,15 +1,8 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 
 import javax.swing.AbstractAction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
@@ -25,8 +18,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RecalculateAction extends AbstractAction {
 
-    private static final Logger log = LoggerFactory.getLogger(RecalculateAction.class);
-
     public static interface TrainAction {
         public void execute(Train train) throws Exception;
     }
@@ -39,83 +30,15 @@ public class RecalculateAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(e.getSource()));
-        ModelAction recalculateAction = getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
-
-            @Override
-            public void execute(Train train) throws Exception {
+        RxActionHandler.getInstance()
+            .newExecution("recalculate", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
+            .onBackground()
+            .logTime()
+            .setMessage(ResourceLoader.getString("wait.message.recalculate"))
+            .split(TrainDiagram::getTrains, 10)
+            .addEdtBatchConsumer((context, train) -> {
                 train.recalculate();
-            }
-        }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
-        ActionHandler.getInstance().execute(recalculateAction);
-    }
-
-    public static ModelAction getAllTrainsAction(ActionContext context, final TrainDiagram diagram, final TrainAction trainAction, final String message, final String actionName) {
-        ModelAction action = new CheckedModelAction(context) {
-
-            private static final int CHUNK_SIZE = 10;
-            private final CyclicBarrier barrier = new CyclicBarrier(2);
-
-            @Override
-            protected void action() {
-                int size = diagram.getTrains().size();
-                if (size == 0) {
-                    return;
-                }
-                setWaitMessage(message);
-                setWaitProgress(0);
-                getActionContext().setShowProgress(true);
-                setWaitDialogVisible(true);
-                long time = System.currentTimeMillis();
-                try {
-                    List<Train> batch = new LinkedList<Train>();
-                    int totalCount = diagram.getTrains().size();
-                    int counter = 0;
-                    int batchCounter = 0;
-                    for (Train train : diagram.getTrains()) {
-                        batch.add(train);
-                        if (++batchCounter == CHUNK_SIZE) {
-                            processChunk(batch);
-                            counter += batchCounter;
-                            batchCounter = 0;
-                            batch = new LinkedList<Train>();
-                            setWaitProgress(100 * counter / totalCount);
-                        }
-                    }
-                    if (batch.size() > 0) {
-                        processChunk(batch);
-                        setWaitProgress(100);
-                    }
-                } finally {
-                    log.debug("{} finished in {}ms", actionName, System.currentTimeMillis() - time);
-                    setWaitDialogVisible(false);
-                }
-            }
-
-            private void processChunk(final Collection<Train> trains) {
-                GuiComponentUtils.runLaterInEDT(() -> {
-                    try {
-                        for (Train train : trains)
-                            try {
-                                trainAction.execute(train);
-                            } catch (Exception e) {
-                                log.error("Modification of train failed.", e);
-                            }
-                    } finally {
-                        try {
-                            barrier.await();
-                        } catch (Exception e) {
-                            log.error("Recalculate action - await interrupted.", e);
-                        }
-                    }
-                });
-                try {
-                    barrier.await();
-                } catch (Exception e) {
-                    log.error("Recalculate - await interrupted.", e);
-                }
-            }
-        };
-        return action;
+            })
+            .execute();
     }
 }

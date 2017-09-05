@@ -116,7 +116,8 @@ public class FreightCheckPanel extends JPanel {
         textPane.setText("");
         if (diagram != null) {
             RxActionHandler.getInstance()
-                .newBuilder("freight_check", GuiComponentUtils.getTopLevelComponent(this), new TextBuffer())
+                .newExecution("freight_check", GuiComponentUtils.getTopLevelComponent(this), new TextBuffer())
+                    .logTime()
                     .onBackground()
                     .addConsumer((c, b) -> {
                         c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));

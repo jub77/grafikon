@@ -134,6 +134,11 @@ public class ActionContext {
         return clazz.cast(getAttribute(name));
     }
 
+    public <T> T getAttribute(String name, Class<T> clazz, T defaultValue) {
+        T value = getAttribute(name, clazz);
+        return value == null ? defaultValue : value;
+    }
+
     public Object removeAttribute(String name) {
         return attributes.remove(name);
     }
