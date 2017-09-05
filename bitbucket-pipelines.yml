@@ -3,5 +3,7 @@ image: maven:3.3.3
 pipelines:
   default:
     - step:
+        caches:
+          - maven 
         script:
           -  mvn -am -pl grafikon-assembly clean install
