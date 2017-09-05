@@ -4,6 +4,9 @@ addons:
     packages:
       - oracle-java8-installer
 language: java
+cache:
+  directories:
+    - $HOME/.m2
 install: mvn -am -pl grafikon-assembly install
 jdk:
   - oraclejdk8
