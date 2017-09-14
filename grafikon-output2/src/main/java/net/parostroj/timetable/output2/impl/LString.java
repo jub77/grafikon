@@ -30,12 +30,10 @@ public class LString {
     public LString(TranslatedString ts) {
         String dString = ts.getDefaultString();
         this.setDefaultString(dString);
-        if (ts.getLocales() != null) {
-            for (Locale locale : ts.getLocales()) {
-                String tString = ts.translate(locale);
-                if (!dString.equals(tString)) {
-                    this.getLocalizedStrings().add(new LStringLang(locale.toLanguageTag(), tString));
-                }
+        for (Locale locale : ts.getLocales()) {
+            String tString = ts.translate(locale);
+            if (!dString.equals(tString)) {
+                this.getLocalizedStrings().add(new LStringLang(locale.toLanguageTag(), tString));
             }
         }
     }

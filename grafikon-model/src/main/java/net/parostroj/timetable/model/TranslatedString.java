@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 
 /**
@@ -27,12 +28,12 @@ public interface TranslatedString {
     }
 
     /**
-     * Optional operation - can return null if the information is not available
+     * Optional operation - can return empty list if the information is not available
      *
      * @return collection of locales of this string
      */
     default Collection<Locale> getLocales() {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
