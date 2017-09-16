@@ -163,19 +163,19 @@ public class LSTrain {
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
         if (this.route != null) {
-	        for (Object routePart : this.route) {
-	            if (routePart instanceof LSTrainRoutePartNode) {
-	                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
-	                Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
-	                NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
-	                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram::getObjectById));
-	            } else {
-	                LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
-	                Line line = diagram.getNet().getLineById(linePart.getLineId());
-	                LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
-	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram::getObjectById));
-	            }
-	        }
+            for (Object routePart : this.route) {
+                if (routePart instanceof LSTrainRoutePartNode) {
+                    LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
+                    Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
+                    NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
+                    builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram::getObjectById));
+                } else {
+                    LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
+                    Line line = diagram.getNet().getLineById(linePart.getLineId());
+                    LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
+                    builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram::getObjectById));
+                }
+            }
         }
         builder.finish();
         // set technological time
