@@ -11,6 +11,8 @@ import net.parostroj.timetable.model.events.SpecialTrainTimeIntervalList;
 
 public class PreviousNextTrainValidator implements TrainDiagramValidator {
 
+    private boolean changing;
+
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram
@@ -61,34 +63,52 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     }
 
     private void updateNextTrain(Train currentTrain, Train oldNextTrain, Train newNextTrain) {
-        if (oldNextTrain != null && oldNextTrain.getPreviousTrain() != null) {
-            oldNextTrain.setPreviousTrain(null);
-        }
-        if (newNextTrain != null && newNextTrain.getPreviousTrain() != currentTrain) {
-            TimeInterval source = currentTrain.getLastInterval();
-            TimeInterval dest = newNextTrain.getFirstInterval();
-            if (!checkNode(source, dest)) {
-                currentTrain.setNextTrain(null);
-            } else {
-                checkAndUpdateTrack(source, dest);
-                newNextTrain.setPreviousTrain(currentTrain);
+        if (changing) return;
+        try {
+            changing = true;
+            if (oldNextTrain != null && oldNextTrain.getPreviousTrain() != null) {
+                oldNextTrain.setPreviousTrain(null);
             }
+            if (newNextTrain != null && newNextTrain.getPreviousTrain() != currentTrain) {
+                TimeInterval source = currentTrain.getLastInterval();
+                TimeInterval dest = newNextTrain.getFirstInterval();
+                if (!checkNode(source, dest)) {
+                    currentTrain.setNextTrain(null);
+                } else {
+                    checkAndUpdateTrack(source, dest);
+                    if (newNextTrain.getPreviousTrain() != null) {
+                        newNextTrain.getPreviousTrain().setNextTrain(null);
+                    }
+                    newNextTrain.setPreviousTrain(currentTrain);
+                }
+            }
+        } finally {
+            changing = false;
         }
     }
 
     private void updatePreviousTrain(Train currentTrain, Train oldPrevTrain, Train newPrevTrain) {
-        if (oldPrevTrain != null && oldPrevTrain.getNextTrain() != null) {
-            oldPrevTrain.setNextTrain(null);
-        }
-        if (newPrevTrain != null && newPrevTrain.getNextTrain() != currentTrain) {
-            TimeInterval source = currentTrain.getFirstInterval();
-            TimeInterval dest = newPrevTrain.getLastInterval();
-            if (!checkNode(source, dest)) {
-                currentTrain.setPreviousTrain(null);
-            } else {
-                checkAndUpdateTrack(source, dest);
-                newPrevTrain.setNextTrain(currentTrain);
+        if (changing) return;
+        try {
+            changing = true;
+            if (oldPrevTrain != null && oldPrevTrain.getNextTrain() != null) {
+                oldPrevTrain.setNextTrain(null);
             }
+            if (newPrevTrain != null && newPrevTrain.getNextTrain() != currentTrain) {
+                TimeInterval source = currentTrain.getFirstInterval();
+                TimeInterval dest = newPrevTrain.getLastInterval();
+                if (!checkNode(source, dest)) {
+                    currentTrain.setPreviousTrain(null);
+                } else {
+                    checkAndUpdateTrack(source, dest);
+                    if (newPrevTrain.getNextTrain() != null) {
+                        newPrevTrain.getNextTrain().setPreviousTrain(null);
+                    }
+                    newPrevTrain.setNextTrain(currentTrain);
+                }
+            }
+        } finally {
+            changing = false;
         }
     }
 
