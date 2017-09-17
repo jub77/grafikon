@@ -25,4 +25,6 @@ public interface TrainAttributes {
     public static final String ATTR_OPTIONAL = "optional";
     public static final String ATTR_TECHNOLOGICAL_BEFORE = "technological.before";
     public static final String ATTR_TECHNOLOGICAL_AFTER = "technological.after";
+    public static final String ATTR_PREVIOUS_TRAIN = "previous.train";
+    public static final String ATTR_NEXT_TRAIN = "next.train";
 }
