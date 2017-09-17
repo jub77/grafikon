@@ -132,6 +132,7 @@ public class TrainDiagram
         this.validators.add(new NodeValidator(this));
         this.validators.add(new TrainCycleTypeRemoveValidator(this));
         this.validators.add(new OutputTemplateRemoveValidator(this));
+        this.validators.add(new PreviousNextTrainValidator());
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
                 groups, companies, trainTypes, trains, cycleTypes, outputs);
     }
