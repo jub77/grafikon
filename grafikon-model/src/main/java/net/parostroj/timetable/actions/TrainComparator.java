@@ -30,6 +30,12 @@ public class TrainComparator implements Comparator<Train> {
 
     @Override
     public int compare(Train o1, Train o2) {
+        if (o1 == null) {
+            return o2 == null ? 0 : -1;
+        } else if (o2 == null) {
+            return 1;
+        }
+
         // checks
         if (sortPattern.getGroups().isEmpty()) {
             log.error("Pattern groups are empty.");
