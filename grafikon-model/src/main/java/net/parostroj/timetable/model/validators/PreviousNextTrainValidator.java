@@ -101,6 +101,8 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
             throw new IllegalStateException("Not the same node");
         }
         Track track = source.getTrack();
-        dest.getTrain().changeNodeTrack(dest, (NodeTrack) track);
+        if (track != dest.getTrack()) {
+            dest.getTrain().changeNodeTrack(dest, (NodeTrack) track);
+        }
     }
 }

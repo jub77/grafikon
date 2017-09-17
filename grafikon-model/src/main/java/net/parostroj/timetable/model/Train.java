@@ -645,6 +645,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (!nodeInterval.isNodeOwner()) {
             throw new IllegalArgumentException("No node interval.");
         }
+        if (nodeInterval.getTrack() == nodeTrack) {
+            return;
+        }
         nodeInterval.setTrack(nodeTrack);
         if (isAttached()) {
             nodeInterval.updateInOwner();
@@ -672,6 +675,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void changeLineTrack(TimeInterval lineInterval, LineTrack lineTrack) {
         if (!lineInterval.isLineOwner()) {
             throw new IllegalArgumentException("No line interval.");
+        }
+        if (lineInterval.getTrack() == lineTrack) {
+            return;
         }
         lineInterval.setTrack(lineTrack);
         if (isAttached()) {
@@ -999,11 +1005,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void setPreviousTrain(Train previousTrain) {
         this.getAttributes().setRemove(ATTR_PREVIOUS_TRAIN, previousTrain);
     }
-    
+
     public Train getNextTrain() {
         return this.getAttributes().get(ATTR_NEXT_TRAIN, Train.class);
     }
-    
+
     public void setNextTrain(Train nextTrain) {
         this.getAttributes().setRemove(ATTR_NEXT_TRAIN, nextTrain);
     }
