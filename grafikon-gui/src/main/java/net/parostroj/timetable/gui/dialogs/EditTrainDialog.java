@@ -8,10 +8,13 @@ package net.parostroj.timetable.gui.dialogs;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.views.CreateTrainView;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -39,6 +42,7 @@ import java.awt.Component;
 import java.awt.event.*;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 
 /**
  * Dialog for editation of train properties.
@@ -74,7 +78,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         this.train = train;
         if (train != null)  {
             // model for train types
-            typeComboBox.setModel(new DefaultComboBoxModel<TrainType>(train.getDiagram().getTrainTypes().toArray(new TrainType[0])));
+            typeComboBox.setModel(new DefaultComboBoxModel<>(train.getDiagram().getTrainTypes().toArray(new TrainType[0])));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
@@ -113,6 +117,28 @@ public class EditTrainDialog extends javax.swing.JDialog {
             } else {
                 weightLimitEditBox.setValueInUnit(BigDecimal.valueOf(weightLimit), WeightUnit.T);
             }
+
+            // next and previous train
+            TrainDiagram diagram = train.getDiagram();
+
+            Node from = train.getFirstInterval().getOwnerAsNode();
+            Node to = train.getLastInterval().getOwnerAsNode();
+
+            nextTrainModel.clear();
+            nextTrainModel.addWrapper(Wrapper.getEmptyWrapper("-"));
+            previousTrainModel.clear();
+            previousTrainModel.addWrapper(Wrapper.getEmptyWrapper("-"));
+
+            diagram.getTrains().stream().forEach(t -> {
+                if (t.getFirstInterval().getOwner() == to) {
+                    nextTrainModel.addWrapper(Wrapper.getWrapper(t));
+                } else if (t.getLastInterval().getOwner() == from) {
+                    previousTrainModel.addWrapper(Wrapper.getWrapper(t));
+                }
+            });
+
+            nextTrainModel.setSelectedObject(train.getNextTrain());
+            previousTrainModel.setSelectedObject(train.getPreviousTrain());
         }
         pack();
         setMinimumSize(getSize());
@@ -121,7 +147,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox<TrainType>();
+        typeComboBox = new javax.swing.JComboBox<>();
         numberTextField = new javax.swing.JTextField();
         javax.swing.JLabel numberLabel = new javax.swing.JLabel();
         descriptionTextField = new javax.swing.JTextField();
@@ -170,6 +196,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
         JPanel routeEditPanel = new JPanel();
 
         JPanel techTimesPanel = new JPanel();
+        techTimesPanel.setBorder(BorderFactory.createEmptyBorder());
+        JPanel connectedTrainsPanel = new JPanel();
+        connectedTrainsPanel.setBorder(BorderFactory.createEmptyBorder());
         FlowLayout fl_techTimesPanel = (FlowLayout) techTimesPanel.getLayout();
         fl_techTimesPanel.setAlignOnBaseline(true);
         fl_techTimesPanel.setAlignment(FlowLayout.LEFT);
@@ -186,6 +215,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                         .addComponent(techTimesPanel, GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                        .addComponent(connectedTrainsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -262,11 +292,56 @@ public class EditTrainDialog extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(techTimesPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(connectedTrainsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(cancelButton)
                         .addComponent(okButton))
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        GridBagLayout gbl_connectedTrainsPanel = new GridBagLayout();
+        connectedTrainsPanel.setLayout(gbl_connectedTrainsPanel);
+
+        JLabel previousTrainLabel = new JLabel(ResourceLoader.getString("edit.train.previous.train") + ": ");
+        GridBagConstraints gbc_previousTrainLabel = new GridBagConstraints();
+        gbc_previousTrainLabel.anchor = GridBagConstraints.WEST;
+        gbc_previousTrainLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_previousTrainLabel.gridx = 0;
+        gbc_previousTrainLabel.gridy = 0;
+        connectedTrainsPanel.add(previousTrainLabel, gbc_previousTrainLabel);
+
+        JComboBox<Wrapper<Train>> previousTrainComboBox = new JComboBox<>();
+        previousTrainModel = new WrapperListModel<>(true);
+        previousTrainComboBox.setModel(previousTrainModel);
+        GridBagConstraints gbc_previousTrainComboBox = new GridBagConstraints();
+        gbc_previousTrainComboBox.insets = new Insets(0, 0, 5, 0);
+        gbc_previousTrainComboBox.weightx = 1.0;
+        gbc_previousTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_previousTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbc_previousTrainComboBox.gridx = 1;
+        gbc_previousTrainComboBox.gridy = 0;
+        connectedTrainsPanel.add(previousTrainComboBox, gbc_previousTrainComboBox);
+
+        JLabel nextTrainLabel = new JLabel(ResourceLoader.getString("edit.train.next.train") + ": ");
+        GridBagConstraints gbc_nextTrainLabel = new GridBagConstraints();
+        gbc_nextTrainLabel.anchor = GridBagConstraints.WEST;
+        gbc_nextTrainLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_nextTrainLabel.gridx = 0;
+        gbc_nextTrainLabel.gridy = 1;
+        connectedTrainsPanel.add(nextTrainLabel, gbc_nextTrainLabel);
+
+        JComboBox<Wrapper<Train>> nextTrainComboBox = new JComboBox<>();
+        nextTrainModel = new WrapperListModel<>(true);
+        nextTrainComboBox.setModel(nextTrainModel);
+        GridBagConstraints gbc_nextTrainComboBox = new GridBagConstraints();
+        gbc_nextTrainComboBox.weightx = 1.0;
+        gbc_nextTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_nextTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbc_nextTrainComboBox.gridx = 1;
+        gbc_nextTrainComboBox.gridy = 1;
+        connectedTrainsPanel.add(nextTrainComboBox, gbc_nextTrainComboBox);
+
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
         GridBagLayout gbl_weightLimitPanel = new GridBagLayout();
         gbl_weightLimitPanel.columnWeights = new double[] { 0.0, 0.0 };
@@ -344,7 +419,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeEditPanel.add(toNodeButton, gbc_toNodeButton);
 
         toNodeButton.addActionListener(evt -> toNodeButtonActionPerformed(evt));
-        stationsComboBox = new javax.swing.JComboBox<Node>();
+        stationsComboBox = new javax.swing.JComboBox<>();
         GridBagConstraints gbc_stationsComboBox = new GridBagConstraints();
         gbc_stationsComboBox.weightx = 1.0;
         gbc_stationsComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -526,6 +601,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // managed freight
         train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
 
+        // next and previous trains
+        train.setNextTrain(nextTrainModel.getSelectedObject());
+        train.setPreviousTrain(previousTrainModel.getSelectedObject());
+
         this.setVisible(false);
     }
 
@@ -567,4 +646,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private ValueWithUnitEditBox weightLimitEditBox;
     private javax.swing.JCheckBox managedFreightCheckBox;
 
+    private WrapperListModel<Train> previousTrainModel;
+    private WrapperListModel<Train> nextTrainModel;
 }
