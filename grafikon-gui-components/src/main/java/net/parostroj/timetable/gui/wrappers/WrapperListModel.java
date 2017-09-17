@@ -237,7 +237,8 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     public int getIndexOfObject(T object) {
         int i = 0;
         for (Wrapper<T> wrapper : list) {
-            if (wrapper.getElement() != null && wrapper.getElement().equals(object)) {
+            if (wrapper.getElement() == null && object == null
+                    || wrapper.getElement() != null && wrapper.getElement().equals(object)) {
                 return i;
             }
             i++;
@@ -291,6 +292,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     @SuppressWarnings("unchecked")
     @Override
     public void setSelectedItem(Object anItem) {
+        System.out.println(anItem);
         selectedItem = (Wrapper<T>) anItem;
         this.fireContentsChanged(this, -1, -1);
     }
