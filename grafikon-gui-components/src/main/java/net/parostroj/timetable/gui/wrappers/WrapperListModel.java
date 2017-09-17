@@ -292,7 +292,6 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     @SuppressWarnings("unchecked")
     @Override
     public void setSelectedItem(Object anItem) {
-        System.out.println(anItem);
         selectedItem = (Wrapper<T>) anItem;
         this.fireContentsChanged(this, -1, -1);
     }
