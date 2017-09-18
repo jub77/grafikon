@@ -8,6 +8,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.events.SpecialTrainTimeIntervalList;
+import net.parostroj.timetable.utils.TimeUtil;
 
 public class PreviousNextTrainValidator implements TrainDiagramValidator {
 
@@ -37,6 +38,16 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                                 (Train) event.getAttributeChange().getOldValue(),
                                 (Train) event.getAttributeChange().getNewValue());
                         break;
+                    case Train.ATTR_TECHNOLOGICAL_AFTER:
+                        if (currentTrain.getNextJoinedTrain() != null) {
+                            checkAndUpdateTechnologicalAfter(currentTrain);
+                        }
+                        break;
+                    case Train.ATTR_TECHNOLOGICAL_BEFORE:
+                        if (currentTrain.getPreviousJoinedTrain() != null) {
+                            currentTrain.setTimeBefore(0);
+                        }
+                        break;
                     default:
                         // nothing
                 }
@@ -55,6 +66,11 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                         TimeInterval dest = currentTrain.getNextJoinedTrain().getFirstInterval();
                         checkAndUpdateTrack(source, dest);
                     }
+                }
+                if (currentTrain.getNextJoinedTrain() != null) {
+                    checkAndUpdateTechnologicalAfter(currentTrain);
+                } else if (currentTrain.getPreviousJoinedTrain() != null) {
+                    checkAndUpdateTechnologicalAfter(currentTrain.getPreviousJoinedTrain());
                 }
             }
             return true;
@@ -81,6 +97,10 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                     }
                     newNextTrain.setPreviousJoinedTrain(currentTrain);
                 }
+                checkAndUpdateTechnologicalAfter(currentTrain);
+            }
+            if (newNextTrain == null) {
+                currentTrain.setTimeAfter(0);
             }
         } finally {
             changing = false;
@@ -106,6 +126,10 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                     }
                     newPrevTrain.setNextJoinedTrain(currentTrain);
                 }
+                checkAndUpdateTechnologicalAfter(newPrevTrain);
+            }
+            if (newPrevTrain == null) {
+                oldPrevTrain.setTimeAfter(0);
             }
         } finally {
             changing = false;
@@ -123,6 +147,21 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         Track track = source.getTrack();
         if (track != dest.getTrack()) {
             dest.getTrain().changeNodeTrack(dest, (NodeTrack) track);
+        }
+    }
+
+    private void checkAndUpdateTechnologicalAfter(Train currentTrain) {
+        Train nextTrain = currentTrain.getNextJoinedTrain();
+        if (nextTrain != null) {
+            int startTime = currentTrain.getEndTime();
+            int endTime = nextTrain.getStartTime();
+            int length = TimeUtil.difference(startTime, endTime);
+            if (length != currentTrain.getTimeAfter()) {
+                currentTrain.setTimeAfter(length);
+            }
+            if (nextTrain.getTimeBefore() != 0) {
+                nextTrain.setTimeBefore(0);
+            }
         }
     }
 }
