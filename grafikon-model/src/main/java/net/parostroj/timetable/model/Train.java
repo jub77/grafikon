@@ -449,7 +449,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         } else if (length != 0 && timeBefore == null) {
             TimeInterval firstInterval = this.getFirstInterval();
             timeBefore = new TimeInterval(IdGenerator.getInstance().getId(), this, firstInterval.getOwner(),
-                    firstInterval.getStart() - length, firstInterval.getStart() - 1,
+                    firstInterval.getStart() - length + 1, firstInterval.getStart() - 1,
                     firstInterval.getTrack());
             if (isAttached()) {
                 timeBefore.addToOwnerWithoutCheck();
@@ -457,8 +457,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         } else if (length != 0 && timeBefore != null) {
             TimeInterval firstInterval = this.getFirstInterval();
             // recalculate time
-            timeBefore.setStart(firstInterval.getStart() - length);
-            timeBefore.setLength(length - 1);
+            timeBefore.setStart(firstInterval.getStart() - length + 1);
+            timeBefore.setLength(length - 2);
             timeBefore.setTrack(firstInterval.getTrack());
             fireEvent = timeBefore.isChanged();
             if (isAttached()) {
@@ -486,7 +486,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         } else if (length != 0 && timeAfter == null) {
             TimeInterval lastInterval = this.getLastInterval();
             timeAfter = new TimeInterval(IdGenerator.getInstance().getId(), this, lastInterval.getOwner(),
-                    lastInterval.getEnd() + 1, lastInterval.getEnd() + length,
+                    lastInterval.getEnd() + 1, lastInterval.getEnd() + length - 1,
                     lastInterval.getTrack());
             if (isAttached()) {
                 timeAfter.addToOwnerWithoutCheck();
@@ -495,7 +495,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             TimeInterval lastInterval = this.getLastInterval();
             // recalculate time
             timeAfter.setStart(lastInterval.getEnd() + 1);
-            timeAfter.setLength(length - 1);
+            timeAfter.setLength(length - 2);
             timeAfter.setTrack(lastInterval.getTrack());
             fireEvent = timeAfter.isChanged();
             if (isAttached()) {
@@ -513,14 +513,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return technological time before train start
      */
     public int getTimeBefore() {
-        return (timeBefore == null) ? 0 : timeBefore.getLength() + 1;
+        return (timeBefore == null) ? 0 : timeBefore.getLength() + 2;
     }
 
     /**
      * @return technological time after train end
      */
     public int getTimeAfter() {
-        return (timeAfter == null) ? 0 : timeAfter.getLength() + 1;
+        return (timeAfter == null) ? 0 : timeAfter.getLength() + 2;
     }
 
     /**
