@@ -305,7 +305,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         GridBagLayout gbl_connectedTrainsPanel = new GridBagLayout();
         connectedTrainsPanel.setLayout(gbl_connectedTrainsPanel);
 
-        JLabel previousTrainLabel = new JLabel(ResourceLoader.getString("edit.train.previous.train") + ": ");
+        JLabel previousTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.previous") + ": ");
         GridBagConstraints gbc_previousTrainLabel = new GridBagConstraints();
         gbc_previousTrainLabel.anchor = GridBagConstraints.WEST;
         gbc_previousTrainLabel.insets = new Insets(0, 0, 5, 5);
@@ -325,7 +325,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_previousTrainComboBox.gridy = 0;
         connectedTrainsPanel.add(previousTrainComboBox, gbc_previousTrainComboBox);
 
-        JLabel nextTrainLabel = new JLabel(ResourceLoader.getString("edit.train.next.train") + ": ");
+        JLabel nextTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.next") + ": ");
         GridBagConstraints gbc_nextTrainLabel = new GridBagConstraints();
         gbc_nextTrainLabel.anchor = GridBagConstraints.WEST;
         gbc_nextTrainLabel.insets = new Insets(0, 0, 0, 5);
