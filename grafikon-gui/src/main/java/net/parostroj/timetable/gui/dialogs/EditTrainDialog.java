@@ -138,8 +138,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 }
             });
 
-            nextTrainModel.setSelectedObject(train.getNextTrain());
-            previousTrainModel.setSelectedObject(train.getPreviousTrain());
+            nextTrainModel.setSelectedObject(train.getNextJoinedTrain());
+            previousTrainModel.setSelectedObject(train.getPreviousJoinedTrain());
         }
         pack();
         setMinimumSize(getSize());
@@ -626,8 +626,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
         train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
 
         // next and previous trains
-        train.setNextTrain(nextTrainModel.getSelectedObject());
-        train.setPreviousTrain(previousTrainModel.getSelectedObject());
+        train.setNextJoinedTrain(nextTrainModel.getSelectedObject());
+        train.setPreviousJoinedTrain(previousTrainModel.getSelectedObject());
 
         this.setVisible(false);
     }

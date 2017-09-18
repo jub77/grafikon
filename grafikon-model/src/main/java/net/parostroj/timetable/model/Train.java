@@ -998,20 +998,20 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return this.getAttributeAsBool(Train.ATTR_MANAGED_FREIGHT);
     }
 
-    public Train getPreviousTrain() {
-        return this.getAttributes().get(ATTR_PREVIOUS_TRAIN, Train.class);
+    public Train getPreviousJoinedTrain() {
+        return this.getAttributes().get(ATTR_PREVIOUS_JOINED_TRAIN, Train.class);
     }
 
-    public void setPreviousTrain(Train previousTrain) {
-        this.getAttributes().setRemove(ATTR_PREVIOUS_TRAIN, previousTrain);
+    public void setPreviousJoinedTrain(Train previousTrain) {
+        this.getAttributes().setRemove(ATTR_PREVIOUS_JOINED_TRAIN, previousTrain);
     }
 
-    public Train getNextTrain() {
-        return this.getAttributes().get(ATTR_NEXT_TRAIN, Train.class);
+    public Train getNextJoinedTrain() {
+        return this.getAttributes().get(ATTR_NEXT_JOINED_TRAIN, Train.class);
     }
 
-    public void setNextTrain(Train nextTrain) {
-        this.getAttributes().setRemove(ATTR_NEXT_TRAIN, nextTrain);
+    public void setNextJoinedTrain(Train nextTrain) {
+        this.getAttributes().setRemove(ATTR_NEXT_JOINED_TRAIN, nextTrain);
     }
 
     @Override

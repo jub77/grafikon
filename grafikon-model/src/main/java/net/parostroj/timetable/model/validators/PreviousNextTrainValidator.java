@@ -18,20 +18,20 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         if (event.getSource() instanceof TrainDiagram
                 && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
             Train currentTrain = (Train) event.getObject();
-            updateNextTrain(currentTrain, currentTrain.getNextTrain(), null);
-            updatePreviousTrain(currentTrain, currentTrain.getPreviousTrain(), null);
+            updateNextTrain(currentTrain, currentTrain.getNextJoinedTrain(), null);
+            updatePreviousTrain(currentTrain, currentTrain.getPreviousJoinedTrain(), null);
         }
         if (event.getSource() instanceof Train) {
             Train currentTrain = (Train) event.getSource();
             if (event.getType() == Type.ATTRIBUTE) {
                 switch (event.getAttributeChange().getName()) {
-                    case Train.ATTR_PREVIOUS_TRAIN:
+                    case Train.ATTR_PREVIOUS_JOINED_TRAIN:
                         updatePreviousTrain(
                                 currentTrain,
                                 (Train) event.getAttributeChange().getOldValue(),
                                 (Train) event.getAttributeChange().getNewValue());
                         break;
-                    case Train.ATTR_NEXT_TRAIN:
+                    case Train.ATTR_NEXT_JOINED_TRAIN:
                         updateNextTrain(
                                 currentTrain,
                                 (Train) event.getAttributeChange().getOldValue(),
@@ -45,14 +45,14 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                 SpecialTrainTimeIntervalList list = (SpecialTrainTimeIntervalList) event.getData();
                 if (list.getType() == SpecialTrainTimeIntervalList.Type.TRACK) {
                     int changed = list.getChanged();
-                    if (changed == 0 && currentTrain.getPreviousTrain() != null) {
+                    if (changed == 0 && currentTrain.getPreviousJoinedTrain() != null) {
                         TimeInterval source = currentTrain.getFirstInterval();
-                        TimeInterval dest = currentTrain.getPreviousTrain().getLastInterval();
+                        TimeInterval dest = currentTrain.getPreviousJoinedTrain().getLastInterval();
                         checkAndUpdateTrack(source, dest);
                     } else if (changed == currentTrain.getTimeIntervalList().size() - 1
-                            && currentTrain.getNextTrain() != null) {
+                            && currentTrain.getNextJoinedTrain() != null) {
                         TimeInterval source = currentTrain.getLastInterval();
-                        TimeInterval dest = currentTrain.getNextTrain().getFirstInterval();
+                        TimeInterval dest = currentTrain.getNextJoinedTrain().getFirstInterval();
                         checkAndUpdateTrack(source, dest);
                     }
                 }
@@ -66,20 +66,20 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         if (changing) return;
         try {
             changing = true;
-            if (oldNextTrain != null && oldNextTrain.getPreviousTrain() != null) {
-                oldNextTrain.setPreviousTrain(null);
+            if (oldNextTrain != null && oldNextTrain.getPreviousJoinedTrain() != null) {
+                oldNextTrain.setPreviousJoinedTrain(null);
             }
-            if (newNextTrain != null && newNextTrain.getPreviousTrain() != currentTrain) {
+            if (newNextTrain != null && newNextTrain.getPreviousJoinedTrain() != currentTrain) {
                 TimeInterval source = currentTrain.getLastInterval();
                 TimeInterval dest = newNextTrain.getFirstInterval();
                 if (!checkNode(source, dest)) {
-                    currentTrain.setNextTrain(null);
+                    currentTrain.setNextJoinedTrain(null);
                 } else {
                     checkAndUpdateTrack(source, dest);
-                    if (newNextTrain.getPreviousTrain() != null) {
-                        newNextTrain.getPreviousTrain().setNextTrain(null);
+                    if (newNextTrain.getPreviousJoinedTrain() != null) {
+                        newNextTrain.getPreviousJoinedTrain().setNextJoinedTrain(null);
                     }
-                    newNextTrain.setPreviousTrain(currentTrain);
+                    newNextTrain.setPreviousJoinedTrain(currentTrain);
                 }
             }
         } finally {
@@ -91,20 +91,20 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         if (changing) return;
         try {
             changing = true;
-            if (oldPrevTrain != null && oldPrevTrain.getNextTrain() != null) {
-                oldPrevTrain.setNextTrain(null);
+            if (oldPrevTrain != null && oldPrevTrain.getNextJoinedTrain() != null) {
+                oldPrevTrain.setNextJoinedTrain(null);
             }
-            if (newPrevTrain != null && newPrevTrain.getNextTrain() != currentTrain) {
+            if (newPrevTrain != null && newPrevTrain.getNextJoinedTrain() != currentTrain) {
                 TimeInterval source = currentTrain.getFirstInterval();
                 TimeInterval dest = newPrevTrain.getLastInterval();
                 if (!checkNode(source, dest)) {
-                    currentTrain.setPreviousTrain(null);
+                    currentTrain.setPreviousJoinedTrain(null);
                 } else {
                     checkAndUpdateTrack(source, dest);
-                    if (newPrevTrain.getNextTrain() != null) {
-                        newPrevTrain.getNextTrain().setPreviousTrain(null);
+                    if (newPrevTrain.getNextJoinedTrain() != null) {
+                        newPrevTrain.getNextJoinedTrain().setPreviousJoinedTrain(null);
                     }
-                    newPrevTrain.setNextTrain(currentTrain);
+                    newPrevTrain.setNextJoinedTrain(currentTrain);
                 }
             }
         } finally {
