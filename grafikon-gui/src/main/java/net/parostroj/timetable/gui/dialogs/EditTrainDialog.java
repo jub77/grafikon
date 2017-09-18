@@ -43,6 +43,7 @@ import java.awt.event.*;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.Box;
 
 /**
  * Dialog for editation of train properties.
@@ -200,6 +201,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         JPanel connectedTrainsPanel = new JPanel();
         connectedTrainsPanel.setBorder(BorderFactory.createEmptyBorder());
         FlowLayout fl_techTimesPanel = (FlowLayout) techTimesPanel.getLayout();
+        fl_techTimesPanel.setHgap(0);
         fl_techTimesPanel.setAlignOnBaseline(true);
         fl_techTimesPanel.setAlignment(FlowLayout.LEFT);
         fl_techTimesPanel.setVgap(0);
@@ -370,18 +372,30 @@ public class EditTrainDialog extends javax.swing.JDialog {
         techTimesPanel.add(techTimesLabel);
 
         techTimesLabel.setText(ResourceLoader.getString("create.train.technological.time"));
+
+        Component delimiterStrut1 = Box.createHorizontalStrut(5);
+        techTimesPanel.add(delimiterStrut1);
         javax.swing.JLabel beforeLabel = new javax.swing.JLabel();
         techTimesPanel.add(beforeLabel);
 
         beforeLabel.setText(ResourceLoader.getString("create.train.time.before"));
+
+        Component delimiterStrut2 = Box.createHorizontalStrut(5);
+        techTimesPanel.add(delimiterStrut2);
         timeBeforeTextField = new javax.swing.JTextField();
         techTimesPanel.add(timeBeforeTextField);
 
         timeBeforeTextField.setColumns(6);
+
+        Component delimiterStrut3 = Box.createHorizontalStrut(5);
+        techTimesPanel.add(delimiterStrut3);
         javax.swing.JLabel afterLabel = new javax.swing.JLabel();
         techTimesPanel.add(afterLabel);
 
         afterLabel.setText(ResourceLoader.getString("create.train.time.after"));
+
+        Component delimiterStrut4 = Box.createHorizontalStrut(5);
+        techTimesPanel.add(delimiterStrut4);
         timeAfterTextField = new javax.swing.JTextField();
         techTimesPanel.add(timeAfterTextField);
 
