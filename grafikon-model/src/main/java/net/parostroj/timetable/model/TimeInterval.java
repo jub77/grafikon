@@ -520,6 +520,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return train.getTimeIntervalBefore() == this || train.getTimeIntervalAfter() == this;
     }
 
+    public boolean isTechnologicalBefore() {
+        return train.getTimeIntervalBefore() == this;
+    }
+
+    public boolean isTechnologicalAfter() {
+        return train.getTimeIntervalAfter() == this;
+    }
+
     public boolean isStop() {
         return isInnerStop() || isFirst() || isLast();
     }
