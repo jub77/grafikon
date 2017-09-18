@@ -61,7 +61,8 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
         boolean showBoundary = config.getOption(GTDrawSettings.Key.TRAIN_ENDS);
         boolean boundary = interval.isBoundary();
         boolean inner = !interval.isTechnological() && interval.isInnerStop();
-        return inner || boundary && showBoundary;
+        boolean joined = interval.isTechnologicalAfter() && interval.getTrain().getNextTrain() != null;
+        return inner || boundary && showBoundary || joined;
     }
 
     @Override
