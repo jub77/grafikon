@@ -305,12 +305,22 @@ public class EditTrainDialog extends javax.swing.JDialog {
         GridBagLayout gbl_connectedTrainsPanel = new GridBagLayout();
         connectedTrainsPanel.setLayout(gbl_connectedTrainsPanel);
 
+        JLabel joinedTrainsLabel = new JLabel(ResourceLoader.getString("edit.train.joined"));
+        GridBagConstraints gbc_joinedTrainsLabel = new GridBagConstraints();
+        gbc_joinedTrainsLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_joinedTrainsLabel.anchor = GridBagConstraints.WEST;
+        gbc_joinedTrainsLabel.gridwidth = 2;
+        gbc_joinedTrainsLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_joinedTrainsLabel.gridx = 0;
+        gbc_joinedTrainsLabel.gridy = 0;
+        connectedTrainsPanel.add(joinedTrainsLabel, gbc_joinedTrainsLabel);
+
         JLabel previousTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.previous") + ": ");
         GridBagConstraints gbc_previousTrainLabel = new GridBagConstraints();
         gbc_previousTrainLabel.anchor = GridBagConstraints.WEST;
-        gbc_previousTrainLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_previousTrainLabel.insets = new Insets(0, 10, 5, 5);
         gbc_previousTrainLabel.gridx = 0;
-        gbc_previousTrainLabel.gridy = 0;
+        gbc_previousTrainLabel.gridy = 1;
         connectedTrainsPanel.add(previousTrainLabel, gbc_previousTrainLabel);
 
         JComboBox<Wrapper<Train>> previousTrainComboBox = new JComboBox<>();
@@ -322,15 +332,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_previousTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_previousTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
         gbc_previousTrainComboBox.gridx = 1;
-        gbc_previousTrainComboBox.gridy = 0;
+        gbc_previousTrainComboBox.gridy = 1;
         connectedTrainsPanel.add(previousTrainComboBox, gbc_previousTrainComboBox);
 
         JLabel nextTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.next") + ": ");
         GridBagConstraints gbc_nextTrainLabel = new GridBagConstraints();
         gbc_nextTrainLabel.anchor = GridBagConstraints.WEST;
-        gbc_nextTrainLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_nextTrainLabel.insets = new Insets(0, 10, 0, 5);
         gbc_nextTrainLabel.gridx = 0;
-        gbc_nextTrainLabel.gridy = 1;
+        gbc_nextTrainLabel.gridy = 2;
         connectedTrainsPanel.add(nextTrainLabel, gbc_nextTrainLabel);
 
         JComboBox<Wrapper<Train>> nextTrainComboBox = new JComboBox<>();
@@ -341,7 +351,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_nextTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_nextTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
         gbc_nextTrainComboBox.gridx = 1;
-        gbc_nextTrainComboBox.gridy = 1;
+        gbc_nextTrainComboBox.gridy = 2;
         connectedTrainsPanel.add(nextTrainComboBox, gbc_nextTrainComboBox);
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
