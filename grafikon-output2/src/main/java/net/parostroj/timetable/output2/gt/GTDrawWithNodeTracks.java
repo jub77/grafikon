@@ -59,9 +59,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     @Override
     protected void computePositions() {
-        positions = new HashMap<Node, Integer>();
-        trackPositions = new HashMap<Track, Integer>();
-        stations = new LinkedList<Node>();
+        positions = new HashMap<>();
+        trackPositions = new HashMap<>();
+        stations = new LinkedList<>();
 
         int completeLength = 0;
         int trackGaps = 0;
@@ -136,7 +136,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
-                if (interval.isTechnological() && config.get(GTDrawSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
+                if (interval.isTechnological() && !config.isOption(GTDrawSettings.Key.TECHNOLOGICAL_TIME)) {
                     continue;
                 }
                 boolean boundary = interval.isBoundary();
