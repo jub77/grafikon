@@ -361,8 +361,11 @@ public class TrainDiagram
     }
 
     private void processValidators(Event event) {
-        for (TrainDiagramValidator validator : validators) {
-            validator.validate(event);
+        if (!event.isConsumed()) {
+            for (TrainDiagramValidator validator : validators) {
+                validator.validate(event);
+                if (event.isConsumed()) break;
+            }
         }
     }
 

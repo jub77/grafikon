@@ -50,14 +50,17 @@ class ListenerSupport {
     }
 
     public void fireEvent(Event event) {
-        for (Listener listener : systemListeners) {
-            listener.changed(event);
-        }
-        for (Listener listener : listeners) {
-            listener.changed(event);
-        }
-        for (Listener listener : weakListeners) {
-            listener.changed(event);
+        fireEventToListeners(event, systemListeners);
+        fireEventToListeners(event, listeners);
+        fireEventToListeners(event, weakListeners);
+    }
+
+    private void fireEventToListeners(Event event, Set<Listener> listeners) {
+        if (!event.isConsumed()) {
+            for (Listener listener : listeners) {
+                listener.changed(event);
+                if (event.isConsumed()) break;
+            }
         }
     }
 
