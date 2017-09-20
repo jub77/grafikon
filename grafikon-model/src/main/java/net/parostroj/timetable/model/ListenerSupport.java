@@ -15,17 +15,17 @@ class ListenerSupport {
 
     private final Set<Listener> listeners;
     private final Set<Listener> weakListeners;
-    private final Set<Listener> validationListeners;
+    private final Set<Listener> systemListeners;
 
     public ListenerSupport() {
         this.listeners = new HashSet<>();
-        this.validationListeners = new HashSet<>();
+        this.systemListeners = new HashSet<>();
         this.weakListeners = Collections.newSetFromMap(new WeakHashMap<>());
     }
 
     public void addListener(Listener listener) {
         if (listener instanceof SystemListener) {
-            this.validationListeners.add(listener);
+            this.systemListeners.add(listener);
         } else if (listener instanceof WeakListener) {
             this.weakListeners.add(listener);
         } else {
@@ -35,7 +35,7 @@ class ListenerSupport {
 
     public void removeListener(Listener listener) {
         if (listener instanceof SystemListener) {
-            this.validationListeners.remove(listener);
+            this.systemListeners.remove(listener);
         } else if (listener instanceof WeakListener) {
             this.weakListeners.remove(listener);
         } else {
@@ -44,13 +44,13 @@ class ListenerSupport {
     }
 
     public void removeAllListeners() {
-        this.validationListeners.clear();
+        this.systemListeners.clear();
         this.weakListeners.clear();
         this.listeners.clear();
     }
 
     public void fireEvent(Event event) {
-        for (Listener listener : validationListeners) {
+        for (Listener listener : systemListeners) {
             listener.changed(event);
         }
         for (Listener listener : listeners) {
