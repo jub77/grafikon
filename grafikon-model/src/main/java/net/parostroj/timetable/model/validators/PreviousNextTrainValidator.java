@@ -40,6 +40,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                         break;
                     case Train.ATTR_TECHNOLOGICAL_AFTER:
                         if (currentTrain.getNextJoinedTrain() != null) {
+                            checkAndUpdateNextTrainStart(currentTrain);
                             checkAndUpdateTechnologicalAfter(currentTrain);
                         }
                         break;
@@ -68,6 +69,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                     }
                 }
                 if (currentTrain.getNextJoinedTrain() != null) {
+                    checkAndUpdateNextTrainStart(currentTrain);
                     checkAndUpdateTechnologicalAfter(currentTrain);
                 } else if (currentTrain.getPreviousJoinedTrain() != null) {
                     checkAndUpdateTechnologicalAfter(currentTrain.getPreviousJoinedTrain());
@@ -161,6 +163,16 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
             }
             if (nextTrain.getTimeBefore() != 0) {
                 nextTrain.setTimeBefore(0);
+            }
+        }
+    }
+
+    private void checkAndUpdateNextTrainStart(Train currentTrain) {
+        Train nextTrain = currentTrain.getNextJoinedTrain();
+        if (nextTrain != null) {
+            int nextStart = currentTrain.getEndTime() + currentTrain.getTimeAfter();
+            if (nextStart != nextTrain.getStartTime()) {
+                nextTrain.move(nextStart);
             }
         }
     }
