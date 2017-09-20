@@ -31,6 +31,8 @@ public class Event {
     private final Object object;
     private final Object data;
 
+    private boolean consumed;
+
     public Event(Object source, AttributeChange attributeChange) {
         this.source = source;
         this.attributeChange = attributeChange;
@@ -85,6 +87,14 @@ public class Event {
 
     public Object getData() {
         return data;
+    }
+
+    public boolean isConsumed() {
+        return consumed;
+    }
+
+    public void consume() {
+        consumed = true;
     }
 
     @Override
