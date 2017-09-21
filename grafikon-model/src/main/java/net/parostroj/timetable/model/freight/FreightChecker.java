@@ -39,13 +39,11 @@ public class FreightChecker {
         Collection<Tuple<Node>> allConns = this.getNodePermutation(net, skipTypes);
 
         return allConns.stream()
-                .<ConnectionState<NodeFreightConnection>>map(t -> {
-                    return connAnalyser.analyse(t.first, t.second).stream()
-                            .filter(NodeFreightConnection::isComplete)
-                            .min(Comparator.comparingInt(NodeFreightConnection::getLength))
-                            .map(fc -> new ConnectionImpl<>(t.first, t.second, fc))
-                            .orElse(new ConnectionImpl<>(t.first, t.second));
-                })
+                .<ConnectionState<NodeFreightConnection>>map(t -> connAnalyser.analyse(t.first, t.second).stream()
+                        .filter(NodeFreightConnection::isComplete)
+                        .min(Comparator.comparingInt(NodeFreightConnection::getLength))
+                        .map(fc -> new ConnectionImpl<>(t.first, t.second, fc))
+                        .orElse(new ConnectionImpl<>(t.first, t.second)))
                 .collect(toSet());
     }
 
@@ -70,9 +68,7 @@ public class FreightChecker {
 
         List<FreightConnectionPath> connections = getConnectionsFrom(center).collect(toList());
 
-        nodes = nodes.filter(n -> {
-            return !connections.stream().anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == n);
-        });
+        nodes = nodes.filter(n -> !connections.stream().anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == n));
 
         return nodes.collect(toSet());
     }
@@ -84,19 +80,17 @@ public class FreightChecker {
 
         Stream<Node> nodes = getNodesOfTheCenter(center, skipTypes);
 
-        nodes = nodes.filter(n -> {
-            return !getConnectionsFrom(n).anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == center);
-        });
+        nodes = nodes.filter(n -> !getConnectionsFrom(n)
+                .anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == center));
 
         return nodes.collect(toSet());
     }
 
     private Stream<Node> getNodesOfTheCenter(Node center, Collection<NodeType> skipTypes) {
-        Stream<Node> nodes = center.getRegions().stream()
+        return center.getRegions().stream()
                 .flatMap(r -> r.getNodes().stream())
                 .distinct()
                 .filter(n -> n != center && !skipTypes.contains(n.getType()));
-        return nodes;
     }
 
     private Stream<FreightConnectionPath> getConnectionsFrom(Node node) {

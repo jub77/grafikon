@@ -82,8 +82,7 @@ public class FreightAnalyser {
                 Node endNode = t.getTo();
                 Transport transport = new TransportImpl(nodes.get(intermediateNode).getTo().getRegions(), null);
                 FreightDestination destination = FreightFactory.createFreightDestination(node, endNode.getCenterRegionHierarchy());
-                FreightConnectionVia connection = FreightFactory.createFreightNodeConnection(node, destination, transport);
-                return connection;
+                return FreightFactory.createFreightNodeConnection(node, destination, transport);
             });
         } else {
             Map<Node, FreightConnectionVia> nodes = this.getToCenterMap(straightConnections, node);
@@ -96,8 +95,7 @@ public class FreightAnalyser {
                 Node endNode = t.getTo();
                 Transport transport = new TransportImpl(nodes.get(t.getFrom()).getTo().getRegions(), null);
                 FreightDestination destination = FreightFactory.createFreightDestination(node, endNode.getCenterRegionHierarchy());
-                FreightConnectionVia connection = FreightFactory.createFreightNodeConnection(node, destination, transport);
-                return connection;
+                return FreightFactory.createFreightNodeConnection(node, destination, transport);
             });
         }
         // filter connections where to regions are the same as via (transport) regions
@@ -185,7 +183,7 @@ public class FreightAnalyser {
                 if (fromFC != null && toFC != null) {
                     Stream<FreightColor> regionMapColors = fromFC.getFreightColorMap().entrySet().stream()
                             .filter(e -> e.getValue() == toFC)
-                            .map(e -> e.getKey());
+                            .map(Map.Entry::getKey);
                     colors = Stream.concat(regionMapColors, colors.stream()).collect(toSet());
                 }
             }

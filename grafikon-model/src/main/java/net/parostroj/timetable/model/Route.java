@@ -113,7 +113,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
      */
     public void add(Route route) {
         List<RouteSegment<?>> addSegments = route.getSegments();
-        if ((segments.size() > 0) && (addSegments.get(0) != segments.get(segments.size() - 1))) {
+        if (!segments.isEmpty() && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
         }
         ListIterator<RouteSegment<?>> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
@@ -128,7 +128,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
      * @return if there are duplicate nodes
      */
     public boolean checkDuplicateNodes() {
-        Set<Node> dNodes = new HashSet<Node>();
+        Set<Node> dNodes = new HashSet<>();
         for (RouteSegment<?> segment : segments) {
             if (segment instanceof Node) {
                 Node node = (Node) segment;

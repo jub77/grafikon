@@ -75,7 +75,7 @@ public class TrainDiagram
         this.id = id;
         this.partFactory = new TrainDiagramPartFactory(this);
         this.itemLists = new LinkedList<>();
-        this.listener = event -> this.fireNestedEvent(event);
+        this.listener = this::fireNestedEvent;
         this.routes = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.trains = new ItemWithIdSetImpl<>((type, item) -> {
@@ -92,8 +92,7 @@ public class TrainDiagram
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.engineClasses = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.textItems = new ItemWithIdListImpl<>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.textItems = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.outputTemplates = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.outputs = new ItemWithIdSetImpl<>(
@@ -102,11 +101,9 @@ public class TrainDiagram
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.companies = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.trainTypeCategories = new ItemWithIdListImpl<>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.trainTypeCategories = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.net = new Net(IdGenerator.getInstance().getId(), this);
-        this.trainTypes = new ItemWithIdListImpl<>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.trainTypes = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
         this.trainsData = new TrainsData(this);

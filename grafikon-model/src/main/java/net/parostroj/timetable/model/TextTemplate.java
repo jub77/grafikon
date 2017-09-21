@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public abstract class TextTemplate {
 
-    public static enum Language {
+    public enum Language {
         GROOVY, MVEL, PLAIN, XSL;
     }
 
@@ -91,10 +91,7 @@ public abstract class TextTemplate {
         if (this.template != other.template && (this.template == null || !this.template.equals(other.template))) {
             return false;
         }
-        if (this.getLanguage() != other.getLanguage()) {
-            return false;
-        }
-        return true;
+        return this.getLanguage() == other.getLanguage();
     }
 
     @Override

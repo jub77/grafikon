@@ -72,13 +72,13 @@ class TrainCachedCycles {
 
     public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, TrainsCycleType type) {
         TimeInterval last = null;
-        ResultList<Tuple<TimeInterval>> result = new ResultList<Tuple<TimeInterval>>();
+        ResultList<Tuple<TimeInterval>> result = new ResultList<>();
         Tuple<TimeInterval> current = null;
         for (TimeInterval interval : intervals) {
             boolean covered = isCovered(interval, type);
             if (!covered) {
                 if (current == null) {
-                    current = new Tuple<TimeInterval>((last == null) ? interval : last, null);
+                    current = new Tuple<>((last == null) ? interval : last, null);
                 }
             } else {
                 if (current != null) {
@@ -97,9 +97,9 @@ class TrainCachedCycles {
     }
 
     public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, TrainsCycleType type) {
-        List<Pair<TimeInterval, Boolean>> result = new LinkedList<Pair<TimeInterval,Boolean>>();
+        List<Pair<TimeInterval, Boolean>> result = new LinkedList<>();
         for (TimeInterval interval : intervals) {
-            result.add(new Pair<TimeInterval, Boolean>(interval, this.isCovered(interval, type)));
+            result.add(new Pair<>(interval, this.isCovered(interval, type)));
         }
         return result;
     }

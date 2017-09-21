@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class Attachment {
 
-    public static enum AttachmentType {
+    public enum AttachmentType {
         TEXT, BINARY
     }
 

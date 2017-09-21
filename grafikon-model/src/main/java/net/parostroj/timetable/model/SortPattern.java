@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Sorting information for trains.
- * 
+ *
  * @author jub
  */
 public class SortPattern {
@@ -15,7 +15,7 @@ public class SortPattern {
 
     public SortPattern(String pattern) {
         this.pattern = pattern;
-        this.groups = new LinkedList<SortPatternGroup>();
+        this.groups = new LinkedList<>();
     }
 
     public List<SortPatternGroup> getGroups() {

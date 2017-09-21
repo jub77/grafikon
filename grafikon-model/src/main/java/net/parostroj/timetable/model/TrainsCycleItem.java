@@ -33,9 +33,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         this.train = train;
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
-        this.attributes = new Attributes((attrs, change) -> {
-            getCycle().fireEvent(new Event(getCycle(), TrainsCycleItem.this, change));
-        });
+        this.attributes = new Attributes((attrs, change) -> getCycle().fireEvent(new Event(getCycle(), TrainsCycleItem.this, change)));
         this.attributes.setRemove(ATTR_COMMENT, comment);
     }
 

@@ -170,7 +170,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     protected Stream<Node> getNodesImpl() {
         if (hasSubRegions()) {
-            return getSubRegions().stream().flatMap(sr -> sr.getNodesImpl());
+            return getSubRegions().stream().flatMap(Region::getNodesImpl);
         } else {
             return getNodes().stream();
         }

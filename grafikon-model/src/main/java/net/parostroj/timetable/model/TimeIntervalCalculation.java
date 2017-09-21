@@ -44,7 +44,7 @@ class TimeIntervalCalculation {
     }
 
     public Integer min(Integer... s) {
-        Optional<Integer> min = Arrays.stream(s).filter(speed -> speed != null).min(Comparator.naturalOrder());
+        Optional<Integer> min = Arrays.stream(s).filter(Objects::nonNull).min(Comparator.naturalOrder());
         return min.orElse(null);
     }
 
@@ -118,7 +118,7 @@ class TimeIntervalCalculation {
             }
         };
 
-        Map<String, Object> binding = new HashMap<String, Object>();
+        Map<String, Object> binding = new HashMap<>();
         binding.put("speed", this.computeLineSpeed());
         binding.put("fromSpeed", this.computeFromSpeed());
         binding.put("toSpeed", this.computeToSpeed());

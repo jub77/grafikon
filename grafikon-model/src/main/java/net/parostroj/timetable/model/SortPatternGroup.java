@@ -2,12 +2,12 @@ package net.parostroj.timetable.model;
 
 /**
  * Row for sort pattern. Holds information about group and comparison type.
- * 
+ *
  * @author jub
  */
 public class SortPatternGroup {
 
-    public static enum Type {
+    public enum Type {
 
         STRING("string"), NUMBER("number");
         private String id;
@@ -28,7 +28,8 @@ public class SortPatternGroup {
             }
             return null;
         }
-    };
+    }
+
     private final int group;
     private final Type type;
 

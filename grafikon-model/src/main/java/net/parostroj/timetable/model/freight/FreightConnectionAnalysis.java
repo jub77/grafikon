@@ -66,7 +66,7 @@ class FreightConnectionAnalysis {
 
     void toNode(Context context) {
         Set<TrainPath> set = finder.getConnectionFromTo(context.current, to).stream()
-                .map(fc -> fc.getPath()).collect(toSet());
+                .map(FreightConnectionPath::getPath).collect(toSet());
         if (!set.isEmpty()) {
             context.steps.add(new StepImpl(context.current, to, set));
             context.stage = Stage.CONNECTION;
@@ -84,7 +84,7 @@ class FreightConnectionAnalysis {
                 Context nContext = conn.context;
                 Node centerNode = conn.center;
                 Set<TrainPath> set = finder.getConnectionFromTo(nContext.current, centerNode).stream()
-                        .map(fc -> fc.getPath()).collect(toSet());
+                        .map(FreightConnectionPath::getPath).collect(toSet());
                 if (!set.isEmpty()) {
                     nContext.steps.add(new StepImpl(nContext.current, centerNode, set));
                     nContext.current = centerNode;
@@ -147,9 +147,9 @@ class FreightConnectionAnalysis {
                 .collect(toSet());
 
         Stream<Node> otherCenters = finder.getConnectionFrom(context.current).stream()
-            .map(c -> c.getTo())
+            .map(FreightConnectionPath::getTo)
             .filter(d -> d.isNode() && d.isRegions())
-            .map(d -> d.getNode())
+            .map(FreightDestination::getNode)
             .filter(n -> !nodeCenters.contains(n));
 
         Stream<ToRegionConnection> toRegionConnNode = nodeCenters.stream()

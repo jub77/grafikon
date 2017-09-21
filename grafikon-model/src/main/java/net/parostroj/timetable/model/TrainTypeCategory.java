@@ -47,7 +47,7 @@ public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHo
     }
 
     public void setName(LocalizedString name) {
-        attributes.setRemove(ATTR_NAME, name);;
+        attributes.setRemove(ATTR_NAME, name);
     }
 
     @Override

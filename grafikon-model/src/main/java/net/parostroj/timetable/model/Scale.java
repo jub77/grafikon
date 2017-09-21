@@ -51,9 +51,7 @@ public final class Scale {
             int index = ratioString.indexOf(':');
             if (index == -1)
                 return -1;
-            ratioString = ratioString.substring(index);
-            int ratio = Integer.parseInt(ratioString);
-            return ratio;
+            return Integer.parseInt(ratioString.substring(index));
         } catch (NumberFormatException e) {
             return -1;
         }

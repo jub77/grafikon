@@ -48,10 +48,12 @@ public class LineClass implements AttributesHolder, ObjectWithId, Visitable, Ite
 
     @Override
     public void added() {
+        // no action
     }
 
     @Override
     public void removed() {
+        // not action
     }
 
     @Override

@@ -18,6 +18,8 @@ import net.parostroj.timetable.model.RegionHierarchy;
  */
 public class FreightFactory {
 
+    private FreightFactory() {}
+
     public static FreightConnectionPath createFreightNodeConnection(Node fromNode, Node toNode, boolean regionTransfer,
             Collection<? extends TrainConnection> path) {
         return new FreightConnectionPathImpl(fromNode,

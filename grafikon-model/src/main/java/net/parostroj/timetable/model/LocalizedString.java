@@ -29,7 +29,7 @@ public interface LocalizedString extends TranslatedString {
 
     @Override
     default Collection<Locale> getLocales() {
-        return FluentIterable.from(getLocalizedStrings()).transform(str -> str.getLocale()).toList();
+        return FluentIterable.from(getLocalizedStrings()).transform(StringWithLocale::getLocale).toList();
     }
 
     /**

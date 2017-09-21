@@ -80,7 +80,7 @@ class BaseConnectionStrategy implements FreightConnectionStrategy {
     private void getFreightToNodesImpl(Node start, TimeInterval fromInterval, List<TrainConnection> path,
             List<FreightConnectionPath> result, Set<FNConnection> used, FreightConnectionFilter filter,
             FilterContext context) {
-        FilterResult filterResult = FilterResult.OK;
+        FilterResult filterResult;
         Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
         Iterators.find(intervals, interval -> interval == fromInterval);
         intervals = Iterators.filter(intervals,

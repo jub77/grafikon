@@ -88,8 +88,7 @@ public class CopyFactory {
     }
 
     public LineClass copy(LineClass lineClass, String id) {
-        LineClass copy = new LineClass(id, lineClass.getName());
-        return copy;
+        return new LineClass(id, lineClass.getName());
     }
 
     public TrainTypeCategory copy(TrainTypeCategory category, String id) {

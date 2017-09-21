@@ -55,8 +55,7 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
         }
         FilterResult parentResult = parent.accepted(context, dst, level + 1);
         FilterResult currentResult = getCurrentResult(context, dst);
-        FilterResult result = currentResult.combine(parentResult);
-        return result;
+        return currentResult.combine(parentResult);
     }
 
     private FilterResult getCurrentResult(FilterContext context, FreightConnection dst) {

@@ -32,7 +32,6 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
 
     List<Pair<DiagramChange, ChangesTrackerEvent.Type>> addChange(DiagramChange change) {
         // add change
-        // TODO implementation of logic missing
         // look for existing changes
         List<DiagramChange> existing = getChangesForId(change.getObjectId());
         List<Pair<DiagramChange, ChangesTrackerEvent.Type>> returning = new LinkedList<>();
@@ -42,9 +41,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
             for (DiagramChange ex : existing) {
                 // logic
                 boolean add = shouldAdd(change, ex);
-                if (add) {
-                    if (ex.getAction() == Action.MODIFIED && change.getAction() == Action.MODIFIED)
-                        addTo = ex;
+                if (add && ex.getAction() == Action.MODIFIED && change.getAction() == Action.MODIFIED) {
+                    addTo = ex;
                 }
                 shouldAdd &= add;
                 if (shouldRemove(change, ex)) {

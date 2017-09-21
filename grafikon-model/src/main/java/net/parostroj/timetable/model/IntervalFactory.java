@@ -7,7 +7,9 @@ import net.parostroj.timetable.utils.TimeUtil;
  *
  * @author jub
  */
-public class IntervalFactory {
+public final class IntervalFactory {
+
+    private IntervalFactory() {}
 
     public static Interval createInterval(int start, int end) {
         int length = end - start;

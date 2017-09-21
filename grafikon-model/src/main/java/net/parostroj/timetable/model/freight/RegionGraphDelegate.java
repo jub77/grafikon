@@ -53,11 +53,10 @@ class RegionGraphDelegate {
     }
 
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
-        Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
+        return stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
-                .map(i -> strategy.getFreightToNodesNet(i))
+                .map(strategy::getFreightToNodesNet)
                 .flatMap(this::toDirectRegionConnections);
-        return list;
     }
 
     private Stream<FreightConnectionPath> toDirectRegionConnections(List<FreightConnectionPath> l) {
@@ -246,7 +245,7 @@ class RegionGraphDelegate {
         @Override
         public String toString() {
             return String.format("%s->%s:%d:%s", getSource(), getTarget(), computeWeight(),
-                    connections.stream().map(cl -> getTrains(cl)).collect(joining(",")));
+                    connections.stream().map(this::getTrains).collect(joining(",")));
         }
 
         private String getTrains(List<TrainConnection> conn) {

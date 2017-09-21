@@ -48,7 +48,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public TrainsCycleType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.cycles = new ItemWithIdSetImpl<TrainsCycle>(
+        this.cycles = new ItemWithIdSetImpl<>(
                 (type, item) -> {
                     if (type == Event.Type.REMOVED) {
                         item.clear();
@@ -113,8 +113,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         ResourceBundle bundle = ResourceBundleUtil.getBundle(
                 "net.parostroj.timetable.model.cycle_type_texts",
                 TrainsCycleType.class.getClassLoader(), locale, locale);
-        String text = bundle.getString(key);
-        return text;
+        return bundle.getString(key);
     }
 
     @Override

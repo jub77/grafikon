@@ -119,9 +119,8 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public DiagramChangeSet addVersion(String version, String author, Calendar date) {
-        if (version == null)
-            version = createVersion();
-        _currentChangeSet = new DiagramChangeSetImpl(version, author, date);
+        String aVersion = version != null ? version : createVersion();
+        _currentChangeSet = new DiagramChangeSetImpl(aVersion, author, date);
         this.sets.add(_currentChangeSet);
         this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, _currentChangeSet));
         return _currentChangeSet;
@@ -168,10 +167,12 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
         // get last version
         String lastVersion = null;
         List<String> versions = getVersions();
-        if (versions.size() > 0)
+        if (!versions.isEmpty()) {
             lastVersion = versions.get(versions.size() - 1);
-        if (lastVersion == null)
+        }
+        if (lastVersion == null) {
             lastVersion = "0";
+        }
         try {
             int ilv = Integer.parseInt(lastVersion);
             ilv++;

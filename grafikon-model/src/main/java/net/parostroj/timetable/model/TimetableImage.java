@@ -1,6 +1,6 @@
 /*
  * TimetableImage.java
- * 
+ *
  * Created on 23.9.2007, 9:13:55
  */
 package net.parostroj.timetable.model;
@@ -11,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Image information.
- * 
+ *
  * @author jub
  */
 public class TimetableImage implements ObjectWithId, Visitable {
@@ -73,10 +73,7 @@ public class TimetableImage implements ObjectWithId, Visitable {
             return false;
         }
         final TimetableImage other = (TimetableImage) obj;
-        if ((Object)this.filename != other.filename && (this.filename == null || !this.filename.equals(other.filename))) {
-            return false;
-        }
-        return true;
+        return !(this.filename != other.filename && (this.filename == null || !this.filename.equals(other.filename)));
     }
 
     @Override

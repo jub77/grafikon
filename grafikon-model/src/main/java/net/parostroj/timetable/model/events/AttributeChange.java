@@ -49,8 +49,8 @@ public class AttributeChange {
     }
 
     public boolean checkName(String... names) {
-        for (String name : names) {
-            if (this.name.equals(name)) {
+        for (String aName : names) {
+            if (this.name.equals(aName)) {
                 return true;
             }
         }
@@ -71,7 +71,7 @@ public class AttributeChange {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder('[');
+        StringBuilder b = new StringBuilder("[");
         b.append(name);
         if (category != null)
             b.append(',').append(category);

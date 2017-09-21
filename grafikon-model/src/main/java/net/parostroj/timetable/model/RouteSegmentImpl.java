@@ -23,13 +23,13 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
 
     public RouteSegmentImpl(String id) {
         this.id = id;
-        this.tracks = new LinkedList<T>();
+        this.tracks = new LinkedList<>();
         this.listenerSupport = new ListenerSupport();
     }
 
     @Override
     public Iterator<TimeInterval> iterator() {
-        return Iterators.concat(Iterators.transform(tracks.iterator(), track -> track.iterator()));
+        return Iterators.concat(Iterators.transform(tracks.iterator(), Track::iterator));
     }
 
     @Override

@@ -10,12 +10,6 @@ import java.util.*;
 public class TimeIntervalList extends ArrayList<TimeInterval> {
 
     /**
-     * Default constructor.
-     */
-    public TimeIntervalList() {
-    }
-
-    /**
      * returns time interval relative to the one passed as an argument.
      *
      * @param i reference interval

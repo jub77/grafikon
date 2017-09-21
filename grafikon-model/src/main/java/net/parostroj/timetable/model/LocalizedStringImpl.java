@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 
 /**
@@ -51,6 +52,11 @@ class LocalizedStringImpl implements LocalizedString {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(defaultString, localizedStrings);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof LocalizedStringImpl)) return false;
         LocalizedStringImpl ls = (LocalizedStringImpl) obj;
@@ -63,7 +69,7 @@ class LocalizedStringImpl implements LocalizedString {
         return !i.hasNext() && !li.hasNext();
     }
 
-    final static class StringWithLocaleImpl implements StringWithLocale {
+    static final class StringWithLocaleImpl implements StringWithLocale {
 
         private final String string;
         private final Locale locale;
@@ -81,6 +87,11 @@ class LocalizedStringImpl implements LocalizedString {
         @Override
         public Locale getLocale() {
             return locale;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(string, locale);
         }
 
         @Override

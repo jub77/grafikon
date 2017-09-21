@@ -202,27 +202,22 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
         if (direction == TimeIntervalDirection.FORWARD) {
             return tracks;
         } else {
-            return new Iterable<LineTrack>() {
+            return () -> new Iterator<LineTrack>() {
+                private final ListIterator<LineTrack> i = tracks.listIterator(tracks.size());
+
                 @Override
-                public Iterator<LineTrack> iterator() {
-                    return new Iterator<LineTrack>() {
-                        private final ListIterator<LineTrack> i = tracks.listIterator(tracks.size());
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
 
-                        @Override
-                        public void remove() {
-                            throw new UnsupportedOperationException();
-                        }
+                @Override
+                public LineTrack next() {
+                    return i.previous();
+                }
 
-                        @Override
-                        public LineTrack next() {
-                            return i.previous();
-                        }
-
-                        @Override
-                        public boolean hasNext() {
-                            return i.hasPrevious();
-                        }
-                    };
+                @Override
+                public boolean hasNext() {
+                    return i.hasPrevious();
                 }
             };
         }

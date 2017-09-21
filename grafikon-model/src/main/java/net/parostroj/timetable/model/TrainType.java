@@ -193,15 +193,13 @@ public class TrainType
 
     public TextTemplate getNameTemplate(NameType nameType) {
         if (nameType == NameType.COMPLETE) {
-            TextTemplate template = (trainCompleteNameTemplate == null) ?
-                    getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
-                        trainCompleteNameTemplate;
-                    return template;
+            return (trainCompleteNameTemplate == null) ?
+                            getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
+                                trainCompleteNameTemplate;
         } else {
-            TextTemplate template = (trainNameTemplate == null) ?
-                    getDiagram().getTrainsData().getTrainNameTemplate() :
-                        trainNameTemplate;
-                    return template;
+            return (trainNameTemplate == null) ?
+                            getDiagram().getTrainsData().getTrainNameTemplate() :
+                                trainNameTemplate;
         }
     }
 

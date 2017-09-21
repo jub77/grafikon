@@ -7,7 +7,7 @@ import net.parostroj.timetable.utils.TimeUtil;
  *
  * @author jub
  */
-final public class IntervalNonNormalizedImpl extends IntervalImpl {
+public final class IntervalNonNormalizedImpl extends IntervalImpl {
 
     private final Interval normalized;
 

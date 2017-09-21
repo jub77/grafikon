@@ -51,7 +51,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.name = name;
         this.description = description;
         this.type = type;
-        this.items = new LinkedList<TrainsCycleItem>();
+        this.items = new LinkedList<>();
         listenerSupport = new ListenerSupport();
         attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(TrainsCycle.this, change)));
@@ -133,13 +133,13 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void moveForwardInSequence() {
-        TrainsCycle next = getNext();
-        TrainsCycle afterNext = next.getNext();
-        if (next != this && afterNext != this) {
+        TrainsCycle lNext = getNext();
+        TrainsCycle afterNext = lNext.getNext();
+        if (lNext != this && afterNext != this) {
             // more than 2 circulations
-            TrainsCycle previous = getPrevious();
-            connectTwo(previous, next);
-            connectTwo(next, this);
+            TrainsCycle lPrevious = getPrevious();
+            connectTwo(lPrevious, lNext);
+            connectTwo(lNext, this);
             connectTwo(this, afterNext);
         }
         // fire event
@@ -184,9 +184,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     private static Consumer<TrainsCycle> getSendChangedSequence() {
-        return tc -> {
-            tc.fireEvent(new Event(tc, Special.SEQUENCE));
-        };
+        return tc -> tc.fireEvent(new Event(tc, Special.SEQUENCE));
     }
 
     @Override

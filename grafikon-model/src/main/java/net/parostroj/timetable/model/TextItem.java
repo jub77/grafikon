@@ -12,7 +12,7 @@ import net.parostroj.timetable.visitors.Visitable;
  */
 public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes, Observable {
 
-    public static enum Type {
+    public enum Type {
         PLAIN_TEXT("plain");
 
         private String key;
@@ -121,6 +121,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
      *
      * @param listener listener
      */
+    @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
@@ -130,6 +131,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
      *
      * @param listener listener
      */
+    @Override
     public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }

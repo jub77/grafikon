@@ -344,12 +344,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             }
         }
         // test technological times
-        if ((timeBefore != null && timeBefore.isOverlapping()) ||
-                (timeAfter != null && timeAfter.isOverlapping())) {
-            return true;
-        }
-        // no conflict found
-        return false;
+        return ((timeBefore != null && timeBefore.isOverlapping()) ||
+                (timeAfter != null && timeAfter.isOverlapping()));
     }
 
     /**
@@ -454,7 +450,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             if (isAttached()) {
                 timeBefore.addToOwnerWithoutCheck();
             }
-        } else if (length != 0 && timeBefore != null) {
+        } else if (length != 0) {
             TimeInterval firstInterval = this.getFirstInterval();
             // recalculate time
             timeBefore.setStart(firstInterval.getStart() - length + 1);
@@ -491,7 +487,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             if (isAttached()) {
                 timeAfter.addToOwnerWithoutCheck();
             }
-        } else if (length != 0 && timeAfter != null) {
+        } else if (length != 0) {
             TimeInterval lastInterval = this.getLastInterval();
             // recalculate time
             timeAfter.setStart(lastInterval.getEnd() + 1);
@@ -784,10 +780,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list of intervals
      */
     public List<TimeInterval> getIntervals(TimeInterval from, TimeInterval to) {
-        if (from == null) from = this.getFirstInterval();
-        if (to == null) to = this.getLastInterval();
-        int fromIndex = timeIntervalList.indexOf(from);
-        int toIndex = timeIntervalList.indexOf(to);
+        TimeInterval lFrom = from == null ? this.getFirstInterval() : from;
+        TimeInterval lTo = to == null ? this.getLastInterval() : to;
+        int fromIndex = timeIntervalList.indexOf(lFrom);
+        int toIndex = timeIntervalList.indexOf(lTo);
         if (fromIndex == -1 || toIndex == -1) {
             throw new IllegalArgumentException("Interval not part of the train.");
         }

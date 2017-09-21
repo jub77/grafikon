@@ -26,27 +26,9 @@ public abstract class IntervalImpl implements Interval {
     }
 
     @Override
-    public abstract int getNormalizedStart();
-
-    @Override
-    public abstract int getNormalizedEnd();
-
-    @Override
     public int getLength() {
         return end - start;
     }
-
-    @Override
-    public abstract Interval normalize();
-
-    @Override
-    public abstract boolean isNormalized();
-
-    @Override
-    public abstract boolean isOverMidnight();
-
-    @Override
-    public abstract boolean isOverThreshold(int threshold);
 
     @Override
     public int compareOpen(Interval o) {
@@ -67,15 +49,16 @@ public abstract class IntervalImpl implements Interval {
         Interval oMidnight = oNormalized.getNonNormalizedIntervalOverMidnight();
 
         if (tMidnight != null) {
-            if (tMidnight.compareOpen(oNormalized) == 0)
+            if (tMidnight.compareOpen(oNormalized) == 0) {
                 return 0;
-            if (oMidnight != null && tMidnight.compareOpen(oMidnight) == 0)
+            }
+            if (oMidnight != null && tMidnight.compareOpen(oMidnight) == 0) {
                 return 0;
+            }
         }
 
-        if (oMidnight != null) {
-            if (tNormalized.compareOpen(oMidnight) == 0)
-                return 0;
+        if (oMidnight != null && tNormalized.compareOpen(oMidnight) == 0) {
+            return 0;
         }
 
         // if not overlapped then compare the ones with normalized start time
@@ -102,27 +85,22 @@ public abstract class IntervalImpl implements Interval {
         Interval oMidnight = oNormalized.getNonNormalizedIntervalOverMidnight();
 
         if (tMidnight != null) {
-            if (tMidnight.compareClosed(oNormalized) == 0)
+            if (tMidnight.compareClosed(oNormalized) == 0) {
                 return 0;
-            if (oMidnight != null && tMidnight.compareClosed(oMidnight) == 0)
+            }
+            if (oMidnight != null && tMidnight.compareClosed(oMidnight) == 0) {
                 return 0;
+            }
         }
 
-        if (oMidnight != null) {
-            if (tNormalized.compareClosed(oMidnight) == 0)
-                return 0;
+        if (oMidnight != null && tNormalized.compareClosed(oMidnight) == 0) {
+            return 0;
         }
 
         // if not overlapped then compare the ones with normalized start time
         // (always the first ones)
         return tNormalized.compareClosed(oNormalized);
     }
-
-    @Override
-    public abstract Interval getNonNormalizedIntervalOverMidnight();
-
-    @Override
-    public abstract Interval getComplementatyIntervalOverThreshold(int threshold);
 
     @Override
     public int hashCode() {
@@ -144,9 +122,7 @@ public abstract class IntervalImpl implements Interval {
         Interval other = (Interval) obj;
         if (getEnd() != other.getEnd())
             return false;
-        if (getStart() != other.getStart())
-            return false;
-        return true;
+        return getStart() == other.getStart();
     }
 
     @Override

@@ -12,15 +12,15 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Map<FreightColor, Region> getFreightColorMap() {
         return this
-                .findInRegions(r -> r.isFreightColorRegion())
-                .map(r -> r.getFreightColorMap())
+                .findInRegions(Region::isFreightColorRegion)
+                .map(Region::getFreightColorMap)
                 .orElse(Collections.emptyMap());
     }
 
     @Override
     public Region getFreightColorRegion() {
         return this
-                .findInRegions(r -> r.isFreightColorRegion())
+                .findInRegions(Region::isFreightColorRegion)
                 .orElse(null);
     }
 

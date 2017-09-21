@@ -14,7 +14,7 @@ public abstract class Script {
 
     private static final Logger log = LoggerFactory.getLogger(Script.class);
 
-    public static enum Language {
+    public enum Language {
         GROOVY, JAVASCRIPT;
     }
 
@@ -73,10 +73,7 @@ public abstract class Script {
         if ((this.sourceCode == null) ? (other.sourceCode != null) : !this.sourceCode.equals(other.sourceCode)) {
             return false;
         }
-        if (this.language != other.language) {
-            return false;
-        }
-        return true;
+        return this.language == other.language;
     }
 
     @Override

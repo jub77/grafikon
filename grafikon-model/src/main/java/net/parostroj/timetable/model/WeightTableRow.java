@@ -21,7 +21,7 @@ public class WeightTableRow {
     WeightTableRow(EngineClass engineClass, int speed) {
         this.engineClass = engineClass;
         this.speed = speed;
-        weights = new HashMap<LineClass, Integer>();
+        weights = new HashMap<>();
     }
 
     public Map<LineClass, Integer> getWeights() {

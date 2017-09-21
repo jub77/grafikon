@@ -80,8 +80,8 @@ class NodeFreightImpl implements NodeFreight {
                     .map(FreightConnectionVia::getTransport)
                     .reduce(Transport::merge)
                     .get();
-            Node from = connections.stream().findAny().map(FreightConnectionVia::getFrom).get();
-            return FreightFactory.createFreightNodeConnection(from, destination, transport);
+            Node lFrom = connections.stream().findAny().map(FreightConnectionVia::getFrom).get();
+            return FreightFactory.createFreightNodeConnection(lFrom, destination, transport);
         }
     }
 

@@ -49,10 +49,10 @@ public class FreightNet
         this.id = id;
         this.diagram = diagram;
         this.listenerSupport = new ListenerSupport();
-        this.defaultAttributesListener = (attributes, change) -> {
+        this.defaultAttributesListener = (attrs, change) -> {
             Event event = null;
-            if (attributes instanceof FNConnection) {
-                event = new Event(FreightNet.this, attributes, change);
+            if (attrs instanceof FNConnection) {
+                event = new Event(FreightNet.this, attrs, change);
             } else {
                 // clean cached strategy object in case strategy changes
                 if (change.checkName(ATTR_CONNECTION_STRATEGY_TYPE, ATTR_CUSTOM_CONNECTION_FILTER)) {

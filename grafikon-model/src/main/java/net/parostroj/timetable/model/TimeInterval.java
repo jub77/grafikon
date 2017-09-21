@@ -188,13 +188,13 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     @Override
     public String toString() {
         TimeConverter converter = this.getTrain().getDiagram().getTimeConverter();
-        String owner = getOwner() != null ?
+        String ownerStr = getOwner() != null ?
                 (isNodeOwner() ? getOwner().toString() : getOwnerAsLine().toString(getDirection()))
                 : "-";
         return getStart() != getEnd()
-                ? String.format("%s[%s](%s,%s)", owner, getTrain().getName().translate(),
+                ? String.format("%s[%s](%s,%s)", ownerStr, getTrain().getName().translate(),
                         converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()))
-                : String.format("%s[%s](%s)", owner, getTrain().getName().translate(),
+                : String.format("%s[%s](%s)", ownerStr, getTrain().getName().translate(),
                         converter.convertIntToText(getStart()));
     }
 
@@ -274,7 +274,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @return <code>true</code> if there is overlapping interval
      */
     public boolean isOverlapping() {
-        return (overlappingIntervals != null) && (overlappingIntervals.size() > 0);
+        return (overlappingIntervals != null) && !overlappingIntervals.isEmpty();
     }
 
     /**

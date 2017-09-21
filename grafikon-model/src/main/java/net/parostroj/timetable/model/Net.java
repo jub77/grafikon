@@ -38,13 +38,12 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     public Net(String id, TrainDiagram diagram) {
         this.itemLists = new LinkedList<>();
         this.netDelegate = new ListenableUndirectedGraph<>(Line.class);
-        this.lineClasses = new ItemWithIdListImpl<>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.lineClasses = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.regions = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
-        this.listener = event -> this.fireNestedEvent(event);
+        this.listener = this::fireNestedEvent;
         this.id = id;
         this.diagram = diagram;
         Collections.addAll(itemLists, lineClasses, regions);
