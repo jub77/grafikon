@@ -1,5 +1,14 @@
 package net.parostroj.timetable.model.events;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 /**
  * The information about attribute value change.
  *
@@ -18,8 +27,8 @@ public class AttributeChange {
 
     public AttributeChange(String name, Object oldValue, Object newValue, String category) {
         this.name = name;
-        this.oldValue = oldValue;
-        this.newValue = newValue;
+        this.oldValue = createCopyIfNeeded(oldValue);
+        this.newValue = createCopyIfNeeded(newValue);
         this.category = category;
     }
 
@@ -46,6 +55,18 @@ public class AttributeChange {
             }
         }
         return false;
+    }
+
+    private Object createCopyIfNeeded(Object value) {
+        if (value instanceof Set) {
+            return ImmutableSet.copyOf((Collection<?>) value);
+        } else if (value instanceof List) {
+            return ImmutableList.copyOf((Iterable<?>) value);
+        } else if (value instanceof Map) {
+            return ImmutableMap.copyOf((Map<?, ?>) value);
+        } else {
+            return value;
+        }
     }
 
     @Override
