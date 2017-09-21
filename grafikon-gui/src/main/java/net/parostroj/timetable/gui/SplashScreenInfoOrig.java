@@ -18,7 +18,8 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
 
     private static final Logger log = LoggerFactory.getLogger(SplashScreenInfoOrig.class);
 
-    private final int x,  y;
+    private final int x;
+    private final int y;
     private final SplashScreen splash;
 
     public SplashScreenInfoOrig(SplashScreen splash, int x, int y) {
@@ -41,7 +42,7 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
             int posY = y;
             int incY = (int)g.getFont().getStringBounds("YMHC", g.getFontRenderContext()).getHeight() + 3;
             for (String str : texts) {
-                log.trace(String.format("Text %d,%d,%s", x, posY, str));
+                log.trace("Text {},{},{}", x, posY, str);
                 g.drawString(str, x, posY);
                 posY += incY;
             }

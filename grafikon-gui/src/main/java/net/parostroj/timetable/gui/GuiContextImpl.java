@@ -33,9 +33,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     @Override
     public Section saveToPreferences(Ini prefs) {
         Section section = AppPreferences.getSection(prefs, INI_SECTION);
-        dataMap.entrySet().forEach(entry -> {
-            section.put(entry.getKey(), this.dataToString(entry.getValue()));
-        });
+        dataMap.entrySet().forEach(entry -> section.put(entry.getKey(), this.dataToString(entry.getValue())));
         preferencesMap.entrySet().forEach(entry -> {
             Section windowSection = AppPreferences.getSection(prefs, entry.getKey());
             if (entry.getValue() == null) {
@@ -51,9 +49,8 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     @Override
     public Section loadFromPreferences(Ini prefs) {
         Section section = AppPreferences.getSection(prefs, INI_SECTION);
-        section.entrySet().stream().forEach(entry -> {
-            dataMap.put(entry.getKey(), this.dataFromString(entry.getValue()));
-        });
+        section.entrySet().stream().forEach(
+                entry -> dataMap.put(entry.getKey(), this.dataFromString(entry.getValue())));
 
         this.preferences = prefs;
 

@@ -207,7 +207,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      * @param modelChanged model is changed
      */
     public void setModelChanged(boolean modelChanged) {
-        if (modelChanged == true && this.modelChanged == false) {
+        if (modelChanged && !this.modelChanged) {
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_CHANGED, this));
         }
         this.modelChanged = modelChanged;
@@ -291,7 +291,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     private void deserializeOutputTemplates(String string) {
-        String entries[] = string.split("\\|");
+        String[] entries = string.split("\\|");
         for (String entry : entries) {
             if (entry.equals(""))
                 continue;
@@ -320,12 +320,12 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         return this.locale.getValue();
     }
 
-    public LinkedList<File> getLastOpenedFiles() {
+    public List<File> getLastOpenedFiles() {
         return lastOpenedFiles;
     }
 
-    public void setLastOpenedFiles(LinkedList<File> lastOpenedFiles) {
-        this.lastOpenedFiles = lastOpenedFiles;
+    public void setLastOpenedFiles(List<File> lastOpenedFiles) {
+        this.lastOpenedFiles = new LinkedList<>(lastOpenedFiles);
     }
 
     public void addLastOpenedFile(File file) {

@@ -10,12 +10,14 @@ import org.ini4j.Ini;
  *
  * @author jub
  */
-public class AppPreferences {
+public final class AppPreferences {
 
     private static final String PREFERENCES_NAME = ".grafikonrc";
     private static Ini instance = null;
 
-    public synchronized static Ini getPreferences() throws IOException {
+    private AppPreferences() {}
+
+    public static synchronized Ini getPreferences() throws IOException {
         if (instance == null) {
             instance = new Ini();
             instance.getConfig().setEscape(false);
@@ -25,7 +27,7 @@ public class AppPreferences {
         return instance;
     }
 
-    public synchronized static Ini.Section getSection(String name) throws IOException {
+    public static synchronized Ini.Section getSection(String name) throws IOException {
         Ini ini = getPreferences();
         return getSection(ini, name);
     }
@@ -37,7 +39,7 @@ public class AppPreferences {
         return ini.get(name);
     }
 
-    public synchronized static void storePreferences() throws IOException {
+    public static synchronized void storePreferences() throws IOException {
         if (instance != null) {
             save(instance);
         }

@@ -23,5 +23,7 @@ public class ApplicationGTEventColleague extends GTEventsReceiverColleague {
         }
     }
 
-    public void processApplicationEvent(ApplicationModelEvent event) {}
+    public void processApplicationEvent(ApplicationModelEvent event) {
+        // no implementation
+    }
 }

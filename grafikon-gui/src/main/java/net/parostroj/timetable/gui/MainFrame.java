@@ -74,7 +74,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private ExecuteScriptAction executeScriptAction;
 
     private Map<File, JMenuItem> lastOpened;
-    private final List<Component> enabled = new ArrayList<>();
+    private final List<Component> enabledComponents = new ArrayList<>();
     private final VersionInfo versionInfo;
 
     public MainFrame(SplashScreenInfo info) {
@@ -122,7 +122,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s\n%s", versionInfo.getVersion().toString(), txt);
+        return String.format("%s%n%s", versionInfo.getVersion().toString(), txt);
     }
 
     public MainFrame() {
@@ -317,7 +317,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void updateView() {
         boolean notNullDiagram = model.getDiagram() != null;
-        for (Component c : enabled) {
+        for (Component c : enabledComponents) {
             c.setEnabled(notNullDiagram);
         }
     }
@@ -414,20 +414,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         diagramMenu.setText(ResourceLoader.getString("menu.diagram")); // NOI18N
 
-        this.addMenuItemWithListener(diagramMenu, "menu.file.settings", evt -> settingsMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.info", evt -> infoMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.traintypes", evt -> trainTypesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.lineclasses", evt -> lineClassesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.weighttables", evt -> weightTablesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.penaltytable", evt -> penaltyTableMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.regions", evt -> regionsMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.companies", evt -> companiesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "localization.languages", evt -> languagesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.localization", evt -> localizationMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.settings", this::settingsMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.info", this::infoMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.traintypes", this::trainTypesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.lineclasses", this::lineClassesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.weighttables", this::weightTablesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.penaltytable", this::penaltyTableMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.regions", this::regionsMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.companies", this::companiesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "localization.languages", this::languagesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.localization", this::localizationMenuItemActionPerformed, true); // NOI18N
         this.addMenuItem(diagramMenu, "menu.groups", new EditGroupsAction(model), null);
-        this.addMenuItemWithListener(diagramMenu, "menu.file.images", evt -> imagesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "menu.file.textitems", evt -> textItemsMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(diagramMenu, "gt.routes.edit", evt -> editRoutesMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.images", this::imagesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "menu.file.textitems", this::textItemsMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "gt.routes.edit", this::editRoutesMenuItemActionPerformed, true); // NOI18N
 
 
         menuBar.add(diagramMenu);
@@ -438,8 +438,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(oLanguageMenuItem);
 
-        this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", evt -> ouputTemplatesMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", evt -> ouputMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", this::ouputTemplatesMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", this::ouputMenuItemActionPerformed, true); // NOI18N
 
         menuBar.add(actionMenu);
 
@@ -468,15 +468,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.addMenuItemWithListener(settingsMenu, "menu.settings.resize.columns", evt -> trainsPane.resizeColumns(), false); // NOI18N
 
 
-        showGTViewMenuItem = this.addCheckMenuItem(settingsMenu, "menu.settings.show.gtview", evt -> showGTViewMenuItemActionPerformed(evt), null, true); // NOI18N
+        showGTViewMenuItem = this.addCheckMenuItem(settingsMenu, "menu.settings.show.gtview", this::showGTViewMenuItemActionPerformed, null, true); // NOI18N
 
-        this.addMenuItemWithListener(settingsMenu, "menu.program.settings", evt -> programSettingsMenuItemActionPerformed(evt), false); // NOI18N
+        this.addMenuItemWithListener(settingsMenu, "menu.program.settings", this::programSettingsMenuItemActionPerformed, false); // NOI18N
 
         menuBar.add(settingsMenu);
 
         helpMenu.setText(ResourceLoader.getString("menu.help")); // NOI18N
 
-        this.addMenuItemWithListener(helpMenu, "menu.help.about", evt -> aboutMenuItemActionPerformed(evt), false); // NOI18N
+        this.addMenuItemWithListener(helpMenu, "menu.help.about", this::aboutMenuItemActionPerformed, false); // NOI18N
 
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(helpMenu);
@@ -484,9 +484,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         setJMenuBar(menuBar);
 
         // enabled list
-        enabled.add(tabbedPane);
-        enabled.add(scriptsMenuModel);
-        enabled.add(scriptsMenuGui);
+        enabledComponents.add(tabbedPane);
+        enabledComponents.add(scriptsMenuModel);
+        enabledComponents.add(scriptsMenuGui);
 
         setMinimumSize(new java.awt.Dimension(800, 600));
         setSize(getMinimumSize());
@@ -550,7 +550,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         item.addActionListener(action);
         menu.add(item);
         if (enableHandled) {
-            enabled.add(item);
+            enabledComponents.add(item);
         }
         return item;
     }
@@ -573,7 +573,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         item.setActionCommand(actionCommand);
         menu.add(item);
         if (enableHandled) {
-            enabled.add(item);
+            enabledComponents.add(item);
         }
         return item;
     }

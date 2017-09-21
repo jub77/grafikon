@@ -22,24 +22,19 @@ public class LanguageMenuBuilder {
     }
 
     public List<Pair<JRadioButtonMenuItem, Locale>> createLanguageMenuItems(String systemLanguage, LanguagesType type) {
-        List<Pair<JRadioButtonMenuItem, Locale>> languages = new ArrayList<Pair<JRadioButtonMenuItem, Locale>>();
+        List<Pair<JRadioButtonMenuItem, Locale>> languages = new ArrayList<>();
 
         // load languages
         Map<Locale, String> lMap = languageLoader.createMap(languageLoader.getLocales(type), systemLanguage);
         for (Map.Entry<Locale, String> locale : lMap.entrySet()) {
-            languages.add(new Pair<JRadioButtonMenuItem, Locale>(new JRadioButtonMenuItem(locale.getValue()), locale.getKey()));
+            languages.add(new Pair<>(new JRadioButtonMenuItem(locale.getValue()), locale.getKey()));
         }
         return this.sort(languages);
     }
 
     private List<Pair<JRadioButtonMenuItem, Locale>> sort(List<Pair<JRadioButtonMenuItem, Locale>> items) {
-        Collections.sort(items, new Comparator<Pair<JRadioButtonMenuItem, Locale>>() {
-            @Override
-            public int compare(Pair<JRadioButtonMenuItem, Locale> o1, Pair<JRadioButtonMenuItem, Locale> o2) {
-                return o1.second == null ? (o2.second == null ? 0 : -1) : (o2.second == null ? 1 : o1.second.toString()
-                        .compareTo(o2.second.toString()));
-            }
-        });
+        Collections.sort(items, (o1, o2) -> o1.second == null ? (o2.second == null ? 0 : -1)
+                : (o2.second == null ? 1 : o1.second.toString().compareTo(o2.second.toString())));
         return items;
     }
 }

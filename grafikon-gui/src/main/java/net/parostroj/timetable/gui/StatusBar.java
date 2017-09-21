@@ -6,8 +6,6 @@
 package net.parostroj.timetable.gui;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Date;
 
 import javax.swing.Timer;
@@ -46,12 +44,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         updateLeft("");
         updateCenter("");
         updateRight("");
-        timer = new Timer(TIMEOUT, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateCenter("");
-            }
-        });
+        timer = new Timer(TIMEOUT, e -> updateCenter(""));
         timer.setRepeats(false);
     }
 
@@ -198,16 +191,14 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     private void updateCenter(String text) {
-        text = ObjectsUtil.checkAndTrim(text);
-        center.setText(text);
+        String updateText = ObjectsUtil.checkAndTrim(text);
+        center.setText(updateText);
         center.setCaretPosition(0);
-        if (text != null) {
-            // start timer
-            if (timer != null) {
-                timer.stop();
-                timer.setInitialDelay(TIMEOUT);
-                timer.start();
-            }
+        if (updateText != null && timer != null) {
+            // restart timer
+            timer.stop();
+            timer.setInitialDelay(TIMEOUT);
+            timer.start();
         }
     }
 

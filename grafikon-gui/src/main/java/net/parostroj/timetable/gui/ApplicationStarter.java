@@ -29,7 +29,8 @@ public class ApplicationStarter<T extends JFrame> {
 
     private Class<T> applicationClass;
     private Image image;
-    private int x,y;
+    private int x;
+    private int y;
     private AfterStartAction<T> action;
 
     private ApplicationStarter(Class<T> applicationClass, int x, int y) {

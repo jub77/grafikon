@@ -41,6 +41,7 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
             this.setSplashPosition();
         } catch (InterruptedException ex) {
             log.error(ex.getMessage(), ex);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -67,14 +68,14 @@ class ImagePanel extends JPanel {
     private static final Logger log = LoggerFactory.getLogger(ImagePanel.class);
 
     private final Image image;
-    private final int x;
-    private final int y;
+    private final int splashX;
+    private final int splashY;
     private String[] text;
 
     public ImagePanel(int x, int y, Image image) {
         this.image = image;
-        this.x = x;
-        this.y = y;
+        this.splashX = x;
+        this.splashY = y;
     }
 
     public void setText(String text) {
@@ -92,11 +93,11 @@ class ImagePanel extends JPanel {
         if (text != null) {
             g.setFont(new Font("SansSerif", Font.BOLD, 11).deriveFont(11.5f));
             g.setColor(Color.BLACK);
-            int posY = y;
+            int posY = splashY;
             int incY = (int)g.getFont().getStringBounds("YMHC", g2d.getFontRenderContext()).getHeight() + 3;
             for (String str : text) {
-                log.trace(String.format("Text %d,%d,%s", x, posY, str));
-                g.drawString(str, x, posY);
+                log.trace("Text {},{},{}", splashX, posY, str);
+                g.drawString(str, splashX, posY);
                 posY += incY;
             }
         }
