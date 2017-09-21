@@ -64,7 +64,7 @@ public class TrainsCycleChecker {
     }
 
     public List<Conflict> checkConflicts(TrainsCycle cycle) {
-        List<Conflict> conflicts = new LinkedList<Conflict>();
+        List<Conflict> conflicts = new LinkedList<>();
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
         TrainsCycleItem last = null;
         TrainsCycleItem first = null;

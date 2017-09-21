@@ -51,7 +51,7 @@ public class ScriptsLoader {
                 InputStream stream = ScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
                 ScriptList scriptList = (ScriptList) unmarshaller.unmarshal(stream);
                 List<ScriptDescription> sList = scriptList.getScripts();
-                scriptActions = new LinkedHashMap<String, ScriptAction>(sList.size());
+                scriptActions = new LinkedHashMap<>(sList.size());
                 for (ScriptDescription d : sList) {
                     scriptActions.put(d.getId(), new ScriptActionImpl(location, d));
                 }

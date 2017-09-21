@@ -8,6 +8,8 @@ import net.parostroj.timetable.utils.Pair;
  */
 public final class RouteHelper {
 
+    private RouteHelper() {}
+
     /**
      * Returns route which covers the most intervals for given train.
      *
@@ -31,7 +33,7 @@ public final class RouteHelper {
                 }
             }
             if (cnt > 0 && (selected == null || selected.second < cnt)) {
-                selected = new Pair<Route, Integer>(route, cnt);
+                selected = new Pair<>(route, cnt);
             }
         }
         return selected != null ? selected.first : null;

@@ -12,7 +12,7 @@ import com.google.common.collect.SetMultimap;
  */
 public class Mediator {
 
-    private final Map<Colleague, Class<?>> colleagues = new HashMap<Colleague, Class<?>>();
+    private final Map<Colleague, Class<?>> colleagues = new HashMap<>();
 
     private final SetMultimap<Class<?>, Colleague> colleaguesForClass = HashMultimap.create();
 

@@ -6,9 +6,11 @@ import java.util.Set;
 
 import com.google.common.base.Predicate;
 
-public class ModelPredicates {
+public final class ModelPredicates {
 
-    public static enum PredefinedTrainTypes {
+    private ModelPredicates() {}
+
+    public enum PredefinedTrainTypes {
         FREIGHT("freight"), PASSENGER("passenger");
 
         private final String key;
@@ -23,7 +25,7 @@ public class ModelPredicates {
     }
 
     public static Predicate<Train> managedTrain() {
-        return train -> train.isManagedFreight();
+        return Train::isManagedFreight;
     }
 
     public static <T extends ObjectWithId> Predicate<T> matchId(final String id) {

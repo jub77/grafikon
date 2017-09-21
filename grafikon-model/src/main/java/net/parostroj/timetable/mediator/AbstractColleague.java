@@ -26,6 +26,4 @@ public abstract class AbstractColleague implements ColleagueWithBackReference {
     public Mediator getMediator() {
         return mediator;
     }
-
-    public abstract void receiveMessage(Object message);
 }

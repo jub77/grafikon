@@ -22,11 +22,13 @@ import com.google.common.collect.*;
  *
  * @author jub
  */
-public class TrainsHelper {
+public final class TrainsHelper {
+
+    private TrainsHelper() {}
 
     private static final Logger log = LoggerFactory.getLogger(TrainsHelper.class);
 
-    public static enum NextType {
+    public enum NextType {
         LAST_STATION, FIRST_STATION, BRANCH_STATION;
     }
 
@@ -75,7 +77,7 @@ public class TrainsHelper {
     }
 
     /** Pattern for extracting weight info. */
-    private static Pattern NUMBER = Pattern.compile("\\d+");
+    private static final Pattern NUMBER = Pattern.compile("\\d+");
 
     /**
      * return weight from weight attribute.
@@ -141,7 +143,7 @@ public class TrainsHelper {
             }, (x, y) -> x + y);
 
             if (weight != null) {
-                retValue = new Pair<Integer, Collection<TrainsCycleItem>>(weight, items);
+                retValue = new Pair<>(weight, items);
             }
         }
         return retValue;
@@ -155,22 +157,23 @@ public class TrainsHelper {
      * @return converted length
      */
     public static Integer convertLength(TrainDiagram diagram, Integer length) {
-        if (length == null)
+        Integer convertedLength = length;
+        if (convertedLength == null)
             return null;
         LengthUnit lengthUnit = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
         if (lengthUnit == LengthUnit.AXLE) {
             Integer lpa = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, Integer.class);
             Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
-            length = (length * scale.getRatio()) / lpa;
+            convertedLength = (convertedLength * scale.getRatio()) / lpa;
         } else if (lengthUnit != null) {
-            BigDecimal converted = lengthUnit.convertFrom(new BigDecimal(length), LengthUnit.MM);
+            BigDecimal converted = lengthUnit.convertFrom(new BigDecimal(convertedLength), LengthUnit.MM);
             try {
-                length = UnitUtil.convert(converted);
+                convertedLength = UnitUtil.convert(converted);
             } catch (ArithmeticException e) {
-                log.warn("Couldn't convert value {} to {}: {}", length, lengthUnit.getKey(), e.getMessage());
+                log.warn("Couldn't convert value {} to {}: {}", convertedLength, lengthUnit.getKey(), e.getMessage());
             }
         }
-        return length;
+        return convertedLength;
     }
 
     /**
@@ -276,9 +279,9 @@ public class TrainsHelper {
         }
         TreeSet<Integer> speeds = engineClasses.stream()
                 .flatMap(engineClass -> engineClass.getWeightTable().stream())
-                .map(table -> table.getSpeed())
+                .map(WeightTableRow::getSpeed)
                 .collect(Collectors.toCollection(
-                        () -> new TreeSet<Integer>(Comparator.<Integer>naturalOrder().reversed())));
+                        () -> new TreeSet<>(Comparator.<Integer>naturalOrder().reversed())));
 
         Integer result = null;
         for (Integer speed : speeds) {
@@ -304,7 +307,7 @@ public class TrainsHelper {
      * @return list of engines
      */
     public static List<EngineClass> getEngineClasses(Collection<TrainsCycleItem> list) {
-        ResultList<EngineClass> result = new ResultList<EngineClass>();
+        ResultList<EngineClass> result = new ResultList<>();
         for (TrainsCycleItem item : list) {
             EngineClass eClass = getEngineClass(item);
             if (eClass != null) {
@@ -333,14 +336,14 @@ public class TrainsHelper {
     public static List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> getWeightList(Train train) {
         List<TimeInterval> intervals = train.getTimeIntervalList();
         List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> result =
-            new ArrayList<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>>(intervals.size());
+            new ArrayList<>(intervals.size());
         for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner()) {
                 result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, null, null));
             } else {
                 Integer weight = getWeight(interval);
                 Collection<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);
-                result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, weight, cycles));
+                result.add(new Triplet<>(interval, weight, cycles));
             }
         }
         return result;
@@ -355,11 +358,11 @@ public class TrainsHelper {
     public static List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> getLengthList(Train train) {
         List<TimeInterval> intervals = train.getTimeIntervalList();
         List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> result =
-            new ArrayList<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>>(intervals.size());
+            new ArrayList<>(intervals.size());
         for (TimeInterval interval : intervals) {
             Integer length = getLength(interval);
             Collection<TrainsCycleItem> cycles = interval.isLineOwner() ? getEngineCyclesForInterval(interval) : null;
-            result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, length, cycles));
+            result.add(new Triplet<>(interval, length, cycles));
         }
         return result;
     }
@@ -377,7 +380,7 @@ public class TrainsHelper {
     public static Pair<Node, Integer> getNextLength(Node node, Train train, NextType nextType) {
         Node endNode = getNextNodeByType(node, train, nextType);
         Integer length = getLengthFromTo(node, endNode, train);
-        return length == null ? null : new Pair<Node, Integer>(endNode, length);
+        return length == null ? null : new Pair<>(endNode, length);
     }
 
     /**
@@ -475,6 +478,6 @@ public class TrainsHelper {
         Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.<TimeInterval>find(train.getTimeIntervalList(),
                 interval -> segment.equals(interval.getOwner()), null)), Predicates.notNull());
         Ordering<TimeInterval> sort = Ordering.from((TimeInterval i1, TimeInterval i2) -> i1.getStart() - i2.getStart());
-        return Iterables.transform(sort.sortedCopy(intervals), interval -> interval.getTrain());
+        return Iterables.transform(sort.sortedCopy(intervals), TimeInterval::getTrain);
     }
 }

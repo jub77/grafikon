@@ -110,29 +110,55 @@ public class GTEventsReceiverColleague extends AbstractColleague {
         processGTEventAll(event);
     }
 
-    public void processLineEvent(Event event) {}
+    public void processLineEvent(Event event) {
+        // empty
+    }
 
-    public void processNetEvent(Event event) {}
+    public void processNetEvent(Event event) {
+        // empty
+    }
 
-    public void processNodeEvent(Event event) {}
+    public void processNodeEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainDiagramEvent(Event event) {}
+    public void processTrainDiagramEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainEvent(Event event) {}
+    public void processTrainEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainTypeEvent(Event event) {}
+    public void processTrainTypeEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainsCycleEvent(Event event) {}
+    public void processTrainsCycleEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainsCycleTypeEvent(Event event) {}
+    public void processTrainsCycleTypeEvent(Event event) {
+        // empty
+    }
 
-    public void processFreightNetEvent(Event event) {}
+    public void processFreightNetEvent(Event event) {
+        // empty
+    }
 
-    public void processGTEvent(Event event) {}
+    public void processGTEvent(Event event) {
+        // empty
+    }
 
-    public void processGTEventAll(Event event) {}
+    public void processGTEventAll(Event event) {
+        // empty
+    }
 
-    public void processLineClassEvent(Event event) {}
+    public void processLineClassEvent(Event event) {
+        // empty
+    }
 
-    public void processTrainTypeCategoryEvent(Event event) {}
+    public void processTrainTypeCategoryEvent(Event event) {
+        // empty
+    }
 }

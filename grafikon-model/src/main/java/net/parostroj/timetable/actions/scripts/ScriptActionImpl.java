@@ -35,6 +35,7 @@ class ScriptActionImpl implements ScriptAction {
         return desc.getId();
     }
 
+    @Override
     public String getLocalizedName() {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(location + ".names");
@@ -50,6 +51,7 @@ class ScriptActionImpl implements ScriptAction {
         return desc.getName();
     }
 
+    @Override
     public Script getScript() {
         if (_cachedScript == null) {
             String sLoc = location + "/" + desc.getLocation();
@@ -70,12 +72,12 @@ class ScriptActionImpl implements ScriptAction {
 
     @Override
     public void execute(TrainDiagram diagram, Map<String, Object> binding) throws GrafikonException {
-        Map<String, Object> b = new HashMap<String, Object>(getBinding(diagram, binding));
+        Map<String, Object> b = new HashMap<>(getBinding(diagram, binding));
         getScript().evaluateWithException(b);
     }
 
     private Map<String, Object> getBinding(TrainDiagram diagram, Map<String, Object> params) {
-        HashMap<String, Object> binding = new HashMap<String, Object>();
+        HashMap<String, Object> binding = new HashMap<>();
         if (params != null) {
             binding.putAll(params);
         }

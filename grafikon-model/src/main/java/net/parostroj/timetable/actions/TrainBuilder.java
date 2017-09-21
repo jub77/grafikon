@@ -15,12 +15,6 @@ import net.parostroj.timetable.utils.Tuple;
 public class TrainBuilder {
 
     /**
-     * creates instance..
-     */
-    public TrainBuilder() {
-    }
-
-    /**
      * creates new train with the same data and same route.
      *
      * @param id id
@@ -82,7 +76,7 @@ public class TrainBuilder {
                 ni.setSpeedLimit(oi.getSpeedLimit());
                 ni.setTrack(oi.getTrack());
                 if (first == null) {
-                    first = new Tuple<TimeInterval>(ni, oi);
+                    first = new Tuple<>(ni, oi);
                 }
             }
         }
@@ -115,7 +109,7 @@ public class TrainBuilder {
         train.getAttributes().add(copiedTrain.getAttributes());
 
         // get original intervals in reverse order
-        LinkedList<TimeInterval> reverseIntervals = new LinkedList<TimeInterval>();
+        LinkedList<TimeInterval> reverseIntervals = new LinkedList<>();
         for (TimeInterval interval : copiedTrain.getTimeIntervalList()) {
             reverseIntervals.addFirst(interval);
         }
@@ -168,14 +162,15 @@ public class TrainBuilder {
         this.adjustSpeedsAndStops(data, train, topSpeed, defaultStop);
 
         Node lastNode = null;
+        int currentTime = time;
 
         for (Pair<RouteSegment<?>, Integer> pair : data) {
             TimeInterval interval = null;
             if (pair.first instanceof Node) {
                 // handle node
                 Node node = (Node)pair.first;
-                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, node, time,
-                        time + pair.second, null);
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, node, currentTime,
+                        currentTime + pair.second, null);
                 lastNode = node;
             } else {
                 // handle line
@@ -184,11 +179,12 @@ public class TrainBuilder {
                         (line.getFrom() == lastNode) ?
                             TimeIntervalDirection.FORWARD :
                             TimeIntervalDirection.BACKWARD;
-                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, line, time, time, pair.second, direction, null, 0);
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, line, currentTime, currentTime,
+                        pair.second, direction, null, 0);
             }
 
             // add created interval to train and set current time
-            time = interval.getEnd();
+            currentTime = interval.getEnd();
             train.addInterval(interval);
         }
         train.recalculate();

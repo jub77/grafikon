@@ -13,11 +13,6 @@ import net.parostroj.timetable.utils.Tuple;
  * @author jub
  */
 public class RouteBuilder {
-    /**
-     * creates instence.
-     */
-    public RouteBuilder() {
-    }
 
     /**
      * creates route through all nodes in the list.
