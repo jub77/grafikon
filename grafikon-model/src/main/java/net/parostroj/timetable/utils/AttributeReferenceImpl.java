@@ -63,6 +63,11 @@ class AttributeReferenceImpl<T> implements AttributeReference<T> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(holder, category, name);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof AttributeReferenceImpl)) return false;
         AttributeReferenceImpl<?> ref = (AttributeReferenceImpl<?>) obj;

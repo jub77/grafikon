@@ -11,7 +11,9 @@ import com.google.common.io.ByteSource;
  *
  * @author jub
  */
-public class Conversions {
+public final class Conversions {
+
+    private Conversions() {}
 
     public static Color convertTextToColor(String text) {
         return Color.decode(text);

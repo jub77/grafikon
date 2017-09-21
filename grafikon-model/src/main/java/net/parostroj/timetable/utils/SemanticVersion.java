@@ -15,21 +15,22 @@ public class SemanticVersion {
     private final String build;
 
     public SemanticVersion(String version) {
-        int plusIndex = version.indexOf('+');
+        String lVersion = version;
+        int plusIndex = lVersion.indexOf('+');
         if (plusIndex != -1) {
-            build = version.substring(plusIndex + 1);
-            version = version.substring(0, plusIndex);
+            build = lVersion.substring(plusIndex + 1);
+            lVersion = lVersion.substring(0, plusIndex);
         } else {
             build = null;
         }
-        int hyphenIndex = version.indexOf('-');
+        int hyphenIndex = lVersion.indexOf('-');
         if (hyphenIndex != -1) {
-            prerelease = version.substring(hyphenIndex + 1);
-            version = version.substring(0, hyphenIndex);
+            prerelease = lVersion.substring(hyphenIndex + 1);
+            lVersion = lVersion.substring(0, hyphenIndex);
         } else {
             prerelease = null;
         }
-        String[] parts = version.split("\\.");
+        String[] parts = lVersion.split("\\.");
         major = Integer.parseInt(parts[0]);
         minor = Integer.parseInt(parts[1]);
         patch = Integer.parseInt(parts[2]);

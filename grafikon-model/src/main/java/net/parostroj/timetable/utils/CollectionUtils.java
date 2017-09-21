@@ -17,6 +17,8 @@ import com.google.common.collect.PeekingIterator;
  */
 public final class CollectionUtils {
 
+    private CollectionUtils() {}
+
     public static <T> boolean advanceTo(PeekingIterator<T> iterator, Predicate<T> predicate) {
         boolean found = false;
         while (iterator.hasNext() && !(found = predicate.apply(iterator.peek()))) {

@@ -10,12 +10,14 @@ import net.parostroj.timetable.model.*;
  *
  * @author jub
  */
-public class TransformUtil {
+public final class TransformUtil {
 
     public static final String THREE_DOTS = "...";
     public static final String SEPARATOR = ",";
     public static final String NET_PART = " *";
     public static final String ROUTE_FORMAT = "%s%s [%s]";
+
+    private TransformUtil() {}
 
     public static String transformRoute(Route route) {
         return transformRoute(route, ROUTE_FORMAT, 0);

@@ -9,7 +9,9 @@ import java.util.ResourceBundle.Control;
  *
  * @author jub
  */
-public class ResourceBundleUtil {
+public final class ResourceBundleUtil {
+
+    private ResourceBundleUtil() {}
 
     /**
      * loads resource bundle.

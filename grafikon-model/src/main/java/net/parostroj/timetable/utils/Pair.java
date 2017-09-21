@@ -30,10 +30,7 @@ public class Pair<T, V> {
         if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
             return false;
         }
-        if (this.second != other.second && (this.second == null || !this.second.equals(other.second))) {
-            return false;
-        }
-        return true;
+        return !(this.second != other.second && (this.second == null || !this.second.equals(other.second)));
     }
 
     @Override

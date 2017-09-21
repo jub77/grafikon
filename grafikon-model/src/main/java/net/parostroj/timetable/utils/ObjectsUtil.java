@@ -24,12 +24,13 @@ public class ObjectsUtil {
      * @return first line of the string
      */
     public static String getFirstLine(String str) {
+        String line = str;
         // keep only the first line
-        int index = str.indexOf('\n');
+        int index = line.indexOf('\n');
         if (index != -1) {
-            str = str.substring(0, index);
+            line = line.substring(0, index);
         }
-        return str;
+        return line;
     }
 
     /**
@@ -40,13 +41,14 @@ public class ObjectsUtil {
      * @return checked and trimmed string
      */
     public static String checkAndTrim(String str) {
-        if (str != null) {
-            str = str.trim();
-            if ("".equals(str)) {
-                str = null;
+        String checkedStr = str;
+        if (checkedStr != null) {
+            checkedStr = checkedStr.trim();
+            if ("".equals(checkedStr)) {
+                checkedStr = null;
             }
         }
-        return str;
+        return checkedStr;
     }
 
     /**
@@ -88,7 +90,7 @@ public class ObjectsUtil {
      * @return if the two collections intersect
      */
     public static boolean intersects(Collection<?> a, Collection<?> b) {
-        return a.stream().anyMatch(t -> b.contains(t));
+        return a.stream().anyMatch(b::contains);
     }
 
     /**
@@ -103,7 +105,7 @@ public class ObjectsUtil {
         if (orig == null) {
             return null;
         } else {
-            return orig.stream().map(o -> clazz.cast(o)).collect(Collectors.toList());
+            return orig.stream().map(clazz::cast).collect(Collectors.toList());
         }
     }
 
@@ -119,7 +121,7 @@ public class ObjectsUtil {
             return null;
         } else {
             checkClass(orig, clazz);
-            return Collections2.transform(orig, o -> clazz.cast(o));
+            return Collections2.transform(orig, clazz::cast);
         }
     }
 
@@ -135,7 +137,7 @@ public class ObjectsUtil {
             return null;
         } else {
             checkClass(orig, clazz);
-            return Lists.transform(orig, o -> clazz.cast(o));
+            return Lists.transform(orig, clazz::cast);
         }
     }
 
@@ -144,7 +146,7 @@ public class ObjectsUtil {
             return null;
         } else {
             checkClass(orig, clazz);
-            return orig.stream().map(i -> clazz.cast(i)).collect(Collectors.toSet());
+            return orig.stream().map(clazz::cast).collect(Collectors.toSet());
         }
     }
 

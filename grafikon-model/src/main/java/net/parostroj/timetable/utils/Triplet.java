@@ -34,10 +34,7 @@ public class Triplet<T, V, U> {
         if (this.second != other.second && (this.second == null || !this.second.equals(other.second))) {
             return false;
         }
-        if (this.third != other.third && (this.third == null || !this.third.equals(other.third))) {
-            return false;
-        }
-        return true;
+        return !(this.third != other.third && (this.third == null || !this.third.equals(other.third)));
     }
 
     @Override

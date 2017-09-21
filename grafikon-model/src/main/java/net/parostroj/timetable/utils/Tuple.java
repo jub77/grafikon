@@ -17,7 +17,7 @@ public class Tuple<V> {
     }
 
     public List<V> toList() {
-        List<V> result = new ArrayList<V>(2);
+        List<V> result = new ArrayList<>(2);
         if (first != null) {
             result.add(first);
         }
@@ -44,10 +44,7 @@ public class Tuple<V> {
         if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
             return false;
         }
-        if (this.second != other.second && (this.second == null || !this.second.equals(other.second))) {
-            return false;
-        }
-        return true;
+        return !(this.second != other.second && (this.second == null || !this.second.equals(other.second)));
     }
 
     @Override
