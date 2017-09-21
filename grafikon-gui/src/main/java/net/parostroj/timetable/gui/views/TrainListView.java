@@ -500,9 +500,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     throw new IllegalArgumentException("No route available.");
                 }
                 TrainBuilder builder = new TrainBuilder();
-                Train newTrain = builder.createTrain(oldTrain, route);
                 model.setSelectedTrain(null);
                 this.deleteTrain(oldTrain, oldTrain.getDiagram());
+                Train newTrain = builder.createTrain(oldTrain, route);
                 model.getDiagram().getTrains().add(newTrain);
                 model.setSelectedTrain(newTrain);
             } catch (Exception e) {

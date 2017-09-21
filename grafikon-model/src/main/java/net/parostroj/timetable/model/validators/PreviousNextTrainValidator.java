@@ -24,6 +24,9 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
             }
             if (currentTrain.getNextJoinedTrain() != null) {
                 currentTrain.setNextJoinedTrain(null);
+                if (currentTrain.getTimeAfter() != 0) {
+                    currentTrain.setTimeAfter(0);
+                }
             }
         }
         if (event.getSource() instanceof Train) {
