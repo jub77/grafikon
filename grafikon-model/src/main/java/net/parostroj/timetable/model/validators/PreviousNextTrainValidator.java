@@ -19,11 +19,11 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         if (event.getSource() instanceof TrainDiagram
                 && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
             Train currentTrain = (Train) event.getObject();
-            if (currentTrain.getNextJoinedTrain() != null) {
-                updateNextTrain(currentTrain, currentTrain.getNextJoinedTrain(), null);
-            }
             if (currentTrain.getPreviousJoinedTrain() != null) {
-                updatePreviousTrain(currentTrain, currentTrain.getPreviousJoinedTrain(), null);
+                currentTrain.setPreviousJoinedTrain(null);
+            }
+            if (currentTrain.getNextJoinedTrain() != null) {
+                currentTrain.setNextJoinedTrain(null);
             }
         }
         if (event.getSource() instanceof Train) {
