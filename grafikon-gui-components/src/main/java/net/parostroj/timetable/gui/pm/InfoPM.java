@@ -64,15 +64,15 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         TrainDiagram diagram = diagramRef.get();
         if (diagram != null) {
             // save values
-            String number = ObjectsUtil.checkAndTrim(this.routeNumbers.getText());
-            String nodes = ObjectsUtil.checkAndTrim(this.routeNodes.getText());
-            String validity = ObjectsUtil.checkAndTrim(this.validity.getText());
-            String info = ObjectsUtil.checkAndTrim(this.info.getText());
+            String lNumber = ObjectsUtil.checkAndTrim(this.routeNumbers.getText());
+            String lNodes = ObjectsUtil.checkAndTrim(this.routeNodes.getText());
+            String lValidity = ObjectsUtil.checkAndTrim(this.validity.getText());
+            String lInfo = ObjectsUtil.checkAndTrim(this.info.getText());
 
-            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
-            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, nodes);
-            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
-            diagram.getAttributes().setRemove(TrainDiagram.ATTR_INFO, info);
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, lNumber);
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, lNodes);
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_VALIDITY, lValidity);
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_INFO, lInfo);
         }
     }
 

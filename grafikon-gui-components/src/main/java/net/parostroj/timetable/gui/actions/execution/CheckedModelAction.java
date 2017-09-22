@@ -13,7 +13,7 @@ public abstract class CheckedModelAction extends AbstractModelAction {
     }
 
     @Override
-    final public void run() {
+    public final void run() {
         // check fails -> return
         if (!this.check())
             return;

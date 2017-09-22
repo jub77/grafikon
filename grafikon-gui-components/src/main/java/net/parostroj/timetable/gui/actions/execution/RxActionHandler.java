@@ -94,27 +94,23 @@ public class RxActionHandler {
         }
 
         public Execution<T> addConsumer(BiConsumer<ActionContext, T> consumer) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doOnNext(t -> {
-                consumer.accept(context, t);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).doOnNext(t -> consumer.accept(context, t)));
         }
 
         public <U> Execution<U> addAction(BiFunction<ActionContext, T, U> function) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).map(t -> {
-                return function.apply(context, t);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).map(t -> function.apply(context, t)));
         }
 
         public <U> Execution<U> addSplitAction(BiFunction<ActionContext, T, ? extends Iterable<U>> function) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> {
-                return function.apply(context, t);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> function.apply(context, t)));
         }
 
         public <U> Execution<U> addSplitObservable(BiFunction<ActionContext, T, Observable<U>> function) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).flatMap(t -> {
-                return function.apply(context, t);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).flatMap(t -> function.apply(context, t)));
         }
 
         public Execution<T> onEdt() {

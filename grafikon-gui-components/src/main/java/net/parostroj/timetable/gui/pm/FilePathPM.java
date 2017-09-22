@@ -8,7 +8,7 @@ import org.beanfabrics.support.Validation;
 
 public class FilePathPM extends TextPM {
 
-    public enum Type { FILE, DIRECTORY, ANY };
+    public enum Type { FILE, DIRECTORY, ANY }
 
     boolean exist;
 

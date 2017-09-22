@@ -128,7 +128,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
 
     public void refreshAll() {
         this.sort(list);
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             this.fireContentsChanged(this, 0, list.size() - 1);
         }
     }
@@ -223,13 +223,13 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     }
 
     public void setListOfWrappers(List<Wrapper<T>> list) {
-        if (this.list.size() > 0) {
+        if (!this.list.isEmpty()) {
             this.fireIntervalRemoved(this, 0, this.list.size() - 1);
         }
         this.list = list;
         this.set = null;
         this.sort(list);
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             this.fireIntervalAdded(this, 0, list.size() - 1);
         }
     }

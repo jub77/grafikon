@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.actions.execution;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -22,8 +23,6 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     private final OutputWriter outputAction;
     private final int count;
 
-    private int current;
-
     public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<Output> outputs) {
         super(context);
         this.outputAction = new OutputWriter(diagram, settings, outputDirectory, outputs);
@@ -37,21 +36,19 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         setWaitMessage(waitMessage);
         setWaitDialogVisible(true);
         context.setShowProgress(count > 1);
-        current = 0;
+        AtomicInteger current = new AtomicInteger();
         try {
-            try {
-                this.outputAction.setListener(template -> {
-                    current++;
-                    if (count > 1) {
-                        setProgressMessage(String.format("%s (%d/%d)", template.getName().translate(), current, count));
-                        setWaitProgress(100 * current / count);
-                    }
-                });
-                this.outputAction.execute();
-            } catch (OutputException e) {
-                log.error(e.getMessage(), e);
-                errorMessage = e.getMessage();
-            }
+            this.outputAction.setListener(template -> {
+                current.incrementAndGet();
+                if (count > 1) {
+                    setProgressMessage(String.format("%s (%d/%d)", template.getName().translate(), current.get(), count));
+                    setWaitProgress(100 * current.get() / count);
+                }
+            });
+            this.outputAction.execute();
+        } catch (OutputException e) {
+            log.error(e.getMessage(), e);
+            errorMessage = e.getMessage();
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
             errorMessage = ResourceLoader.getString("ot.message.error");

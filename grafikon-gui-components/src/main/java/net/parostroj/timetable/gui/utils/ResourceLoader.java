@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class ResourceLoader {
+public final class ResourceLoader {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceLoader.class);
+
+    private ResourceLoader() {}
 
     /**
      * returns localized string for key.

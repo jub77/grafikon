@@ -71,7 +71,6 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     private static final int CHUNK_SIZE = 10;
     private TrainDiagramPartImport imports;
-    private int size;
     private final CyclicBarrier barrier = new CyclicBarrier(2);
 
     public ImportModelAction(ActionContext context) {
@@ -90,8 +89,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjectMap();
             imports = new TrainDiagramPartImport(diagram, selection.getImportMatch(), selection.isImportOverwrite());
             List<ObjectWithId> list = map.values().stream().sequential().flatMap(item -> item.stream().sequential()).collect(Collectors.toList());
-            size = list.size();
-            if (size == 0) {
+            if (list.isEmpty()) {
                 return;
             }
             if (trainImportConfig != null && trainImportConfig.isRemoveExisting()) {
@@ -128,7 +126,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
                 batch = new LinkedList<>();
             }
         }
-        if (batch.size() > 0) {
+        if (!batch.isEmpty()) {
             processChunk(batch, importProcess);
         }
     }
@@ -202,12 +200,10 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     private void processImportedObject(ObjectWithId o, TrainImportConfig trainImportConfig) {
         // process new trains
-        if (o instanceof Train) {
-            // if train import -> move to appropriate group
-            if (trainImportConfig != null) {
-                Group destGroup = trainImportConfig.getToGroup();
-                ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
-            }
+        // if train import -> move to appropriate group
+        if (o instanceof Train && trainImportConfig != null) {
+            Group destGroup = trainImportConfig.getToGroup();
+            ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
         }
     }
 }

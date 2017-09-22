@@ -47,16 +47,16 @@ public class CopyTrainPM extends AbstractPM implements IPM<Train> {
         Train train = this.trainRef.get();
         if (train != null) {
             TrainDiagram diagram = train.getDiagram();
-            int time = this.time.getTime();
-            if (time == -1) {
+            int lTime = this.time.getTime();
+            if (lTime == -1) {
                 // select midnight if the time is not correct
-                time = 0;
+                lTime = 0;
             }
             TrainBuilder builder = new TrainBuilder();
             String name = this.number.getText();
             Train newTrain = reversed.getBoolean() ?
-                    builder.createReverseTrain(IdGenerator.getInstance().getId(), name, time, train) :
-                    builder.createTrain(IdGenerator.getInstance().getId(), name, time, train);
+                    builder.createReverseTrain(IdGenerator.getInstance().getId(), name, lTime, train) :
+                    builder.createTrain(IdGenerator.getInstance().getId(), name, lTime, train);
             // add train to diagram
             diagram.getTrains().add(newTrain);
         }

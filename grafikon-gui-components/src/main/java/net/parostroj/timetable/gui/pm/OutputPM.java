@@ -80,15 +80,15 @@ public class OutputPM extends AbstractPM {
 
     private String getUniqueKey(OutputTemplate template) {
         TrainDiagram diagram = diagramRef.get();
-        String key = template.getKey();
+        String keyStr = template.getKey();
         if (diagram != null) {
-            String originalKey = key;
+            String originalKey = keyStr;
             int counter = 0;
-            while (!checkUnique(key, diagram)) {
-                key = String.format("%s_%d", originalKey, ++counter);
+            while (!checkUnique(keyStr, diagram)) {
+                keyStr = String.format("%s_%d", originalKey, ++counter);
             }
         }
-        return key;
+        return keyStr;
     }
 
     private boolean checkUnique(String key, TrainDiagram diagram) {

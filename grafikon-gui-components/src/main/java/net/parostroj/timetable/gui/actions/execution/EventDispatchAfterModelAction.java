@@ -15,9 +15,9 @@ public abstract class EventDispatchAfterModelAction extends CheckedModelAction {
     }
 
     @Override
-    final protected void action() {
+    protected final void action() {
         this.backgroundAction();
-        GuiComponentUtils.runNowInEDT(() -> eventDispatchActionAfter());
+        GuiComponentUtils.runNowInEDT(this::eventDispatchActionAfter);
     }
 
     protected void backgroundAction() {}

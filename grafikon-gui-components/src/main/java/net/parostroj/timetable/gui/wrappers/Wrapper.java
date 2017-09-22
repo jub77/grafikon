@@ -46,10 +46,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             return false;
         }
         final Wrapper<?> other = (Wrapper<?>) obj;
-        if (this.wrappedElement != other.wrappedElement && (this.wrappedElement == null || !this.wrappedElement.equals(other.wrappedElement))) {
-            return false;
-        }
-        return true;
+        return !(this.wrappedElement != other.wrappedElement
+                && (this.wrappedElement == null || !this.wrappedElement.equals(other.wrappedElement)));
     }
 
     @Override
@@ -79,7 +77,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate<? super T> delegate) {
+    public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate<? super T> aDelegate) {
+        WrapperDelegate<? super T> delegate = aDelegate;
         if (delegate == null) {
             if (o instanceof Train) {
                 delegate = (WrapperDelegate<? super T>) new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getDiagram().getTrainsData().getTrainComparator());
@@ -92,7 +91,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             } else if (o instanceof ImportComponent) {
                 delegate = (WrapperDelegate<? super T>) new ImportComponentWrapperDelegate();
             } else if (o instanceof Locale) {
-                delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale>(l -> l.getDisplayName(l), l -> l != null ? l.toString() : "");
+                delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale >(l -> l.getDisplayName(l), l -> l != null ? l.toString() : "");
             } else if (o instanceof OutputTemplate) {
                 delegate = (WrapperDelegate<? super T>) new OutputTemplateWrapperDelegate();
             } else if (o instanceof EngineClass) {

@@ -16,9 +16,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class GuiComponentUtils {
+public final class GuiComponentUtils {
 
     private static final Logger log = LoggerFactory.getLogger(GuiComponentUtils.class);
+
+    private GuiComponentUtils() {}
 
     public static BnButton createBnButton(GuiIcon icon, int margin) {
         return createButton(new BnButton(), icon, margin);
@@ -77,14 +79,15 @@ public class GuiComponentUtils {
     }
 
     public static Window getWindow(Component comp) {
-        while (comp != null && !(comp instanceof Window)) {
-            if (comp instanceof JPopupMenu) {
-                comp = ((JPopupMenu) comp).getInvoker();
+        Component currentComp = comp;
+        while (currentComp != null && !(currentComp instanceof Window)) {
+            if (currentComp instanceof JPopupMenu) {
+                currentComp = ((JPopupMenu) currentComp).getInvoker();
             } else {
-                comp = comp.getParent();
+                currentComp = currentComp.getParent();
             }
         }
-        return (Window) comp;
+        return (Window) currentComp;
     }
 
     public static void showError(String text, Component parent) {

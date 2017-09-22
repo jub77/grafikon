@@ -12,7 +12,7 @@ public class LocalizationContext<T extends Reference<LocalizedString>> implement
     private final Collection<LocalizationType<T>> localizationTypes;
 
     public LocalizationContext(Collection<? extends LocalizationType<T>> localizationTypes) {
-        this.localizationTypes = new ArrayList<LocalizationType<T>>(localizationTypes);
+        this.localizationTypes = new ArrayList<>(localizationTypes);
     }
 
     public Collection<LocalizationType<T>> getLocalizationTypes() {

@@ -11,9 +11,6 @@ import net.parostroj.timetable.model.EngineClass;
  */
 public class EngineClassWrapperDelegate extends BasicWrapperDelegate<EngineClass> {
 
-    public EngineClassWrapperDelegate() {
-    }
-
     @Override
     public String toCompareString(EngineClass element) {
         return element.getName();

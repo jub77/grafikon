@@ -15,7 +15,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
  */
 public class ActionContext {
 
-    public static enum WaitDialogState {
+    public enum WaitDialogState {
         HIDE, SHOW;
     }
 

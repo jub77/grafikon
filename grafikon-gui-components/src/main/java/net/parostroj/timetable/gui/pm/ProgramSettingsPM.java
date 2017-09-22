@@ -21,15 +21,16 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
     private WeakReference<ProgramSettings> settingsRef;
 
     public ProgramSettingsPM() {
-        speed = new EnumeratedValuesPM<SpeedUnit>(EnumeratedValuesPM.createValueMap(
-                Arrays.asList(SpeedUnit.KMPH, SpeedUnit.MPH), i -> i.toString()));
-        length = new EnumeratedValuesPM<LengthUnit>(EnumeratedValuesPM.createValueMap(LengthUnit.getScaleDependent(),
-                i -> i.toString()));
+        speed = new EnumeratedValuesPM<>(
+                EnumeratedValuesPM.createValueMap(Arrays.asList(SpeedUnit.KMPH, SpeedUnit.MPH), SpeedUnit::toString));
+        length = new EnumeratedValuesPM<>(
+                EnumeratedValuesPM.createValueMap(LengthUnit.getScaleDependent(), LengthUnit::toString));
         PMManager.setup(this);
     }
 
+    @Override
     public void init(ProgramSettings settings) {
-        settingsRef = new WeakReference<ProgramSettings>(settings);
+        settingsRef = new WeakReference<>(settings);
         speed.setValue(settings.getSpeedUnit());
         length.setValue(settings.getLengthUnit());
         user.setText(settings.getUserName());

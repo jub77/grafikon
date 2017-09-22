@@ -60,6 +60,7 @@ public class NewModelPM extends AbstractPM {
     }
 
     public void init() {
+        // nothing to initialize
     }
 
     public Callable<TrainDiagram> getResult() {

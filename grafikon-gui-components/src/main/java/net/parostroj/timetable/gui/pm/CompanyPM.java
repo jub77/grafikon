@@ -27,14 +27,15 @@ public class CompanyPM extends AbstractPM implements IPM<Company> {
     private WeakReference<Company> companyRef;
 
     public CompanyPM(Collection<Locale> locales) {
-        locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
+        locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
                 locales, l -> l.getDisplayName(l)), "-");
         abbr.setMandatory(true);
         PMManager.setup(this);
     }
 
+    @Override
     public void init(Company company) {
-        this.companyRef = new WeakReference<Company>(company);
+        this.companyRef = new WeakReference<>(company);
         this.abbr.setText(company.getAbbr());
         this.name.setText(company.getName());
         this.part.setText(company.getAttribute(Company.ATTR_PART_NAME, String.class));

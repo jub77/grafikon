@@ -36,7 +36,7 @@ public class LocalizationTypeFactory {
                 holder.getAttributes().getAttributesMap(category).keySet().stream()
                         .map(key -> AttributeReference.create(holder, category, key, LocalizedString.class))
                         .collect(Collectors.toList()),
-                ref -> ((AttributeReference<?>) ref).getName(),
+                AttributeReference<LocalizedString>::getName,
                 diagram.getLocales()) {
                     @Override
                     protected AttributeReference<LocalizedString> createImpl(String key) {
@@ -72,7 +72,7 @@ public class LocalizationTypeFactory {
                         .filter(cycle -> cycle.getComment() != null)
                         .map(cycle -> AttributeReference.create(cycle, TrainsCycleItem.ATTR_COMMENT, LocalizedString.class))
                         .collect(Collectors.toList()),
-                ref -> getCirculationItemDesc(ref),
+                LocalizationTypeFactory::getCirculationItemDesc,
                 diagram.getLocales());
     }
 
@@ -83,7 +83,7 @@ public class LocalizationTypeFactory {
                         .filter(interval -> interval.getComment() != null)
                         .map(interval -> AttributeReference.create(interval, TimeInterval.ATTR_COMMENT, LocalizedString.class))
                         .collect(Collectors.toList()),
-                ref -> getTimeIntervalDesc(ref),
+                LocalizationTypeFactory::getTimeIntervalDesc,
                 diagram.getLocales());
     }
 

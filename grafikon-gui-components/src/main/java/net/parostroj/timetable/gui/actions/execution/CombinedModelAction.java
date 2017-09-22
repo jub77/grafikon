@@ -14,10 +14,10 @@ public abstract class CombinedModelAction extends CheckedModelAction {
     }
 
     @Override
-    final protected void action() {
-        GuiComponentUtils.runNowInEDT(() -> eventDispatchActionBefore());
+    protected final void action() {
+        GuiComponentUtils.runNowInEDT(this::eventDispatchActionBefore);
         this.backgroundAction();
-        GuiComponentUtils.runNowInEDT(() -> eventDispatchActionAfter());
+        GuiComponentUtils.runNowInEDT(this::eventDispatchActionAfter);
     }
 
     protected void eventDispatchActionBefore() {}

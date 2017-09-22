@@ -6,7 +6,7 @@ import java.util.Map;
 
 import net.parostroj.timetable.model.OutputTemplate;
 
-public class OutputTypeUtil {
+public final class OutputTypeUtil {
 
     private static final Map<String, String> OUTPUT_MAPPING;
 
@@ -18,6 +18,8 @@ public class OutputTypeUtil {
         map.put("xml", "xml");
         OUTPUT_MAPPING = Collections.unmodifiableMap(map);
     }
+
+    private OutputTypeUtil() {}
 
     public static String convertOutputType(OutputTemplate template) {
         String output = template.getOutput();

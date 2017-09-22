@@ -4,13 +4,20 @@ import java.lang.ref.WeakReference;
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.beanfabrics.model.*;
+import org.beanfabrics.model.AbstractPM;
+import org.beanfabrics.model.BooleanPM;
+import org.beanfabrics.model.IBooleanPM;
+import org.beanfabrics.model.IOperationPM;
+import org.beanfabrics.model.ListPM;
+import org.beanfabrics.model.OperationPM;
+import org.beanfabrics.model.PMManager;
+import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
 
@@ -63,7 +70,7 @@ public class RegionPM extends AbstractPM {
                 .filter(r -> r.getNodes().isEmpty())
                 .sorted(comparator)
                 .collect(Collectors.toList());
-        this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regionsForSuper, item -> item.getName(), "-"));
+        this.superRegion.addValues(EnumeratedValuesPM.createValueMap(regionsForSuper, Region::getName, "-"));
         this.superRegion.setValue(region.getSuperRegion());
         this.colorRegion.setBoolean(region.isFreightColorRegion());
         // color map
@@ -73,7 +80,7 @@ public class RegionPM extends AbstractPM {
             ColorMappingPM mapping = new ColorMappingPM();
             mapping.set(entry.getKey(), entry.getValue(), allRegions.stream()
                     .filter(notThisOne)
-                    .filter(r -> r.isFreightColorRegion())
+                    .filter(Region::isFreightColorRegion)
                     .sorted(comparator)
                     .collect(Collectors.toSet()));
             colorMap.add(mapping);
@@ -121,7 +128,7 @@ public class RegionPM extends AbstractPM {
             region.setSuperRegion(this.superRegion.getValue());
             region.setFreightColorRegion(colorRegion.getBoolean());
             // color mapping
-            HashMap<FreightColor, Region> map = new HashMap<>();
+            Map<FreightColor, Region> map = new EnumMap<>(FreightColor.class);
             for (ColorMappingPM cMapping : colorMap) {
                 FreightColor mColor = cMapping.color.getValue();
                 Region mRegion = cMapping.region.getValue();

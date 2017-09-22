@@ -59,14 +59,14 @@ public class LanguageLoader {
 
     private List<Locale> getLocales(Properties properties, String key) {
         String property = properties.getProperty(key, "");
-        List<Locale> locales = new ArrayList<>();
+        List<Locale> loadedLocales = new ArrayList<>();
         for (String lang : property.split(",")) {
             Locale locale = Locale.forLanguageTag(lang);
             if (locale != null) {
-                locales.add(locale);
+                loadedLocales.add(locale);
             }
         }
-        return locales;
+        return loadedLocales;
     }
 
     private Properties getLanguageProperties() {

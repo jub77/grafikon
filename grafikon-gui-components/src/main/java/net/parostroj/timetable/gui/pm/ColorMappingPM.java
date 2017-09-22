@@ -18,7 +18,7 @@ public class ColorMappingPM extends AbstractPM {
 
     public ColorMappingPM() {
         color = new EnumeratedValuesPM<>(
-                EnumeratedValuesPM.createValueMap(Arrays.asList(FreightColor.values()), item -> item.getName()), "-");
+                EnumeratedValuesPM.createValueMap(Arrays.asList(FreightColor.values()), FreightColor::getName), "-");
         region = new EnumeratedValuesPM<>();
         PMManager.setup(this);
     }
@@ -31,7 +31,7 @@ public class ColorMappingPM extends AbstractPM {
         this.color.setValue(color);
         // fill in regions and selected region
         this.region.removeAllValues();
-        this.region.addValues(EnumeratedValuesPM.createValueMap(allRegions, item -> item.getName(), "-"));
+        this.region.addValues(EnumeratedValuesPM.createValueMap(allRegions, Region::getName, "-"));
         this.region.setValue(region);
     }
 }
