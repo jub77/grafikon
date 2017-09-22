@@ -9,7 +9,9 @@ import net.parostroj.timetable.output2.OutputParams;
  *
  * @author jub
  */
-public class OutputParamsUtil {
+public final class OutputParamsUtil {
+
+    private OutputParamsUtil() {}
 
     public static OutputParams createParams(String... names) {
         OutputParams outputParams = new OutputParams();

@@ -53,7 +53,7 @@ public class GTDrawOrientationFactory {
                             startP.setLocation(startP.getX() + dSize.getWidth(), startP.getY() - 2);
                             endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() + dSize.getHeight() - 2);
                         }
-                        return new Tuple<Point2D>(startP, endP);
+                        return new Tuple<>(startP, endP);
                     }
 
                     @Override
@@ -98,7 +98,7 @@ public class GTDrawOrientationFactory {
                     @Override
                     public int getStationsSize(Dimension size) {
                         return size.width;
-                    };
+                    }
 
                     @Override
                     public int getHoursStart(Point p) {
@@ -122,7 +122,7 @@ public class GTDrawOrientationFactory {
                             startP.setLocation(startP.getX() - dSize.getWidth(), startP.getY() + dSize.getHeight());
                             endP.setLocation(endP.getX(), endP.getY() - 3);
                         }
-                        return new Tuple<Point2D>(startP, endP);
+                        return new Tuple<>(startP, endP);
                     }
 
                     @Override

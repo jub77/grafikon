@@ -15,7 +15,9 @@ import com.google.common.io.CharSource;
  *
  * @author jub
  */
-public class ResourceHelper {
+public final class ResourceHelper {
+
+    private ResourceHelper() {}
 
     private static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
@@ -24,8 +26,7 @@ public class ResourceHelper {
             ByteSource bs = new ByteSource() {
                 @Override
                 public InputStream openStream() throws IOException {
-                    InputStream fis = getStream(filename, cl);
-                    return fis;
+                    return getStream(filename, cl);
                 }
             };
             CharSource cs = bs.asCharSource(StandardCharsets.UTF_8);

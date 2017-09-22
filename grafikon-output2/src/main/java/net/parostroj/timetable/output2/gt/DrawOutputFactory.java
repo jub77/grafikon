@@ -18,12 +18,9 @@ public class DrawOutputFactory extends OutputFactory {
     private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
-        OUTPUT_TYPES = new LinkedHashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES = new LinkedHashMap<>();
         OUTPUT_TYPES.put("diagram", GTDrawOutput.class);
         OUTPUT_TYPES.put("circulations", CirculationDrawOutput.class);
-    }
-
-    public DrawOutputFactory() {
     }
 
     private Locale getLocale() {

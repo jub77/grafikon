@@ -10,5 +10,6 @@ public class DiagramTemplateBinding extends GroovyTemplateBinding {
 
     @Override
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
+        // nothing specific
     }
 }

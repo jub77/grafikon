@@ -10,7 +10,9 @@ import com.google.common.base.Function;
 /**
  * @author jub
  */
-public class DrawUtils {
+public final class DrawUtils {
+
+    private DrawUtils() {}
 
     private static class ShortenStringFunction implements Function<Integer, String> {
 
@@ -36,16 +38,15 @@ public class DrawUtils {
 
     public static FontInfo createFontInfo(Font font, Graphics2D g, String s) {
         LineMetrics lm = font.getLineMetrics(s, g.getFontRenderContext());
-        FontInfo fontInfo = new FontInfo(Math.round(lm.getStrikethroughOffset()),
+        return new FontInfo(Math.round(lm.getStrikethroughOffset()),
                 Math.round(lm.getDescent()),
                 Math.round(lm.getHeight()));
-        return fontInfo;
     }
 
     public static class FontInfo {
-        public int strikeThrough;
-        public int descent;
-        public int height;
+        public final int strikeThrough;
+        public final int descent;
+        public final int height;
 
         public FontInfo(int strikeThrough, int descent, int height) {
             this.strikeThrough = strikeThrough;

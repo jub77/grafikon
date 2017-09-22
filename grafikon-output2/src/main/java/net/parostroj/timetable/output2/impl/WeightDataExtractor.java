@@ -21,7 +21,7 @@ public class WeightDataExtractor {
     public WeightDataExtractor(Train train, TrainsCycleType trainUnitCycleType) {
         this.train = train;
         this.trainUnitCycleType = trainUnitCycleType;
-        this.data = new LinkedList<WeightDataRow>();
+        this.data = new LinkedList<>();
 
         this.processData();
         this.collapseData();
@@ -74,10 +74,10 @@ public class WeightDataExtractor {
                     else {
                         Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> itemNext = list.get(i + 1);
                         eClasses2 = this.convertItemList(itemNext.third);
-                        if (!this.compareEngineLists(eClasses, eClasses2))
+                        if (!this.compareEngineLists(eClasses, eClasses2) || (weight != null && item.first.isStop()
+                                && item.first.getOwnerAsNode().getType().isStation())) {
                             process = true;
-                        else if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStation())
-                            process = true;
+                        }
                     }
                     if (process) {
                         // add data
@@ -93,7 +93,7 @@ public class WeightDataExtractor {
     }
 
     private List<String> convertItemList(Collection<TrainsCycleItem> items) {
-        List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<>();
         for (TrainsCycleItem item : items) {
             result.add(TransformUtil.getEngineCycleDescription(item.getCycle()));
         }
@@ -103,7 +103,7 @@ public class WeightDataExtractor {
     private boolean compareEngineLists(List<String> list1, List<String> list2) {
         if (list1 == null || list2 == null)
             return list1 == list2;
-        List<String> test = new LinkedList<String>(list1);
+        List<String> test = new LinkedList<>(list1);
         for (String eClass : list2) {
             boolean removed = test.remove(eClass);
             if (!removed)

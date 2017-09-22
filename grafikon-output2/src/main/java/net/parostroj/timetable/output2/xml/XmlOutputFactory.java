@@ -20,7 +20,7 @@ public class XmlOutputFactory extends OutputFactory {
     private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
-        OUTPUT_TYPES = new LinkedHashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES = new LinkedHashMap<>();
         OUTPUT_TYPES.put("starts", XmlStartPositionsOutput.class);
         OUTPUT_TYPES.put("ends", XmlEndPositionsOutput.class);
         OUTPUT_TYPES.put("stations", XmlStationTimetablesOutput.class);

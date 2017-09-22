@@ -62,5 +62,5 @@ public abstract class GroovyTemplateBinding {
         }
     }
 
-    abstract protected void addSpecific(OutputParams params, Map<String, Object> binding, TrainDiagram diagram, Locale locale);
+    protected abstract void addSpecific(OutputParams params, Map<String, Object> binding, TrainDiagram diagram, Locale locale);
 }

@@ -16,7 +16,7 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public class GTDrawSettings {
 
-    public static enum Key {
+    public enum Key {
         ARRIVAL_DEPARTURE_DIGITS(Boolean.class),
         EXTENDED_LINES(Boolean.class),
         TRAIN_NAMES(Boolean.class),
@@ -109,7 +109,7 @@ public class GTDrawSettings {
     }
 
     public static GTDrawSettings create() {
-        GTDrawSettings settings = new GTDrawSettings()
+        return new GTDrawSettings()
             .set(Key.BORDER_X, 1.5f)
             .set(Key.BORDER_Y, 1.5f)
             .set(Key.STATION_NAME_WIDTH, 15)
@@ -125,7 +125,6 @@ public class GTDrawSettings {
             .set(Key.BACKGROUND_COLOR, Color.white)
             .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT)
             .set(Key.TRAIN_ENDS, Boolean.TRUE);
-        return settings;
     }
 
     public static GTDrawSettings copy(GTDrawSettings settings) {

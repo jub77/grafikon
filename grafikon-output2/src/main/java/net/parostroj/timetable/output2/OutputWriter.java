@@ -87,8 +87,7 @@ public class OutputWriter {
         }
 
         public OutputParams createParams() {
-            OutputParams params = new OutputParams();
-            return params;
+            return new OutputParams();
         }
     }
 
@@ -167,9 +166,9 @@ public class OutputWriter {
 
                 @Override
                 public OutputSettings create() {
-                    OutputSettings settings = new OutputSettings();
-                    out.add(settings);
-                    return settings;
+                    OutputSettings lSettings = new OutputSettings();
+                    out.add(lSettings);
+                    return lSettings;
                 }
             });
             try {
@@ -229,8 +228,8 @@ public class OutputWriter {
             params.setParam(Output.PARAM_OUTPUT_ENCODING, encoding);
         }
         if (parameters != null) {
-            for (String key : parameters.keySet()) {
-                params.setParam(key, parameters.get(key));
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                params.setParam(entry.getKey(), entry.getValue());
             }
         }
         output.write(params);
@@ -238,28 +237,29 @@ public class OutputWriter {
 
     private Map<String, Object> updateContext(net.parostroj.timetable.model.Output modelOutput,
             OutputTemplate outputTemplate, Map<String, Object> context) {
-        if (context == null) context = new HashMap<>();
-        context.put("settings", new WrapperLogMap<>(
+        Map<String, Object> usedContext = context;
+        if (usedContext == null) usedContext = new HashMap<>();
+        usedContext.put("settings", new WrapperLogMap<>(
                 modelOutput.getSettings().getAttributesMap(net.parostroj.timetable.model.Output.CATEGORY_SETTINGS),
                 templateLog, "settings"));
-        context.put("localization", new WrapperLogMap<>(
+        usedContext.put("localization", new WrapperLogMap<>(
                 outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N),
                 templateLog, "localization"));
-        context.put("selection", modelOutput.getSelection());
-        context.put("util", new OutputUtil());
-        return context;
+        usedContext.put("selection", modelOutput.getSelection());
+        usedContext.put("util", new OutputUtil());
+        return usedContext;
     }
 
     private File getFile(String directory, String name) {
-        name = name.replaceAll("[\\\\:/\"?<>|*]", "");
+        String filename = name.replaceAll("[\\\\:/\"?<>|*]", "");
         File dir = getDir(directory);
-        return new File(dir, name);
+        return new File(dir, filename);
     }
 
     private File getFile(String directory, String name, String extension, String type) {
-        name = name.replaceAll("[\\\\:/\"?<>|*]", "");
+        String filename = name.replaceAll("[\\\\:/\"?<>|*]", "");
         File dir = getDir(directory);
-        return new File(dir, name + "." + (extension == null ? getDefaultExtension(type) : extension));
+        return new File(dir, filename + "." + (extension == null ? getDefaultExtension(type) : extension));
     }
 
     private String getDefaultExtension(String type) {

@@ -28,9 +28,9 @@ public class TrainStrokeCache {
     public TrainStrokeCache(float baseWidth, float zoom) {
         this.baseWidth = baseWidth;
         this.zoom = zoom;
-        this.dashMap = new EnumMap<LineType, float[]>(LineType.class);
-        this.strokes = new HashMap<TrainType, Stroke>();
-        this.strokesByLineType = new EnumMap<LineType, Stroke>(LineType.class);
+        this.dashMap = new EnumMap<>(LineType.class);
+        this.strokes = new HashMap<>();
+        this.strokesByLineType = new EnumMap<>(LineType.class);
         this.baseDashLenght = 0f;
     }
 
@@ -43,8 +43,8 @@ public class TrainStrokeCache {
         this.zoom = zoom;
         this.baseDashLenght = baseDashLength;
         this.dashMap = null;
-        this.strokes = new HashMap<TrainType, Stroke>();
-        this.strokesByLineType = new EnumMap<LineType, Stroke>(LineType.class);
+        this.strokes = new HashMap<>();
+        this.strokesByLineType = new EnumMap<>(LineType.class);
     }
 
     public void add(LineType type, float[] dashes) {

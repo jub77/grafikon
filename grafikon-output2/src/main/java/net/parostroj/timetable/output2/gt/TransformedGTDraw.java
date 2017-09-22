@@ -20,6 +20,7 @@ public class TransformedGTDraw extends GTDrawDecorator {
     public TransformedGTDraw(GTDraw draw) {
         super(draw);
     }
+
     private static int drawCnt = 0;
 
     @Override
@@ -28,7 +29,7 @@ public class TransformedGTDraw extends GTDrawDecorator {
         this.applyTranslation(g);
         this.applyClipping(g);
         super.draw(g);
-        log.trace("DRAW TIME(" + (drawCnt++) + "): " + (System.currentTimeMillis() - time) + "ms");
+        log.trace("DRAW TIME({}): {} ms", drawCnt++, System.currentTimeMillis() - time);
     }
 
     private void applyClipping(Graphics2D g) {

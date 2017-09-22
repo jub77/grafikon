@@ -15,7 +15,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  *
  * @author jub
  */
-public class SelectionHelper {
+public final class SelectionHelper {
+
+    private SelectionHelper() {}
 
     public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
         if (params.paramExistWithValue("routes")) {

@@ -7,7 +7,7 @@ import java.util.Locale;
  *
  * @author jub
  */
-abstract public class OutputWithLocale extends OutputWithDiagramStream {
+public abstract class OutputWithLocale extends OutputWithDiagramStream {
 
     private Locale locale;
 

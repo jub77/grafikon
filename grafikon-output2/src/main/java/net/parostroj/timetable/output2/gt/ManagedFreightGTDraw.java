@@ -88,7 +88,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             GTStorage storage) {
         super(draw);
         draw.addListener(new MFListener());
-        this.written = new ArrayList<Rectangle>();
+        this.written = new ArrayList<>();
         this.collector = collector;
         this.highlight = storage.getParameter(HIGHLIGHT, Highlight.class);
         this.draw = draw;
@@ -99,7 +99,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         lineExtend = (int) (zoom * 16);
         connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);
 
-        routeNodes = new HashSet<Node>();
+        routeNodes = new HashSet<>();
         for (Node node : draw.getRoute().getNodes()) {
             routeNodes.add(node);
         }

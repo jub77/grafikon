@@ -206,10 +206,8 @@ public class TrainTimetablesExtractor {
                 row.setComment(nodeI.getComment());
             }
             // check line end
-            if (nodeI.isLast() || nodeI.isInnerStop()) {
-                if (nodeI.getTrack().getAttributes().getBool(Track.ATTR_LINE_END)) {
-                    row.setLineEnd(Boolean.TRUE);
-                }
+            if ((nodeI.isLast() || nodeI.isInnerStop()) && nodeI.getTrack().getAttributes().getBool(Track.ATTR_LINE_END)) {
+                row.setLineEnd(Boolean.TRUE);
             }
             // check occupied track
             if (nodeI.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED)) {
@@ -299,15 +297,10 @@ public class TrainTimetablesExtractor {
         if (!interval.isFirst())
             for (Iterator<TimeInterval> i = over.iterator(); i.hasNext();) {
                 TimeInterval checked = i.next();
-                if (interval.getStart() > checked.getStart()) {
+                if (interval.getStart() > checked.getStart() || (interval.getStart() == checked.getStart()
+                        && comparator.compare(interval.getTrain(), checked.getTrain()) >= 0)) {
                     first = false;
                     break;
-                } else if (interval.getStart() == checked.getStart()) {
-                    // using train comparator
-                    if (comparator.compare(interval.getTrain(), checked.getTrain()) >= 0) {
-                        first = false;
-                        break;
-                    }
                 }
             }
         if (over.isEmpty()) {
@@ -331,8 +324,7 @@ public class TrainTimetablesExtractor {
 
     private Text createText(TextItem item) {
         if (item.getAttributes().getBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO)) {
-            Text t = new Text(item.getName(), item.getType().getKey(), item.getText());
-            return t;
+            return new Text(item.getName(), item.getType().getKey(), item.getText());
         } else {
             return null;
         }
@@ -362,11 +354,9 @@ public class TrainTimetablesExtractor {
     private Double computeRoutePosition(Pair<Line, Node> pair) {
         Route foundRoute = null;
         for (Route route : diagram.getRoutes()) {
-            if (route.isNetPart()) {
-                if (checkRoute(pair.first, route.getSegments())) {
-                    foundRoute = route;
-                    break;
-                }
+            if (route.isNetPart() && checkRoute(pair.first, route.getSegments())) {
+                foundRoute = route;
+                break;
             }
         }
         if (foundRoute != null) {

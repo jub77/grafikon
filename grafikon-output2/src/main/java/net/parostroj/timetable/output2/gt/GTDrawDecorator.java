@@ -8,68 +8,68 @@ import net.parostroj.timetable.model.events.Event;
 
 public abstract class GTDrawDecorator implements GTDraw {
 
-    protected GTDraw draw;
+    protected GTDraw decoratedDraw;
 
     public GTDrawDecorator(GTDraw draw) {
-        this.draw = draw;
+        this.decoratedDraw = draw;
     }
 
     public GTDraw getDraw() {
-        return draw;
+        return decoratedDraw;
     }
 
     @Override
     public void draw(Graphics2D g) {
-        draw.draw(g);
+        decoratedDraw.draw(g);
     }
 
     @Override
     public void paintStationNames(Graphics2D g) {
-        draw.paintStationNames(g);
+        decoratedDraw.paintStationNames(g);
     }
 
     @Override
     public Route getRoute() {
-        return draw.getRoute();
+        return decoratedDraw.getRoute();
     }
 
     @Override
     public int getX(int time) {
-        return draw.getX(time);
+        return decoratedDraw.getX(time);
     }
 
     @Override
     public int getY(Node node, Track track) {
-        return draw.getY(node, track);
+        return decoratedDraw.getY(node, track);
     }
 
     @Override
     public int getY(TimeInterval interval) {
-        return draw.getY(interval);
+        return decoratedDraw.getY(interval);
     }
 
     @Override
     public Dimension getSize() {
-        return draw.getSize();
+        return decoratedDraw.getSize();
     }
 
     @Override
     public Refresh processEvent(Event event) {
-        return draw.processEvent(event);
+        return decoratedDraw.processEvent(event);
     }
 
     @Override
     public void addListener(Listener listener) {
-    	draw.addListener(listener);
+    	decoratedDraw.addListener(listener);
     }
 
     @Override
     public void removeListener(Listener listener) {
-    	draw.removeListener(listener);
+    	decoratedDraw.removeListener(listener);
     }
 
     @Override
     public GTDrawSettings getSettings() {
-        return draw.getSettings();
+        return decoratedDraw.getSettings();
     }
 }

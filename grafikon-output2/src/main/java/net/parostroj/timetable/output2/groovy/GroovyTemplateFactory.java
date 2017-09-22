@@ -27,9 +27,6 @@ public class GroovyTemplateFactory {
         BINDINGS = Collections.unmodifiableMap(bindingCreators);
     }
 
-    public GroovyTemplateFactory() {
-    }
-
     public TemplateWriter getTemplate(String type, Charset outputEncoding) throws OutputException {
         return new GroovyTemplate(BINDINGS.get(type)).get(outputEncoding);
     }

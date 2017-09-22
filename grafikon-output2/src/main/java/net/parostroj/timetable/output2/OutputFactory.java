@@ -12,16 +12,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class OutputFactory {
 
-    private final Map<String, Object> parameters = new HashMap<String, Object>();
+    private final Map<String, Object> parameters = new HashMap<>();
 
     private static final ServiceLoader<OutputFactory> loader = ServiceLoader.load(OutputFactory.class);
-    private static final Map<String, Class<? extends OutputFactory>> cache = new ConcurrentHashMap<String, Class<? extends OutputFactory>>();
+    private static final Map<String, Class<? extends OutputFactory>> cache = new ConcurrentHashMap<>();
 
     /**
      * @return list of output factory types
      */
     public static Collection<String> getTypes() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         synchronized(loader) {
             for (OutputFactory factory : loader) {
                 result.add(factory.getType());

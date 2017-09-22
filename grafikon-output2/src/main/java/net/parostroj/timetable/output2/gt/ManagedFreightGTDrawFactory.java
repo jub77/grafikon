@@ -7,9 +7,6 @@ import com.google.common.base.Predicate;
 
 public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
 
-    public ManagedFreightGTDrawFactory() {
-    }
-
     @Override
     public GTDraw createInstance(GTDraw.Type type, GTDrawSettings settings, Route route, GTStorage storage) {
         // replace filter ...

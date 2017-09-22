@@ -14,7 +14,7 @@ import net.parostroj.timetable.output2.util.OutputParamsUtil;
  *
  * @author jub
  */
-abstract public class OutputWithDiagramStream extends AbstractOutput {
+public abstract class OutputWithDiagramStream extends AbstractOutput {
 
     @Override
     public void write(OutputParams params) throws OutputException {

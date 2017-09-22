@@ -52,11 +52,12 @@ public class PdfTransformer {
     }
 
     private static FopFactory getFopFactory(URIResolver resolver) throws OutputException {
-        try {
+        try (InputStream fopCfgStream = ResourceHelper.getStream("fop/fop-cfg.xml",
+                PdfTransformer.class.getClassLoader())) {
             // base uri is empty
             URI baseURI = new URI("");
             FopConfParser parser = new FopConfParser(
-                    ResourceHelper.getStream("fop/fop-cfg.xml", PdfTransformer.class.getClassLoader()),
+                    fopCfgStream,
                     EnvironmentalProfileFactory.createRestrictedIO(baseURI, convertResolver(resolver)));
             FopFactory fopFactory = parser.getFopFactoryBuilder().build();
             fopFactory.getFontManager().disableFontCache();

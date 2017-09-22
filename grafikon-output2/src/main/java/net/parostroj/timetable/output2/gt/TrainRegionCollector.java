@@ -32,25 +32,25 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     public TrainRegionCollector() {
         regions = LinkedListMultimap.create();
         collected = false;
-        modifiedTrains = new HashSet<Train>();
+        modifiedTrains = new HashSet<>();
     }
 
     @Override
     public void clear() {
         regions.clear();
         collected = false;
-        modifiedTrains = new HashSet<Train>();
+        modifiedTrains = new HashSet<>();
     }
 
     @Override
     public void addRegion(TimeInterval interval,Shape shape) {
         // add shape
-        regions.put(interval.getTrain(), new Pair<Shape, TimeInterval>(shape, interval));
+        regions.put(interval.getTrain(), new Pair<>(shape, interval));
     }
 
     public void finishCollecting() {
         this.collected = true;
-        modifiedTrains = new HashSet<Train>();
+        modifiedTrains = new HashSet<>();
     }
 
     public boolean isCollecting(Train train) {
@@ -73,7 +73,7 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     @Override
     public List<TimeInterval> getItemsForPoint(int x, int y, int radius) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
-        LinkedList<TimeInterval> list = new LinkedList<TimeInterval>();
+        LinkedList<TimeInterval> list = new LinkedList<>();
         for (Train train : regions.keySet()) {
             for (Pair<Shape, TimeInterval> pair : regions.get(train)) {
                 if (pair.first.intersects(cursor) && !list.contains(pair.second)) {

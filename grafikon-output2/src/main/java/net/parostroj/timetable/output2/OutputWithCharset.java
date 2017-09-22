@@ -8,7 +8,7 @@ import java.util.Locale;
  *
  * @author jub
  */
-abstract public class OutputWithCharset extends OutputWithLocale {
+public abstract class OutputWithCharset extends OutputWithLocale {
 
     private final Charset charset;
 

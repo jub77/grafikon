@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -43,8 +45,8 @@ public class OutputUtil {
         // otherwise get locale from regions
         if (locale == null) {
             locale = node.getRegions().stream()
-                    .map(region -> region.getLocale())
-                    .filter(loc -> loc != null)
+                    .map(Region::getLocale)
+                    .filter(Objects::nonNull)
                     .findAny()
                     .orElse(null);
         }

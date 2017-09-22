@@ -8,15 +8,15 @@ import net.parostroj.timetable.model.Attributes;
 
 /**
  * Extraction of user attributes.
- * 
+ *
  * @author jub
  */
 public class AttributesExtractor {
-    
+
     private static final String ATTR_CATEGORY = "user";
-    
+
     public List<Attribute> extract(Attributes attributes) {
-        List<Attribute> result = new LinkedList<Attribute>();
+        List<Attribute> result = new LinkedList<>();
         for (Map.Entry<String, Object> entry : attributes.getAttributesMap(ATTR_CATEGORY).entrySet()) {
             result.add(new Attribute(entry.getKey(), (String)entry.getValue()));
         }

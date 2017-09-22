@@ -20,7 +20,7 @@ public abstract class RegionCollectorAdapter<T> extends RegionCollector<T> {
     @Override
     public List<T> getItemsForPoint(int x, int y, int radius) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
-        List<T> list = new LinkedList<T>();
+        List<T> list = new LinkedList<>();
         for (T region : regions.keySet()) {
             for (Shape shape : regions.get(region)) {
                 if (shape.intersects(cursor)) {

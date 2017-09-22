@@ -11,7 +11,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-public class SelectorUtils {
+public final class SelectorUtils {
+
+    private SelectorUtils() {}
 
     public static <T> T select(Iterable<? extends T> list, T old, Predicate<? super T> filter) {
         Iterable<? extends T> filteredList = Iterables.filter(list, filter);
@@ -37,7 +39,7 @@ public class SelectorUtils {
     }
 
     public static Predicate<TimeInterval> createUniqueTrainIntervalFilter() {
-        final List<Train> collected = new LinkedList<Train>();
+        final List<Train> collected = new LinkedList<>();
         return interval -> {
             if (!collected.contains(interval.getTrain())) {
                 collected.add(interval.getTrain());
@@ -49,7 +51,7 @@ public class SelectorUtils {
     }
 
     public static Predicate<Train> createUniqueTrainFilter() {
-        final List<Train> collected = new LinkedList<Train>();
+        final List<Train> collected = new LinkedList<>();
         return input -> {
             if (!collected.contains(input)) {
                 collected.add(input);
@@ -61,6 +63,6 @@ public class SelectorUtils {
     }
 
     public static Function<TimeInterval, Train> createToTrainFunction() {
-        return interval -> interval.getTrain();
+        return TimeInterval::getTrain;
     }
 }

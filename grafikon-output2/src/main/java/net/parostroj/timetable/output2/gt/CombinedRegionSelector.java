@@ -27,7 +27,7 @@ public class CombinedRegionSelector<T> implements RegionSelector<T> {
 
     @Override
     public List<T> getSelected() {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         for (RegionSelector<T> selector : selectors) {
             List<T> selected = selector.getSelected();
             if (selected != null) {

@@ -23,7 +23,7 @@ import com.google.common.base.Predicate;
  *
  * @author jub
  */
-abstract public class GTDrawBase implements GTDraw {
+public abstract class GTDrawBase implements GTDraw {
 
     private static final Logger log = LoggerFactory.getLogger(GTDrawBase.class);
 
@@ -174,9 +174,9 @@ abstract public class GTDrawBase implements GTDraw {
         Integer snWidth = config.get(GTDrawSettings.Key.STATION_NAME_WIDTH, Integer.class);
         Float bx = config.get(GTDrawSettings.Key.BORDER_X, Float.class);
         Float by = config.get(GTDrawSettings.Key.BORDER_Y, Float.class);
-        Rectangle mSize = getMSize(g);
-        this.borderX = (int) (mSize.getWidth() * bx);
-        this.borderY = (int) (mSize.getWidth() * by);
+        Rectangle lmSize = getMSize(g);
+        this.borderX = (int) (lmSize.getWidth() * bx);
+        this.borderY = (int) (lmSize.getWidth() * by);
         this.stationNameWidth = this.computeInitialStationNameWidth(g, snWidth); // initial size ...
 
         // correct gap by station names
@@ -188,7 +188,7 @@ abstract public class GTDrawBase implements GTDraw {
                     Node n = seg.asNode();
                     String name = TransformUtil.transformStation(n).trim();
                     int nameWidth = DrawUtils.getStringWidth(g, name);
-                    int w = (int) (nameWidth + mSize.getWidth());
+                    int w = (int) (nameWidth + lmSize.getWidth());
                     if (w > max) {
                         max = w;
                     }
@@ -201,10 +201,10 @@ abstract public class GTDrawBase implements GTDraw {
         // update start
         this.start = new Point(this.borderX, this.borderY);
         FontInfo fi = this.getFontInfo(g);
-        orientationDelegate.adaptStart(this.start, stationNameWidth, fi, mSize.width);
+        orientationDelegate.adaptStart(this.start, stationNameWidth, fi, lmSize.width);
         if (config.isOption(GTDrawSettings.Key.TITLE)) {
             // height of the font plus one border more
-            titleHeight = (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO) + this.borderX;
+            titleHeight = (int) (lmSize.getHeight() * TITLE_FONT_SIZE_RATIO) + this.borderX;
             this.start.translate(0, titleHeight);
         }
         // compute size
@@ -388,16 +388,14 @@ abstract public class GTDrawBase implements GTDraw {
             x2 = x;
         }
 
-        Line2D line2D = orientationDelegate.createLine(x1, y1, x2, y2);
-        return line2D;
+        return orientationDelegate.createLine(x1, y1, x2, y2);
     }
 
     protected Line2D createTrainLineInStation(TimeInterval interval, Interval i) {
         int y = this.getY(interval);
         int x1 = this.getX(this.isTimeVisible(i.getStart()) ? i.getStart() : startTime);
         int x2 = this.getX(this.isTimeVisible(i.getEnd()) ? i.getEnd() : endTime);
-        Line2D line2D = orientationDelegate.createLine(x1, y, x2, y);
-        return line2D;
+        return orientationDelegate.createLine(x1, y, x2, y);
     }
 
     protected void paintTrainsOnLine(Line line, Graphics2D g) {
@@ -498,7 +496,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
             Rectangle b = this.getStringBounds(name, g);
             FontInfo fi = this.getFontInfo(g);
-            int ow = Math.round(this.getMSize(g).width / 5);
+            int ow = this.getMSize(g).width / 5;
             Rectangle r2 = new Rectangle(-ow, fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
             orientationDelegate.drawStationName(g, name, r2, y, fi, borderX, borderY, background, titleHeight);
         }
@@ -628,9 +626,9 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     private void drawUnderscore(Graphics2D g, int xp, int yp, double wp) {
-        yp = (int) (yp + wp / 4);
+        int computedYp = (int) (yp + wp / 4);
         g.setStroke(underlineStroke);
-        g.drawLine(xp, yp, (int) (xp + wp), yp);
+        g.drawLine(xp, computedYp, (int) (xp + wp), computedYp);
     }
 
     protected Color getIntervalColor(TimeInterval interval) {
@@ -672,8 +670,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public int getX(int time) {
-        int x = start != null ? (int) (orientationDelegate.getHoursStart(start) + (time - startTime) * timeStep) : -1;
-        return x;
+        return start != null ? (int) (orientationDelegate.getHoursStart(start) + (time - startTime) * timeStep) : -1;
     }
 
     @Override
@@ -789,10 +786,9 @@ abstract public class GTDrawBase implements GTDraw {
                     }
                     break;
                 case ATTRIBUTE:
-                    if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
-                        if (route != null && route.contains((RouteSegment<?>) event.getSource())) {
-                            setRefresh(Refresh.RECREATE);
-                        }
+                    if (event.getAttributeChange().checkName(Line.ATTR_LENGTH) && route != null
+                            && route.contains((RouteSegment<?>) event.getSource())) {
+                        setRefresh(Refresh.RECREATE);
                     }
                     break;
                 default:
@@ -804,11 +800,8 @@ abstract public class GTDrawBase implements GTDraw {
             public void visitTrainTypeEvent(Event event) {
                 switch (event.getType()) {
                 case ATTRIBUTE:
-                    if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
-                        getTrainStrokeCache().clear();
-                        setRefresh(Refresh.REPAINT);
-                    } else if (event.getAttributeChange().checkName(TrainType.ATTR_LINE_TYPE, TrainType.ATTR_LINE_WIDTH,
-                            TrainType.ATTR_LINE_LENGTH)) {
+                    if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR, TrainType.ATTR_LINE_TYPE,
+                            TrainType.ATTR_LINE_WIDTH, TrainType.ATTR_LINE_LENGTH)) {
                         getTrainStrokeCache().clear();
                         setRefresh(Refresh.REPAINT);
                     }
@@ -822,7 +815,7 @@ abstract public class GTDrawBase implements GTDraw {
         return visitor.getRefresh();
     }
 
-    abstract protected TrainStrokeCache getTrainStrokeCache();
+    protected abstract TrainStrokeCache getTrainStrokeCache();
 
     protected Stroke getTrainStroke(Train train) {
         boolean extended = config.isOption(GTDrawSettings.Key.EXTENDED_LINES);

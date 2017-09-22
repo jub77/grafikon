@@ -73,9 +73,9 @@ public abstract class RegionCollector<T> {
         }
     }
 
-    abstract public void clear();
+    public abstract void clear();
 
-    abstract public void addRegion(T region, Shape shape);
+    public abstract void addRegion(T region, Shape shape);
 
-    abstract public void processEvent(Event event);
+    public abstract void processEvent(Event event);
 }

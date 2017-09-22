@@ -93,8 +93,8 @@ public class PositionsExtractor {
         return result;
     }
 
-    private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(Collection<TrainsCycle> cycles, Integer startingTime) {
-        startingTime = startingTime == null ? 0 : startingTime;
+    private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(Collection<TrainsCycle> cycles, Integer start) {
+        int startingTime = start == null ? 0 : start;
         List<Pair<TrainsCycleItem, TimeInterval>> itemStarts = new ArrayList<>();
         for (TrainsCycle cycle : sortTrainsCycleList(cycles)) {
             TrainsCycleItem sItem = null;

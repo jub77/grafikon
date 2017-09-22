@@ -41,8 +41,8 @@ public class OutputFreightUtil {
     private Stream<String> regionsToStringImpl(Collection<Region> regions, Locale locale) {
         Collator collator = Collator.getInstance(locale);
         return regions.stream()
-                .map(r -> r.getName())
-                .sorted((a, b) -> collator.compare(a, b));
+                .map(Region::getName)
+                .sorted(collator::compare);
     }
 
     public List<String> intervalsToString(TrainDiagram diagram, Collection<TimeInterval> intervals, Locale locale) {
@@ -64,7 +64,7 @@ public class OutputFreightUtil {
     public List<String> intervalFreightTrainUnitToString(TrainDiagram diagram, TimeInterval interval) {
         Collection<TrainsCycleItem> items = interval.getTrain()
                 .getCycleItemsForInterval(diagram.getTrainUnitCycleType(), interval);
-        Stream<TrainsCycle> cycles = items.stream().map(item -> item.getCycle())
+        Stream<TrainsCycle> cycles = items.stream().map(TrainsCycleItem::getCycle)
                 .filter(cycle -> cycle.getAttributeAsBool(TrainsCycle.ATTR_FREIGHT));
         return cycles.map(cycle -> {
             String desc = cycle.getDescription();
@@ -109,9 +109,10 @@ public class OutputFreightUtil {
     }
 
     public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
-        return list.stream().map(c -> c.getTo()).map(d -> {
-            return freightToString(d, locale);
-        }).collect(Collectors.toList());
+        return list.stream()
+                .map(FreightConnection::getTo)
+                .map(d -> freightToString(d, locale))
+                .collect(Collectors.toList());
     }
 
     public String freightToString(FreightDestination dest, Locale locale) {

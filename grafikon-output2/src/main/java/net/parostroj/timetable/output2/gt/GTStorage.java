@@ -6,9 +6,9 @@ import com.google.common.base.Predicate;
 
 public class GTStorage {
 
-    private final Map<Class<?>, RegionCollector<?>> collectors = new LinkedHashMap<Class<?>, RegionCollector<?>>();
-    private final Map<Class<?>, Predicate<?>> filters = new HashMap<Class<?>, Predicate<?>>();
-    private final Map<String, Object> parameters = new HashMap<String, Object>();
+    private final Map<Class<?>, RegionCollector<?>> collectors = new LinkedHashMap<>();
+    private final Map<Class<?>, Predicate<?>> filters = new HashMap<>();
+    private final Map<String, Object> parameters = new HashMap<>();
 
     public <T> void setCollector(Class<T> clazz, RegionCollector<T> collector) {
         collectors.put(clazz, collector);

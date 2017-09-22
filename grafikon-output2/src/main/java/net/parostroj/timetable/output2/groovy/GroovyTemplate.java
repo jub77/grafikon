@@ -42,9 +42,8 @@ public class GroovyTemplate {
     }
 
     public TemplateWriter get(Charset outputEncoding) {
-        return (output, params, locale) -> {
+        return (output, params, locale) ->
             write(output, params, params.getParamValue(Output.PARAM_TRAIN_DIAGRAM, TrainDiagram.class), locale,
                     outputEncoding);
-        };
     }
 }
