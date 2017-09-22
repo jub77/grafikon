@@ -42,7 +42,7 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
         return templateList;
     }
 
-    abstract protected InputStream getTemplateListStream() throws IOException;
+    protected abstract  InputStream getTemplateListStream() throws IOException;
 
     @Override
     public T loadTemplate(Template template) throws LSException {
@@ -60,5 +60,5 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
         return instance;
     }
 
-    abstract protected InputStream getTemplateStream(Template template) throws IOException;
+    protected abstract InputStream getTemplateStream(Template template) throws IOException;
 }
