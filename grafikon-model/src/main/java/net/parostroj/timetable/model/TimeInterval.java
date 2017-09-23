@@ -528,6 +528,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return train.getTimeIntervalAfter() == this;
     }
 
+    public boolean isJoiningTrains() {
+        return isTechnologicalAfter() && train.getNextJoinedTrain() != null;
+    }
+
     public boolean isStop() {
         return isInnerStop() || isFirst() || isLast();
     }

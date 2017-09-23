@@ -138,7 +138,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
                 boolean technological = interval.isTechnological();
                 if (technological) {
-                    if (interval.getTrain().getNextJoinedTrain() != null && interval.isTechnologicalAfter()) {
+                    if (interval.isJoiningTrains()) {
                         technological = false;
                     } else if (!config.isOption(GTDrawSettings.Key.TECHNOLOGICAL_TIME)) {
                         continue;
