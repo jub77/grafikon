@@ -131,33 +131,31 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     @Override
     protected void paintTrainsInStation(Node station, Graphics2D g) {
-        for (NodeTrack nodeTrack : station.getTracks()) {
-            for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (!checkIntervalFilter(interval)) {
+        for (TimeInterval interval : station) {
+            if (!checkIntervalFilter(interval)) {
+                continue;
+            }
+            boolean technological = interval.isTechnological();
+            if (technological) {
+                if (interval.isJoiningTrains()) {
+                    technological = false;
+                } else if (!config.isOption(GTDrawSettings.Key.TECHNOLOGICAL_TIME)) {
                     continue;
                 }
-                boolean technological = interval.isTechnological();
-                if (technological) {
-                    if (interval.isJoiningTrains()) {
-                        technological = false;
-                    } else if (!config.isOption(GTDrawSettings.Key.TECHNOLOGICAL_TIME)) {
-                        continue;
-                    }
-                }
-                boolean boundary = interval.isBoundary();
-                boolean showBoundary = config.isOption(GTDrawSettings.Key.TRAIN_ENDS);
-                if (!boundary) {
-                    g.setStroke(getTrainStroke(interval.getTrain()));
-                } else if (technological) {
-                    g.setStroke(techTimeStroke);
-                } else {
-                    g.setStroke(trainSsStroke);
-                }
-                g.setColor(this.getIntervalColor(interval));
+            }
+            boolean boundary = interval.isBoundary();
+            boolean showBoundary = config.isOption(GTDrawSettings.Key.TRAIN_ENDS);
+            if (!boundary) {
+                g.setStroke(getTrainStroke(interval.getTrain()));
+            } else if (technological) {
+                g.setStroke(techTimeStroke);
+            } else {
+                g.setStroke(trainSsStroke);
+            }
+            g.setColor(this.getIntervalColor(interval));
 
-                if (boundary && showBoundary || interval.getLength() > 0) {
-                    this.paintTrainInStationWithInterval(g, interval);
-                }
+            if (boundary && showBoundary || interval.getLength() > 0) {
+                this.paintTrainInStationWithInterval(g, interval);
             }
         }
     }
