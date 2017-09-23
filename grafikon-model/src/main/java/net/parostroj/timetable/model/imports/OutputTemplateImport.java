@@ -45,7 +45,7 @@ public class OutputTemplateImport extends Import {
         // add to diagram
         this.getDiagram().getOutputTemplates().add(outputTemplate);
         this.addImportedObject(outputTemplate);
-        log.trace("Successfully imported output template: " + outputTemplate);
+        log.trace("Successfully imported output template: {}", outputTemplate);
         return outputTemplate;
     }
 }

@@ -81,7 +81,7 @@ public class TrainImport extends Import {
 
         this.getDiagram().getTrains().add(train);
         this.addImportedObject(train);
-        log.trace("Successfully imported train: " + train);
+        log.trace("Successfully imported train: {}", train);
         return train;
     }
 
@@ -95,7 +95,7 @@ public class TrainImport extends Import {
                 Node node = this.getNode(interval.getOwnerAsNode());
                 Track nodeTrack = node != null ? this.getTrack(node, interval.getTrack()) : null;
                 if (node == null || nodeTrack == null) {
-                    log.trace("Cannot find node or track: " + interval.getOwnerAsNode());
+                    log.trace("Cannot find node or track: {}", interval.getOwnerAsNode());
                     return null;
                 }
                 if (previousNode != null) {
@@ -103,7 +103,7 @@ public class TrainImport extends Import {
                     Line line = this.getDiagram().getNet().getLine(previousNode, node);
                     Track lineTrack = line != null ? this.getTrack(line, previousLineTrack) : null;
                     if (line == null || lineTrack == null) {
-                        log.trace("Cannot find line or track: " + previousNode + ", " + node);
+                        log.trace("Cannot find line or track: {}, {}", previousNode, node);
                         return null;
                     }
                     segments.add(new Triplet<>(line, lineTrack, previousLineInterval));

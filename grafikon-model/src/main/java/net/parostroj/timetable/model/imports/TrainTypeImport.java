@@ -59,7 +59,7 @@ public class TrainTypeImport extends Import {
         // add to diagram
         this.getDiagram().getTrainTypes().add(type);
         this.addImportedObject(type);
-        log.trace("Successfully imported type: " + type);
+        log.trace("Successfully imported type: {}", type);
         return type;
     }
 }

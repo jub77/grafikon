@@ -55,7 +55,7 @@ public class RouteImport extends Import {
         // add to diagram
         this.getDiagram().getRoutes().add(route);
         this.addImportedObject(route);
-        log.trace("Successfully imported route: " + route);
+        log.trace("Successfully imported route: {}", route);
         return route;
     }
 

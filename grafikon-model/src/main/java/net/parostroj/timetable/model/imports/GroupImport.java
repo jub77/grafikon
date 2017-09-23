@@ -43,7 +43,7 @@ public class GroupImport extends Import {
         // add to diagram
         this.getDiagram().getGroups().add(group);
         this.addImportedObject(group);
-        log.trace("Successfully imported group: " + group);
+        log.trace("Successfully imported group: {}", group);
         return group;
     }
 }

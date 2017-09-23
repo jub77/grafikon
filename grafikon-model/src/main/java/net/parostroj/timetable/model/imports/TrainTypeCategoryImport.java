@@ -41,7 +41,7 @@ public class TrainTypeCategoryImport extends Import {
         }
 
         // create new category
-        TrainTypeCategory  category = (TrainTypeCategory) copyFactory.copy(importedCategory, this.getId(importedCategory));
+        TrainTypeCategory  category = copyFactory.copy(importedCategory, this.getId(importedCategory));
 
         // add to diagram
         this.getDiagram().getTrainTypeCategories().add(category);

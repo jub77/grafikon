@@ -43,7 +43,7 @@ public class CompanyImport extends Import {
         // add to diagram
         this.getDiagram().getCompanies().add(company);
         this.addImportedObject(company);
-        log.trace("Successfully imported company: " + company);
+        log.trace("Successfully imported company: {}", company);
         return company;
     }
 }

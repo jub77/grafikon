@@ -43,7 +43,7 @@ public class RegionImport extends Import {
         // add to diagram
         this.getDiagram().getNet().getRegions().add(region);
         this.addImportedObject(region);
-        log.trace("Successfully imported region: " + region);
+        log.trace("Successfully imported region: {}", region);
         return region;
     }
 }

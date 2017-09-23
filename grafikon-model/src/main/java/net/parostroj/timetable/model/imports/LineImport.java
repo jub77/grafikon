@@ -61,7 +61,7 @@ public class LineImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addLine(iNodeFrom, iNodeTo, line);
         this.addImportedObject(line);
-        log.trace("Successfully imported line: " + line);
+        log.trace("Successfully imported line: {}", line);
         return line;
     }
 

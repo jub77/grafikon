@@ -42,7 +42,7 @@ public class LineClassImport extends Import {
         // add to diagram
         this.getDiagram().getNet().getLineClasses().add(lineClass);
         this.addImportedObject(lineClass);
-        log.trace("Successfully imported line class: " + lineClass);
+        log.trace("Successfully imported line class: {}", lineClass);
         return lineClass;
     }
 }

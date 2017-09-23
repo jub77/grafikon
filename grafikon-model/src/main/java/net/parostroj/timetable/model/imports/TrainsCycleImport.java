@@ -68,12 +68,12 @@ public class TrainsCycleImport extends Import {
 
         cycle.getType().getCycles().add(cycle);
         this.addImportedObject(cycle);
-        log.trace("Successfully imported circulation: " + cycle);
+        log.trace("Successfully imported circulation: {}", cycle);
         return cycle;
     }
 
     private List<Triplet<Train, TimeInterval, TimeInterval>> createCycleItems(TrainsCycle cycle) {
-        List<Triplet<Train, TimeInterval, TimeInterval>> items = new LinkedList<Triplet<Train,TimeInterval,TimeInterval>>();
+        List<Triplet<Train, TimeInterval, TimeInterval>> items = new LinkedList<>();
         for (TrainsCycleItem item : cycle.getItems()) {
             Train train = this.getTrain(item.getTrain());
             if (train == null) {
@@ -110,7 +110,7 @@ public class TrainsCycleImport extends Import {
             if (to == tlSize - 1) {
                 ti = null;
             }
-            items.add(new Triplet<Train, TimeInterval, TimeInterval>(train, fi, ti));
+            items.add(new Triplet<>(train, fi, ti));
         }
         return items;
     }

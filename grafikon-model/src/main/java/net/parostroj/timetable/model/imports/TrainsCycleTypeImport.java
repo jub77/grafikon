@@ -43,7 +43,7 @@ public class TrainsCycleTypeImport extends Import {
 
         this.getDiagram().getCycleTypes().add(type);
         this.addImportedObject(type);
-        log.trace("Successfully imported circulation type: " + type);
+        log.trace("Successfully imported circulation type: {}", type);
         return type;
     }
 
