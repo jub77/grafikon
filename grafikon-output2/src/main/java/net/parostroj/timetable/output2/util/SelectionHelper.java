@@ -63,10 +63,8 @@ public final class SelectionHelper {
             Set<Train> trains = new HashSet<>();
             for (Route route : routes) {
                 for (Line line : route.getLines()) {
-                    for (Track track : line.getTracks()) {
-                        for (TimeInterval i : track.getTimeIntervalList()) {
-                            trains.add(i.getTrain());
-                        }
+                    for (TimeInterval i : line) {
+                        trains.add(i.getTrain());
                     }
                 }
             }

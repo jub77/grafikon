@@ -53,7 +53,7 @@ class NodeImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addNode(node);
         this.addImportedObject(node);
-        log.trace("Successfully imported node: " + node);
+        log.trace("Successfully imported node: {}", node);
         return node;
     }
 }

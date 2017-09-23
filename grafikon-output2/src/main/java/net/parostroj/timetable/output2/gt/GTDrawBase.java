@@ -403,23 +403,21 @@ public abstract class GTDrawBase implements GTDraw {
     }
 
     protected void paintTrainsOnLine(Line line, Graphics2D g) {
-        for (LineTrack track : line.getTracks()) {
-            for (TimeInterval interval : track.getTimeIntervalList()) {
-                if (checkIntervalFilter(interval)) {
-                    g.setStroke(this.getTrainStroke(interval.getTrain()));
-                    boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
-                            && (config.isOption(GTDrawSettings.Key.TRAIN_NAMES));
-                    boolean paintMinutes = config.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
-                    Interval normalized = interval.getInterval().normalize();
-                    if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
-                        g.setColor(this.getIntervalColor(interval));
-                        this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
-                    }
-                    Interval overMidnight = normalized.getComplementatyIntervalOverThreshold(startTime);
-                    if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
-                        g.setColor(this.getIntervalColor(interval));
-                        this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
-                    }
+        for (TimeInterval interval : line) {
+            if (checkIntervalFilter(interval)) {
+                g.setStroke(this.getTrainStroke(interval.getTrain()));
+                boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
+                        && (config.isOption(GTDrawSettings.Key.TRAIN_NAMES));
+                boolean paintMinutes = config.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
+                Interval normalized = interval.getInterval().normalize();
+                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
+                    g.setColor(this.getIntervalColor(interval));
+                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
+                }
+                Interval overMidnight = normalized.getComplementatyIntervalOverThreshold(startTime);
+                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+                    g.setColor(this.getIntervalColor(interval));
+                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
                 }
             }
         }

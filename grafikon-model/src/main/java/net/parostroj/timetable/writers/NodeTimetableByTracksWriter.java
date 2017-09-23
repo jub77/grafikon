@@ -32,12 +32,12 @@ public class NodeTimetableByTracksWriter {
         for (NodeTrack track : tracks) {
             str.append("Track: " + track.getNumber()).append('\n');
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                @SuppressWarnings("resource")
-                Formatter f = new Formatter(str);
-                f.format("%1$-20s", interval.getTrain().getDefaultCompleteName());
-                str.append(c.convertIntToText(interval.getStart(), true));
-                str.append(" ").append(c.convertIntToText(interval.getEnd(), true)).append("\n");
-                f.flush();
+                try (Formatter f = new Formatter(str)) {
+                    f.format("%1$-20s", interval.getTrain().getDefaultCompleteName());
+                    str.append(c.convertIntToText(interval.getStart(), true));
+                    str.append(" ").append(c.convertIntToText(interval.getEnd(), true)).append("\n");
+                    f.flush();
+                }
             }
         }
     }

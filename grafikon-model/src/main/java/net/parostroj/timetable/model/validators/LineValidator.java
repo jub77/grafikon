@@ -20,11 +20,9 @@ public class LineValidator implements TrainDiagramValidator {
     public boolean validate(Event event) {
         if (event.getSource() instanceof Line && event.getType() == Type.ATTRIBUTE && event.getAttributeChange().checkName(Line.ATTR_LENGTH, Line.ATTR_SPEED)) {
             Line line = (Line) event.getSource();
-            Set<Train> trains = new HashSet<Train>();
-            for (Track track : line.getTracks()) {
-                for (TimeInterval interval : ImmutableList.copyOf(track.getTimeIntervalList())) {
-                    trains.add(interval.getTrain());
-                }
+            Set<Train> trains = new HashSet<>();
+            for (TimeInterval interval : line) {
+                trains.add(interval.getTrain());
             }
             // recalculate collected trains
             for (Train train : trains) {

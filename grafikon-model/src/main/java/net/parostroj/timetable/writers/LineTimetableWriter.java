@@ -31,10 +31,8 @@ public class LineTimetableWriter {
         str.append(st.getName());
         str.append('\n');
 
-        for (LineTrack track : line.getTracks()) {
-            for (TimeInterval interval : track.getTimeIntervalList()) {
-                @SuppressWarnings("resource")
-                Formatter f = new Formatter(str);
+        for (TimeInterval interval : line) {
+            try (Formatter f = new Formatter(str)) {
                 f.format("%1$-20s", interval.getTrain().getDefaultCompleteName());
                 str.append(c.convertIntToTextFull(interval.getStart(), true));
                 str.append(" ").append(c.convertIntToTextFull(interval.getEnd(), true));

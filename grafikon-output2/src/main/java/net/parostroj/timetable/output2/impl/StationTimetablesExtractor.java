@@ -16,7 +16,6 @@ import net.parostroj.timetable.actions.TrainsHelper.NextType;
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TimeInterval;
@@ -100,11 +99,7 @@ public class StationTimetablesExtractor {
      */
     private List<TimeInterval> collectIntervals(Node node) {
         TimeIntervalList list = new TimeIntervalList();
-        for (NodeTrack track : node.getTracks()) {
-            for (TimeInterval i : track.getTimeIntervalList()) {
-                list.addIntervalByNormalizedStartTime(i);
-            }
-        }
+        node.forEach(list::addIntervalByNormalizedStartTime);
         return list;
     }
 
