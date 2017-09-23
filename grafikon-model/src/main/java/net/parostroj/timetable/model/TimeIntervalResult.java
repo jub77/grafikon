@@ -53,4 +53,9 @@ public final class TimeIntervalResult {
     public Status getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s", status, overlappingIntervals);
+    }
 }
