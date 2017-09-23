@@ -30,7 +30,7 @@ public class TrainBuilder {
         train.setType(copiedTrain.getType());
         train.setDescription(copiedTrain.getDescription());
         train.setTopSpeed(copiedTrain.getTopSpeed());
-        train.getAttributes().add(copiedTrain.getAttributes());
+        copyAttributes(copiedTrain, train);
 
         // create copy of time intervals
         for (TimeInterval copiedInterval : copiedTrain.getTimeIntervalList()) {
@@ -53,7 +53,7 @@ public class TrainBuilder {
         Train newTrain = createTrain(copiedTrain.getId(), copiedTrain.getNumber(), copiedTrain.getType(),
                 copiedTrain.getTopSpeed(), newRoute, 0, copiedTrain.getDiagram(), 0);
         // copy train properties
-        newTrain.getAttributes().add(copiedTrain.getAttributes());
+        copyAttributes(copiedTrain, newTrain);
         newTrain.setDescription(copiedTrain.getDescription());
         newTrain.setTimeAfter(copiedTrain.getTimeAfter());
         newTrain.setTimeBefore(copiedTrain.getTimeBefore());
@@ -106,7 +106,7 @@ public class TrainBuilder {
         train.setType(copiedTrain.getType());
         train.setDescription(copiedTrain.getDescription());
         train.setTopSpeed(copiedTrain.getTopSpeed());
-        train.getAttributes().add(copiedTrain.getAttributes());
+        copyAttributes(copiedTrain, train);
 
         // get original intervals in reverse order
         LinkedList<TimeInterval> reverseIntervals = new LinkedList<>();
@@ -217,5 +217,12 @@ public class TrainBuilder {
                 }
             }
         }
+    }
+
+    private void copyAttributes(Train from, Train to) {
+        Attributes attributes = new Attributes(from.getAttributes());
+        attributes.remove(Train.ATTR_NEXT_JOINED_TRAIN);
+        attributes.remove(Train.ATTR_PREVIOUS_JOINED_TRAIN);
+        to.getAttributes().add(attributes);
     }
 }
