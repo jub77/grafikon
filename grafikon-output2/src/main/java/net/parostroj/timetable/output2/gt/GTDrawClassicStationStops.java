@@ -38,46 +38,47 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
 
     @Override
     protected void paintTrainsInStation(Node station, Graphics2D g) {
-        for (NodeTrack nodeTrack : station.getTracks()) {
-            for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (intervalFilter != null && !intervalFilter.apply(interval)) {
-                    continue;
-                }
-                if (this.isPlacedInterval(interval)) {
-                    if (interval.getLength() > 0) {
-                        g.setStroke(getTrainStroke(interval.getTrain()));
-                    } else {
-                        g.setStroke(trainSsStroke);
-                    }
-                    g.setColor(this.getIntervalColor(interval));
-
-                    this.paintTrainInStationWithInterval(g, interval);
-                }
+        for (TimeInterval interval : station) {
+            if (interval.isJoiningTrains() && checkIntervalFilter(interval)) {
+                paintTrainInStationImpl(g, interval);
+            }
+         }
+        for (TimeInterval interval : station) {
+            if (checkIntervalFilter(interval) && isPlacedInterval(interval)) {
+                paintTrainInStationImpl(g, interval);
             }
         }
+    }
+
+    private void paintTrainInStationImpl(Graphics2D g, TimeInterval interval) {
+        if (interval.getLength() > 0) {
+            g.setStroke(getTrainStroke(interval.getTrain()));
+        } else {
+            g.setStroke(trainSsStroke);
+        }
+        g.setColor(this.getIntervalColor(interval));
+
+        this.paintTrainInStationWithInterval(g, interval);
     }
 
     private boolean isPlacedInterval(TimeInterval interval) {
         boolean showBoundary = config.getOption(GTDrawSettings.Key.TRAIN_ENDS);
         boolean boundary = interval.isBoundary();
         boolean inner = !interval.isTechnological() && interval.isInnerStop();
-        boolean joining = interval.isJoiningTrains();
-        return inner || boundary && showBoundary || joining;
+        return inner || boundary && showBoundary;
     }
 
     @Override
     public int getY(TimeInterval interval) {
         int y = this.getY(interval.getOwnerAsNode(), interval.getTrack());
-        if (this.isPlacedInterval(interval)) {
-            Integer location = locationMap.computeIfAbsent(interval, i -> {
-                List<TimeIntervalList> im = nodeIntervalLists.computeIfAbsent(
-                        interval.getOwnerAsNode(),
-                        key -> new LinkedList<>());
-                return this.findLocation(interval, im);
+        Integer location = locationMap.computeIfAbsent(interval, i -> {
+            List<TimeIntervalList> im = nodeIntervalLists.computeIfAbsent(
+                    interval.getOwnerAsNode(),
+                    key -> new LinkedList<>());
+            return this.findLocation(interval, im);
 
-            });
-            y += this.convertLocationToShift(location);
-        }
+        });
+        y += this.convertLocationToShift(location);
         return y;
     }
 

@@ -398,10 +398,14 @@ public abstract class GTDrawBase implements GTDraw {
         return orientationDelegate.createLine(x1, y, x2, y);
     }
 
+    protected boolean checkIntervalFilter(TimeInterval interval) {
+        return intervalFilter == null || intervalFilter.apply(interval);
+    }
+
     protected void paintTrainsOnLine(Line line, Graphics2D g) {
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                if (intervalFilter == null || intervalFilter.apply(interval)) {
+                if (checkIntervalFilter(interval)) {
                     g.setStroke(this.getTrainStroke(interval.getTrain()));
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
                             && (config.isOption(GTDrawSettings.Key.TRAIN_NAMES));

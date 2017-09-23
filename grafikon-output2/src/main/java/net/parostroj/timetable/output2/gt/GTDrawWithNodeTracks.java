@@ -133,7 +133,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     protected void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (intervalFilter != null && !intervalFilter.apply(interval)) {
+                if (!checkIntervalFilter(interval)) {
                     continue;
                 }
                 boolean technological = interval.isTechnological();
