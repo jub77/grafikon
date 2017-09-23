@@ -192,9 +192,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
                 (isNodeOwner() ? getOwner().toString() : getOwnerAsLine().toString(getDirection()))
                 : "-";
         return getStart() != getEnd()
-                ? String.format("%s[%s](%s,%s)", ownerStr, getTrain().getName().translate(),
+                ? String.format("%s[%s]{%s}(%s,%s)", ownerStr, getTrain().getName().translate(), getTrack().getNumber(),
                         converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()))
-                : String.format("%s[%s](%s)", ownerStr, getTrain().getName().translate(),
+                : String.format("%s[%s]{%s}(%s)", ownerStr, getTrain().getName().translate(), getTrack().getNumber(),
                         converter.convertIntToText(getStart()));
     }
 
