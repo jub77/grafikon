@@ -69,16 +69,13 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     public int getY(TimeInterval interval) {
         int y = this.getY(interval.getOwnerAsNode(), interval.getTrack());
         if (this.isPlacedInterval(interval)) {
-            Integer location = locationMap.get(interval);
-            if (location == null) {
-                List<TimeIntervalList> im = nodeIntervalLists.get(interval.getOwnerAsNode());
-                if (im == null) {
-                    im = new LinkedList<>();
-                    nodeIntervalLists.put(interval.getOwnerAsNode(), im);
-                }
-                location = this.findLocation(interval, im);
-                locationMap.put(interval, location);
-            }
+            Integer location = locationMap.computeIfAbsent(interval, i -> {
+                List<TimeIntervalList> im = nodeIntervalLists.computeIfAbsent(
+                        interval.getOwnerAsNode(),
+                        key -> new LinkedList<>());
+                return this.findLocation(interval, im);
+
+            });
             y += this.convertLocationToShift(location);
         }
         return y;
