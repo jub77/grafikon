@@ -119,7 +119,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
     public TimeIntervalResult testIntervalForRouteSegment(TimeInterval interval) {
         for (TimeInterval item : this) {
             if (item.compareOpenNormalized(interval) == 0 && item != interval) {
-                return new TimeIntervalResult(TimeIntervalResult.Status.OVERLAPPING);
+                return new TimeIntervalResult(TimeIntervalResult.Status.OVERLAPPING, Collections.singleton(item));
             }
         }
         return new TimeIntervalResult(TimeIntervalResult.Status.OK);
