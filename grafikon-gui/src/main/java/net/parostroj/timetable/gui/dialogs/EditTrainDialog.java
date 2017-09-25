@@ -131,10 +131,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
             previousTrainModel.addWrapper(Wrapper.getEmptyWrapper("-"));
 
             diagram.getTrains().stream().forEach(t -> {
-                if (t.getFirstInterval().getOwner() == to) {
-                    nextTrainModel.addWrapper(Wrapper.getWrapper(t));
-                } else if (t.getLastInterval().getOwner() == from) {
-                    previousTrainModel.addWrapper(Wrapper.getWrapper(t));
+                if (t != train) {
+                    if (t.getFirstInterval().getOwner() == to) {
+                        nextTrainModel.addWrapper(Wrapper.getWrapper(t));
+                    }
+                    if (t.getLastInterval().getOwner() == from) {
+                        previousTrainModel.addWrapper(Wrapper.getWrapper(t));
+                    }
                 }
             });
 
