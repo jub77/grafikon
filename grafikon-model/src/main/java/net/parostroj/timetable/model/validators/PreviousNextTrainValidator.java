@@ -87,12 +87,12 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         return false;
     }
 
-    private void updateNextTrain(Train currentTrain, Train oldNextTrain, Train newNextTrain) {
+    private void updateNextTrain(Train currentTrain, Train oldTrain, Train newNextTrain) {
         if (changing) return;
         try {
             changing = true;
-            if (oldNextTrain != null && oldNextTrain.getPreviousJoinedTrain() != null) {
-                oldNextTrain.setPreviousJoinedTrain(null);
+            if (oldTrain != null && oldTrain.getPreviousJoinedTrain() != null) {
+                oldTrain.setPreviousJoinedTrain(null);
             }
             if (newNextTrain != null && newNextTrain.getPreviousJoinedTrain() != currentTrain) {
                 TimeInterval source = currentTrain.getLastInterval();
@@ -137,7 +137,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                 }
                 checkAndUpdateTechnologicalAfter(newPrevTrain);
             }
-            if (newPrevTrain == null) {
+            if (oldPrevTrain != null) {
                 oldPrevTrain.setTimeAfter(0);
             }
         } finally {
