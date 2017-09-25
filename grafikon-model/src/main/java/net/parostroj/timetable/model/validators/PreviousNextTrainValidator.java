@@ -88,12 +88,12 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         return false;
     }
 
-    private void updateNextTrain(Train currentTrain, Train oldTrain, Train newNextTrain) {
+    private void updateNextTrain(Train currentTrain, Train oldNextTrain, Train newNextTrain) {
         if (changing) return;
         try {
             changing = true;
-            if (oldTrain != null && oldTrain.getPreviousJoinedTrain() != null) {
-                oldTrain.setPreviousJoinedTrain(null);
+            if (oldNextTrain != null && oldNextTrain.getPreviousJoinedTrain() != null) {
+                oldNextTrain.setPreviousJoinedTrain(null);
             }
             if (newNextTrain != null && newNextTrain.getPreviousJoinedTrain() != currentTrain) {
                 TimeInterval source = currentTrain.getLastInterval();
