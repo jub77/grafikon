@@ -541,11 +541,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         this.updateTechnologicalTimeAfter();
     }
 
-    public void updateTechnologicalTimeAfter() {
+    private void updateTechnologicalTimeAfter() {
         this.setTimeAfter(this.getTimeAfter());
     }
 
-    public void updateTechnologicalTimeBefore() {
+    private void updateTechnologicalTimeBefore() {
         this.setTimeBefore(this.getTimeBefore());
     }
 
