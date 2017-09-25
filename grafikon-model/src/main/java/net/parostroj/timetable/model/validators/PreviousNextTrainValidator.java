@@ -104,6 +104,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                     checkAndUpdateTrack(source, dest);
                     if (newNextTrain.getPreviousJoinedTrain() != null) {
                         newNextTrain.getPreviousJoinedTrain().setNextJoinedTrain(null);
+                        newNextTrain.getPreviousJoinedTrain().setTimeAfter(0);
                     }
                     newNextTrain.setPreviousJoinedTrain(currentTrain);
                 }
