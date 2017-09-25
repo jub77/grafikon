@@ -456,7 +456,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             timeBefore.setStart(firstInterval.getStart() - length + 1);
             timeBefore.setLength(length - 2);
             timeBefore.setTrack(firstInterval.getTrack());
-            fireEvent = timeBefore.isChanged();
+            fireEvent = oldLength != length;
             if (isAttached()) {
                 timeBefore.updateInOwner();
             }
@@ -493,7 +493,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             timeAfter.setStart(lastInterval.getEnd() + 1);
             timeAfter.setLength(length - 2);
             timeAfter.setTrack(lastInterval.getTrack());
-            fireEvent = timeAfter.isChanged();
+            fireEvent = oldLength != length;
             if (isAttached()) {
                 timeAfter.updateInOwner();
             }
