@@ -78,7 +78,8 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                 if (currentTrain.getNextJoinedTrain() != null) {
                     checkAndUpdateNextTrainStart(currentTrain);
                     checkAndUpdateTechnologicalAfter(currentTrain);
-                } else if (currentTrain.getPreviousJoinedTrain() != null) {
+                }
+                if (currentTrain.getPreviousJoinedTrain() != null) {
                     checkAndUpdateTechnologicalAfter(currentTrain.getPreviousJoinedTrain());
                 }
             }
