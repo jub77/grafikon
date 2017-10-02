@@ -46,8 +46,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private TimeInterval timeBefore;
     private TimeInterval timeAfter;
 
+
     /* Cached map for train cycles. */
-    private final TrainCachedCycles _cachedCycles;
+    private final TrainCachedCycles cachedCycles;
     private final Collection<TimeInterval> nodeIntervalsView;
     private final Collection<TimeInterval> lineIntervalsView;
     private final List<TimeInterval> timeIntervalsView;
@@ -65,7 +66,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         this.id = id;
         this.diagram = diagram;
         this.nameDelegate = new TrainNameDelegate(this);
-        _cachedCycles = new TrainCachedCycles();
+        cachedCycles = new TrainCachedCycles();
         timeIntervalList = new TimeIntervalList();
         nodeIntervalsView = Collections.unmodifiableCollection(
                 Collections2.filter(timeIntervalList, ModelPredicates::nodeInterval));
@@ -287,8 +288,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     protected void addCycleItem(TrainsCycleItem item) {
         TrainsCycleType cycleType = item.getCycle().getType();
-        _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), item, true);
-        _cachedCycles.add(timeIntervalList, item);
+        cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), item, true);
+        cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new Event(this, Event.Type.ADDED, item));
         this.checkRecalculateCycle(item.getCycle());
     }
@@ -299,7 +300,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     protected void removeCycleItem(TrainsCycleItem item) {
         TrainsCycleType cycleType = item.getCycle().getType();
         this.cycles.remove(cycleType, item);
-        _cachedCycles.remove(item);
+        cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, item));
         this.checkRecalculateCycle(item.getCycle());
     }
@@ -307,9 +308,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     protected void replaceCycleItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
         TrainsCycleType cycleType = oldItem.getCycle().getType();
         this.cycles.remove(cycleType, oldItem);
-        _cachedCycles.remove(oldItem);
-        _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), newItem, true);
-        _cachedCycles.add(timeIntervalList, newItem);
+        cachedCycles.remove(oldItem);
+        cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), newItem, true);
+        cachedCycles.add(timeIntervalList, newItem);
         this.listenerSupport.fireEvent(new Event(this, Event.Type.REPLACED, newItem, ListData.createData(oldItem, newItem)));
         this.checkRecalculateCycle(newItem.getCycle());
     }
@@ -326,7 +327,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list of train cycle items that covers given interval (empty list if there are none)
      */
     public Collection<TrainsCycleItem> getCycleItemsForInterval(TrainsCycleType type, TimeInterval interval) {
-        return _cachedCycles.get(interval, type);
+        return cachedCycles.get(interval, type);
     }
 
     @Override
@@ -864,7 +865,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return covered
      */
     public boolean isCovered(TrainsCycleType type) {
-        return _cachedCycles.isCovered(timeIntervalList, type);
+        return cachedCycles.isCovered(timeIntervalList, type);
     }
 
     /**
@@ -875,7 +876,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return covered
      */
     public boolean isCovered(TrainsCycleType type, TimeInterval interval) {
-        return !_cachedCycles.get(interval, type).isEmpty();
+        return !cachedCycles.get(interval, type).isEmpty();
     }
 
     /**
@@ -886,7 +887,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return covered
      */
     public boolean isCovered(TrainsCycle cycle, TimeInterval interval) {
-        Collection<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType());
+        Collection<TrainsCycleItem> list = cachedCycles.get(interval, cycle.getType());
         for (TrainsCycleItem item : list) {
             if (item.getCycle() == cycle) {
                 return true;
@@ -902,7 +903,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return interval
      */
     public Tuple<TimeInterval> getFirstUncoveredPart(TrainsCycleType type) {
-        List<Tuple<TimeInterval>> tuples = _cachedCycles.getUncovered(timeIntervalList, type);
+        List<Tuple<TimeInterval>> tuples = cachedCycles.getUncovered(timeIntervalList, type);
         return tuples.isEmpty() ? null : tuples.get(0);
     }
 
@@ -913,7 +914,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list of intervals
      */
     public List<Tuple<TimeInterval>> getAllUncoveredParts(TrainsCycleType type) {
-        return _cachedCycles.getUncovered(timeIntervalList, type);
+        return cachedCycles.getUncovered(timeIntervalList, type);
     }
 
     /**
@@ -923,7 +924,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list of intervals
      */
     public List<Pair<TimeInterval, Boolean>> getRouteCoverage(TrainsCycleType type) {
-        return _cachedCycles.getCoverage(timeIntervalList, type);
+        return cachedCycles.getCoverage(timeIntervalList, type);
     }
 
     /**
@@ -934,7 +935,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return if can be safely added
      */
     public boolean testAddCycle(TrainsCycleItem newItem, TrainsCycleItem ignoredItem, boolean overlapping) {
-        return _cachedCycles.testAddCycle(timeIntervalList, newItem, ignoredItem, overlapping);
+        return cachedCycles.testAddCycle(timeIntervalList, newItem, ignoredItem, overlapping);
     }
 
     /**
