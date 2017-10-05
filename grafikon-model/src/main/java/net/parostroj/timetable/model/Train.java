@@ -46,6 +46,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private TimeInterval timeBefore;
     private TimeInterval timeAfter;
 
+    private Train previousJoinedTrain;
 
     /* Cached map for train cycles. */
     private final TrainCachedCycles cachedCycles;
@@ -75,7 +76,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
         listenerSupport = new ListenerSupport();
         attributes = new Attributes((attrs, change) ->  {
-            listenerSupport.fireEvent(new Event(Train.this, change));
             refreshCachedNames();
             if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
                 Train.this.recalculate();
@@ -85,6 +85,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
                     interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
             }
+            if (change.checkName(Train.ATTR_NEXT_JOINED_TRAIN)) {
+                Train oldTrain = (Train) change.getOldValue();
+                Train newTrain = (Train) change.getNewValue();
+                if (oldTrain != null) {
+                    oldTrain.setPreviousJoinedTrain(oldTrain.previousJoinedTrain, null);
+                }
+                if (newTrain != null) {
+                    Train newTrainOldPrevious = newTrain.previousJoinedTrain;
+                    newTrain.previousJoinedTrain = null;
+                    if (newTrainOldPrevious != null) {
+                        newTrainOldPrevious.setNextJoinedTrain(null);
+                    }
+                    newTrain.setPreviousJoinedTrain(newTrainOldPrevious, this);
+                }
+            }
+            listenerSupport.fireEvent(new Event(Train.this, change));
         });
         cycles = LinkedListMultimap.create();
         attached = false;
@@ -996,11 +1012,15 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     public Train getPreviousJoinedTrain() {
-        return this.getAttributes().get(ATTR_PREVIOUS_JOINED_TRAIN, Train.class);
+        return previousJoinedTrain;
     }
 
-    public void setPreviousJoinedTrain(Train previousTrain) {
-        this.getAttributes().setRemove(ATTR_PREVIOUS_JOINED_TRAIN, previousTrain);
+    private void setPreviousJoinedTrain(Train oldPreviousTrain, Train previousTrain) {
+        if (previousTrain != oldPreviousTrain) {
+            previousJoinedTrain = previousTrain;
+            this.fireEvent(new Event(this,
+                    new AttributeChange(Train.ATTR_PREVIOUS_JOINED_TRAIN, oldPreviousTrain, previousJoinedTrain)));
+        }
     }
 
     public Train getNextJoinedTrain() {

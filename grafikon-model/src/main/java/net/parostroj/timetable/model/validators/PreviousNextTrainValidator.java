@@ -12,33 +12,22 @@ import net.parostroj.timetable.utils.TimeUtil;
 
 public class PreviousNextTrainValidator implements TrainDiagramValidator {
 
-    private boolean changing;
-
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram
                 && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
             Train currentTrain = (Train) event.getObject();
             if (currentTrain.getPreviousJoinedTrain() != null) {
-                currentTrain.setPreviousJoinedTrain(null);
+                currentTrain.getPreviousJoinedTrain().setNextJoinedTrain(null);
             }
             if (currentTrain.getNextJoinedTrain() != null) {
                 currentTrain.setNextJoinedTrain(null);
-                if (currentTrain.getTimeAfter() != 0) {
-                    currentTrain.setTimeAfter(0);
-                }
             }
         }
         if (event.getSource() instanceof Train) {
             Train currentTrain = (Train) event.getSource();
             if (event.getType() == Type.ATTRIBUTE) {
                 switch (event.getAttributeChange().getName()) {
-                    case Train.ATTR_PREVIOUS_JOINED_TRAIN:
-                        updatePreviousTrain(
-                                currentTrain,
-                                (Train) event.getAttributeChange().getOldValue(),
-                                (Train) event.getAttributeChange().getNewValue());
-                        break;
                     case Train.ATTR_NEXT_JOINED_TRAIN:
                         updateNextTrain(
                                 currentTrain,
@@ -89,61 +78,17 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     }
 
     private void updateNextTrain(Train currentTrain, Train oldNextTrain, Train newNextTrain) {
-        if (changing) return;
-        try {
-            changing = true;
-            if (oldNextTrain != null && oldNextTrain.getPreviousJoinedTrain() != null) {
-                oldNextTrain.setPreviousJoinedTrain(null);
+        if (newNextTrain != null) {
+            TimeInterval source = currentTrain.getLastInterval();
+            TimeInterval dest = newNextTrain.getFirstInterval();
+            if (!checkNode(source, dest)) {
+                currentTrain.setNextJoinedTrain(null);
+            } else {
+                checkAndUpdateTrack(source, dest);
             }
-            if (newNextTrain != null && newNextTrain.getPreviousJoinedTrain() != currentTrain) {
-                TimeInterval source = currentTrain.getLastInterval();
-                TimeInterval dest = newNextTrain.getFirstInterval();
-                if (!checkNode(source, dest)) {
-                    currentTrain.setNextJoinedTrain(null);
-                } else {
-                    checkAndUpdateTrack(source, dest);
-                    if (newNextTrain.getPreviousJoinedTrain() != null) {
-                        newNextTrain.getPreviousJoinedTrain().setNextJoinedTrain(null);
-                        newNextTrain.getPreviousJoinedTrain().setTimeAfter(0);
-                    }
-                    newNextTrain.setPreviousJoinedTrain(currentTrain);
-                }
-                checkAndUpdateTechnologicalAfter(currentTrain);
-            }
-            if (newNextTrain == null) {
-                currentTrain.setTimeAfter(0);
-            }
-        } finally {
-            changing = false;
-        }
-    }
-
-    private void updatePreviousTrain(Train currentTrain, Train oldPrevTrain, Train newPrevTrain) {
-        if (changing) return;
-        try {
-            changing = true;
-            if (oldPrevTrain != null && oldPrevTrain.getNextJoinedTrain() != null) {
-                oldPrevTrain.setNextJoinedTrain(null);
-            }
-            if (newPrevTrain != null && newPrevTrain.getNextJoinedTrain() != currentTrain) {
-                TimeInterval source = currentTrain.getFirstInterval();
-                TimeInterval dest = newPrevTrain.getLastInterval();
-                if (!checkNode(source, dest)) {
-                    currentTrain.setPreviousJoinedTrain(null);
-                } else {
-                    checkAndUpdateTrack(source, dest);
-                    if (newPrevTrain.getNextJoinedTrain() != null) {
-                        newPrevTrain.getNextJoinedTrain().setPreviousJoinedTrain(null);
-                    }
-                    newPrevTrain.setNextJoinedTrain(currentTrain);
-                }
-                checkAndUpdateTechnologicalAfter(newPrevTrain);
-            }
-            if (oldPrevTrain != null) {
-                oldPrevTrain.setTimeAfter(0);
-            }
-        } finally {
-            changing = false;
+            checkAndUpdateTechnologicalAfter(currentTrain);
+        } else {
+            currentTrain.setTimeAfter(0);
         }
     }
 
