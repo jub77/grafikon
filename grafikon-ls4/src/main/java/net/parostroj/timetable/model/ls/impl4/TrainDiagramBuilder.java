@@ -4,25 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.FreightNet;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.Region;
@@ -46,12 +38,11 @@ import net.parostroj.timetable.model.ls.LSException;
  */
 public class TrainDiagramBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainDiagramBuilder.class);
-
     private TrainDiagram diagram;
     private final boolean trackChanges;
     private final Map<String, String> circulationSequenceMap;
     private final FileLoadSaveAttachments flsAttachments;
+    private final Collection<DelayedAttributes<?>> delayedAttributesList = new ArrayList<>();
 
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram, FileLoadSaveAttachments flsAttachments) throws LSException {
         this.flsAttachments = flsAttachments;
@@ -193,7 +184,9 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrain(LSTrain lsTrain) throws LSException {
-        Train train = lsTrain.createTrain(diagram, delayedMapping(diagram::getObjectById));
+        DelayedAttributes<Train> delayedAttributes = lsTrain.createTrain(diagram);
+        delayedAttributesList.add(delayedAttributes);
+        Train train = delayedAttributes.getObject();
         Train foundTrain = null;
         if ((foundTrain = diagram.getTrains().getById(train.getId())) != null) {
             diagram.getTrains().remove(foundTrain);
@@ -237,38 +230,6 @@ public class TrainDiagramBuilder {
         }
     }
 
-    private void finishDelaydObjectWithIds() {
-        // trains references to trains in default category
-        updateObjectWithIdReferences(
-                diagram.getTrains()::getById,
-                diagram.getTrains().stream(),
-                train -> train.getAttributes());
-    }
-
-    private void updateObjectWithIdReferences(
-            Function<String, ObjectWithId> objectMapping,
-            Stream<? extends AttributesHolder> objectStream,
-            Function<AttributesHolder, Map<String, Object>> attributesAccessor) {
-        objectStream.forEach(holder -> {
-            Map<String, Object> attributes = attributesAccessor.apply(holder);
-            Iterator<Map.Entry<String, Object>> i = attributes.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry<String, Object> entry = i.next();
-                if (entry.getValue() instanceof DelayedObjectWithId) {
-                    DelayedObjectWithId delayedObject = (DelayedObjectWithId) entry.getValue();
-                    ObjectWithId object = objectMapping.apply(delayedObject.getId());
-                    if (object == null) {
-                        log.warn("Not found object {} with key {} in {}",
-                                delayedObject.getId(), entry.getKey(), holder);
-                        i.remove();
-                    } else {
-                        entry.setValue(object);
-                    }
-                }
-            }
-        });
-    }
-
     private void finishCirculationSequences() {
         while (!circulationSequenceMap.isEmpty()) {
             addCirculationToSequence(circulationSequenceMap.values().iterator().next());
@@ -288,14 +249,13 @@ public class TrainDiagramBuilder {
         }
     }
 
-    private Function<String, ObjectWithId> delayedMapping(Function<String, ObjectWithId> mapping) {
-        return id -> {
-            ObjectWithId objectWithId = mapping.apply(id);
-            return objectWithId == null ? new DelayedObjectWithId(id) : objectWithId;
-        };
+    private void finishDelaydObjectWithIds() throws LSException {
+        for (DelayedAttributes<?> delayedAttributes : delayedAttributesList) {
+            delayedAttributes.addAttributes();
+        }
     }
 
-    public TrainDiagram getTrainDiagram() {
+    public TrainDiagram getTrainDiagram() throws LSException {
         if (diagram == null) {
             throw new IllegalStateException("Diagram already created");
         }

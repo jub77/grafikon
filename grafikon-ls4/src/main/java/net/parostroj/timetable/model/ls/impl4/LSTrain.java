@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -14,7 +13,6 @@ import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -156,10 +154,9 @@ public class LSTrain {
         this.start = start;
     }
 
-    public Train createTrain(TrainDiagram diagram, Function<String, ObjectWithId> mapping) throws LSException {
+    public DelayedAttributes<Train> createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
-        train.getAttributes().add(attributes.createAttributes(mapping));
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
         train.setType(diagram.getTrainTypes().getById(type));
@@ -172,14 +169,14 @@ public class LSTrain {
                     Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
                     NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
                     builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(),
-                            nodePart.getAttributes().createAttributes(mapping));
+                            nodePart.getAttributes().createAttributes(diagram::getObjectById));
                 } else {
                     LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
                     Line line = diagram.getNet().getLineById(linePart.getLineId());
                     LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
                     builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(),
                             linePart.getAddedTime() != null ? linePart.getAddedTime() : 0,
-                            linePart.getAttributes().createAttributes(mapping));
+                            linePart.getAttributes().createAttributes(diagram::getObjectById));
                 }
             }
         }
@@ -187,6 +184,6 @@ public class LSTrain {
         // set technological time
         train.setTimeBefore(this.timeBefore);
         train.setTimeAfter(this.timeAfter);
-        return train;
+        return new DelayedAttributes<>(train, attributes, diagram::getObjectById);
     }
 }
