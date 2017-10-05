@@ -104,7 +104,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         }, (attrs, change) -> {
             if (change.checkName(Train.ATTR_NEXT_JOINED_TRAIN)) {
                 Train newTrain = (Train) change.getNewValue();
-                return this.getLastInterval().getOwnerAsNode() == newTrain.getFirstInterval().getOwnerAsNode();
+                return newTrain == null
+                        || this.getLastInterval().getOwnerAsNode() == newTrain.getFirstInterval().getOwnerAsNode();
             }
             return true;
         });
