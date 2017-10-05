@@ -40,6 +40,17 @@ public class ListData {
         return newItem;
     }
 
+    @Override
+    public String toString() {
+        if (index != null) {
+            return String.format("index: %d", index);
+        } else if (fromIndex != null) {
+            return String.format("from index: %d to index: %d", fromIndex, toIndex);
+        } else {
+            return String.format("from: %s to: %s", oldItem, newItem);
+        }
+    }
+
     public static ListData createData(Integer index1, Integer index2) {
         if (index1 == null && index2 == null) {
             return null;
