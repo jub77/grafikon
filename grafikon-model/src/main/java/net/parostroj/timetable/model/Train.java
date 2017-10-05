@@ -477,8 +477,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         } else if (length != 0) {
             TimeInterval firstInterval = this.getFirstInterval();
             // recalculate time
-            timeBefore.setStart(firstInterval.getStart() - length + 1);
-            timeBefore.setLength(length - 2);
+            int start = firstInterval.getStart() - length + 1;
+            int end = start + length - 2;
+            timeBefore.setInterval(start, end);
             timeBefore.setTrack(firstInterval.getTrack());
             fireEvent = oldLength != length;
             if (isAttached()) {
@@ -514,8 +515,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         } else if (length != 0) {
             TimeInterval lastInterval = this.getLastInterval();
             // recalculate time
-            timeAfter.setStart(lastInterval.getEnd() + 1);
-            timeAfter.setLength(length - 2);
+            int start = lastInterval.getEnd() + 1;
+            int end = start + length - 2;
+            timeAfter.setInterval(start, end);
             timeAfter.setTrack(lastInterval.getTrack());
             fireEvent = oldLength != length;
             if (isAttached()) {
