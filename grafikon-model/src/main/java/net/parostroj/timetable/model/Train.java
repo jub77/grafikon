@@ -101,6 +101,12 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
                 }
             }
             listenerSupport.fireEvent(new Event(Train.this, change));
+        }, (attrs, change) -> {
+            if (change.checkName(Train.ATTR_NEXT_JOINED_TRAIN)) {
+                Train newTrain = (Train) change.getNewValue();
+                return this.getLastInterval().getOwnerAsNode() == newTrain.getFirstInterval().getOwnerAsNode();
+            }
+            return true;
         });
         cycles = LinkedListMultimap.create();
         attached = false;
