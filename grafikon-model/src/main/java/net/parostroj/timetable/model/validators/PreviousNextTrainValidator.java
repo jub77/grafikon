@@ -81,19 +81,11 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         if (newNextTrain != null) {
             TimeInterval source = currentTrain.getLastInterval();
             TimeInterval dest = newNextTrain.getFirstInterval();
-            if (!checkNode(source, dest)) {
-                currentTrain.setNextJoinedTrain(null);
-            } else {
-                checkAndUpdateTrack(source, dest);
-            }
+            checkAndUpdateTrack(source, dest);
             checkAndUpdateTechnologicalAfter(currentTrain);
         } else {
             currentTrain.setTimeAfter(0);
         }
-    }
-
-    private boolean checkNode(TimeInterval source, TimeInterval dest) {
-        return source.getOwner() == dest.getOwner();
     }
 
     private void checkAndUpdateTrack(TimeInterval source, TimeInterval dest) {
