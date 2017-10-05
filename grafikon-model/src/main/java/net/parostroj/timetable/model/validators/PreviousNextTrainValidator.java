@@ -31,7 +31,6 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                     case Train.ATTR_NEXT_JOINED_TRAIN:
                         updateNextTrain(
                                 currentTrain,
-                                (Train) event.getAttributeChange().getOldValue(),
                                 (Train) event.getAttributeChange().getNewValue());
                         break;
                     case Train.ATTR_TECHNOLOGICAL_AFTER:
@@ -53,12 +52,11 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                 SpecialTrainTimeIntervalList list = (SpecialTrainTimeIntervalList) event.getData();
                 if (list.getType() == SpecialTrainTimeIntervalList.Type.TRACK) {
                     int changed = list.getChanged();
-                    if (changed == 0 && currentTrain.getPreviousJoinedTrain() != null) {
+                    if (currentTrain.getPreviousJoinedTrain() != null && changed == 0) {
                         TimeInterval source = currentTrain.getFirstInterval();
                         TimeInterval dest = currentTrain.getPreviousJoinedTrain().getLastInterval();
                         checkAndUpdateTrack(source, dest);
-                    } else if (changed == currentTrain.getTimeIntervalList().size() - 1
-                            && currentTrain.getNextJoinedTrain() != null) {
+                    } else if (currentTrain.getNextJoinedTrain() != null && changed == currentTrain.getTimeIntervalList().size() - 1) {
                         TimeInterval source = currentTrain.getLastInterval();
                         TimeInterval dest = currentTrain.getNextJoinedTrain().getFirstInterval();
                         checkAndUpdateTrack(source, dest);
@@ -77,7 +75,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         return false;
     }
 
-    private void updateNextTrain(Train currentTrain, Train oldNextTrain, Train newNextTrain) {
+    private void updateNextTrain(Train currentTrain, Train newNextTrain) {
         if (newNextTrain != null) {
             TimeInterval source = currentTrain.getLastInterval();
             TimeInterval dest = newNextTrain.getFirstInterval();
@@ -89,9 +87,6 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     }
 
     private void checkAndUpdateTrack(TimeInterval source, TimeInterval dest) {
-        if (source.getOwner() != dest.getOwner()) {
-            throw new IllegalStateException("Not the same node");
-        }
         Track track = source.getTrack();
         if (track != dest.getTrack()) {
             dest.getTrain().changeNodeTrack(dest, (NodeTrack) track);
