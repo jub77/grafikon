@@ -186,10 +186,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeLabel.setText(ResourceLoader.getString("edit.train.route")); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
+        okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         groupsComboBox = new GroupsComboBox(false);
 
@@ -203,11 +203,11 @@ public class EditTrainDialog extends javax.swing.JDialog {
         techTimesPanel.setBorder(BorderFactory.createEmptyBorder());
         JPanel connectedTrainsPanel = new JPanel();
         connectedTrainsPanel.setBorder(BorderFactory.createEmptyBorder());
-        FlowLayout fl_techTimesPanel = (FlowLayout) techTimesPanel.getLayout();
-        fl_techTimesPanel.setHgap(0);
-        fl_techTimesPanel.setAlignOnBaseline(true);
-        fl_techTimesPanel.setAlignment(FlowLayout.LEFT);
-        fl_techTimesPanel.setVgap(0);
+        FlowLayout flTechTimesPanel = (FlowLayout) techTimesPanel.getLayout();
+        flTechTimesPanel.setHgap(0);
+        flTechTimesPanel.setAlignOnBaseline(true);
+        flTechTimesPanel.setAlignment(FlowLayout.LEFT);
+        flTechTimesPanel.setVgap(0);
 
         JPanel weightLimitPanel = new JPanel();
 
@@ -305,82 +305,83 @@ public class EditTrainDialog extends javax.swing.JDialog {
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        GridBagLayout gbl_connectedTrainsPanel = new GridBagLayout();
-        connectedTrainsPanel.setLayout(gbl_connectedTrainsPanel);
+        GridBagLayout gblConnectedTrainsPanel = new GridBagLayout();
+        connectedTrainsPanel.setLayout(gblConnectedTrainsPanel);
 
         JLabel joinedTrainsLabel = new JLabel(ResourceLoader.getString("edit.train.joined"));
-        GridBagConstraints gbc_joinedTrainsLabel = new GridBagConstraints();
-        gbc_joinedTrainsLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_joinedTrainsLabel.anchor = GridBagConstraints.WEST;
-        gbc_joinedTrainsLabel.gridwidth = 2;
-        gbc_joinedTrainsLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_joinedTrainsLabel.gridx = 0;
-        gbc_joinedTrainsLabel.gridy = 0;
-        connectedTrainsPanel.add(joinedTrainsLabel, gbc_joinedTrainsLabel);
+        GridBagConstraints gbcJoinedTrainsLabel = new GridBagConstraints();
+        gbcJoinedTrainsLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbcJoinedTrainsLabel.anchor = GridBagConstraints.WEST;
+        gbcJoinedTrainsLabel.gridwidth = 2;
+        gbcJoinedTrainsLabel.insets = new Insets(0, 0, 5, 5);
+        gbcJoinedTrainsLabel.gridx = 0;
+        gbcJoinedTrainsLabel.gridy = 0;
+        connectedTrainsPanel.add(joinedTrainsLabel, gbcJoinedTrainsLabel);
 
         JLabel previousTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.previous") + ": ");
-        GridBagConstraints gbc_previousTrainLabel = new GridBagConstraints();
-        gbc_previousTrainLabel.anchor = GridBagConstraints.WEST;
-        gbc_previousTrainLabel.insets = new Insets(0, 10, 5, 5);
-        gbc_previousTrainLabel.gridx = 0;
-        gbc_previousTrainLabel.gridy = 1;
-        connectedTrainsPanel.add(previousTrainLabel, gbc_previousTrainLabel);
+        GridBagConstraints gbcPreviousTrainLabel = new GridBagConstraints();
+        gbcPreviousTrainLabel.anchor = GridBagConstraints.WEST;
+        gbcPreviousTrainLabel.insets = new Insets(0, 10, 5, 5);
+        gbcPreviousTrainLabel.gridx = 0;
+        gbcPreviousTrainLabel.gridy = 1;
+        connectedTrainsPanel.add(previousTrainLabel, gbcPreviousTrainLabel);
 
         JComboBox<Wrapper<Train>> previousTrainComboBox = new JComboBox<>();
         previousTrainModel = new WrapperListModel<>(true);
         previousTrainComboBox.setModel(previousTrainModel);
-        GridBagConstraints gbc_previousTrainComboBox = new GridBagConstraints();
-        gbc_previousTrainComboBox.insets = new Insets(0, 0, 5, 0);
-        gbc_previousTrainComboBox.weightx = 1.0;
-        gbc_previousTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_previousTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_previousTrainComboBox.gridx = 1;
-        gbc_previousTrainComboBox.gridy = 1;
-        connectedTrainsPanel.add(previousTrainComboBox, gbc_previousTrainComboBox);
+        GridBagConstraints gbcPreviousTrainComboBox = new GridBagConstraints();
+        gbcPreviousTrainComboBox.insets = new Insets(0, 0, 5, 0);
+        gbcPreviousTrainComboBox.weightx = 1.0;
+        gbcPreviousTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcPreviousTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbcPreviousTrainComboBox.gridx = 1;
+        gbcPreviousTrainComboBox.gridy = 1;
+        connectedTrainsPanel.add(previousTrainComboBox, gbcPreviousTrainComboBox);
 
         JLabel nextTrainLabel = new JLabel(ResourceLoader.getString("edit.train.joined.next") + ": ");
-        GridBagConstraints gbc_nextTrainLabel = new GridBagConstraints();
-        gbc_nextTrainLabel.anchor = GridBagConstraints.WEST;
-        gbc_nextTrainLabel.insets = new Insets(0, 10, 0, 5);
-        gbc_nextTrainLabel.gridx = 0;
-        gbc_nextTrainLabel.gridy = 2;
-        connectedTrainsPanel.add(nextTrainLabel, gbc_nextTrainLabel);
+        GridBagConstraints gbcNextTrainLabel = new GridBagConstraints();
+        gbcNextTrainLabel.anchor = GridBagConstraints.WEST;
+        gbcNextTrainLabel.insets = new Insets(0, 10, 0, 5);
+        gbcNextTrainLabel.gridx = 0;
+        gbcNextTrainLabel.gridy = 2;
+        connectedTrainsPanel.add(nextTrainLabel, gbcNextTrainLabel);
 
         JComboBox<Wrapper<Train>> nextTrainComboBox = new JComboBox<>();
         nextTrainModel = new WrapperListModel<>(true);
         nextTrainComboBox.setModel(nextTrainModel);
-        GridBagConstraints gbc_nextTrainComboBox = new GridBagConstraints();
-        gbc_nextTrainComboBox.weightx = 1.0;
-        gbc_nextTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_nextTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_nextTrainComboBox.gridx = 1;
-        gbc_nextTrainComboBox.gridy = 2;
-        connectedTrainsPanel.add(nextTrainComboBox, gbc_nextTrainComboBox);
+        GridBagConstraints gbcNextTrainComboBox = new GridBagConstraints();
+        gbcNextTrainComboBox.weightx = 1.0;
+        gbcNextTrainComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcNextTrainComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbcNextTrainComboBox.gridx = 1;
+        gbcNextTrainComboBox.gridy = 2;
+        connectedTrainsPanel.add(nextTrainComboBox, gbcNextTrainComboBox);
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
-        GridBagLayout gbl_weightLimitPanel = new GridBagLayout();
-        gbl_weightLimitPanel.columnWeights = new double[] { 0.0, 0.0 };
-        gbl_weightLimitPanel.rowWeights = new double[] { 0.0 };
-        weightLimitPanel.setLayout(gbl_weightLimitPanel);
+        layout.linkSize(SwingConstants.HORIZONTAL, typeLabel, numberLabel, descLabel, speedLabel, weightLabel,
+                routeLabel, groupLabel, weightLimitLabel);
+        GridBagLayout gblWeightLimitPanel = new GridBagLayout();
+        gblWeightLimitPanel.columnWeights = new double[] { 0.0, 0.0 };
+        gblWeightLimitPanel.rowWeights = new double[] { 0.0 };
+        weightLimitPanel.setLayout(gblWeightLimitPanel);
 
         weightLimitCheckBox = new JCheckBox();
         weightLimitCheckBox.addItemListener(e -> weightLimitEditBox.setEnabled(e.getStateChange() == ItemEvent.SELECTED));
-        GridBagConstraints gbc_weightLimitCheckBox = new GridBagConstraints();
-        gbc_weightLimitCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_weightLimitCheckBox.gridx = 1;
-        gbc_weightLimitCheckBox.gridy = 0;
-        weightLimitPanel.add(weightLimitCheckBox, gbc_weightLimitCheckBox);
+        GridBagConstraints gbcWeightLimitCheckBox = new GridBagConstraints();
+        gbcWeightLimitCheckBox.anchor = GridBagConstraints.WEST;
+        gbcWeightLimitCheckBox.gridx = 1;
+        gbcWeightLimitCheckBox.gridy = 0;
+        weightLimitPanel.add(weightLimitCheckBox, gbcWeightLimitCheckBox);
 
         weightLimitEditBox = new ValueWithUnitEditBox();
         weightLimitEditBox.setUnits(Arrays.asList(WeightUnit.values()));
         weightLimitEditBox.setUnit(WeightUnit.T);
-        GridBagConstraints gbc_weightLimitEditBox = new GridBagConstraints();
-        gbc_weightLimitEditBox.weightx = 1.0;
-        gbc_weightLimitEditBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_weightLimitEditBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_weightLimitEditBox.gridx = 0;
-        gbc_weightLimitEditBox.gridy = 0;
-        weightLimitPanel.add(weightLimitEditBox, gbc_weightLimitEditBox);
+        GridBagConstraints gbcWeightLimitEditBox = new GridBagConstraints();
+        gbcWeightLimitEditBox.weightx = 1.0;
+        gbcWeightLimitEditBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcWeightLimitEditBox.anchor = GridBagConstraints.NORTHWEST;
+        gbcWeightLimitEditBox.gridx = 0;
+        gbcWeightLimitEditBox.gridy = 0;
+        weightLimitPanel.add(weightLimitEditBox, gbcWeightLimitEditBox);
         javax.swing.JLabel techTimesLabel = new javax.swing.JLabel();
         techTimesPanel.add(techTimesLabel);
 
@@ -413,108 +414,108 @@ public class EditTrainDialog extends javax.swing.JDialog {
         techTimesPanel.add(timeAfterTextField);
 
         timeAfterTextField.setColumns(6);
-        GridBagLayout gbl_routeEditPanel = new GridBagLayout();
-        routeEditPanel.setLayout(gbl_routeEditPanel);
+        GridBagLayout gblRouteEditPanel = new GridBagLayout();
+        routeEditPanel.setLayout(gblRouteEditPanel);
         javax.swing.JLabel routeInsertLabel = new javax.swing.JLabel();
-        GridBagConstraints gbc_routeInsertLabel = new GridBagConstraints();
-        gbc_routeInsertLabel.anchor = GridBagConstraints.WEST;
-        gbc_routeInsertLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_routeInsertLabel.gridx = 0;
-        gbc_routeInsertLabel.gridy = 0;
-        routeEditPanel.add(routeInsertLabel, gbc_routeInsertLabel);
+        GridBagConstraints gbcRouteInsertLabel = new GridBagConstraints();
+        gbcRouteInsertLabel.anchor = GridBagConstraints.WEST;
+        gbcRouteInsertLabel.insets = new Insets(0, 0, 0, 5);
+        gbcRouteInsertLabel.gridx = 0;
+        gbcRouteInsertLabel.gridy = 0;
+        routeEditPanel.add(routeInsertLabel, gbcRouteInsertLabel);
 
         routeInsertLabel.setText(ResourceLoader.getString("edit.train.insert.node"));
         fromNodeButton = new javax.swing.JButton();
-        GridBagConstraints gbc_fromNodeButton = new GridBagConstraints();
-        gbc_fromNodeButton.weightx = 1.0;
-        gbc_fromNodeButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_fromNodeButton.anchor = GridBagConstraints.WEST;
-        gbc_fromNodeButton.insets = new Insets(0, 0, 0, 5);
-        gbc_fromNodeButton.gridx = 1;
-        gbc_fromNodeButton.gridy = 0;
-        routeEditPanel.add(fromNodeButton, gbc_fromNodeButton);
+        GridBagConstraints gbcFromNodeButton = new GridBagConstraints();
+        gbcFromNodeButton.weightx = 1.0;
+        gbcFromNodeButton.fill = GridBagConstraints.HORIZONTAL;
+        gbcFromNodeButton.anchor = GridBagConstraints.WEST;
+        gbcFromNodeButton.insets = new Insets(0, 0, 0, 5);
+        gbcFromNodeButton.gridx = 1;
+        gbcFromNodeButton.gridy = 0;
+        routeEditPanel.add(fromNodeButton, gbcFromNodeButton);
 
-        fromNodeButton.addActionListener(evt -> fromNodeButtonActionPerformed(evt));
+        fromNodeButton.addActionListener(this::fromNodeButtonActionPerformed);
         toNodeButton = new javax.swing.JButton();
-        GridBagConstraints gbc_toNodeButton = new GridBagConstraints();
-        gbc_toNodeButton.weightx = 1.0;
-        gbc_toNodeButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_toNodeButton.anchor = GridBagConstraints.WEST;
-        gbc_toNodeButton.insets = new Insets(0, 0, 0, 5);
-        gbc_toNodeButton.gridx = 2;
-        gbc_toNodeButton.gridy = 0;
-        routeEditPanel.add(toNodeButton, gbc_toNodeButton);
+        GridBagConstraints gbcToNodeButton = new GridBagConstraints();
+        gbcToNodeButton.weightx = 1.0;
+        gbcToNodeButton.fill = GridBagConstraints.HORIZONTAL;
+        gbcToNodeButton.anchor = GridBagConstraints.WEST;
+        gbcToNodeButton.insets = new Insets(0, 0, 0, 5);
+        gbcToNodeButton.gridx = 2;
+        gbcToNodeButton.gridy = 0;
+        routeEditPanel.add(toNodeButton, gbcToNodeButton);
 
-        toNodeButton.addActionListener(evt -> toNodeButtonActionPerformed(evt));
+        toNodeButton.addActionListener(this::toNodeButtonActionPerformed);
         stationsComboBox = new javax.swing.JComboBox<>();
-        GridBagConstraints gbc_stationsComboBox = new GridBagConstraints();
-        gbc_stationsComboBox.weightx = 1.0;
-        gbc_stationsComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_stationsComboBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_stationsComboBox.insets = new Insets(0, 0, 0, 5);
-        gbc_stationsComboBox.gridx = 3;
-        gbc_stationsComboBox.gridy = 0;
-        routeEditPanel.add(stationsComboBox, gbc_stationsComboBox);
+        GridBagConstraints gbcStationsComboBox = new GridBagConstraints();
+        gbcStationsComboBox.weightx = 1.0;
+        gbcStationsComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcStationsComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbcStationsComboBox.insets = new Insets(0, 0, 0, 5);
+        gbcStationsComboBox.gridx = 3;
+        gbcStationsComboBox.gridy = 0;
+        routeEditPanel.add(stationsComboBox, gbcStationsComboBox);
         insertButton = new javax.swing.JButton();
-        GridBagConstraints gbc_insertButton = new GridBagConstraints();
-        gbc_insertButton.anchor = GridBagConstraints.EAST;
-        gbc_insertButton.gridx = 4;
-        gbc_insertButton.gridy = 0;
-        routeEditPanel.add(insertButton, gbc_insertButton);
+        GridBagConstraints gbcInsertButton = new GridBagConstraints();
+        gbcInsertButton.anchor = GridBagConstraints.EAST;
+        gbcInsertButton.gridx = 4;
+        gbcInsertButton.gridy = 0;
+        routeEditPanel.add(insertButton, gbcInsertButton);
 
         insertButton.setText("^");
-        insertButton.addActionListener(evt -> insertButtonActionPerformed(evt));
-        GridBagLayout gbl_optionsPanel = new GridBagLayout();
-        gbl_optionsPanel.columnWeights = new double[]{0.0, 0.0};
-        gbl_optionsPanel.rowWeights = new double[]{0.0, 0.0, 0.0};
-        optionsPanel.setLayout(gbl_optionsPanel);
+        insertButton.addActionListener(this::insertButtonActionPerformed);
+        GridBagLayout gblOptionsPanel = new GridBagLayout();
+        gblOptionsPanel.columnWeights = new double[]{0.0, 0.0};
+        gblOptionsPanel.rowWeights = new double[]{0.0, 0.0, 0.0};
+        optionsPanel.setLayout(gblOptionsPanel);
         dieselCheckBox = new javax.swing.JCheckBox();
-        GridBagConstraints gbc_dieselCheckBox = new GridBagConstraints();
-        gbc_dieselCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_dieselCheckBox.insets = new Insets(0, 0, 5, 5);
-        gbc_dieselCheckBox.gridx = 0;
-        gbc_dieselCheckBox.gridy = 0;
-        optionsPanel.add(dieselCheckBox, gbc_dieselCheckBox);
+        GridBagConstraints gbcDieselCheckBox = new GridBagConstraints();
+        gbcDieselCheckBox.anchor = GridBagConstraints.WEST;
+        gbcDieselCheckBox.insets = new Insets(0, 0, 5, 5);
+        gbcDieselCheckBox.gridx = 0;
+        gbcDieselCheckBox.gridy = 0;
+        optionsPanel.add(dieselCheckBox, gbcDieselCheckBox);
 
         dieselCheckBox.setText(ResourceLoader.getString("create.train.diesel")); // NOI18N
         dieselCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         dieselCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         emptyCheckBox = new javax.swing.JCheckBox();
-        GridBagConstraints gbc_emptyCheckBox = new GridBagConstraints();
-        gbc_emptyCheckBox.weightx = 1.0;
-        gbc_emptyCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_emptyCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_emptyCheckBox.insets = new Insets(0, 0, 5, 0);
-        gbc_emptyCheckBox.gridx = 1;
-        gbc_emptyCheckBox.gridy = 0;
-        optionsPanel.add(emptyCheckBox, gbc_emptyCheckBox);
+        GridBagConstraints gbcEmptyCheckBox = new GridBagConstraints();
+        gbcEmptyCheckBox.weightx = 1.0;
+        gbcEmptyCheckBox.anchor = GridBagConstraints.WEST;
+        gbcEmptyCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcEmptyCheckBox.insets = new Insets(0, 0, 5, 0);
+        gbcEmptyCheckBox.gridx = 1;
+        gbcEmptyCheckBox.gridy = 0;
+        optionsPanel.add(emptyCheckBox, gbcEmptyCheckBox);
 
         emptyCheckBox.setText(ResourceLoader.getString("create.train.empty")); // NOI18N
         emptyCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         emptyCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         electricCheckBox = new javax.swing.JCheckBox();
-        GridBagConstraints gbc_electricCheckBox = new GridBagConstraints();
-        gbc_electricCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_electricCheckBox.insets = new Insets(0, 0, 5, 5);
-        gbc_electricCheckBox.gridx = 0;
-        gbc_electricCheckBox.gridy = 1;
-        optionsPanel.add(electricCheckBox, gbc_electricCheckBox);
+        GridBagConstraints gbcElectricCheckBox = new GridBagConstraints();
+        gbcElectricCheckBox.anchor = GridBagConstraints.WEST;
+        gbcElectricCheckBox.insets = new Insets(0, 0, 5, 5);
+        gbcElectricCheckBox.gridx = 0;
+        gbcElectricCheckBox.gridy = 1;
+        optionsPanel.add(electricCheckBox, gbcElectricCheckBox);
 
         electricCheckBox.setText(ResourceLoader.getString("create.train.electric")); // NOI18N
         electricCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         electricCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         showLengthCheckBox = new javax.swing.JCheckBox();
-        GridBagConstraints gbc_showLengthCheckBox = new GridBagConstraints();
-        gbc_showLengthCheckBox.insets = new Insets(0, 0, 5, 0);
-        gbc_showLengthCheckBox.weightx = 1.0;
-        gbc_showLengthCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_showLengthCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_showLengthCheckBox.gridx = 1;
-        gbc_showLengthCheckBox.gridy = 1;
-        optionsPanel.add(showLengthCheckBox, gbc_showLengthCheckBox);
+        GridBagConstraints gbcShowLengthCheckBox = new GridBagConstraints();
+        gbcShowLengthCheckBox.insets = new Insets(0, 0, 5, 0);
+        gbcShowLengthCheckBox.weightx = 1.0;
+        gbcShowLengthCheckBox.anchor = GridBagConstraints.WEST;
+        gbcShowLengthCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcShowLengthCheckBox.gridx = 1;
+        gbcShowLengthCheckBox.gridy = 1;
+        optionsPanel.add(showLengthCheckBox, gbcShowLengthCheckBox);
 
         showLengthCheckBox.setText(ResourceLoader.getString("create.train.show.station.length")); // NOI18N
         showLengthCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -523,25 +524,25 @@ public class EditTrainDialog extends javax.swing.JDialog {
         managedFreightCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.managed.freight")); // NOI18N
         managedFreightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         managedFreightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        GridBagConstraints gbc_managedFreightCheckBox = new GridBagConstraints();
-        gbc_managedFreightCheckBox.weightx = 1.0;
-        gbc_managedFreightCheckBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_managedFreightCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_managedFreightCheckBox.insets = new Insets(0, 0, 5, 5);
-        gbc_managedFreightCheckBox.gridx = 0;
-        gbc_managedFreightCheckBox.gridy = 2;
-        optionsPanel.add(managedFreightCheckBox, gbc_managedFreightCheckBox);
+        GridBagConstraints gbcManagedFreightCheckBox = new GridBagConstraints();
+        gbcManagedFreightCheckBox.weightx = 1.0;
+        gbcManagedFreightCheckBox.anchor = GridBagConstraints.NORTHWEST;
+        gbcManagedFreightCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcManagedFreightCheckBox.insets = new Insets(0, 0, 5, 5);
+        gbcManagedFreightCheckBox.gridx = 0;
+        gbcManagedFreightCheckBox.gridy = 2;
+        optionsPanel.add(managedFreightCheckBox, gbcManagedFreightCheckBox);
 
         optionalCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.optional.train")); //NOI18N
-        GridBagConstraints gbc_checkBox = new GridBagConstraints();
+        GridBagConstraints gbcCheckBox = new GridBagConstraints();
         optionalCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         optionalCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        gbc_checkBox.weightx = 1.0;
-        gbc_checkBox.anchor = GridBagConstraints.WEST;
-        gbc_checkBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_checkBox.gridx = 1;
-        gbc_checkBox.gridy = 2;
-        optionsPanel.add(optionalCheckBox, gbc_checkBox);
+        gbcCheckBox.weightx = 1.0;
+        gbcCheckBox.anchor = GridBagConstraints.WEST;
+        gbcCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbcCheckBox.gridx = 1;
+        gbcCheckBox.gridy = 2;
+        optionsPanel.add(optionalCheckBox, gbcCheckBox);
 
         getContentPane().setLayout(layout);
 
