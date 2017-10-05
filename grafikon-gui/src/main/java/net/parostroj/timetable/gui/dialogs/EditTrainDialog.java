@@ -630,7 +630,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         // next and previous trains
         train.setNextJoinedTrain(nextTrainModel.getSelectedObject());
-        train.setPreviousJoinedTrain(previousTrainModel.getSelectedObject());
+        Train previousTrain = train.getPreviousJoinedTrain();
+        Train newPreviousTrain = previousTrainModel.getSelectedObject();
+        if (previousTrain != newPreviousTrain) {
+            if (newPreviousTrain != null) {
+                newPreviousTrain.setNextJoinedTrain(train);
+            } else {
+                previousTrain.setNextJoinedTrain(null);
+            }
+        }
 
         this.setVisible(false);
     }
