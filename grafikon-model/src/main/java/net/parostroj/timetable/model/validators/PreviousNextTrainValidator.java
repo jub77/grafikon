@@ -111,7 +111,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     private void checkAndUpdateNextTrainStart(Train currentTrain) {
         Train nextTrain = currentTrain.getNextJoinedTrain();
         if (nextTrain != null) {
-            int nextStart = currentTrain.getEndTime() + currentTrain.getTimeAfter();
+            int nextStart = TimeUtil.normalizeTime(currentTrain.getEndTime() + currentTrain.getTimeAfter());
             if (nextStart != nextTrain.getStartTime()) {
                 nextTrain.move(nextStart);
             }
