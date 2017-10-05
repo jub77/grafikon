@@ -357,7 +357,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
-    public void setIntervalImpl(int start, int end) {
+    private void setIntervalImpl(int start, int end) {
         this.interval = IntervalFactory.createInterval(start, end);
         if (this.getLength() == 0) {
             this.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
