@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.AttributesChecker;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
@@ -13,9 +14,12 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class Attributes implements Map<String, Object> {
 
+    private static final AttributesChecker EMPTY = (attrs, change) -> true;
+
     private final List<AttributesListener> listeners = new LinkedList<>();
     private final Map<String, Object> values;
     private Map<String, Map<String, Object>> valuesWithCategory;
+    private final AttributesChecker checker;
 
     private boolean skipListeners = false;
 
@@ -23,7 +27,7 @@ public class Attributes implements Map<String, Object> {
      * Default constructor.
      */
     public Attributes() {
-        values = new LinkedHashMap<>();
+        this(null, EMPTY);
     }
 
     /**
@@ -32,8 +36,21 @@ public class Attributes implements Map<String, Object> {
      * @param listener listener
      */
     public Attributes(AttributesListener listener) {
-        this();
-        this.addListener(listener);
+        this(listener, EMPTY);
+    }
+
+    /**
+     * Creates attributes with initial listener and checker.
+     *
+     * @param listener listener
+     * @param checker checker
+     */
+    public Attributes(AttributesListener listener, AttributesChecker checker) {
+        this.values = new LinkedHashMap<>();
+        if (listener != null) {
+            this.addListener(listener);
+        }
+        this.checker = checker;
     }
 
     /**
@@ -50,6 +67,7 @@ public class Attributes implements Map<String, Object> {
             }
             valuesWithCategory.put(category, new LinkedHashMap<>(attributes.getMapForCategory(category)));
         }
+        this.checker = EMPTY;
     }
 
     public void setRemove(String name, Object value) {
@@ -72,8 +90,14 @@ public class Attributes implements Map<String, Object> {
         Map<String, Object> map = this.getMapForCategory(category);
         Object oldValue = map.get(name);
         if (!ObjectsUtil.compareWithNull(oldValue, value)) {
-            map.put(name, value);
-            this.fireChange(category, name, oldValue, value);
+            AttributeChange change = new AttributeChange(name, oldValue, value);
+            if (checker.check(this, change)) {
+                map.put(name, value);
+                this.fireChange(change);
+            } else {
+                throw new GrafikonException("Cannot change attribute " + name + " to " + value,
+                        GrafikonException.Type.ATTRIBUTE);
+            }
         }
     }
 
@@ -186,9 +210,16 @@ public class Attributes implements Map<String, Object> {
             return null;
         } else {
             Map<String, Object> map = this.getMapForCategory(category);
-            Object o = map.remove(name);
+            Object o = map.get(name);
             if (o != null) {
-                this.fireChange(category, name, o, null);
+                AttributeChange change = new AttributeChange(name, o, null, category);
+                if (checker.check(this, change)) {
+                    map.remove(name);
+                    this.fireChange(change);
+                } else {
+                    throw new GrafikonException("Cannot remove attribute " + name,
+                            GrafikonException.Type.ATTRIBUTE);
+                }
             }
             return o;
         }
@@ -240,11 +271,6 @@ public class Attributes implements Map<String, Object> {
 
     public void removeAllListeners() {
         listeners.clear();
-    }
-
-    protected void fireChange(String category, String name, Object oldV, Object newV) {
-        AttributeChange change = new AttributeChange(name, oldV, newV, category);
-        this.fireChange(change);
     }
 
     protected void fireChange(AttributeChange change) {

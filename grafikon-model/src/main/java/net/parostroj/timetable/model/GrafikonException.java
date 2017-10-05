@@ -8,7 +8,7 @@ package net.parostroj.timetable.model;
 public class GrafikonException extends RuntimeException {
 
     public enum Type {
-        TEXT_TEMPLATE, SCRIPT;
+        TEXT_TEMPLATE, SCRIPT, ATTRIBUTE;
     }
 
     private final Type type;
