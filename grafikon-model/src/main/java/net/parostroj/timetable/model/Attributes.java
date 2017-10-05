@@ -13,7 +13,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class Attributes implements Map<String, Object> {
 
-    private final Set<AttributesListener> listeners = new HashSet<>();
+    private final List<AttributesListener> listeners = new LinkedList<>();
     private final Map<String, Object> values;
     private Map<String, Map<String, Object>> valuesWithCategory;
 
@@ -229,7 +229,9 @@ public class Attributes implements Map<String, Object> {
     }
 
     public void addListener(AttributesListener listener) {
-        listeners.add(listener);
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     public void removeListener(AttributesListener listener) {
