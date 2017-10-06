@@ -16,7 +16,6 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
-import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
@@ -88,17 +87,13 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         // sort columns to initial order
         TableColumnModel tcm = trainTable.getColumnModel();
         Enumeration<TableColumn> columns = tcm.getColumns();
-        List<TableColumn> list = new LinkedList<TableColumn>();
+        List<TableColumn> list = new LinkedList<>();
         while (columns.hasMoreElements()) {
             TableColumn tc = columns.nextElement();
             list.add(tc);
         }
-        Collections.sort(list, new Comparator<TableColumn>() {
-            @Override
-            public int compare(TableColumn o1, TableColumn o2) {
-                return Integer.valueOf(Integer.valueOf(o1.getModelIndex()).compareTo(Integer.valueOf(o2.getModelIndex())));
-            }
-        });
+        Collections.sort(list, (o1, o2) ->
+                Integer.valueOf(Integer.valueOf(o1.getModelIndex()).compareTo(Integer.valueOf(o2.getModelIndex()))));
         for (TableColumn tc : list) {
             tcm.removeColumn(tc);
         }
@@ -112,33 +107,31 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.updateView(model.getSelectedTrain());
         this.model.addListener(this);
         ((TrainTableModel) trainTable.getModel()).setModel(model);
-        model.getMediator().addColleague(new Colleague() {
-            @Override
-            public void receiveMessage(Object message) {
-                IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
-                if (ism.getInterval() != null) {
-                    TimeInterval interval = ism.getInterval();
-                    Train train = interval.getTrain();
-                    if (train.getTimeIntervalBefore() == interval) {
-                        interval = train.getFirstInterval();
-                    } else if (train.getTimeIntervalAfter() == interval) {
-                        interval = train.getLastInterval();
-                    }
-                    if (train != TrainView.this.train) {
-                        updateView(train);
-                    }
-                    int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
-                    int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
-                    trainTable.setRowSelectionInterval(row, row);
-                    if (column != -1) {
-                        trainTable.setColumnSelectionInterval(column, column);
-                    }
-                    Rectangle rect = trainTable.getCellRect(row, 0, true);
-                    trainTable.scrollRectToVisible(rect);
-                    Component topLevelComponent = GuiComponentUtils.getTopLevelComponent(TrainView.this);
-                    if (topLevelComponent.hasFocus()) {
-                        trainTable.requestFocus();
-                    }
+        model.getMediator().addColleague(message -> {
+            IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
+            if (ism.getInterval() != null) {
+                TimeInterval interval = ism.getInterval();
+                Train train = interval.getTrain();
+                if (train.getTimeIntervalBefore() == interval) {
+                    interval = train.getFirstInterval();
+                } else if (train.getTimeIntervalAfter() == interval) {
+                    interval = train.getLastInterval();
+                }
+                if (train != TrainView.this.train) {
+                    updateView(train);
+                }
+                int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
+                int column = TrainTableColumn.getIndex(trainTable.getColumnModel(),
+                        interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
+                trainTable.setRowSelectionInterval(row, row);
+                if (column != -1) {
+                    trainTable.setColumnSelectionInterval(column, column);
+                }
+                Rectangle rect = trainTable.getCellRect(row, 0, true);
+                trainTable.scrollRectToVisible(rect);
+                Component topLevelComponent = GuiComponentUtils.getTopLevelComponent(TrainView.this);
+                if (topLevelComponent.hasFocus()) {
+                    trainTable.requestFocus();
                 }
             }
         }, IntervalSelectionMessage.class);
@@ -171,8 +164,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             // train type
             String name = train.getDefaultCompleteName();
             TextTemplate routeTemplate = train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class);
-            if (routeTemplate != null)
+            if (routeTemplate != null) {
                 name = String.format("%s (%s)", name, routeTemplate.evaluate(TextTemplate.getBinding(train)));
+            }
             trainTextField.setText(name);
             // scroll to the beginning - ensure that the start in visible
             trainTextField.setCaretPosition(0);
@@ -321,7 +315,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         Ini.Section section = AppPreferences.getSection(prefs, "trains");
         // set displayed columns (if the prefs are empty - show all)
         String cs = section.get("columns");
-        List<TableColumn> shownColumns = new LinkedList<TableColumn>();
+        List<TableColumn> shownColumns = new LinkedList<>();
         cs = ObjectsUtil.checkAndTrim(cs);
         if (cs == null) {
             // all columns
@@ -332,25 +326,23 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             // extract
             String[] splitted = cs.split("\\|");
             for (String cStr : splitted) {
+                String[] ss = cStr.split(",");
                 try {
-                    String[] ss = cStr.split(",");
-                    try {
-                        TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
-                        if (column != null) {
-                            TableColumn ac = column.createTableColumn();
-                            if (ss.length > 1) {
-                                int wInt = Integer.parseInt(ss[1]);
-                                if (wInt != 0) {
-                                    ac.setPreferredWidth(wInt);
-                                }
+                    TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
+                    if (column != null) {
+                        TableColumn ac = column.createTableColumn();
+                        if (ss.length > 1) {
+                            int wInt = Integer.parseInt(ss[1]);
+                            if (wInt != 0) {
+                                ac.setPreferredWidth(wInt);
                             }
-                            shownColumns.add(ac);
                         }
-                    } catch (Exception e) {
-                        log.warn("Error adding column to train view: {}", ss[0]);
+                        shownColumns.add(ac);
                     }
                 } catch (NumberFormatException e) {
                     log.warn("Cannot load columns order for train view: {}", cStr);
+                } catch (Exception e) {
+                    log.warn("Error adding column to train view: {}", ss[0]);
                 }
             }
         }
