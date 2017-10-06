@@ -41,10 +41,9 @@ public class TrainNamesValidator implements TrainDiagramValidator {
                 train.refreshCachedNames();
             } else if (type == null) {
                 TrainType tType = train.getType();
-                if (tType != null) {
-                    if (tType.getTrainCompleteNameTemplate() == null || tType.getTrainNameTemplate() == null) {
-                        train.refreshCachedNames();
-                    }
+                if (tType != null
+                        && (tType.getTrainCompleteNameTemplate() == null || tType.getTrainNameTemplate() == null)) {
+                    train.refreshCachedNames();
                 }
             }
         }

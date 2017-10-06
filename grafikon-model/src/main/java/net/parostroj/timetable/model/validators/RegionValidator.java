@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,30 +41,7 @@ public class RegionValidator implements TrainDiagramValidator {
             return true;
         }
         if (event.getType() == Type.OBJECT_ATTRIBUTE && event.getObject() instanceof Region) {
-            if (event.getAttributeChange().checkName(Region.ATTR_SUPER_REGION)) {
-                // in case a region changes to super-region
-                Region superRegion = (Region) event.getAttributeChange().getNewValue();
-                if (superRegion != null) {
-                    this.removeRegionFromNet(superRegion);
-                }
-                Region region = (Region) event.getObject();
-                Region firstColorCenter = getColorCenterRegion(region);
-                if (firstColorCenter != null) {
-                    checkRegionsInHierarchyForDuplicateColorCenter(firstColorCenter);
-                }
-            }
-            // in case a region changes color center attribute
-            if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_REGION)) {
-                Region region = (Region) event.getObject();
-                checkFreightColorMapWithColorCenter(region);
-                checkOtherFreightColorMapsWhenColorCenterDeactivates(region);
-                checkRegionsInHierarchyForDuplicateColorCenter(region);
-            }
-            // in case freight color map is set
-            if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_MAP)) {
-                Region region = (Region) event.getObject();
-                checkFreightColorMapWithColorCenter(region);
-            }
+            checkObjectAttributeOfRegion(event);
         }
         // in case region is used - cannot be used as super-region
         if (event.getSource() instanceof Node && event.getType() == Type.ATTRIBUTE &&
@@ -74,6 +52,33 @@ public class RegionValidator implements TrainDiagramValidator {
             checkCommonSuperRegion((Node) event.getSource());
         }
         return false;
+    }
+
+    private void checkObjectAttributeOfRegion(Event event) {
+        if (event.getAttributeChange().checkName(Region.ATTR_SUPER_REGION)) {
+            // in case a region changes to super-region
+            Region superRegion = (Region) event.getAttributeChange().getNewValue();
+            if (superRegion != null) {
+                this.removeRegionFromNet(superRegion);
+            }
+            Region region = (Region) event.getObject();
+            Region firstColorCenter = getColorCenterRegion(region);
+            if (firstColorCenter != null) {
+                checkRegionsInHierarchyForDuplicateColorCenter(firstColorCenter);
+            }
+        }
+        // in case a region changes color center attribute
+        if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_REGION)) {
+            Region region = (Region) event.getObject();
+            checkFreightColorMapWithColorCenter(region);
+            checkOtherFreightColorMapsWhenColorCenterDeactivates(region);
+            checkRegionsInHierarchyForDuplicateColorCenter(region);
+        }
+        // in case freight color map is set
+        if (event.getAttributeChange().checkName(Region.ATTR_FREIGHT_COLOR_MAP)) {
+            Region region = (Region) event.getObject();
+            checkFreightColorMapWithColorCenter(region);
+        }
     }
 
     // checks that all regions have the same super-region
@@ -132,12 +137,12 @@ public class RegionValidator implements TrainDiagramValidator {
     private void checkOtherFreightColorMapsWhenColorCenterDeactivates(Region region) {
         // remove existing color mapping to this region
         if (!region.isFreightColorRegion()) {
-            diagram.getNet().getRegions().stream().filter(r -> r != region).filter(r -> r.isFreightColorRegion())
+            diagram.getNet().getRegions().stream().filter(r -> r != region).filter(Region::isFreightColorRegion)
                     .forEach(r -> {
                         Map<FreightColor, Region> colorMap = r.getFreightColorMap();
                         if (colorMap.values().contains(region)) {
                             r.setFreightColorMap(colorMap.entrySet().stream().filter(e -> e.getValue() != region)
-                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())));
+                                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
                         }
                     });
         }
@@ -151,7 +156,7 @@ public class RegionValidator implements TrainDiagramValidator {
             // check freight colors
             region.getAllNodes().stream()
                     .filter(n -> !n.getFreightColors().isEmpty())
-                    .forEach(n -> NodeValidator.checkAllowedFreightColors(n));
+                    .forEach(NodeValidator::checkAllowedFreightColors);
         }
     }
 
@@ -175,9 +180,10 @@ public class RegionValidator implements TrainDiagramValidator {
     }
 
     private Region getColorCenterRegion(Region start) {
-        while (start != null && !start.isFreightColorRegion()) {
-            start = start.getSuperRegion();
+        Region currentStart = start;
+        while (currentStart != null && !currentStart.isFreightColorRegion()) {
+            currentStart = currentStart.getSuperRegion();
         }
-        return start;
+        return currentStart;
     }
 }

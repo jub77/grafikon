@@ -31,12 +31,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
                 return true;
             }
             if (train.isManagedFreight()) {
-                if (event.getType() == Event.Type.OBJECT_ATTRIBUTE && event.getObject() instanceof TimeInterval
-                        && event.getAttributeChange().checkName(TimeInterval.ATTR_NOT_MANAGED_FREIGHT)) {
-                    diagram.getFreightNet().checkTrain(train);
-                } else if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
-                    diagram.getFreightNet().checkTrain(train);
-                }
+                checkTrainWithManagedFreight(event, train);
                 return true;
             }
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
@@ -47,5 +42,13 @@ public class FreightNetValidator implements TrainDiagramValidator {
             }
         }
         return false;
+    }
+
+    private void checkTrainWithManagedFreight(Event event, Train train) {
+        if (event.getType() == Event.Type.OBJECT_ATTRIBUTE && event.getObject() instanceof TimeInterval
+                && event.getAttributeChange().checkName(TimeInterval.ATTR_NOT_MANAGED_FREIGHT)
+                || event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
+            diagram.getFreightNet().checkTrain(train);
+        }
     }
 }

@@ -64,16 +64,7 @@ public class NodeValidator implements TrainDiagramValidator {
         Set<Region> regions = node.getCenterRegions();
         if (!regions.isEmpty()) {
             for (Region region : regions) {
-                // look through all nodes for another region start in
-                // the same region
-                for (Node tn : diagram.getNet().getNodes()) {
-                    if (tn != node && tn.getCenterRegions().contains(region)) {
-                        // ensure that there is no region start
-                        Set<Region> newSet = new HashSet<>(tn.getCenterRegions());
-                        newSet.remove(region);
-                        tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newSet.isEmpty() ? null : newSet);
-                    }
-                }
+                checkOnlyOneRegionCenter(node, region);
             }
             applied = true;
         } else {
@@ -84,12 +75,25 @@ public class NodeValidator implements TrainDiagramValidator {
         return applied;
     }
 
+    private void checkOnlyOneRegionCenter(Node node, Region region) {
+        // look through all nodes for another region start in
+        // the same region
+        for (Node tn : diagram.getNet().getNodes()) {
+            if (tn != node && tn.getCenterRegions().contains(region)) {
+                // ensure that there is no region start
+                Set<Region> newSet = new HashSet<>(tn.getCenterRegions());
+                newSet.remove(region);
+                tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newSet.isEmpty() ? null : newSet);
+            }
+        }
+    }
+
     static void checkAllowedFreightColors(Node node) {
         if (node.getFreightColors().isEmpty()) {
             return;
         }
         // get all nodes with the same color center
-        Optional<Region> center = node.getRegionHierarchy().findInRegions(r -> r.isFreightColorRegion());
+        Optional<Region> center = node.getRegionHierarchy().findInRegions(Region::isFreightColorRegion);
         if (center.isPresent()) {
             Set<FreightColor> colors = node.getFreightColors();
             center.get().getAllNodes().stream().filter(n -> n != node && !n.getFreightColors().isEmpty()).forEach(n -> {

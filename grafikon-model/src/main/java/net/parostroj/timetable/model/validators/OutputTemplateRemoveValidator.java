@@ -22,24 +22,29 @@ public class OutputTemplateRemoveValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof OutputTemplate) {
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
+                && event.getObject() instanceof OutputTemplate) {
             OutputTemplate outputTemplate = (OutputTemplate) event.getObject();
-            List<Output> outputsToRemove = null;
-            // output if the template for that is removed
-            for (Output output : diagram.getOutputs()) {
-                if (output.getTemplate() == outputTemplate) {
-                    if (outputsToRemove == null) { outputsToRemove = new ArrayList<>(); }
-                    outputsToRemove.add(output);
-                }
-            }
-            if (outputsToRemove != null) {
-                for (Output output : outputsToRemove) {
-                    diagram.getOutputs().remove(output);
-                }
-            }
+            removeOutputsForTemplate(outputTemplate);
             return true;
         }
         return false;
+    }
+
+    private void removeOutputsForTemplate(OutputTemplate outputTemplate) {
+        List<Output> outputsToRemove = null;
+        // output if the template for that is removed
+        for (Output output : diagram.getOutputs()) {
+            if (output.getTemplate() == outputTemplate) {
+                if (outputsToRemove == null) { outputsToRemove = new ArrayList<>(); }
+                outputsToRemove.add(output);
+            }
+        }
+        if (outputsToRemove != null) {
+            for (Output output : outputsToRemove) {
+                diagram.getOutputs().remove(output);
+            }
+        }
     }
 
 }
