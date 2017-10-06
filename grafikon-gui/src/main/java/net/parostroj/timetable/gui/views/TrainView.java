@@ -167,11 +167,14 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             if (routeTemplate != null) {
                 name = String.format("%s (%s)", name, routeTemplate.evaluate(TextTemplate.getBinding(train)));
             }
+            name = this.addPreviousTrain(name, train);
+            name = this.addNextTrain(name, train);
             trainTextField.setText(name);
             // scroll to the beginning - ensure that the start in visible
             trainTextField.setCaretPosition(0);
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             techTimeTextField.setText(this.createTechTimeString(train));
+            techTimeTextField.setCaretPosition(0);
             speedTextField.setEnabled(true);
         }
 
@@ -179,6 +182,22 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         ((TrainTableModel)trainTable.getModel()).setTrain(train);
 
         this.invalidate();
+    }
+
+    private String addPreviousTrain(String name, Train train) {
+        if (train.getPreviousJoinedTrain() != null) {
+            return String.format("[%s >] %s", train.getPreviousJoinedTrain().getDefaultName(), name);
+        } else {
+            return name;
+        }
+    }
+
+    private String addNextTrain(String name, Train train) {
+        if (train.getNextJoinedTrain() != null) {
+            return String.format("%s [> %s]", name, train.getNextJoinedTrain().getDefaultName());
+        } else {
+            return name;
+        }
     }
 
     private String createTechTimeString(Train train) {
