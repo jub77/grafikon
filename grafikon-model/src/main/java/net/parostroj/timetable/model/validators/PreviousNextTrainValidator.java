@@ -10,10 +10,27 @@ import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.events.SpecialTrainTimeIntervalList;
 import net.parostroj.timetable.utils.TimeUtil;
 
+/**
+ * Validator for joined trains feature. It keeps aligned tracks of joined train,
+ * moves joined trains and adjusts technological time after for joined trains.
+ *
+ * @author jub
+ */
 public class PreviousNextTrainValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
+        checkRemovedTrain(event);
+        if (event.getSource() instanceof Train) {
+            Train currentTrain = (Train) event.getSource();
+            checkTrainAttributes(event, currentTrain);
+            checkTrainIntervals(event, currentTrain);
+            return true;
+        }
+        return false;
+    }
+
+    private void checkRemovedTrain(Event event) {
         if (event.getSource() instanceof TrainDiagram
                 && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
             Train currentTrain = (Train) event.getObject();
@@ -24,63 +41,64 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
                 currentTrain.setNextJoinedTrain(null);
             }
         }
-        if (event.getSource() instanceof Train) {
-            Train currentTrain = (Train) event.getSource();
-            if (event.getType() == Type.ATTRIBUTE) {
-                switch (event.getAttributeChange().getName()) {
-                    case Train.ATTR_NEXT_JOINED_TRAIN:
-                        updateNextTrain(
-                                currentTrain,
-                                (Train) event.getAttributeChange().getNewValue());
-                        break;
-                    case Train.ATTR_TECHNOLOGICAL_AFTER:
-                        if (currentTrain.getNextJoinedTrain() != null) {
-                            checkAndUpdateNextTrainStart(currentTrain);
-                            checkAndUpdateTechnologicalAfter(currentTrain);
-                        }
-                        break;
-                    case Train.ATTR_TECHNOLOGICAL_BEFORE:
-                        if (currentTrain.getPreviousJoinedTrain() != null) {
-                            currentTrain.setTimeBefore(0);
-                        }
-                        break;
-                    default:
-                        // nothing
-                }
-            }
-            if (event.getType() == Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
-                SpecialTrainTimeIntervalList list = (SpecialTrainTimeIntervalList) event.getData();
-                if (list.getType() == SpecialTrainTimeIntervalList.Type.TRACK) {
-                    int changed = list.getChanged();
-                    if (currentTrain.getPreviousJoinedTrain() != null && changed == 0) {
-                        TimeInterval source = currentTrain.getFirstInterval();
-                        TimeInterval dest = currentTrain.getPreviousJoinedTrain().getLastInterval();
-                        checkAndUpdateTrack(source, dest);
-                    } else if (currentTrain.getNextJoinedTrain() != null && changed == currentTrain.getTimeIntervalList().size() - 1) {
-                        TimeInterval source = currentTrain.getLastInterval();
-                        TimeInterval dest = currentTrain.getNextJoinedTrain().getFirstInterval();
-                        checkAndUpdateTrack(source, dest);
-                    }
-                }
-                if (currentTrain.getNextJoinedTrain() != null) {
-                    checkAndUpdateNextTrainStart(currentTrain);
-                    checkAndUpdateTechnologicalAfter(currentTrain);
-                }
-                if (currentTrain.getPreviousJoinedTrain() != null) {
-                    checkAndUpdateTechnologicalAfter(currentTrain.getPreviousJoinedTrain());
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
-    private void updateNextTrain(Train currentTrain, Train newNextTrain) {
+    private void checkTrainAttributes(Event event, Train currentTrain) {
+        if (event.getType() == Type.ATTRIBUTE) {
+            switch (event.getAttributeChange().getName()) {
+                case Train.ATTR_NEXT_JOINED_TRAIN:
+                    checkAndUpdateTrackAndTimeAfter(
+                            currentTrain,
+                            (Train) event.getAttributeChange().getNewValue());
+                    break;
+                case Train.ATTR_TECHNOLOGICAL_AFTER:
+                    if (currentTrain.getNextJoinedTrain() != null) {
+                        checkAndUpdateNextTrainStart(currentTrain);
+                        checkAndUpdateTimeAfter(currentTrain);
+                    }
+                    break;
+                case Train.ATTR_TECHNOLOGICAL_BEFORE:
+                    if (currentTrain.getPreviousJoinedTrain() != null) {
+                        currentTrain.setTimeBefore(0);
+                    }
+                    break;
+                default:
+                    // nothing
+            }
+        }
+    }
+
+    private void checkTrainIntervals(Event event, Train currentTrain) {
+        if (event.getType() == Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
+            SpecialTrainTimeIntervalList list = (SpecialTrainTimeIntervalList) event.getData();
+            if (list.getType() == SpecialTrainTimeIntervalList.Type.TRACK) {
+                int changed = list.getChanged();
+                if (currentTrain.getPreviousJoinedTrain() != null && changed == 0) {
+                    TimeInterval source = currentTrain.getFirstInterval();
+                    TimeInterval dest = currentTrain.getPreviousJoinedTrain().getLastInterval();
+                    checkAndUpdateTrack(source, dest);
+                } else if (currentTrain.getNextJoinedTrain() != null && changed == currentTrain.getTimeIntervalList().size() - 1) {
+                    TimeInterval source = currentTrain.getLastInterval();
+                    TimeInterval dest = currentTrain.getNextJoinedTrain().getFirstInterval();
+                    checkAndUpdateTrack(source, dest);
+                }
+            }
+            if (currentTrain.getNextJoinedTrain() != null) {
+                checkAndUpdateNextTrainStart(currentTrain);
+                checkAndUpdateTimeAfter(currentTrain);
+            }
+            if (currentTrain.getPreviousJoinedTrain() != null) {
+                checkAndUpdateTimeAfter(currentTrain.getPreviousJoinedTrain());
+            }
+        }
+    }
+
+    private void checkAndUpdateTrackAndTimeAfter(Train currentTrain, Train newNextTrain) {
         if (newNextTrain != null) {
             TimeInterval source = currentTrain.getLastInterval();
             TimeInterval dest = newNextTrain.getFirstInterval();
             checkAndUpdateTrack(source, dest);
-            checkAndUpdateTechnologicalAfter(currentTrain);
+            checkAndUpdateTimeAfter(currentTrain);
         } else {
             currentTrain.setTimeAfter(0);
         }
@@ -93,7 +111,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
         }
     }
 
-    private void checkAndUpdateTechnologicalAfter(Train currentTrain) {
+    private void checkAndUpdateTimeAfter(Train currentTrain) {
         Train nextTrain = currentTrain.getNextJoinedTrain();
         if (nextTrain != null) {
             int startTime = currentTrain.getEndTime();
