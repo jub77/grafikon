@@ -52,11 +52,11 @@ class FreightRegionGraphDelegate {
     }
 
     Stream<FreightConnectionPath> getRegionConnections(Node node) {
-        Stream<FreightConnectionPath> list = stream(node.spliterator(), false)
+        return stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
                 .map(i -> diagram.getFreightNet().getFreightToNodes(i))
-                .flatMap(l -> l.stream().filter(d -> d.getTo().isRegions()));
-        return list;
+                .flatMap(l -> l.stream().filter(d -> d.getTo().isRegions()))
+                .filter(connection -> connection.getFrom() != connection.getTo().getNode());
     }
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {
