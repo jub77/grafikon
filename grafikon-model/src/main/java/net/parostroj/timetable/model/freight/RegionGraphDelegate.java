@@ -56,12 +56,13 @@ class RegionGraphDelegate {
         return stream(node.spliterator(), false)
                 .filter(TimeInterval::isFreightFrom)
                 .map(strategy::getFreightToNodesNet)
-                .flatMap(this::toDirectRegionConnections)
-                .filter(connection -> connection.getFrom() != connection.getTo().getNode());
+                .flatMap(this::toDirectRegionConnections);
     }
 
     private Stream<FreightConnectionPath> toDirectRegionConnections(List<FreightConnectionPath> l) {
-        return l.stream().filter(d -> d.getTo().isRegions());
+        return l.stream()
+                .filter(d -> d.getTo().isRegions())
+                .filter(d -> d.getFrom() != d.getTo().getNode());
     }
 
     Collection<NodeConnectionNodes> getRegionConnectionNodes() {
