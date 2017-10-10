@@ -64,7 +64,7 @@ public enum TrainTableColumn {
 
     private static class TimeCellRenderer implements TableCellRenderer {
 
-        private final static String END;
+        private static final String END;
         private TableCellRenderer wrapped;
         private final int width;
         private final Icon icon;
@@ -156,6 +156,8 @@ public enum TrainTableColumn {
                 case 'c':
                     time = true;
                     break;
+                default:
+                    // no change
             }
         }
     }
@@ -199,11 +201,7 @@ public enum TrainTableColumn {
             return false;
         if (last && row == max)
             return false;
-        if (oneTrack) {
-            if (interval.getOwner().getTracks().size() == 1)
-                return false;
-        }
-        return true;
+        return !(oneTrack && interval.getOwner().getTracks().size() == 1);
     }
 
     public TableColumn createTableColumn() {
@@ -218,8 +216,9 @@ public enum TrainTableColumn {
                 tableColumn.setCellRenderer(new TimeCellRenderer(cellRenderer));
             }
         }
-        if (this.getEditor() != null)
+        if (this.getEditor() != null) {
             tableColumn.setCellEditor(this.getEditor());
+        }
         String cName = ResourceLoader.getString(this.getKey());
         tableColumn.setHeaderValue(cName);
         return tableColumn;
@@ -234,8 +233,9 @@ public enum TrainTableColumn {
         int i = 0;
         while (e.hasMoreElements()) {
             TableColumn tc = e.nextElement();
-            if (tc.getModelIndex() == column.ordinal())
+            if (tc.getModelIndex() == column.ordinal()) {
                 return i;
+            }
             i++;
         }
         return -1;
