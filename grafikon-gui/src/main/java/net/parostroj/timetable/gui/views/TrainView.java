@@ -33,6 +33,7 @@ import com.google.common.collect.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 /**
@@ -243,6 +244,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTable.setAutoCreateColumnsFromModel(false);
         trainTable.setModel(new TrainTableModel(model,train));
         trainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel()) {
             @Override
             public javax.swing.JPopupMenu getComponentPopupMenu() {
