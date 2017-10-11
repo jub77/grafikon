@@ -388,11 +388,7 @@ class TrainTableModel extends AbstractTableModel {
             case SET_SPEED:
                 // train speed
                 Integer trainSpeed = (Integer) aValue;
-                if (trainSpeed != null && trainSpeed > 0) {
-                    if (trainSpeed > train.getTopSpeed()) {
-                        trainSpeed = train.getTopSpeed();
-                    }
-                } else {
+                if (trainSpeed != null && trainSpeed <= 0) {
                     trainSpeed = null;
                 }
                 interval.getAttributes().setRemove(TimeInterval.ATTR_SET_SPEED, trainSpeed);

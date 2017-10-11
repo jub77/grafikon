@@ -92,7 +92,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             numberTextField.setText(train.getNumber());
 
             descriptionTextField.setText(train.getDescription());
-            speedTextField.setText(Integer.toString(train.getTopSpeed()));
+            Integer topSpeed = train.getTopSpeed();
+            speedTextField.setText(topSpeed == null ? "" : Integer.toString(topSpeed));
             Integer weight = train.getAttribute(Train.ATTR_WEIGHT, Integer.class);
             weightTextField.setText(weight != null ? weight.toString() : "");
             routeEditBox.setTemplate(train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class));
@@ -456,7 +457,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbcStationsComboBox.gridx = 3;
         gbcStationsComboBox.gridy = 0;
         routeEditPanel.add(stationsComboBox, gbcStationsComboBox);
-        insertButton = new javax.swing.JButton();
+        javax.swing.JButton insertButton = new javax.swing.JButton();
         GridBagConstraints gbcInsertButton = new GridBagConstraints();
         gbcInsertButton.anchor = GridBagConstraints.EAST;
         gbcInsertButton.gridx = 4;
@@ -601,13 +602,16 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         // check max speed - modify if changed
         try {
-            int maxSpeed = Integer.parseInt(speedTextField.getText());
-            if (maxSpeed > 0) {
-                // modify top speed
-                train.setTopSpeed(maxSpeed);
-            } else {
-                log.warn("Speed has to be positive number: {}", maxSpeed);
+            String speedText = ObjectsUtil.checkAndTrim(speedTextField.getText());
+            Integer maxSpeed = null;
+            if (speedText != null) {
+                maxSpeed = Integer.parseInt(speedText);
+                if (maxSpeed <= 0) {
+                    log.warn("Speed has to be positive number: {}", maxSpeed);
+                    maxSpeed = null;
+                }
             }
+            train.setTopSpeed(maxSpeed);
         } catch (NumberFormatException e) {
             log.warn("Cannot convert speed to number: {}", speedTextField.getText());
         }
@@ -666,7 +670,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox emptyCheckBox;
     private javax.swing.JCheckBox optionalCheckBox;
     private javax.swing.JButton fromNodeButton;
-    private javax.swing.JButton insertButton;
     private javax.swing.JTextField numberTextField;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox routeEditBox;
     private javax.swing.JCheckBox showLengthCheckBox;

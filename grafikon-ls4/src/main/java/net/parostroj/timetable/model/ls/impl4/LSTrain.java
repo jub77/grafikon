@@ -32,7 +32,7 @@ public class LSTrain {
     private String number;
     private String desc;
     private String type;
-    private int topSpeed;
+    private Integer topSpeed;
     private int start;
     private LSAttributes attributes;
     private List<Object> route;
@@ -99,11 +99,11 @@ public class LSTrain {
     }
 
     @XmlElement(name = "top_speed")
-    public int getTopSpeed() {
+    public Integer getTopSpeed() {
         return topSpeed;
     }
 
-    public void setTopSpeed(int topSpeed) {
+    public void setTopSpeed(Integer topSpeed) {
         this.topSpeed = topSpeed;
     }
 

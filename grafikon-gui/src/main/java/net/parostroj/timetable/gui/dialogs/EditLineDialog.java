@@ -18,6 +18,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -81,12 +82,8 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         if (line.getTopSpeed() == null) {
             speedTextField.setText("");
-            unlimitedSpeedCheckBox.setSelected(true);
-            speedTextField.setEditable(false);
         } else {
-            unlimitedSpeedCheckBox.setSelected(false);
             speedTextField.setText(Integer.toString(line.getTopSpeed()));
-            speedTextField.setEditable(true);
         }
 
         lengthEditBox.setValueInUnit(new BigDecimal(line.getLength()), LengthUnit.MM);
@@ -171,10 +168,15 @@ public class EditLineDialog extends javax.swing.JDialog {
         }
         Integer speed = line.getTopSpeed();
         try {
-            if (!unlimitedSpeedCheckBox.isSelected())
+            String speedText = ObjectsUtil.checkAndTrim(speedTextField.getText());
+            if (speedText != null) {
                 speed = Integer.parseInt(speedTextField.getText());
-            else
+                if (speed <= 0) {
+                    speed = null;
+                }
+            } else {
                 speed = null;
+            }
         } catch (NumberFormatException e) {
             log.warn("Cannot convert string to int (speed).", e);
         }
@@ -217,7 +219,6 @@ public class EditLineDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        unlimitedSpeedCheckBox = new javax.swing.JCheckBox();
         speedTextField = new javax.swing.JTextField();
         speedTextField.setColumns(30);
         speedTextField.setHorizontalAlignment(JTextField.RIGHT);
@@ -237,7 +238,6 @@ public class EditLineDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         lineClassComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         fromToLabel = new javax.swing.JLabel();
         lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
@@ -247,8 +247,6 @@ public class EditLineDialog extends javax.swing.JDialog {
         setResizable(false);
 
         jLabel1.setText(ResourceLoader.getString("editline.length")); // NOI18N
-
-        unlimitedSpeedCheckBox.addActionListener(this::unlimitedSpeedCheckBoxActionPerformed);
 
         jLabel2.setText(ResourceLoader.getString("editline.speed")); // NOI18N
 
@@ -282,8 +280,6 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         jLabel7.setText(ResourceLoader.getString("editline.lineclass")); // NOI18N
 
-        jLabel8.setText(ResourceLoader.getString("editline.speed.unlimited") + ": "); // NOI18N
-
         fromToLabel.setText(" ");
 
         jLabel9.setText(ResourceLoader.getString("editline.lineclass.back")); // NOI18N
@@ -311,12 +307,10 @@ public class EditLineDialog extends javax.swing.JDialog {
                                     .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel6)
                                     .addComponent(jLabel7, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addComponent(jLabel8)
                                 .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
                                 .addComponent(controlledCheckBox)
-                                .addComponent(unlimitedSpeedCheckBox)
                                 .addComponent(speedTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                                 .addComponent(fromDirectTrackComboBox, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                                 .addComponent(toDirectTrackComboBox, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
@@ -340,10 +334,6 @@ public class EditLineDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.CENTER)
                         .addComponent(jLabel1)
                         .addComponent(lengthEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.CENTER)
-                        .addComponent(unlimitedSpeedCheckBox)
-                        .addComponent(jLabel8))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -398,15 +388,6 @@ public class EditLineDialog extends javax.swing.JDialog {
         // write values back ...
         this.writeValuesBack();
         this.setVisible(false);
-    }
-
-    private void unlimitedSpeedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        speedTextField.setEditable(!unlimitedSpeedCheckBox.isSelected());
-        if (unlimitedSpeedCheckBox.isSelected()) {
-            speedTextField.setText("");
-        } else {
-            speedTextField.setText(line.getTopSpeed() != null ? Integer.toString(line.getTopSpeed()) : "");
-        }
     }
 
     private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -493,5 +474,4 @@ public class EditLineDialog extends javax.swing.JDialog {
     private javax.swing.JTextField speedTextField;
     private javax.swing.JComboBox<NodeTrack> toDirectTrackComboBox;
     private javax.swing.JList<LineTrack> trackList;
-    private javax.swing.JCheckBox unlimitedSpeedCheckBox;
 }

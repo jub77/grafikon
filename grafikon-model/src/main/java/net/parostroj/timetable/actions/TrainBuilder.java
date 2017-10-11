@@ -149,7 +149,7 @@ public class TrainBuilder {
      * @param defaultStop default stop time
      * @return created train
      */
-    public Train createTrain(String id, String number, TrainType trainType, int topSpeed, Route route, int time,
+    public Train createTrain(String id, String number, TrainType trainType, Integer topSpeed, Route route, int time,
             TrainDiagram diagram, int defaultStop) {
         Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
@@ -159,7 +159,7 @@ public class TrainBuilder {
         train.setTopSpeed(topSpeed);
 
         List<Pair<RouteSegment<?>, Integer>> data = this.createDataForRoute(route);
-        this.adjustSpeedsAndStops(data, train, topSpeed, defaultStop);
+        this.adjustSpeedsAndStops(data, train, defaultStop);
 
         Node lastNode = null;
         int currentTime = time;
@@ -201,7 +201,7 @@ public class TrainBuilder {
         return data;
     }
 
-    private void adjustSpeedsAndStops(List<Pair<RouteSegment<?>, Integer>> data, Train train, int speed, int defaultStop) {
+    private void adjustSpeedsAndStops(List<Pair<RouteSegment<?>, Integer>> data, Train train, int defaultStop) {
         int size = data.size();
         int i = 0;
         for (Pair<RouteSegment<?>,Integer> pair : data) {

@@ -34,7 +34,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** List of time intervals. */
     private final TimeIntervalList timeIntervalList;
     /** Top speed. */
-    private int topSpeed = Integer.MAX_VALUE;
+    private Integer topSpeed;
     /** Cycles. */
     private final ListMultimap<TrainsCycleType, TrainsCycleItem> cycles;
     /* Attributes of the train. */
@@ -230,16 +230,19 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * @return top speed
      */
-    public int getTopSpeed() {
+    public Integer getTopSpeed() {
         return topSpeed;
     }
 
     /**
      * @param topSpeed top speed to be set
      */
-    public void setTopSpeed(int topSpeed) {
-        if (this.topSpeed != topSpeed) {
-            int oldSpeed = this.topSpeed;
+    public void setTopSpeed(Integer topSpeed) {
+        if (topSpeed != null && topSpeed <= 0) {
+            throw new IllegalArgumentException("Speed cannot be 0 or less");
+        }
+        if (!Objects.equals(this.topSpeed, topSpeed)) {
+            Integer oldSpeed = this.topSpeed;
             this.topSpeed = topSpeed;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
             this.recalculate();

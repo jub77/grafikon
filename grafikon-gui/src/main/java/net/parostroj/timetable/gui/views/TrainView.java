@@ -173,7 +173,8 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             trainTextField.setText(name);
             // scroll to the beginning - ensure that the start in visible
             trainTextField.setCaretPosition(0);
-            speedTextField.setText(Integer.toString(train.getTopSpeed()));
+            Integer topSpeed = train.getTopSpeed();
+            speedTextField.setText(topSpeed == null ? "" : Integer.toString(topSpeed));
             techTimeTextField.setText(this.createTechTimeString(train));
             techTimeTextField.setCaretPosition(0);
             speedTextField.setEnabled(true);

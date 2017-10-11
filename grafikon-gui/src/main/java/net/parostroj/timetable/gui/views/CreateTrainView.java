@@ -266,10 +266,15 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test needed values
+        Integer speed = null;
         try {
-            Integer speed = Integer.valueOf(speedTextField.getText());
-            if (speed < 1)
-                throw new NumberFormatException();
+            String speedText = ObjectsUtil.checkAndTrim(speedTextField.getText());
+            if (speedText != null) {
+                speed = Integer.valueOf(speedText);
+                if (speed < 1) {
+                    throw new NumberFormatException();
+                }
+            }
         } catch (NumberFormatException e) {
             GuiComponentUtils.showError(ResourceLoader.getString("create.train.trainspeedmissing"), this.getParent());
             return;
@@ -315,7 +320,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         CreateTrainCommand createCommand = new CreateTrainCommand(
                 ObjectsUtil.checkAndTrim(nameTextField.getText()),
                 tType != NO_TYPE ? tType : null,
-                        Integer.valueOf(speedTextField.getText()),
+                        speed,
                         route,
                         start,
                         (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),

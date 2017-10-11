@@ -19,7 +19,7 @@ public class CreateTrainCommand extends Command {
 
     private final String number;
     private final TrainType type;
-    private final int topSpeed;
+    private final Integer topSpeed;
     private final Route route;
     private final int time;
     private final int defaultStop;
@@ -46,7 +46,7 @@ public class CreateTrainCommand extends Command {
      * @param group group
      * @param managedFreight managed freight
      */
-    public CreateTrainCommand(String number, TrainType type, int topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group, boolean managedFreight) {
+    public CreateTrainCommand(String number, TrainType type, Integer topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group, boolean managedFreight) {
         this.number = number;
         this.type = type;
         this.topSpeed = topSpeed;

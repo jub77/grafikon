@@ -14,6 +14,8 @@ class TimeIntervalCalculation {
 
     private static final Logger log = LoggerFactory.getLogger(TimeIntervalCalculation.class);
 
+    private static final int FALLBACK_SPEED = 10;
+
     private final List<TimeInterval> list;
     private final TimeInterval interval;
 
@@ -54,7 +56,7 @@ class TimeIntervalCalculation {
         }
         Train train = lineInterval.getTrain();
         // apply speed limit
-        int speed = min(train.getTopSpeed(), speedLimit);
+        Integer speed = min(train.getTopSpeed(), speedLimit);
 
         // adjust (engine class influence)
         List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(lineInterval);
@@ -70,6 +72,12 @@ class TimeIntervalCalculation {
         LineClass lineClass = lineInterval.getLineClass();
         if (!engineClasses.isEmpty() && weightLimit != null && lineClass != null) {
             speed = min(speed, TrainsHelper.getSpeedForWeight(engineClasses, lineClass, weightLimit));
+        }
+
+        if (speed == null) {
+            // fallback solution to default speed and log a warning
+            speed = FALLBACK_SPEED;
+            log.warn("Couldn't compute speed for interval {}", lineInterval);
         }
 
         return speed;
@@ -100,9 +108,10 @@ class TimeIntervalCalculation {
     /**
      * computes running time.
      *
+     * @param usedSpeed speed on line
      * @return pair running time and speed
      */
-    public int computeRunningTime() {
+    public int computeRunningTime(int usedSpeed) {
         final Train train = interval.getTrain();
         final TrainDiagram diagram = train.getDiagram();
         PenaltySolver ps = new PenaltySolver() {
@@ -119,7 +128,7 @@ class TimeIntervalCalculation {
         };
 
         Map<String, Object> binding = new HashMap<>();
-        binding.put("speed", this.computeLineSpeed());
+        binding.put("speed", usedSpeed);
         binding.put("fromSpeed", this.computeFromSpeed());
         binding.put("toSpeed", this.computeToSpeed());
         binding.put("timeScale", diagram.getTimeScale());
