@@ -39,10 +39,11 @@ public class EditLineDialog extends javax.swing.JDialog {
 
     private static class LTModel extends javax.swing.DefaultListModel<LineTrack> {}
 
-    private Line line;
-    private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
+
+    private Line line;
+    private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<>();
     private List<LineTrack> removed;
 
     /** Creates new form EditLineDialog */
@@ -226,12 +227,12 @@ public class EditLineDialog extends javax.swing.JDialog {
         fromDirectTrackComboBox = new javax.swing.JComboBox<>();
         toDirectTrackComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         trackList = new javax.swing.JList<>();
-        newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
-        deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
+        javax.swing.JButton newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
+        javax.swing.JButton deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         lineClassComboBox = new javax.swing.JComboBox<>();
@@ -247,82 +248,37 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         jLabel1.setText(ResourceLoader.getString("editline.length")); // NOI18N
 
-        unlimitedSpeedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                unlimitedSpeedCheckBoxActionPerformed(evt);
-            }
-        });
+        unlimitedSpeedCheckBox.addActionListener(this::unlimitedSpeedCheckBoxActionPerformed);
 
         jLabel2.setText(ResourceLoader.getString("editline.speed")); // NOI18N
 
         jLabel3.setText(ResourceLoader.getString("editline.direct.from")); // NOI18N
 
-        fromDirectTrackComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fromDirectTrackComboBoxItemStateChanged(evt);
-            }
-        });
+        fromDirectTrackComboBox.addItemListener(this::fromDirectTrackComboBoxItemStateChanged);
 
-        toDirectTrackComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                toDirectTrackComboBoxItemStateChanged(evt);
-            }
-        });
+        toDirectTrackComboBox.addItemListener(this::toDirectTrackComboBoxItemStateChanged);
 
         jLabel4.setText(ResourceLoader.getString("editline.direct.to")); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         trackList.setVisibleRowCount(4);
-        trackList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                trackListValueChanged(evt);
-            }
-        });
+        trackList.addListSelectionListener(this::trackListValueChanged);
         scrollPane.setViewportView(trackList);
 
-        newTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newTrackButtonActionPerformed(evt);
-            }
-        });
+        newTrackButton.addActionListener(this::newTrackButtonActionPerformed);
 
-        deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteTrackButtonActionPerformed(evt);
-            }
-        });
+        deleteTrackButton.addActionListener(this::deleteTrackButtonActionPerformed);
 
         jLabel5.setText(ResourceLoader.getString("editline.tracks")); // NOI18N
 
         jLabel6.setText(ResourceLoader.getString("editline.type.controlled") + ": "); // NOI18N
 
-        lineClassComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                lineClassChanged(evt);
-            }
-        });
+        lineClassComboBox.addItemListener(this::lineClassChanged);
 
         jLabel7.setText(ResourceLoader.getString("editline.lineclass")); // NOI18N
 
@@ -332,12 +288,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         jLabel9.setText(ResourceLoader.getString("editline.lineclass.back")); // NOI18N
 
-        lineClassBackComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                lineClassChanged(evt);
-            }
-        });
+        lineClassBackComboBox.addItemListener(this::lineClassChanged);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
@@ -533,16 +484,12 @@ public class EditLineDialog extends javax.swing.JDialog {
         }
     }
 
-    private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox controlledCheckBox;
-    private javax.swing.JButton deleteTrackButton;
     private javax.swing.JComboBox<NodeTrack> fromDirectTrackComboBox;
     private javax.swing.JLabel fromToLabel;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthEditBox;
     private javax.swing.JComboBox<LineClass> lineClassBackComboBox;
     private javax.swing.JComboBox<LineClass> lineClassComboBox;
-    private javax.swing.JButton newTrackButton;
-    private javax.swing.JButton okButton;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JComboBox<NodeTrack> toDirectTrackComboBox;
     private javax.swing.JList<LineTrack> trackList;
