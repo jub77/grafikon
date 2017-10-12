@@ -22,11 +22,8 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.ini4j.Ini;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.*;
 
@@ -43,16 +40,16 @@ import javax.swing.SwingConstants;
  */
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainView.class);
-
     private ApplicationModel model;
     private Train train;
+    private TrainViewColumns columns;
 
     /**
      * Creates new form TrainView.
      */
     public TrainView() {
         initComponents();
+        columns = new TrainViewColumns(trainTable);
     }
 
     public void editColumns() {
@@ -311,68 +308,11 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
 
     @Override
     public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "trains");
-        // get displayed columns and save theirs order
-        prefs.remove("columns");
-        TableColumnModel tcm = trainTable.getColumnModel();
-        Enumeration<TableColumn> columns = tcm.getColumns();
-        StringBuilder order = null;
-        while (columns.hasMoreElements()) {
-            TableColumn column = columns.nextElement();
-            if (order != null) {
-                order.append('|');
-            } else {
-                order = new StringBuilder();
-            }
-            order.append(TrainTableColumn.values()[column.getModelIndex()].name()).append(',').append(column.getPreferredWidth());
-        }
-        if (order != null) {
-            section.put("columns", order.toString());
-        }
-        return section;
+        return columns.saveToPreferences(prefs);
     }
 
     @Override
     public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "trains");
-        // set displayed columns (if the prefs are empty - show all)
-        String cs = section.get("columns");
-        List<TableColumn> shownColumns = new LinkedList<>();
-        cs = ObjectsUtil.checkAndTrim(cs);
-        if (cs == null) {
-            // all columns
-            for (TrainTableColumn c : TrainTableColumn.values()) {
-                shownColumns.add(c.createTableColumn());
-            }
-        } else {
-            // extract
-            String[] splitted = cs.split("\\|");
-            for (String cStr : splitted) {
-                String[] ss = cStr.split(",");
-                try {
-                    TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
-                    if (column != null) {
-                        TableColumn ac = column.createTableColumn();
-                        if (ss.length > 1) {
-                            int wInt = Integer.parseInt(ss[1]);
-                            if (wInt != 0) {
-                                ac.setPreferredWidth(wInt);
-                            }
-                        }
-                        shownColumns.add(ac);
-                    }
-                } catch (NumberFormatException e) {
-                    log.warn("Cannot load columns order for train view: {}", cStr);
-                } catch (Exception e) {
-                    log.warn("Error adding column to train view: {}", ss[0]);
-                }
-            }
-        }
-        // append columns to table
-        TableColumnModel tcm = trainTable.getColumnModel();
-        for (TableColumn column : shownColumns) {
-            tcm.addColumn(column);
-        }
-        return section;
+        return columns.loadFromPreferences(prefs);
     }
 }
