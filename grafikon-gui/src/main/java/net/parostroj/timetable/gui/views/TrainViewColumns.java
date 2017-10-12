@@ -37,21 +37,9 @@ public class TrainViewColumns implements StorableGuiData {
         Ini.Section section = getTrainsSection(prefs);
         // get displayed columns and save theirs order
         prefs.remove("columns");
-        TableColumnModel tcm = trainTable.getColumnModel();
-        Enumeration<TableColumn> columns = tcm.getColumns();
-        StringBuilder order = null;
-        while (columns.hasMoreElements()) {
-            TableColumn column = columns.nextElement();
-            if (order != null) {
-                order.append('|');
-            } else {
-                order = new StringBuilder();
-            }
-            order.append(TrainTableColumn.values()[column.getModelIndex()].name()).append(',')
-                    .append(column.getPreferredWidth());
-        }
+        String order = createStringForColumns();
         if (order != null) {
-            section.put("columns", order.toString());
+            section.put("columns", order);
         }
         return section;
     }
@@ -61,8 +49,13 @@ public class TrainViewColumns implements StorableGuiData {
         Ini.Section section = getTrainsSection(prefs);
         // set displayed columns (if the prefs are empty - show all)
         String cs = section.get("columns");
-        List<TableColumn> shownColumns = new LinkedList<>();
         cs = ObjectsUtil.checkAndTrim(cs);
+        applyStringForColumns(cs);
+        return section;
+    }
+
+    private void applyStringForColumns(String cs) {
+        List<TableColumn> shownColumns = new LinkedList<>();
         if (cs == null) {
             // all columns
             for (TrainTableColumn c : TrainTableColumn.values()) {
@@ -97,7 +90,23 @@ public class TrainViewColumns implements StorableGuiData {
         for (TableColumn column : shownColumns) {
             tcm.addColumn(column);
         }
-        return section;
+    }
+
+    public String createStringForColumns() {
+        TableColumnModel tcm = trainTable.getColumnModel();
+        Enumeration<TableColumn> columns = tcm.getColumns();
+        StringBuilder order = null;
+        while (columns.hasMoreElements()) {
+            TableColumn column = columns.nextElement();
+            if (order != null) {
+                order.append('|');
+            } else {
+                order = new StringBuilder();
+            }
+            order.append(TrainTableColumn.values()[column.getModelIndex()].name()).append(',')
+                    .append(column.getPreferredWidth());
+        }
+        return order == null ? null : order.toString();
     }
 
     private Ini.Section getTrainsSection(Ini prefs) {
