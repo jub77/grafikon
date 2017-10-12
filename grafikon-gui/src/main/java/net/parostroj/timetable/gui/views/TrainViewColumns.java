@@ -1,8 +1,11 @@
 package net.parostroj.timetable.gui.views;
 
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
@@ -24,23 +27,34 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class TrainViewColumns implements StorableGuiData {
 
+    private static final String CURRENT_COLUMNS_KEY = "columns";
+    private static final String STORED_COLUMNS_KEY = "stored.columns";
+    private static final String DELIMITER = ":";
+
     private static final Logger log = LoggerFactory.getLogger(TrainViewColumns.class);
 
     private JTable trainTable;
+    private Map<String, String> columnConfigurations;
 
     public TrainViewColumns(JTable trainTable) {
         this.trainTable = trainTable;
+        this.columnConfigurations = new HashMap<>();
     }
 
     @Override
     public Section saveToPreferences(Ini prefs) {
         Ini.Section section = getTrainsSection(prefs);
         // get displayed columns and save theirs order
-        prefs.remove("columns");
-        String order = createStringForColumns();
+        prefs.remove(CURRENT_COLUMNS_KEY);
+        String order = createColumnConfiguration();
         if (order != null) {
-            section.put("columns", order);
+            section.put(CURRENT_COLUMNS_KEY, order);
         }
+        // stored columns
+        section.remove(STORED_COLUMNS_KEY);
+        columnConfigurations.forEach((key, config) -> {
+            section.add(STORED_COLUMNS_KEY, key + DELIMITER + config);
+        });
         return section;
     }
 
@@ -48,13 +62,38 @@ public class TrainViewColumns implements StorableGuiData {
     public Section loadFromPreferences(Ini prefs) {
         Ini.Section section = getTrainsSection(prefs);
         // set displayed columns (if the prefs are empty - show all)
-        String cs = section.get("columns");
+        String cs = section.get(CURRENT_COLUMNS_KEY);
         cs = ObjectsUtil.checkAndTrim(cs);
-        applyStringForColumns(cs);
+        applyColumnConfiguration(cs);
+        List<String> keysWithConfig = section.getAll(STORED_COLUMNS_KEY);
+        keysWithConfig.forEach(keyWithConfig -> {
+            String[] items = keyWithConfig.split(DELIMITER);
+            if (items.length == 2) {
+                columnConfigurations.put(items[0], items[1]);
+            }
+        });
         return section;
     }
 
-    private void applyStringForColumns(String cs) {
+    public void storeColumnConfiguration(String key) {
+        String configuration = this.createColumnConfiguration();
+        columnConfigurations.put(key, configuration);
+    }
+
+    public void loadColumnConfiguration(String key) {
+        String configuration = columnConfigurations.get(key);
+        this.applyColumnConfiguration(configuration);
+    }
+
+    public void removeColumnConfiguration(String key) {
+        columnConfigurations.remove(key);
+    }
+
+    public Collection<String> getColumnConfigurationKeys() {
+        return columnConfigurations.keySet();
+    }
+
+    public void applyColumnConfiguration(String cs) {
         List<TableColumn> shownColumns = new LinkedList<>();
         if (cs == null) {
             // all columns
@@ -92,7 +131,7 @@ public class TrainViewColumns implements StorableGuiData {
         }
     }
 
-    public String createStringForColumns() {
+    public String createColumnConfiguration() {
         TableColumnModel tcm = trainTable.getColumnModel();
         Enumeration<TableColumn> columns = tcm.getColumns();
         StringBuilder order = null;
