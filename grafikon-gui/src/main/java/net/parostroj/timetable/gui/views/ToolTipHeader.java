@@ -14,6 +14,6 @@ class ToolTipHeader extends JTableHeader {
     @Override
     public String getToolTipText(MouseEvent e) {
         int col = this.getTable().columnAtPoint(e.getPoint());
-        return (String) this.getTable().getColumnModel().getColumn(col).getHeaderValue();
+        return col == -1 ? null : (String) this.getTable().getColumnModel().getColumn(col).getHeaderValue();
     }
 }
