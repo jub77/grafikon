@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -94,6 +95,7 @@ public class TrainViewColumns implements StorableGuiData {
     }
 
     public void applyColumnConfiguration(String cs) {
+        this.clearExistingColumns();
         List<TableColumn> shownColumns = new LinkedList<>();
         if (cs == null) {
             // all columns
@@ -146,6 +148,15 @@ public class TrainViewColumns implements StorableGuiData {
                     .append(column.getPreferredWidth());
         }
         return order == null ? null : order.toString();
+    }
+
+    private void clearExistingColumns() {
+        Collection<TableColumn> columns = new ArrayList<>(trainTable.getColumnCount());
+        Enumeration<TableColumn> e = trainTable.getColumnModel().getColumns();
+        while (e.hasMoreElements()) {
+            columns.add(e.nextElement());
+        }
+        columns.forEach(column -> trainTable.removeColumn(column));
     }
 
     private Ini.Section getTrainsSection(Ini prefs) {
