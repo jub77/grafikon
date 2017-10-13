@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
  *
  * @author jub
  */
-abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
+public abstract class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     protected E element;
     protected WrapperListModel<T> listModel;
@@ -64,17 +64,17 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         this.setVisible(true);
     }
 
-    abstract protected Collection<T> getList();
+    protected abstract Collection<T> getList();
 
-    abstract protected void add(T item, int index);
+    protected abstract void add(T item, int index);
 
-    abstract protected void remove(T item);
+    protected abstract void remove(T item);
 
-    abstract protected void move(T item, int oldIndex, int newIndex);
+    protected abstract void move(T item, int oldIndex, int newIndex);
 
-    abstract protected boolean deleteAllowed(T item);
+    protected abstract boolean deleteAllowed(T item);
 
-    abstract protected T createNew(String name);
+    protected abstract T createNew(String name);
 
     protected void refresh(T item) {
         listModel.refreshObject(item);
@@ -113,14 +113,14 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     public void updateEnabled() {
         boolean enabled = !itemList.isSelectionEmpty();
         int selectedItemsCount = itemList.getSelectedIndices().length;
-        boolean multiple = enabled && selectedItemsCount > 1;
+        boolean isMultiple = enabled && selectedItemsCount > 1;
         if (upButton != null)
-            upButton.setEnabled(enabled && !multiple);
+            upButton.setEnabled(enabled && !isMultiple);
         if (downButton != null)
-            downButton.setEnabled(enabled && !multiple);
+            downButton.setEnabled(enabled && !isMultiple);
         deleteButton.setEnabled(enabled);
         if (editButton != null)
-            editButton.setEnabled(enabled && !multiple);
+            editButton.setEnabled(enabled && !isMultiple);
         this.selectionChanged(selectedItemsCount);
         this.updateCopyButton();
     }
@@ -143,12 +143,10 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
-        upButton.addActionListener(evt -> upButtonActionPerformed(evt));
-        downButton.addActionListener(evt -> downButtonActionPerformed(evt));
+        upButton.addActionListener(this::upButtonActionPerformed);
+        downButton.addActionListener(this::downButtonActionPerformed);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        editButton.addActionListener(evt -> {
-            edit(itemList.getSelectedValue().getElement());
-        });
+        editButton.addActionListener(evt -> edit(itemList.getSelectedValue().getElement()));
         itemList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -169,17 +167,12 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
         itemList.setSelectionMode(multiple ? javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
                 : javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                itemListValueChanged(evt);
-            }
-        });
+        itemList.addListSelectionListener(this::itemListValueChanged);
         scrollPane.setViewportView(itemList);
 
-        newButton.addActionListener(evt -> newButtonActionPerformed(evt));
-        copyButton.addActionListener(evt -> copyButtonActionPerformed(evt));
-        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
+        newButton.addActionListener(this::newButtonActionPerformed);
+        copyButton.addActionListener(this::copyButtonActionPerformed);
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         Component box = Box.createRigidArea(new Dimension(0, 0));
 
@@ -225,7 +218,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
                             .addComponent(box, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameTextField, newButton, copyButton, deleteButton, upButton, downButton, editButton});
+        layout.linkSize(SwingConstants.HORIZONTAL, nameTextField, newButton, copyButton, deleteButton, upButton, downButton, editButton);
         panel.setLayout(layout);
 
         getContentPane().setLayout(new java.awt.BorderLayout());
@@ -263,7 +256,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        createNewImpl(name -> this.createNew(name));
+        createNewImpl(this::createNew);
     }
 
     private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -424,8 +417,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
         public E build(java.awt.Window window, boolean modal) {
             try {
-                E instance = constructor.newInstance(window, modal, move, edit, newByName, copy, multiple);
-                return instance;
+                return constructor.newInstance(window, modal, move, edit, newByName, copy, multiple);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new RuntimeException("Problem creating instance: " + constructor);
             }
