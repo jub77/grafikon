@@ -8,9 +8,12 @@ import java.util.*;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.components.ElementSelectionCheckBoxPanel;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.views.TrainTableColumn;
+import net.parostroj.timetable.gui.views.TrainViewColumns;
 import net.parostroj.timetable.gui.wrappers.BasicWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -66,7 +69,8 @@ public class ColumnSelectionDialog extends JDialog {
         }
     }
 
-    public static JPopupMenu createPopupMenu(JTable table, Collection<? extends TrainTableColumn> columns) {
+    public static JPopupMenu createPopupMenu(JTable table, Collection<? extends TrainTableColumn> columns,
+            TrainViewColumns viewColumns) {
         JPopupMenu menu = new JPopupMenu();
         ItemListener listener = e -> {
             SelectionCheckBoxMenuItem chb = (SelectionCheckBoxMenuItem) e.getItemSelectable();
@@ -83,6 +87,34 @@ public class ColumnSelectionDialog extends JDialog {
             item.addItemListener(listener);
             menu.add(item);
         }
+        menu.addSeparator();
+        addColunmsMenuItems(viewColumns, menu);
         return menu;
+    }
+
+    public static void addColunmsMenuItems(TrainViewColumns viewColumns, JPopupMenu menu) {
+        JMenu configs = new JMenu(ResourceLoader.getString("train.view.columns.set"));
+        menu.add(configs);
+        JMenu removeConfigs = new JMenu(ResourceLoader.getString("train.view.columns.remove"));
+        menu.add(removeConfigs);
+        JMenuItem saveConfig = new JMenuItem(ResourceLoader.getString("train.view.columns.save") + "...");
+        menu.add(saveConfig);
+        viewColumns.getColumnConfigurationKeys().forEach(key -> {
+            JMenuItem menuItem = new JMenuItem(key);
+            menuItem.addActionListener(event -> viewColumns.loadColumnConfiguration(key));
+            configs.add(menuItem);
+            JMenuItem removeMenuItem = new JMenuItem(key);
+            removeMenuItem.addActionListener(event -> viewColumns.removeColumnConfiguration(key));
+            removeConfigs.add(removeMenuItem);
+        });
+        saveConfig.addActionListener(event -> {
+            String value = (String) JOptionPane.showInputDialog(
+                    GuiComponentUtils.getTopLevelComponent(event.getSource()),
+                    "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
+            value = ObjectsUtil.checkAndTrim(value);
+            if (value != null) {
+                viewColumns.storeColumnConfiguration(value);
+            }
+        });
     }
 }

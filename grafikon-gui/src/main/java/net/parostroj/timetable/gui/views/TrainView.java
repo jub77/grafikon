@@ -246,7 +246,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel()) {
             @Override
             public javax.swing.JPopupMenu getComponentPopupMenu() {
-                return ColumnSelectionDialog.createPopupMenu(trainTable, getCurrentColumns());
+                this.setDraggedColumn(null);
+                this.repaint();
+                return ColumnSelectionDialog.createPopupMenu(trainTable, getCurrentColumns(), columns);
             }
         };
         header.setToolTipText("text");
