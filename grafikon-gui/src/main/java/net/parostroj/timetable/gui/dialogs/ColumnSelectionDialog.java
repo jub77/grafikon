@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.Collator;
 import java.util.*;
 
 import javax.swing.*;
@@ -94,19 +95,18 @@ public class ColumnSelectionDialog extends JDialog {
 
     public static void addColunmsMenuItems(TrainViewColumns viewColumns, JPopupMenu menu) {
         JMenu configs = new JMenu(ResourceLoader.getString("train.view.columns.set"));
-        menu.add(configs);
         JMenu removeConfigs = new JMenu(ResourceLoader.getString("train.view.columns.remove"));
-        menu.add(removeConfigs);
         JMenuItem saveConfig = new JMenuItem(ResourceLoader.getString("train.view.columns.save") + "...");
-        menu.add(saveConfig);
-        viewColumns.getColumnConfigurationKeys().forEach(key -> {
-            JMenuItem menuItem = new JMenuItem(key);
-            menuItem.addActionListener(event -> viewColumns.loadColumnConfiguration(key));
-            configs.add(menuItem);
-            JMenuItem removeMenuItem = new JMenuItem(key);
-            removeMenuItem.addActionListener(event -> viewColumns.removeColumnConfiguration(key));
-            removeConfigs.add(removeMenuItem);
-        });
+        viewColumns.getColumnConfigurationKeys().stream()
+                .sorted(Collator.getInstance())
+                .forEach(key -> {
+                    JMenuItem menuItem = new JMenuItem(key);
+                    menuItem.addActionListener(event -> viewColumns.loadColumnConfiguration(key));
+                    configs.add(menuItem);
+                    JMenuItem removeMenuItem = new JMenuItem(key);
+                    removeMenuItem.addActionListener(event -> viewColumns.removeColumnConfiguration(key));
+                    removeConfigs.add(removeMenuItem);
+                });
         saveConfig.addActionListener(event -> {
             String value = (String) JOptionPane.showInputDialog(
                     GuiComponentUtils.getTopLevelComponent(event.getSource()),
@@ -116,5 +116,8 @@ public class ColumnSelectionDialog extends JDialog {
                 viewColumns.storeColumnConfiguration(value);
             }
         });
+        menu.add(configs);
+        menu.add(saveConfig);
+        menu.add(removeConfigs);
     }
 }
