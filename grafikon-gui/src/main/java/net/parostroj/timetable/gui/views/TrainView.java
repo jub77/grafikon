@@ -40,6 +40,20 @@ import javax.swing.SwingConstants;
  */
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
+    private final class ToolTipHeaderWithPopupMenu extends ToolTipHeader {
+
+        private ToolTipHeaderWithPopupMenu(TableColumnModel model) {
+            super(model);
+        }
+
+        @Override
+        public javax.swing.JPopupMenu getComponentPopupMenu() {
+            this.setDraggedColumn(null);
+            this.repaint();
+            return ColumnSelectionDialog.createPopupMenu(trainTable, getCurrentColumns(), columns);
+        }
+    }
+
     private ApplicationModel model;
     private Train train;
     private TrainViewColumns columns;
@@ -243,14 +257,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTable.setModel(new TrainTableModel(model,train));
         trainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel()) {
-            @Override
-            public javax.swing.JPopupMenu getComponentPopupMenu() {
-                this.setDraggedColumn(null);
-                this.repaint();
-                return ColumnSelectionDialog.createPopupMenu(trainTable, getCurrentColumns(), columns);
-            }
-        };
+        ToolTipHeader header = new ToolTipHeaderWithPopupMenu(trainTable.getColumnModel());
         header.setToolTipText("text");
         trainTable.setTableHeader(header);
         trainTableScrollPane.setViewportView(trainTable);
