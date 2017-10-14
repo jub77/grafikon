@@ -150,7 +150,7 @@ public abstract class EditItemsDialog<T, E> extends javax.swing.JDialog {
         itemList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && !itemList.isSelectionEmpty()
+                if (edit && e.getClickCount() == 2 && !itemList.isSelectionEmpty()
                         && itemList.getSelectedIndices().length == 1) {
                     edit(itemList.getSelectedValue().getElement());
                 }
@@ -159,7 +159,7 @@ public abstract class EditItemsDialog<T, E> extends javax.swing.JDialog {
         itemList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER && itemList.getSelectedIndices().length == 1) {
+                if (edit && e.getKeyCode() == KeyEvent.VK_ENTER && itemList.getSelectedIndices().length == 1) {
                     edit(itemList.getSelectedValue().getElement());
                 }
             }
