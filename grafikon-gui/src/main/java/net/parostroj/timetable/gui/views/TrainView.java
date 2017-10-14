@@ -77,20 +77,20 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     private Set<TrainTableColumn> getCurrentColumns() {
-        Set<TrainTableColumn> columns = new HashSet<>();
+        Set<TrainTableColumn> currentColumns = new HashSet<>();
         Iterator<TableColumn> i = Iterators.forEnumeration(trainTable.getColumnModel().getColumns());
         while (i.hasNext()) {
-            columns.add(TrainTableColumn.getColumn(i.next().getModelIndex()));
+            currentColumns.add(TrainTableColumn.getColumn(i.next().getModelIndex()));
         }
-        return columns;
+        return currentColumns;
     }
 
     public void resizeColumns() {
         // resize columns to original size
         TableColumnModel tcm = trainTable.getColumnModel();
-        Enumeration<TableColumn> columns = tcm.getColumns();
-        while (columns.hasMoreElements()) {
-            TableColumn tc = columns.nextElement();
+        Enumeration<TableColumn> allColumns = tcm.getColumns();
+        while (allColumns.hasMoreElements()) {
+            TableColumn tc = allColumns.nextElement();
             tc.setPreferredWidth(TrainTableColumn.getColumn(tc.getModelIndex()).getPrefWidth());
         }
     }
@@ -98,10 +98,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     public void sortColumns() {
         // sort columns to initial order
         TableColumnModel tcm = trainTable.getColumnModel();
-        Enumeration<TableColumn> columns = tcm.getColumns();
+        Enumeration<TableColumn> allColumns = tcm.getColumns();
         List<TableColumn> list = new LinkedList<>();
-        while (columns.hasMoreElements()) {
-            TableColumn tc = columns.nextElement();
+        while (allColumns.hasMoreElements()) {
+            TableColumn tc = allColumns.nextElement();
             list.add(tc);
         }
         Collections.sort(list, (o1, o2) ->
@@ -123,14 +123,14 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
             if (ism.getInterval() != null) {
                 TimeInterval interval = ism.getInterval();
-                Train train = interval.getTrain();
-                if (train.getTimeIntervalBefore() == interval) {
-                    interval = train.getFirstInterval();
-                } else if (train.getTimeIntervalAfter() == interval) {
-                    interval = train.getLastInterval();
+                Train trainForInterval = interval.getTrain();
+                if (trainForInterval.getTimeIntervalBefore() == interval) {
+                    interval = trainForInterval.getFirstInterval();
+                } else if (trainForInterval.getTimeIntervalAfter() == interval) {
+                    interval = trainForInterval.getLastInterval();
                 }
-                if (train != TrainView.this.train) {
-                    updateView(train);
+                if (trainForInterval != TrainView.this.train) {
+                    updateView(trainForInterval);
                 }
                 int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
                 int column = TrainTableColumn.getIndex(trainTable.getColumnModel(),
@@ -240,7 +240,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private void initComponents() {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         trainTextField = new javax.swing.JTextField();
-        trainTableScrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane trainTableScrollPane = new javax.swing.JScrollPane();
         trainTable = new javax.swing.JTable();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         speedTextField = new javax.swing.JTextField();
@@ -312,7 +312,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private javax.swing.JTextField speedTextField;
     private javax.swing.JTextField techTimeTextField;
     private javax.swing.JTable trainTable;
-    private javax.swing.JScrollPane trainTableScrollPane;
     private javax.swing.JTextField trainTextField;
 
     @Override
