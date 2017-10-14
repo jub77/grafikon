@@ -5,6 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.Collator;
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.swing.*;
 
@@ -22,12 +23,13 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class ColumnSelectionDialog extends JDialog {
+public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColumns> {
 
     private ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
+    private Supplier<Collection<? extends TrainTableColumn>> selected;
 
     public ColumnSelectionDialog(Window owner, boolean modal) {
-        super(owner, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
+        super(owner, modal, false, true, true, false, false);
 
         panel = new ElementSelectionCheckBoxPanel<>(false);
         panel.setListForSelection(Wrapper.getWrapperList(Arrays.asList(TrainTableColumn.values()),
@@ -37,14 +39,17 @@ public class ColumnSelectionDialog extends JDialog {
                         return ResourceLoader.getString(element.getKey());
                     }
                 }));
-        getContentPane().add(panel, BorderLayout.CENTER);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        panel.setVisibleRows(15);
+        getContentPane().add(panel, BorderLayout.SOUTH);
 
         this.pack();
     }
 
-    public void selectColumns(JTable table, Collection<? extends TrainTableColumn> selected) {
+    public void selectColumns(JTable table, Supplier<Collection<? extends TrainTableColumn>> selected, TrainViewColumns columns) {
         // update selected columns
-        panel.setSelected(selected);
+        this.selected = selected;
+        panel.setSelected(selected.get());
         panel.setListener((column, sel) -> {
             if (sel) {
                 table.addColumn(column.createTableColumn());
@@ -54,7 +59,7 @@ public class ColumnSelectionDialog extends JDialog {
             }
         });
         try {
-            this.setVisible(true);
+            this.showDialog(columns);
         } finally {
             panel.setListener(null);
         }
@@ -119,5 +124,41 @@ public class ColumnSelectionDialog extends JDialog {
         menu.add(configs);
         menu.add(saveConfig);
         menu.add(removeConfigs);
+    }
+
+    @Override
+    protected Collection<String> getList() {
+        return element.getColumnConfigurationKeys();
+    }
+
+    @Override
+    protected void add(String item, int index) {
+        element.storeColumnConfiguration(item);
+    }
+
+    @Override
+    protected void remove(String item) {
+        element.removeColumnConfiguration(item);
+    }
+
+    @Override
+    protected void move(String item, int oldIndex, int newIndex) {
+        throw new UnsupportedOperationException("move");
+    }
+
+    @Override
+    protected boolean deleteAllowed(String item) {
+        return true;
+    }
+
+    @Override
+    protected String createNew(String name) {
+        return name;
+    }
+
+    @Override
+    protected void edit(String item) {
+        element.loadColumnConfiguration(item);
+        panel.setSelected(selected.get());
     }
 }

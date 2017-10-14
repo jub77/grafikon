@@ -72,7 +72,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                 true);
 
         dialog.setLocationRelativeTo(trainTableScrollPane);
-        dialog.selectColumns(trainTable, this.getCurrentColumns());
+        dialog.selectColumns(trainTable, this::getCurrentColumns, columns);
         dialog.dispose();
     }
 
