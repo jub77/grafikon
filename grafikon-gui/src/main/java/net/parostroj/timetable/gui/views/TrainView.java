@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.util.*;
 
 import javax.swing.table.TableColumn;
@@ -67,11 +68,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     public void editColumns() {
-        ColumnSelectionDialog dialog = new ColumnSelectionDialog(
-                GuiComponentUtils.getWindow(this),
-                true);
+        Window window = GuiComponentUtils.getWindow(this);
+        ColumnSelectionDialog dialog = new ColumnSelectionDialog(window, true);
 
-        dialog.setLocationRelativeTo(trainTableScrollPane);
+        dialog.setLocationRelativeTo(window);
         dialog.selectColumns(trainTable, this::getCurrentColumns, columns);
         dialog.dispose();
     }
