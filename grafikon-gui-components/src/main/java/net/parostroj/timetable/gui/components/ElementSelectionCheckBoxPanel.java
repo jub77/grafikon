@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
     private BiMap<T, JCheckBox> itemMap;
     private boolean sorted;
     private ElementSelectionListener<T> listener;
+    private boolean disabledListener;
 
     private JPanel panel;
 
@@ -76,11 +78,16 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
     }
 
     public void setSelected(Collection<? extends T> selected) {
-        for (JCheckBox comp : itemMap.values()) {
-            comp.setSelected(false);
-        }
-        for (T item : selected) {
-            itemMap.get(item).setSelected(true);
+        disabledListener = true;
+        try {
+            for (JCheckBox comp : itemMap.values()) {
+                comp.setSelected(false);
+            }
+            for (T item : selected) {
+                itemMap.get(item).setSelected(true);
+            }
+        } finally {
+            disabledListener = false;
         }
     }
 
@@ -96,7 +103,7 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
     public Collection<T> getSelected() {
         return itemMap.entrySet().stream()
                 .filter(entry -> entry.getValue().isSelected())
-                .map(entry -> entry.getKey())
+                .map(Entry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -115,7 +122,7 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
     private void refreshItems() {
         panel.removeAll();
         ItemListener l = e -> {
-            if (listener != null) {
+            if (!disabledListener && listener != null) {
                 listener.selection(
                         itemMap.inverse().get(e.getItemSelectable()),
                         e.getStateChange() == ItemEvent.SELECTED);
