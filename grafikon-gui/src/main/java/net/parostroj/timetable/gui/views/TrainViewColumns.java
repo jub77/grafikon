@@ -67,12 +67,14 @@ public class TrainViewColumns implements StorableGuiData {
         cs = ObjectsUtil.checkAndTrim(cs);
         applyColumnConfiguration(cs);
         List<String> keysWithConfig = section.getAll(STORED_COLUMNS_KEY);
-        keysWithConfig.forEach(keyWithConfig -> {
-            String[] items = keyWithConfig.split(DELIMITER);
-            if (items.length == 2) {
-                columnConfigurations.put(items[0], items[1]);
-            }
-        });
+        if (keysWithConfig != null) {
+            keysWithConfig.forEach(keyWithConfig -> {
+                String[] items = keyWithConfig.split(DELIMITER);
+                if (items.length == 2) {
+                    columnConfigurations.put(items[0], items[1]);
+                }
+            });
+        }
         return section;
     }
 
