@@ -13,7 +13,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.ini4j.Ini;
-import org.ini4j.Profile.Section;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class TrainViewColumns implements StorableGuiData {
     }
 
     @Override
-    public Section saveToPreferences(Ini prefs) {
+    public Ini.Section saveToPreferences(Ini prefs) {
         Ini.Section section = getTrainsSection(prefs);
         // get displayed columns and save theirs order
         prefs.remove(CURRENT_COLUMNS_KEY);
@@ -53,14 +52,12 @@ public class TrainViewColumns implements StorableGuiData {
         }
         // stored columns
         section.remove(STORED_COLUMNS_KEY);
-        columnConfigurations.forEach((key, config) -> {
-            section.add(STORED_COLUMNS_KEY, key + DELIMITER + config);
-        });
+        columnConfigurations.forEach((key, config) -> section.add(STORED_COLUMNS_KEY, key + DELIMITER + config));
         return section;
     }
 
     @Override
-    public Section loadFromPreferences(Ini prefs) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
         Ini.Section section = getTrainsSection(prefs);
         // set displayed columns (if the prefs are empty - show all)
         String cs = section.get(CURRENT_COLUMNS_KEY);
@@ -108,30 +105,34 @@ public class TrainViewColumns implements StorableGuiData {
             // extract
             String[] splitted = cs.split("\\|");
             for (String cStr : splitted) {
-                String[] ss = cStr.split(",");
-                try {
-                    TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
-                    if (column != null) {
-                        TableColumn ac = column.createTableColumn();
-                        if (ss.length > 1) {
-                            int wInt = Integer.parseInt(ss[1]);
-                            if (wInt != 0) {
-                                ac.setPreferredWidth(wInt);
-                            }
-                        }
-                        shownColumns.add(ac);
-                    }
-                } catch (NumberFormatException e) {
-                    log.warn("Cannot load columns order for train view: {}", cStr);
-                } catch (Exception e) {
-                    log.warn("Error adding column to train view: {}", ss[0]);
-                }
+                parseOneColumn(shownColumns, cStr);
             }
         }
         // append columns to table
         TableColumnModel tcm = trainTable.getColumnModel();
         for (TableColumn column : shownColumns) {
             tcm.addColumn(column);
+        }
+    }
+
+    private void parseOneColumn(List<TableColumn> shownColumns, String cStr) {
+        String[] ss = cStr.split(",");
+        try {
+            TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
+            if (column != null) {
+                TableColumn ac = column.createTableColumn();
+                if (ss.length > 1) {
+                    int wInt = Integer.parseInt(ss[1]);
+                    if (wInt != 0) {
+                        ac.setPreferredWidth(wInt);
+                    }
+                }
+                shownColumns.add(ac);
+            }
+        } catch (NumberFormatException e) {
+            log.warn("Cannot load columns order for train view: {}", cStr);
+        } catch (Exception e) {
+            log.warn("Error adding column to train view: {}", ss[0]);
         }
     }
 
