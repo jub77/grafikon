@@ -70,8 +70,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     public void editColumns() {
         Window window = GuiComponentUtils.getWindow(this);
         ColumnSelectionDialog dialog = new ColumnSelectionDialog(window, true);
-
         dialog.setLocationRelativeTo(window);
+        dialog.registerContext(model.getGuiContext());
+
         dialog.selectColumns(trainTable, this::getCurrentColumns, columns);
         dialog.dispose();
     }

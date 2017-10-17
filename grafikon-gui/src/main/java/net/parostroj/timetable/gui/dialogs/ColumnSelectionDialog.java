@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 
 import javax.swing.*;
 
+import net.parostroj.timetable.gui.GuiContext;
+import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.ElementSelectionCheckBoxPanel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.views.TrainTableColumn;
@@ -23,7 +25,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColumns> {
+public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColumns> implements GuiContextComponent {
 
     private ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
     private Supplier<Collection<? extends TrainTableColumn>> selected;
@@ -160,5 +162,10 @@ public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColu
     protected void edit(String item) {
         element.loadColumnConfiguration(item);
         panel.setSelected(selected.get());
+    }
+
+    @Override
+    public void registerContext(GuiContext context) {
+        context.registerWindow("column.selection", this);
     }
 }
