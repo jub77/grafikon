@@ -1,9 +1,9 @@
-image: maven:3.3.3
+image: gradle:jdk8-alpine
 
 pipelines:
   default:
     - step:
         caches:
-          - maven 
+          - gradle
         script:
-          -  mvn -am -pl grafikon-assembly clean install
+          - gradle build
