@@ -13,3 +13,12 @@ dependencies {
 
 	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
 }
+
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'net.parostroj.timetable.gui.Main',
+			'Class-Path' : configurations.runtime.files.collect { file -> file.name }.join(' ')
+		)
+	}
+}
