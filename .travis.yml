@@ -4,9 +4,12 @@ addons:
     packages:
       - oracle-java8-installer
 language: java
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.m2
-install: mvn -am -pl grafikon-assembly install
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 jdk:
   - oraclejdk8
