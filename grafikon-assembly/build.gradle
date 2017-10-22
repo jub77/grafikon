@@ -1,0 +1,17 @@
+apply plugin: 'base'
+
+configurations {
+	runtime
+}
+
+dependencies {
+	runtime project(":grafikon-start")
+}
+
+task createDist(type: Zip) {
+	baseName = "grafikon-${completeVersion}"
+	destinationDir = file("${buildDir}/dist")
+	from configurations.runtime
+	from file("${projectDir}/src/main/scripts")
+	rename "grafikon-start.*", "grafikon.jar"
+}

@@ -3,10 +3,21 @@ plugins {
 	id 'org.ajoberstar.grgit' version '2.0.1' apply false
 }
 
+def javaProjectsFilter = [
+	"grafikon-gui",
+	"grafikon-gui-components",
+	"grafikon-ls",
+	"grafikon-ls4",
+	"grafikon-model",
+	"grafikon-output2",
+	"grafikon-save",
+	"grafikon-start",
+	"grafikon-templates"
+]
+
 subprojects { project ->
-	apply plugin: 'java'
-	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'org.ajoberstar.grgit'
+	apply plugin: 'io.spring.dependency-management'
 
 	group = 'net.parostroj'
 	version = '2.1.0-SNAPSHOT'
@@ -21,28 +32,10 @@ subprojects { project ->
 			? "${version.replace('-SNAPSHOT', '')}-dev.${commitTimestamp}+${buildId}"
 			: "${version}+${buildId}"
 	}
-
-	compileJava {
-		sourceCompatibility = 1.8
-		targetCompatibility = 1.8
-		options.encoding = 'utf-8'
-	}
 	
 	repositories {
 		mavenLocal()
 		mavenCentral()
-	}
-	
-	jar {
-		manifest {
-			attributes(
-				"Implementation-Title": project.name,
-				"Implementation-Version": completeVersion,
-				"Build-Id": buildId,
-				"Build-Time": buildTimestamp,
-				"Permissions": "all-permissions"
-			)
-		}
 	}
 
 	dependencyManagement {
@@ -72,6 +65,30 @@ subprojects { project ->
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.1'
 
 			dependency 'junit:junit:4.12'
+		}
+	}
+
+	if (!(project.name in javaProjectsFilter)) {
+		return
+	}
+
+	apply plugin: 'java'
+
+	compileJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+		options.encoding = 'utf-8'
+	}
+
+	jar {
+		manifest {
+			attributes(
+				"Implementation-Title": project.name,
+				"Implementation-Version": completeVersion,
+				"Build-Id": buildId,
+				"Build-Time": buildTimestamp,
+				"Permissions": "all-permissions"
+			)
 		}
 	}
 }
