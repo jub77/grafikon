@@ -1,28 +1,26 @@
 package net.parostroj.timetable.utils;
 
-import java.util.ResourceBundle;
+import java.util.Map;
+
+import net.parostroj.timetable.utils.ManifestVersionInfo.VersionData;
 
 public class VersionInfo {
 
-    private final ResourceBundle bundle;
+    private static final SemanticVersion UNKNOW_VERSION = new SemanticVersion("0.0.0-unknown");
+
+    private final SemanticVersion version;
 
     public VersionInfo() {
-        bundle = ResourceBundle.getBundle("grafikon_version");
+        Map<String, VersionData> manifests = new ManifestVersionInfo().getManifestVersions();
+        VersionData modelData = manifests.get("grafikon-model");
+        if (modelData == null) {
+            version = UNKNOW_VERSION;
+        } else {
+            version = new SemanticVersion(modelData.getVersion());
+        }
     }
 
     public SemanticVersion getVersion() {
-        return new SemanticVersion(bundle.getString("grafikon.version"));
-    }
-
-    public String getBuild() {
-    	return bundle.getString("grafikon.build");
-    }
-
-    public String getId() {
-    	return bundle.getString("grafikon.id");
-    }
-
-    public String getTimestamp() {
-    	return bundle.getString("grafikon.timestamp");
+        return version;
     }
 }

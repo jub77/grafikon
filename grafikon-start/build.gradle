@@ -1,0 +1,15 @@
+//apply plugin: 'application'
+
+task runApp(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'net.parostroj.timetable.gui.Main'
+}
+
+dependencies {
+	compile project(':grafikon-gui')
+	compile project(':grafikon-save')
+	compile project(':grafikon-ls')
+	compile project(':grafikon-ls4')
+
+	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
+}

@@ -1,17 +1,5 @@
-grafikon-applet/target/*
-grafikon-assembly/target/*
-grafikon-gui/target/*
-grafikon-gui-components/target/*
-grafikon-ls/target/*
-grafikon-ls4/target/*
-grafikon-model/target/*
-grafikon-net/target/*
-grafikon-output/target/*
-grafikon-output2/target/*
-grafikon-save/target/*
-grafikon-start/target/*
-grafikon-templates/target/*
-grafikon-webstart/target/*
+grafikon-*/bin/*
+grafikon-*/build/*
 grafikon-webstart/src/main/keystore/grafikon.ks
 /*.cmd
 /*.sh
@@ -21,4 +9,5 @@ grafikon-webstart/src/main/keystore/grafikon.ks
 /*/.settings
 .project
 .settings
+.gradle
 /*.txt

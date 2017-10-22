@@ -1,0 +1,10 @@
+dependencies {
+	compile project(':grafikon-model')
+	compile project(':grafikon-output2')
+	compile project(':grafikon-templates')
+
+	compile 'com.github.akarnokd:rxjava2-swing'
+	compile 'org.beanfabrics:beanfabrics-swing'
+	compile 'org.swinglabs:jxlayer'
+	compile 'com.fifesoft:rsyntaxtextarea'
+}
