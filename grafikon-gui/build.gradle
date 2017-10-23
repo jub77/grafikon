@@ -1,5 +1,5 @@
 dependencies {
-	compile project(':grafikon-gui-components')
+	compile 'net.parostroj:grafikon-gui-components'
 
 	compile 'org.ini4j:ini4j'
 	compile 'org.tinyjee.jgraphx:jgraphx'

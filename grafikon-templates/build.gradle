@@ -1,3 +1,4 @@
 dependencies {
-	compile project(':grafikon-model')
+	compile 'org.slf4j:slf4j-api'
+	compile 'net.parostroj:grafikon-model'
 }

@@ -3,42 +3,57 @@ plugins {
 	id 'org.ajoberstar.grgit' version '2.0.1' apply false
 }
 
-def javaProjectsFilter = [
-	"grafikon-gui",
-	"grafikon-gui-components",
-	"grafikon-ls",
-	"grafikon-ls4",
-	"grafikon-model",
-	"grafikon-output2",
-	"grafikon-save",
-	"grafikon-start",
-	"grafikon-templates"
+def nonJavaProjectsFilter = [
+	"grafikon-assembly"
 ]
 
-subprojects { project ->
+subprojects { prj ->
 	apply plugin: 'org.ajoberstar.grgit'
 	apply plugin: 'io.spring.dependency-management'
 
 	group = 'net.parostroj'
 	version = '2.1.0-SNAPSHOT'
 
+
 	ext {
+		dirty = !grgit.status().clean
 		gitHead = grgit.head()
 		buildTimestamp = new Date().format('yyyyMMddHHmm')
 		commitTimestamp = Date.from(gitHead.dateTime.toInstant()).format('yyyyMMddHHmm')
 		commitId = gitHead.id.substring(0, 12)
 		buildId = commitId
 		completeVersion = version.endsWith("-SNAPSHOT")
-			? "${version.replace('-SNAPSHOT', '')}-dev.${commitTimestamp}+${buildId}"
-			: "${version}+${buildId}"
+			? "${version.replace('-SNAPSHOT', '')}-dev.${commitTimestamp}+${buildId}${dirty ? '#' : ''}"
+			: "${version}+${buildId}${dirty ? '#' : ''}"
 	}
-	
+
 	repositories {
 		mavenLocal()
 		mavenCentral()
 	}
 
+	def subs = { 
+		substitute module('net.parostroj:grafikon-model') with project(':grafikon-model')
+		substitute module('net.parostroj:grafikon-save') with project(':grafikon-save')
+		substitute module('net.parostroj:grafikon-ls') with project(':grafikon-ls')
+		substitute module('net.parostroj:grafikon-ls4') with project(':grafikon-ls4')
+		substitute module('net.parostroj:grafikon-templates') with project(':grafikon-templates')
+		substitute module('net.parostroj:grafikon-output2') with project(':grafikon-output2')
+		substitute module('net.parostroj:grafikon-gui-components') with project(':grafikon-gui-components')
+		substitute module('net.parostroj:grafikon-gui') with project(':grafikon-gui')
+		substitute module('net.parostroj:grafikon-start') with project(':grafikon-start')
+	}
+
+	configurations.all {
+		resolutionStrategy {
+			dependencySubstitution subs
+		}
+	}
+
 	dependencyManagement {
+		resolutionStrategy {
+			dependencySubstitution subs
+		}
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.0.1'
 			dependency 'org.mvel:mvel2:2.3.2.Final'
@@ -68,7 +83,7 @@ subprojects { project ->
 		}
 	}
 
-	if (!(project.name in javaProjectsFilter)) {
+	if (prj.name in nonJavaProjectsFilter) {
 		return
 	}
 
@@ -83,7 +98,7 @@ subprojects { project ->
 	jar {
 		manifest {
 			attributes(
-				"Implementation-Title": project.name,
+				"Implementation-Title": prj.name,
 				"Implementation-Version": completeVersion,
 				"Build-Id": buildId,
 				"Build-Time": buildTimestamp,

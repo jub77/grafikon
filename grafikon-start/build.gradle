@@ -6,19 +6,22 @@ task runApp(type: JavaExec) {
 }
 
 dependencies {
-	compile project(':grafikon-gui')
-	compile project(':grafikon-save')
-	compile project(':grafikon-ls')
-	compile project(':grafikon-ls4')
+	compile 'net.parostroj:grafikon-gui'
+	compile 'net.parostroj:grafikon-save'
+	compile 'net.parostroj:grafikon-ls'
+	compile 'net.parostroj:grafikon-ls4'
+	compile 'net.parostroj:grafikon-templates'
 
 	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
 }
 
-jar {
-	manifest {
-		attributes(
-			'Main-Class': 'net.parostroj.timetable.gui.Main',
-			'Class-Path' : configurations.runtime.files.collect { file -> file.name }.join(' ')
-		)
+compileJava.doFirst {
+	jar {
+		manifest {
+			attributes(
+				'Main-Class': 'net.parostroj.timetable.gui.Main',
+				'Class-Path' : configurations.runtime.files.collect { file -> file.name }.join(' ')
+			)
+		}
 	}
 }

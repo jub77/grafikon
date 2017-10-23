@@ -5,7 +5,7 @@ configurations {
 }
 
 dependencies {
-	runtime project(":grafikon-start")
+	runtime 'net.parostroj:grafikon-start'
 }
 
 task createDist(type: Zip) {
@@ -14,4 +14,10 @@ task createDist(type: Zip) {
 	from configurations.runtime
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
+}
+
+createDist.doFirst {
+	if (dirty) {
+		throw new GradleException("Creating of distribution from not clean working directory forbidden!")
+	}
 }
