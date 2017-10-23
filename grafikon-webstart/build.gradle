@@ -41,10 +41,10 @@ task createWebstart(dependsOn: copyWebstart) {
 				alias: 'jub',
 				keystore: "${projectDir}/src/main/keystore/grafikon.ks",
 				storepass: 'grafikon',
-	            preservelastmodified: true,
-	            lazy: true,
-	            sigalg: 'SHA1withDSA',
-	            digestalg: 'SHA1'
+				preservelastmodified: true,
+				lazy: true,
+				sigalg: 'SHA1withDSA',
+				digestalg: 'SHA1'
 			)
 		}
 	}

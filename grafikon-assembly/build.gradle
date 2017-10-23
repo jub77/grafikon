@@ -9,7 +9,8 @@ dependencies {
 }
 
 task createDistribution(type: Zip) {
-	baseName = "grafikon-${completeVersion}"
+	baseName = "grafikon"
+	version = completeVersion
 	destinationDir = file("${buildDir}/dist")
 	from configurations.runtime
 	from file("${projectDir}/src/main/scripts")
