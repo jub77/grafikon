@@ -1,6 +1,4 @@
-//apply plugin: 'application'
-
-task runApp(type: JavaExec) {
+task runApplication(type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'net.parostroj.timetable.gui.Main'
 }
