@@ -1,0 +1,49 @@
+apply plugin: 'base'
+
+configurations {
+	runtime
+}
+
+dependencies {
+	runtime 'net.parostroj:grafikon-start'
+}
+
+ext {
+	webstartDir = "${buildDir}/dist/grafikon-${completeVersion}" 
+}
+
+task copyWebstart(type: Copy) {
+	def jnlpDir = "${projectDir}/src/main/jnlp"
+	from configurations.runtime
+	from (jnlpDir) {
+		include '*.jnlp'
+	}
+	from (jnlpDir) {
+		include '*.png', '*.gif'
+	}
+	into webstartDir
+	rename "grafikon-start.*", "grafikon.jar"
+	doFirst {
+		if (dirty) {
+			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
+		}
+	}
+}
+
+task createWebstart(dependsOn: copyWebstart) {
+	doLast {
+		def files = fileTree dir: webstartDir, include: '*.jar'
+		files.each { signedFile ->
+			ant.signjar(
+				jar: signedFile,
+				alias: 'jub',
+				keystore: "${projectDir}/src/main/keystore/grafikon.ks",
+				storepass: 'grafikon',
+	            preservelastmodified: true,
+	            lazy: true,
+	            sigalg: 'SHA1withDSA',
+	            digestalg: 'SHA1'
+			)
+		}
+	}
+}
