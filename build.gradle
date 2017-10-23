@@ -4,7 +4,8 @@ plugins {
 }
 
 def nonJavaProjectsFilter = [
-	"grafikon-assembly"
+	"grafikon-assembly",
+	"grafikon-webstart"
 ]
 
 subprojects { prj ->
