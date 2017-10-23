@@ -67,9 +67,19 @@ subprojects { prj ->
 				exclude 'com.google.errorprone:error_prone_annotations'
 				exclude 'org.codehaus.mojo:animal-sniffer-annotations'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.2'
+			dependency ('org.apache.xmlgraphics:fop:2.2') {
+				exclude 'org.apache.xmlgraphics:batik-extension'
+				exclude 'commons-logging:commons-logging'
+				exclude 'org.apache.pdfbox:fontbox'
+				exclude 'xalan:xalan'
+				exclude 'xml-apis:xml-apis-ext'
+			}
+
 			dependency 'org.apache.xmlgraphics:batik-svggen:1.9'
-			dependency 'org.apache.xmlgraphics:batik-dom:1.9'
+			dependency ('org.apache.xmlgraphics:batik-dom:1.9') {
+				exclude 'xalan:xalan'
+				exclude 'xml-apis:xml-apis-ext'
+			}
 			dependency 'com.github.akarnokd:rxjava2-swing:0.2.5'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
