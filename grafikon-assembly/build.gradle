@@ -8,16 +8,15 @@ dependencies {
 	runtime 'net.parostroj:grafikon-start'
 }
 
-task createDist(type: Zip) {
+task createDistribution(type: Zip) {
 	baseName = "grafikon-${completeVersion}"
 	destinationDir = file("${buildDir}/dist")
 	from configurations.runtime
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
-}
-
-createDist.doFirst {
-	if (dirty) {
-		throw new GradleException("Creating of distribution from not clean working directory forbidden!")
+	doFirst {
+		if (dirty) {
+			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
+		}
 	}
 }
