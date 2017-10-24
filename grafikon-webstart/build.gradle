@@ -24,7 +24,6 @@ task copyWebstart(type: Copy) {
 		include '*.png', '*.gif'
 	}
 	into webstartDir
-	rename "grafikon-start.*", "grafikon.jar"
 	doFirst {
 		if (dirty) {
 			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
