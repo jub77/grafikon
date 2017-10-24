@@ -1,4 +1,6 @@
-apply plugin: 'base'
+plugins {
+	id 'base'
+}
 
 configurations {
 	runtime
@@ -8,7 +10,7 @@ dependencies {
 	runtime 'net.parostroj:grafikon-start'
 }
 
-task createDistribution(type: Zip) {
+task distribution(type: Zip) {
 	baseName = "grafikon"
 	version = completeVersion
 	destinationDir = file("${buildDir}/dist")

@@ -1,4 +1,6 @@
-apply plugin: 'base'
+plugins {
+	id 'base'
+}
 
 configurations {
 	runtime
@@ -31,7 +33,7 @@ task copyWebstart(type: Copy) {
 	}
 }
 
-task createWebstart(dependsOn: copyWebstart) {
+task webstart(dependsOn: copyWebstart) {
 	doLast {
 		def files = fileTree dir: webstartDir, include: '*.jar'
 		files.each { signedFile ->
