@@ -1,3 +1,5 @@
+rootProject.name = 'grafikon'
+
 include 'grafikon-model'
 include 'grafikon-save'
 include 'grafikon-ls'
