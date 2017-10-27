@@ -11,6 +11,7 @@ dependencies {
 	compile 'net.parostroj:grafikon-templates'
 
 	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
+	compile 'com.github.markusbernhardt:proxy-vole'
 }
 
 compileJava.doFirst {

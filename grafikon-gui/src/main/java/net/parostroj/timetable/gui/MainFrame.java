@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.ProxySelector;
 import java.net.URL;
 import java.util.*;
 
@@ -54,8 +53,6 @@ import org.beanfabrics.Path;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.markusbernhardt.proxy.ProxySearch;
 
 /**
  * Main frame for the application.
@@ -104,20 +101,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         info.setText(getInfoText("Preloading dialogs..."));
         FileChooserFactory fcf = FileChooserFactory.getInstance();
         fcf.initialize();
-
-        // init proxy selector
-        try {
-            Class.forName("javax.jnlp.ServiceManager");
-            // JNLP service manager does exists - running from webstart
-            // do not set proxy-vole (it is preventing url connections from webstart)
-            log.info("Running as webstart");
-        } catch (Exception e) {
-            // JNLP service manager does not exist - running from desktop
-            // setting up proxy-vole (for proxy.pac scripts)
-            log.info("Running from desktop");
-            ProxySearch search = ProxySearch.getDefaultProxySearch();
-            ProxySelector.setDefault(search.getProxySelector());
-        }
     }
 
     private String getInfoText(String txt) {

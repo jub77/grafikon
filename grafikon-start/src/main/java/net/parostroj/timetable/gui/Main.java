@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ProxySelector;
 
 import javax.swing.RepaintManager;
 import javax.swing.UIManager;
@@ -10,6 +11,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.markusbernhardt.proxy.ProxySearch;
 
 import net.parostroj.timetable.gui.ApplicationStarter.AfterStartAction;
 import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
@@ -36,6 +39,7 @@ public class Main {
             setDebug();
         }
         setLookAndFeel();
+        initProxy();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<>(
                 MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"));
         starter.setAction(new AfterStartAction<MainFrame>() {
@@ -76,6 +80,22 @@ public class Main {
             }
         } catch (Exception e) {
             log.warn("Error setting up look and feel.", e);
+        }
+    }
+
+    private static void initProxy() {
+        // init proxy selector
+        try {
+            Class.forName("javax.jnlp.ServiceManager");
+            // JNLP service manager does exists - running from webstart
+            // do not set proxy-vole (it is preventing url connections from webstart)
+            log.info("Running as webstart");
+        } catch (Exception e) {
+            // JNLP service manager does not exist - running from desktop
+            // setting up proxy-vole (for proxy.pac scripts)
+            log.info("Running from desktop");
+            ProxySearch search = ProxySearch.getDefaultProxySearch();
+            ProxySelector.setDefault(search.getProxySelector());
         }
     }
 }
