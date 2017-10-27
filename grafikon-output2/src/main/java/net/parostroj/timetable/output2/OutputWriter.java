@@ -85,10 +85,6 @@ public class OutputWriter {
             Locale returnedLocale = locale != null ? locale : Locale.getDefault();
             return LocalizedString.getOnlyLanguageLocale(returnedLocale);
         }
-
-        public OutputParams createParams() {
-            return new OutputParams();
-        }
     }
 
     private static final Logger scriptLog = LoggerFactory.getLogger(OUTPUT_SCRIPT_LOG_NAME);
@@ -213,7 +209,7 @@ public class OutputWriter {
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
             Map<String, Object> parameters, Map<String, Object> context, OutputResources resources, String encoding) throws OutputException {
-        OutputParams params = settings.createParams();
+        OutputParams params = new OutputParams();
 
         if (textTemplate != null) {
             params.setParam(Output.PARAM_TEXT_TEMPLATE, textTemplate);
