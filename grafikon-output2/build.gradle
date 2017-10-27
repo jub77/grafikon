@@ -4,6 +4,4 @@ dependencies {
 	compile 'org.slf4j:slf4j-api'
 	compile 'org.slf4j:jcl-over-slf4j'
 	compile 'org.apache.xmlgraphics:fop'
-	compile 'org.apache.xmlgraphics:batik-svggen'
-	compile 'org.apache.xmlgraphics:batik-dom'
 }

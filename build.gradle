@@ -73,13 +73,7 @@ subprojects { prj ->
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
 				exclude 'xalan:xalan'
-				exclude 'xml-apis:xml-apis-ext'
-			}
-
-			dependency 'org.apache.xmlgraphics:batik-svggen:1.9'
-			dependency ('org.apache.xmlgraphics:batik-dom:1.9') {
-				exclude 'xalan:xalan'
-				exclude 'xml-apis:xml-apis-ext'
+				exclude 'xml-apis:xml-apis'
 			}
 			dependency 'com.github.akarnokd:rxjava2-swing:0.2.5'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
