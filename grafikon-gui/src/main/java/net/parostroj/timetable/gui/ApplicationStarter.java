@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ApplicationStarter<T extends JFrame> {
 
+    @FunctionalInterface
     public static interface AfterStartAction<T> {
 
         public void action(T frame);
