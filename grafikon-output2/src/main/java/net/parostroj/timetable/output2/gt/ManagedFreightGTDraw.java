@@ -23,14 +23,14 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             if (!fromConnections.isEmpty()) {
                 g.setStroke(connectionStroke);
                 for (FNConnection connection : fromConnections) {
-                    drawConnection(g, connection, timeInterval, interval, line, true);
+                    drawConnection(g, connection, timeInterval, line, true);
                 }
             }
             Collection<FNConnection> toConnections = freightNet.getTrainsTo(timeInterval);
             if (!toConnections.isEmpty()) {
                 g.setStroke(connectionStroke);
                 for (FNConnection connection : toConnections) {
-                    drawConnection(g, connection, timeInterval, interval, line, false);
+                    drawConnection(g, connection, timeInterval, line, false);
                 }
             }
             g.setColor(c);
@@ -61,7 +61,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private static final Color CONNECTION_COLOR = Color.RED;
     private static final float CONNECTION_STROKE_WIDTH = 1.5f;
 
-    public static final String HIGHLIGHT = "mf.highlight";
+    public static final String HIGHLIGHT_KEY = "mf.highlight";
 
     public interface Highlight {
 
@@ -90,7 +90,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         draw.addListener(new MFListener());
         this.written = new ArrayList<>();
         this.collector = collector;
-        this.highlight = storage.getParameter(HIGHLIGHT, Highlight.class);
+        this.highlight = storage.getParameter(HIGHLIGHT_KEY, Highlight.class);
         this.draw = draw;
         this.firstNode = draw.getRoute() != null ? draw.getRoute().getFirst() : null;
         this.freightNet = firstNode != null ? firstNode.getDiagram().getFreightNet() : null;
@@ -118,7 +118,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         this.initFontInfo(g);
     }
 
-    private void drawConnection(Graphics2D g, FNConnection conn, TimeInterval interval, Interval i, Line2D line,
+    private void drawConnection(Graphics2D g, FNConnection conn, TimeInterval interval, Line2D line,
             boolean from) {
         if (highlight != null) {
             if (conn == highlight.getSelectedConnection()) {
@@ -128,14 +128,13 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             }
         }
         int dir = conn.getFrom().getOwnerAsNode() == firstNode ? -1 : 1;
-        Point location = getLocation(interval, line, dir, from);
-        if (location != null) {
-            String text = this.createText(conn);
-            Rectangle bounds = g.getFont().getStringBounds(text, g.getFontRenderContext()).getBounds();
-            int width = bounds.width;
-            paintText(conn, text, g, new Rectangle(bounds), location, width, dir);
-            paintLine(conn, g, location, width, from, dir);
-        }
+        Point location = getLocation(interval, line, dir);
+
+        String text = this.createText(conn);
+        Rectangle bounds = g.getFont().getStringBounds(text, g.getFontRenderContext()).getBounds();
+        int width = bounds.width;
+        paintText(conn, text, g, new Rectangle(bounds), location, width, dir);
+        paintLine(conn, g, location, width, from);
     }
 
     private boolean collisions(Rectangle rec) {
@@ -163,7 +162,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         }
     }
 
-    private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left, int dir) {
+    private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left) {
         int half = (width + lineExtend) / 2;
         int x1 = point.x - half;
         int y = point.y + fontInfo.descent;
@@ -195,7 +194,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         return String.format("%s > %s", conn.getFrom().getTrain().getDefaultName(), conn.getTo().getTrain().getDefaultName());
     }
 
-    private Point getLocation(TimeInterval interval, Line2D line, int dir, boolean from) {
+    private Point getLocation(TimeInterval interval, Line2D line, int dir) {
         Node node = interval.getOwnerAsNode();
         List<NodeTrack> tracks = node.getTracks();
         NodeTrack track = dir > 0 ? node.getTracks().get(0) : tracks.get(tracks.size() - 1);

@@ -19,7 +19,7 @@ public class CustomCyclesExtractor {
 
     private int counter;
 
-    public CustomCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, Locale locale) {
+    public CustomCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
 

@@ -19,7 +19,7 @@ public class TrainUnitCyclesExtractor {
 
     private int counter;
 
-    public TrainUnitCyclesExtractor(List<TrainsCycle> cycles, Locale locale) {
+    public TrainUnitCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
 

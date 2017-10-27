@@ -17,7 +17,7 @@ public class DriverCyclesExtractor {
 
     private RoutesExtractor routesExtractor;
 
-    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, boolean addRoutes, Locale locale) {
+    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, boolean addRoutes) {
         this.cycles = cycles;
         this.diagram = diagram;
         if (addRoutes) {

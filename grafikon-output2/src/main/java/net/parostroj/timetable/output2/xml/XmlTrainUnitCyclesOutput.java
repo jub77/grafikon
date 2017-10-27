@@ -33,7 +33,7 @@ class XmlTrainUnitCyclesOutput extends OutputWithCharset {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             TrainUnitCyclesExtractor tuce = new TrainUnitCyclesExtractor(
-                    SelectionHelper.selectCycles(params, diagram, diagram.getTrainUnitCycleType()), getLocale());
+                    SelectionHelper.selectCycles(params, diagram, diagram.getTrainUnitCycleType()));
             TrainUnitCycles cards = new TrainUnitCycles(tuce.getTrainUnitCycles());
 
             JAXBContext context = JAXBContext.newInstance(TrainUnitCycles.class);

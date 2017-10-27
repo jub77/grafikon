@@ -284,7 +284,6 @@ public class CirculationDraw {
     }
 
     private int getX(int time) {
-        int x = (int) (this.getStartX() + (time - layout.fromTime) * layout.step);
-        return x;
+        return (int) (this.getStartX() + (time - layout.fromTime) * layout.step);
     }
 }

@@ -16,7 +16,7 @@ public class GroovyTemplate {
 
     private final GroovyTemplateBinding binding;
 
-    public GroovyTemplate(GroovyTemplateBinding binding) throws OutputException {
+    public GroovyTemplate(GroovyTemplateBinding binding) {
         this.binding = binding;
     }
 

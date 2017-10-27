@@ -8,6 +8,7 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
+@FunctionalInterface
 public interface TrainColorChooser {
 
     public Color getIntervalColor(TimeInterval interval);

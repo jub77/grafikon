@@ -17,7 +17,7 @@ public class CustomCyclesTemplateBinding extends GroovyTemplateBinding {
         OutputParam param = params.get("cycle_type");
         TrainsCycleType type = param != null ? param.getValue(TrainsCycleType.class) : null;
         // extract cycles
-        CustomCyclesExtractor ece = new CustomCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, type), locale);
+        CustomCyclesExtractor ece = new CustomCyclesExtractor(SelectionHelper.selectCycles(params, diagram, type));
         List<CustomCycle> cycles = ece.getCycles();
 
         // call template

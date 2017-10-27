@@ -13,7 +13,7 @@ public class TrainUnitCyclesTemplateBinding extends GroovyTemplateBinding {
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
         // extract positions
         TrainUnitCyclesExtractor tuce = new TrainUnitCyclesExtractor(SelectionHelper.selectCycles(params, diagram,
-                diagram.getTrainUnitCycleType()), locale);
+                diagram.getTrainUnitCycleType()));
         List<TrainUnitCycle> cycles = tuce.getTrainUnitCycles();
 
         // call template

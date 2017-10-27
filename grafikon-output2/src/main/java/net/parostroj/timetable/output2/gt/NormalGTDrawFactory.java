@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
-public class NormalGTDrawFactory extends GTDrawFactory {
+public class NormalGTDrawFactory implements GTDrawFactory {
 
     @Override
     public GTDraw createInstance(GTDraw.Type type, GTDrawSettings settings, Route route, GTStorage storage) {

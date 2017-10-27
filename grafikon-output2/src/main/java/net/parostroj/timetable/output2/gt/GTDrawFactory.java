@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.Route;
  *
  * @author jub
  */
-public abstract class GTDrawFactory {
+public interface GTDrawFactory {
 
-    public abstract GTDraw createInstance(GTDraw.Type type, GTDrawSettings settings, Route route, GTStorage storage);
+    GTDraw createInstance(GTDraw.Type type, GTDrawSettings settings, Route route, GTStorage storage);
 }

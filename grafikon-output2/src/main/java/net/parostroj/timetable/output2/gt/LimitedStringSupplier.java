@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
  *
  * @author jub
  */
+@FunctionalInterface
 public interface LimitedStringSupplier {
 
     /**
