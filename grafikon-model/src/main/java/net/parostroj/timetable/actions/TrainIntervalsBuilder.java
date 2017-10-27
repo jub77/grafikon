@@ -18,7 +18,7 @@ public class TrainIntervalsBuilder {
     private final int startTime;
     private boolean finished;
 
-    public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
+    public TrainIntervalsBuilder(Train train, int startTime) {
         this.train = train;
         this.lastInterval = null;
         this.startTime = startTime;

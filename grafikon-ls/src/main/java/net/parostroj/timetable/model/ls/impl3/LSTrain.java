@@ -52,7 +52,7 @@ public class LSTrain {
         this.attributes = new LSAttributes(train.getAttributes());
 
         // create route parts ...
-        route = new LinkedList<Object>();
+        route = new LinkedList<>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             Object part = null;
             if (interval.isLineOwner()) {
@@ -157,7 +157,7 @@ public class LSTrain {
         train.setTopSpeed(topSpeed);
         train.setType(diagram.getTrainTypes().getById(type));
         // build time interval list
-        TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
+        TrainIntervalsBuilder builder = new TrainIntervalsBuilder(train, start);
         for (Object routePart : getRoute()) {
             if (routePart instanceof LSTrainRoutePartNode) {
                 LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;

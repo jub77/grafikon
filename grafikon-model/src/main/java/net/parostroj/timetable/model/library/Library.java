@@ -46,7 +46,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     public ObjectWithId getObjectById(String id) {
         return FluentIterable.from(itemMap.values())
-                .transform(item -> item.getObject())
+                .transform(LibraryItem::getObject)
                 .firstMatch(object -> object.getId().equals(id))
                 .orNull();
     }

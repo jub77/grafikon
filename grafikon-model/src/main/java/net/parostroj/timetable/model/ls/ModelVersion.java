@@ -12,7 +12,7 @@ public class ModelVersion implements Comparable<ModelVersion> {
     private final int patchVersion;
 
     public static ModelVersion parseModelVersion(String version) {
-        String parts[] = version.split("\\.");
+        String[] parts = version.split("\\.");
         int majorVersion = Integer.parseInt(parts[0]);
         int minorVersion = Integer.parseInt(parts[1]);
         int patchVersion = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
@@ -80,10 +80,7 @@ public class ModelVersion implements Comparable<ModelVersion> {
         if (minorVersion != other.minorVersion) {
             return false;
         }
-        if (patchVersion != other.patchVersion) {
-            return false;
-        }
-        return true;
+        return patchVersion == other.patchVersion;
     }
 
     @Override

@@ -5,6 +5,7 @@ package net.parostroj.timetable.mediator;
  *
  * @author jub
  */
+@FunctionalInterface
 public interface Colleague {
 
     public void receiveMessage(Object message);

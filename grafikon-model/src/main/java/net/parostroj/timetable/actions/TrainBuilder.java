@@ -159,7 +159,7 @@ public class TrainBuilder {
         train.setTopSpeed(topSpeed);
 
         List<Pair<RouteSegment<?>, Integer>> data = this.createDataForRoute(route);
-        this.adjustSpeedsAndStops(data, train, defaultStop);
+        this.adjustSpeedsAndStops(data, defaultStop);
 
         Node lastNode = null;
         int currentTime = time;
@@ -201,7 +201,7 @@ public class TrainBuilder {
         return data;
     }
 
-    private void adjustSpeedsAndStops(List<Pair<RouteSegment<?>, Integer>> data, Train train, int defaultStop) {
+    private void adjustSpeedsAndStops(List<Pair<RouteSegment<?>, Integer>> data, int defaultStop) {
         int size = data.size();
         int i = 0;
         for (Pair<RouteSegment<?>,Integer> pair : data) {

@@ -24,6 +24,8 @@ public class UnitUtil {
 
     private static final Logger log = LoggerFactory.getLogger(UnitUtil.class);
 
+    private UnitUtil() {}
+
     public static BigDecimal convert(BigDecimal value, Unit from, Unit to) {
         if (to == null || from == null)
             throw new IllegalArgumentException("Units cannot be null.");

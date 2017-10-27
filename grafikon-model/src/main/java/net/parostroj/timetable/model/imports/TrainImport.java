@@ -55,7 +55,7 @@ public class TrainImport extends Import {
         train.setType(trainType);
         train.setTopSpeed(importedTrain.getTopSpeed());
 
-        TrainIntervalsBuilder builder = new TrainIntervalsBuilder(this.getDiagram(), train, importedTrain.getStartTime());
+        TrainIntervalsBuilder builder = new TrainIntervalsBuilder(train, importedTrain.getStartTime());
         // create route (new)
         List<Triplet<RouteSegment<?>, Track, TimeInterval>> route = createNewRoute(importedTrain);
         if (route == null) {

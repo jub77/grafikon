@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
@@ -68,10 +67,8 @@ class LSCache<T extends LSVersions> {
                 throw new LSException(metadataFile + " was not the first entry.");
             }
             Properties metadata = new Properties();
-            if (entry != null) {
-                // load metadata
-                metadata.load(is);
-            }
+            // load metadata
+            metadata.load(is);
             return this.createInstanceForLoad(metadata);
         } catch (IOException ex) {
             throw new LSException(ex);
@@ -88,8 +85,6 @@ class LSCache<T extends LSVersions> {
             }
 
             return this.createInstanceForLoad(metadata);
-        } catch (ZipException ex) {
-            throw new LSException(ex);
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -105,9 +100,7 @@ class LSCache<T extends LSVersions> {
             if (clazz == null)
                 throw new LSException("No LS registered for version: " + modelVersion.getVersion());
             return cacheType.cast(clazz.newInstance());
-        } catch (InstantiationException ex) {
-            throw new LSException(ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new LSException(ex);
         }
     }
@@ -137,9 +130,7 @@ class LSCache<T extends LSVersions> {
             List<ModelVersion> versions = instance.getLoadVersions();
             logVersions(modelVersion, versions);
             return instance;
-        } catch (InstantiationException ex) {
-            throw new LSException(ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new LSException(ex);
         }
     }

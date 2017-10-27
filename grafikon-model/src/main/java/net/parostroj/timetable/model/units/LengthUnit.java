@@ -129,7 +129,7 @@ public enum LengthUnit implements Unit {
     }
 
     public static List<LengthUnit> getScaleDependent() {
-        List<LengthUnit> dep = new LinkedList<LengthUnit>();
+        List<LengthUnit> dep = new LinkedList<>();
         for (LengthUnit unit : values())
             if (unit.isScaleDependent())
                 dep.add(unit);
