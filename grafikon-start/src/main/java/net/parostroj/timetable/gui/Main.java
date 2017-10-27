@@ -56,7 +56,7 @@ public class Main {
         starter.start();
     }
 
-    private static void setDebug() throws Exception {
+    private static void setDebug() throws IOException {
         if (AppPreferences.getSection("debug").get("debug.edt", Boolean.class, false)) {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         }
