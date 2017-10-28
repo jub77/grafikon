@@ -12,7 +12,8 @@ dependencies {
 
 ext {
 	webstartDir = "${buildDir}/dist/grafikon-${completeVersion}"
-	jnlpVersion = version.endsWith('-SNAPSHOT') ? 'dev' : version.replaceAll("(\\d+)\\.(\\d+).*", "\$1.\$2")
+	jnlpVersion = project.findProperty('jnlp.version')
+			?: version.endsWith('-SNAPSHOT') ? 'dev' : version.replaceAll("(\\d+)\\.(\\d+).*", "\$1.\$2")
 }
 
 task copyWebstart(type: Copy) {
