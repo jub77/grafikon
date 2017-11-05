@@ -1,4 +1,4 @@
-task runApplication(type: JavaExec) {
+task run(type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'net.parostroj.timetable.gui.Main'
 }

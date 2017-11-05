@@ -15,7 +15,6 @@ subprojects { prj ->
 	group = 'net.parostroj'
 	version = '2.1.0-SNAPSHOT'
 
-
 	ext {
 		dirty = !grgit.status().clean
 		gitHead = grgit.head()
