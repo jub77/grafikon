@@ -176,7 +176,7 @@ public final class TransformUtil {
                     firstNode = n;
                 }
                 switch (n.getType()) {
-                    case STOP: case STOP_WITH_FREIGHT: case ROUTE_SPLIT: case SIGNAL:
+                    case STOP: case STOP_WITH_FREIGHT: case ROUTE_SPLIT: case SIGNAL: case STATION_FREIGHT:
                         // do nothing
                         break;
                     default:
