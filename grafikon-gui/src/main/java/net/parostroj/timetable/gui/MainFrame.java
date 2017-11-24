@@ -138,6 +138,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot load preferences.", e);
         }
 
+        log.debug("Locale: {}", Locale.getDefault());
+
         executeScriptAction = new ExecuteScriptAction(model);
 
         initComponents();
