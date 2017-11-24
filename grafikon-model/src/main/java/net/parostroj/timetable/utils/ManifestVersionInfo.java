@@ -44,6 +44,7 @@ public class ManifestVersionInfo {
     }
 
     private Map<String, VersionData> getVersionsImpl() throws IOException {
+        long startTime = System.currentTimeMillis();
         Map<String, VersionData> versions = new TreeMap<>();
         Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(JarFile.MANIFEST_NAME);
         for (URL url : (Iterable<URL>) () -> Iterators.forEnumeration(urls)) {
@@ -69,6 +70,7 @@ public class ManifestVersionInfo {
                 });
             }
         }
+        log.debug("Analysis of versions finished in {}ms", System.currentTimeMillis() - startTime);
         return versions;
     }
 }
