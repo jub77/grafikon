@@ -46,7 +46,6 @@ import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.VersionInfo;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
@@ -72,11 +71,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private Map<File, JMenuItem> lastOpened;
     private final List<Component> enabledComponents = new ArrayList<>();
-    private final VersionInfo versionInfo;
 
     public MainFrame(SplashScreenInfo info) {
-        versionInfo = new VersionInfo();
-        log.info("Version: {}", versionInfo.getVersion().toCompleteString());
+        model = new ApplicationModel();
+        log.info("Version: {}", model.getVersionInfo().getVersion().toCompleteString());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -105,11 +103,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s%n%s", versionInfo.getVersion().toString(), txt);
+        return String.format("%s%n%s", model.getVersionInfo().getVersion().toString(), txt);
     }
 
     public MainFrame() {
-        versionInfo = new VersionInfo();
+        model = new ApplicationModel();
         this.initializeFrame();
     }
 
@@ -117,7 +115,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
      * initializes frame.
      */
     private void initializeFrame() {
-        model = new ApplicationModel();
         provider.setPresentationModel(model);
         lastOpened = new HashMap<>();
 
@@ -281,7 +278,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = versionInfo.getVersion().toString();
+        String version = model.getVersionInfo().getVersion().toString();
         if (version != null) {
             title += " (" + version + ")";
         }
@@ -675,8 +672,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot create FileLoadSave", e);
         }
         AboutDialog dialog = new AboutDialog(this, true,
-                String.format(aboutBundle.getString("text"), versionInfo.getVersion().toCompleteString(), fls == null ? "-" : fls.getSaveVersion()),
-                getClass().getResource(aboutBundle.getString("image")), true);
+                String.format(aboutBundle.getString("text"),
+                        model.getVersionInfo().getVersion().toCompleteString(),
+                        fls == null ? "-" : fls.getSaveVersion()),
+                getClass().getResource(aboutBundle.getString("image")), true, model.getVersionInfo());
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         dialog.dispose();

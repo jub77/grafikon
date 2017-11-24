@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.utils.ManifestVersionInfo;
 import net.parostroj.timetable.utils.ManifestVersionInfo.VersionData;
+import net.parostroj.timetable.utils.VersionInfo;
 
 /**
  * About dialog.
@@ -27,8 +27,12 @@ public class AboutDialog extends javax.swing.JDialog {
 
     private static final Logger log = LoggerFactory.getLogger(AboutDialog.class);
 
-    public AboutDialog(java.awt.Frame parent, boolean modal, String text, URL imageURL, boolean rotated) {
+    private VersionInfo versionInfo;
+
+    public AboutDialog(java.awt.Frame parent, boolean modal, String text, URL imageURL, boolean rotated,
+            VersionInfo versionInfo) {
         super(parent, modal);
+        this.versionInfo = versionInfo;
         initComponents();
 
         this.setText(text);
@@ -102,7 +106,7 @@ public class AboutDialog extends javax.swing.JDialog {
         versionsTextArea.setMargin(new java.awt.Insets(5, 5, 5, 5));
 
         StringBuilder text = new StringBuilder();
-        Map<String, VersionData> versions = new ManifestVersionInfo().getManifestVersions();
+        Map<String, VersionData> versions = versionInfo.getVersions();
         for (VersionData data : versions.values()) {
             text.append(data.getTitle()).append(": ").append(data.getVersion()).append("\n");
         }

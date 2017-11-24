@@ -10,9 +10,11 @@ public class VersionInfo {
 
     private final SemanticVersion version;
 
+    private Map<String, VersionData> versions;
+
     public VersionInfo() {
-        Map<String, VersionData> manifests = new ManifestVersionInfo().getManifestVersions();
-        VersionData modelData = manifests.get("grafikon-model");
+        versions = new ManifestVersionInfo().getManifestVersions();
+        VersionData modelData = versions.get("grafikon-model");
         if (modelData == null) {
             version = NO_MANIFEST_VERSION;
         } else {
@@ -22,5 +24,9 @@ public class VersionInfo {
 
     public SemanticVersion getVersion() {
         return version;
+    }
+
+    public Map<String, VersionData> getVersions() {
+        return versions;
     }
 }

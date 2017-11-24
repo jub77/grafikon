@@ -56,6 +56,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final ScriptsLoader guiPsLoader;
     private final LanguageLoader languageLoader;
     private final SemanticVersion currentVersion;
+    private final VersionInfo versionInfo;
 
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<String> lookAndFeel;
@@ -66,7 +67,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      * Default constructor.
      */
     public ApplicationModel() {
-        currentVersion = new VersionInfo().getVersion();
+        versionInfo = new VersionInfo();
+        currentVersion = versionInfo.getVersion();
         guiContext = new GuiContextImpl();
         languageLoader = LanguageLoader.getInstance();
         listeners = new HashSet<>();
@@ -376,5 +378,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public String getTemplatesBaseUrl() {
         return String.format(UrlConstants.TEMPLATES_URL, currentVersion.toMajorMinorString());
+    }
+
+    public VersionInfo getVersionInfo() {
+        return versionInfo;
     }
 }
