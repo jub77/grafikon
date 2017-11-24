@@ -28,7 +28,8 @@ task copyWebstart(type: Copy) {
 	}
 	into webstartDir
 	doFirst {
-		if (dirty) {
+		def force = project.findProperty("forceWebstart") != null
+		if (dirty && !force) {
 			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
 		}
 	}

@@ -18,7 +18,8 @@ task distribution(type: Zip) {
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
 	doFirst {
-		if (dirty) {
+		def force = project.findProperty("forceDistribution") != null
+		if (dirty && !force) {
 			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
 		}
 	}
