@@ -9,6 +9,8 @@ import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 import org.ini4j.Ini;
 
+import com.github.zafarkhaja.semver.Version;
+
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.UrlConstants;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
@@ -28,7 +30,6 @@ import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.Reference;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.SemanticVersion;
 import net.parostroj.timetable.utils.VersionInfo;
 
 /**
@@ -55,7 +56,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
     private final LanguageLoader languageLoader;
-    private final SemanticVersion currentVersion;
+    private final Version currentVersion;
     private final VersionInfo versionInfo;
 
     final IEnumeratedValuesPM<Locale> locale;
@@ -373,14 +374,18 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     public String getLibraryBaseUrl() {
-        return String.format(UrlConstants.LIBRARY_URL, currentVersion.toMajorMinorString());
+        return String.format(UrlConstants.LIBRARY_URL, getMajorMinorString(currentVersion));
     }
 
     public String getTemplatesBaseUrl() {
-        return String.format(UrlConstants.TEMPLATES_URL, currentVersion.toMajorMinorString());
+        return String.format(UrlConstants.TEMPLATES_URL, getMajorMinorString(currentVersion));
     }
 
     public VersionInfo getVersionInfo() {
         return versionInfo;
+    }
+
+    private String getMajorMinorString(Version version) {
+        return String.format("%d.%d", version.getMajorVersion(), version.getMinorVersion());
     }
 }

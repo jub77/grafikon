@@ -12,6 +12,7 @@ import java.util.jar.Manifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.common.collect.Iterators;
 
 /**
@@ -25,7 +26,7 @@ public class ManifestVersionInfo {
 
     public static interface VersionData {
         String getTitle();
-        String getVersion();
+        Version getVersion();
     }
 
     private Map<String, VersionData> cachedVersions;
@@ -54,8 +55,8 @@ public class ManifestVersionInfo {
             if (title != null && title.startsWith("grafikon")) {
                 versions.put(title, new VersionData() {
                     @Override
-                    public String getVersion() {
-                        return version;
+                    public Version getVersion() {
+                        return Version.valueOf(version);
                     }
 
                     @Override

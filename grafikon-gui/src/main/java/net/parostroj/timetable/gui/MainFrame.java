@@ -74,7 +74,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         model = new ApplicationModel();
-        log.info("Version: {}", model.getVersionInfo().getVersion().toCompleteString());
+        log.info("Version: {}", model.getVersionInfo().getVersion());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -675,7 +675,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
         AboutDialog dialog = new AboutDialog(this, true,
                 String.format(aboutBundle.getString("text"),
-                        model.getVersionInfo().getVersion().toCompleteString(),
+                        model.getVersionInfo().getVersion(),
                         fls == null ? "-" : fls.getSaveVersion()),
                 getClass().getResource(aboutBundle.getString("image")), true, model.getVersionInfo());
         dialog.setLocationRelativeTo(this);
