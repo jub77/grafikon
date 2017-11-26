@@ -11,21 +11,10 @@ def nonJavaProjectsFilter = [
 subprojects { prj ->
 	apply plugin: 'org.ajoberstar.grgit'
 	apply plugin: 'io.spring.dependency-management'
+	apply from: "${rootProject.projectDir}/version.gradle"
 
 	group = 'net.parostroj'
-	version = '2.1.0-SNAPSHOT'
-
-	ext {
-		dirty = !grgit.status().clean
-		gitHead = grgit.head()
-		buildTimestamp = new Date().format('yyyyMMddHHmm')
-		commitTimestamp = Date.from(gitHead.dateTime.toInstant()).format('yyyyMMddHHmm')
-		commitId = gitHead.id.substring(0, 12)
-		buildId = commitId
-		completeVersion = version.endsWith("-SNAPSHOT")
-			? "${version.replace('-SNAPSHOT', '')}-dev.${commitTimestamp}+${buildId}${dirty ? '.dirty' : ''}"
-			: "${version}+${buildId}${dirty ? '.dirty' : ''}"
-	}
+	version = scmVersion.projectVersion
 
 	repositories {
 		mavenLocal()
@@ -104,9 +93,9 @@ subprojects { prj ->
 		manifest {
 			attributes(
 				"Implementation-Title": prj.name,
-				"Implementation-Version": completeVersion,
-				"Build-Id": buildId,
-				"Build-Time": buildTimestamp,
+				"Implementation-Version": scmVersion.distVersion,
+				"Build-Id": scmVersion.buildId,
+				"Build-Time": scmVersion.buildTimestamp,
 				"Permissions": "all-permissions"
 			)
 		}

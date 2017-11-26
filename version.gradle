@@ -1,0 +1,81 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+        classpath 'com.github.zafarkhaja:java-semver:0.9.0'
+    }
+}
+
+import com.github.zafarkhaja.semver.*
+
+class VersionExtension {
+	def tagVersion
+	def dirty
+	def snapshot
+	def prerelease
+
+	def buildTimestamp
+	def buildId
+	
+	def projectVersion
+	def distVersion
+}
+
+class VersionPlugin implements Plugin<Project> {
+	void apply(Project project) {
+		def ver = project.extensions.create("scmVersion", VersionExtension.class)
+		def head = project.grgit.head()
+		ver.dirty = !project.grgit.status().clean
+
+		def commitTimestamp = Date.from(head.dateTime.toInstant()).format('yyyyMMddHHmm')
+		def commitId = head.id.substring(0, 12)
+		ver.buildId = commitId
+		ver.buildTimestamp = new Date().format('yyyyMMddHHmm')
+
+		def describe = project.grgit.describe(longDescr: true)
+
+		def match = describe =~ /(.*)-(\d*)-g([a-f0-9]*)/
+		if (!match) {
+			ver.snapshot = true
+			ver.tagVersion = Version.valueOf("0.0.0")
+			ver.prerelease = false
+		} else {
+			ver.tagVersion = Version.valueOf(match[0][1])
+			ver.snapshot = match[0][2] != "0"
+			if ("alfa" == ver.tagVersion.preReleaseVersion) {
+				ver.snapshot = true
+			}
+			ver.prerelease = ver.tagVersion.preReleaseVersion as Boolean
+		}
+		
+		def dVersion
+		if (ver.snapshot) {
+			if (ver.prerelease) {
+				dVersion = ver.tagVersion.normalVersion
+			} else {
+				dVersion = ver.tagVersion.incrementPatchVersion().toString()
+			}
+		} else {
+			dVersion = ver.tagVersion.toString()
+		}
+		
+		ver.projectVersion = ver.snapshot ? dVersion + "-SNAPSHOT" : dVersion
+		ver.distVersion = ver.snapshot
+			? "${dVersion}-dev.${commitTimestamp}+${ver.buildId}${ver.dirty ? '.dirty' : ''}"
+			: "${dVersion}+${ver.buildId}${ver.dirty ? '.dirty' : ''}"
+
+		project.tasks.create('version', {
+			doLast {
+				project.logger.lifecycle("Tag version: {}", project.scmVersion.tagVersion)
+				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
+				project.logger.lifecycle("Dist version: {}", project.scmVersion.distVersion)
+				project.logger.lifecycle("Snapshot: {}", project.scmVersion.snapshot)
+				project.logger.lifecycle("Build timestamp: {}", project.scmVersion.buildTimestamp)
+				project.logger.lifecycle("Build id: {}", project.scmVersion.buildId)
+			}
+		})
+	}
+}
+
+apply plugin: VersionPlugin

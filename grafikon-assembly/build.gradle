@@ -12,14 +12,14 @@ dependencies {
 
 task distribution(type: Zip) {
 	baseName = "grafikon"
-	version = completeVersion
+	version = scmVersion.distVersion
 	destinationDir = file("${buildDir}/dist")
 	from configurations.runtime
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
 	doFirst {
 		def force = project.findProperty("forceDistribution") != null
-		if (dirty && !force) {
+		if (scmVersion.dirty && !force) {
 			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
 		}
 	}

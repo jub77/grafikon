@@ -11,9 +11,9 @@ dependencies {
 }
 
 ext {
-	webstartDir = "${buildDir}/dist/grafikon-${completeVersion}"
+	webstartDir = "${buildDir}/dist/grafikon-${scmVersion.distVersion}"
 	jnlpVersion = project.findProperty('jnlp.version')
-			?: version.endsWith('-SNAPSHOT') ? 'dev' : version.replaceAll("(\\d+)\\.(\\d+).*", "\$1.\$2")
+			?: scmVersion.snapshot ? 'dev' : version.replaceAll("(\\d+)\\.(\\d+).*", "\$1.\$2")
 }
 
 task copyWebstart(type: Copy) {
@@ -29,7 +29,7 @@ task copyWebstart(type: Copy) {
 	into webstartDir
 	doFirst {
 		def force = project.findProperty("forceWebstart") != null
-		if (dirty && !force) {
+		if (scmVersion.dirty && !force) {
 			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
 		}
 	}
