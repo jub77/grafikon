@@ -10,10 +10,8 @@ buildscript {
 import com.github.zafarkhaja.semver.*
 
 class VersionExtension {
-	def tagVersion
 	def dirty
 	def snapshot
-	def prerelease
 
 	def buildTimestamp
 	def buildId
@@ -35,39 +33,44 @@ class VersionPlugin implements Plugin<Project> {
 
 		def describe = project.grgit.describe(longDescr: true)
 
+		def tagVersion
+		def prerelease
+
 		def match = describe =~ /(.*)-(\d*)-g([a-f0-9]*)/
 		if (!match) {
+			tagVersion = Version.valueOf("0.0.0")
 			ver.snapshot = true
-			ver.tagVersion = Version.valueOf("0.0.0")
-			ver.prerelease = false
+			prerelease = false
 		} else {
-			ver.tagVersion = Version.valueOf(match[0][1])
+			tagVersion = Version.valueOf(match[0][1])
 			ver.snapshot = match[0][2] != "0"
-			if ("alfa" == ver.tagVersion.preReleaseVersion) {
+			if ("alfa" == tagVersion.preReleaseVersion) {
 				ver.snapshot = true
 			}
-			ver.prerelease = ver.tagVersion.preReleaseVersion as Boolean
+			prerelease = tagVersion.preReleaseVersion as Boolean
 		}
 		
-		def dVersion
+		def baseVersion
 		if (ver.snapshot) {
-			if (ver.prerelease) {
-				dVersion = ver.tagVersion.normalVersion
+			if (prerelease) {
+				baseVersion = tagVersion.normalVersion
 			} else {
-				dVersion = ver.tagVersion.incrementPatchVersion().toString()
+				baseVersion = tagVersion.incrementPatchVersion().toString()
 			}
 		} else {
-			dVersion = ver.tagVersion.toString()
+			baseVersion = tagVersion.toString()
 		}
 		
-		ver.projectVersion = ver.snapshot ? dVersion + "-SNAPSHOT" : dVersion
+		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
+		def dirtySuffix = ver.dirty ? '.dirty' : ''
 		ver.distVersion = ver.snapshot
-			? "${dVersion}-dev.${commitTimestamp}+${ver.buildId}${ver.dirty ? '.dirty' : ''}"
-			: "${dVersion}+${ver.buildId}${ver.dirty ? '.dirty' : ''}"
+			? "${baseVersion}-dev.${commitTimestamp}+${ver.buildId}${dirtySuffix}"
+			: "${baseVersion}+${ver.buildId}${dirtySuffix}"
 
 		project.tasks.create('version', {
 			doLast {
-				project.logger.lifecycle("Tag version: {}", project.scmVersion.tagVersion)
+				project.logger.lifecycle("Git describe: {}", describe)
+				project.logger.lifecycle("Tag version: {}", tagVersion)
 				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
 				project.logger.lifecycle("Dist version: {}", project.scmVersion.distVersion)
 				project.logger.lifecycle("Snapshot: {}", project.scmVersion.snapshot)
