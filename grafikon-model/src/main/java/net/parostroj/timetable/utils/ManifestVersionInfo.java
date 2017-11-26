@@ -51,12 +51,13 @@ public class ManifestVersionInfo {
         for (URL url : (Iterable<URL>) () -> Iterators.forEnumeration(urls)) {
             Manifest m = new Manifest(url.openStream());
             String title = m.getMainAttributes().getValue("Implementation-Title");
-            String version = m.getMainAttributes().getValue("Implementation-Version");
+            String versionString = m.getMainAttributes().getValue("Implementation-Version");
+            Version version = Version.valueOf(versionString);
             if (title != null && title.startsWith("grafikon")) {
                 versions.put(title, new VersionData() {
                     @Override
                     public Version getVersion() {
-                        return Version.valueOf(version);
+                        return version;
                     }
 
                     @Override
