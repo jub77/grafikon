@@ -52,8 +52,8 @@ public class ManifestVersionInfo {
             Manifest m = new Manifest(url.openStream());
             String title = m.getMainAttributes().getValue("Implementation-Title");
             String versionString = m.getMainAttributes().getValue("Implementation-Version");
-            Version version = Version.valueOf(versionString);
             if (title != null && title.startsWith("grafikon")) {
+                Version version = Version.valueOf(versionString);
                 versions.put(title, new VersionData() {
                     @Override
                     public Version getVersion() {
