@@ -7,9 +7,8 @@ import java.awt.Frame;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import org.ini4j.Ini;
-
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -40,9 +39,9 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
 
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        prefs.remove(storageKeyPrefix);
-        Ini.Section section = prefs.add(storageKeyPrefix);
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        prefs.removeSection(storageKeyPrefix);
+        IniConfigSection section = prefs.getSection(storageKeyPrefix);
         boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
         section.put("maximized", maximized);
         section.put("position", GuiUtils.getPositionFrame(this, maximized));
@@ -51,8 +50,8 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, storageKeyPrefix);
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(storageKeyPrefix);
         String positionStr = section.get("position");
         if (positionStr != null) {
             // set position

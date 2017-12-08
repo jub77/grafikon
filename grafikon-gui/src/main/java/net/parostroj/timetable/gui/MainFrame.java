@@ -31,6 +31,8 @@ import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.utils.*;
@@ -51,7 +53,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // set local before anything else
         String loadedLocale = null;
         try {
-            Ini.Section section = AppPreferences.getSection("main");
+            IniConfigSection section = AppPreferences.getPreferences().getSection("main");
             loadedLocale = section.get("locale.program");
             String templateLocale = section.get("locale.output");
             if (loadedLocale != null) {
@@ -752,10 +753,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
         boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
 
-        Ini.Section section = AppPreferences.getSection(prefs, "main");
+        IniConfigSection section = prefs.getSection("main");
 
         section.put("maximized", maximized);
 
@@ -791,8 +792,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "main");
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("main");
         if (section.get("maximized", Boolean.class, false)) {
             // setting maximized state
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -807,7 +808,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         String laf = section.get("look.and.feel", "system");
         model.lookAndFeel.setValue(laf);
 
-        showGTViewMenuItem.setSelected(AppPreferences.getSection(prefs, "trains").get("show.gtview", Boolean.class, true));
+        showGTViewMenuItem.setSelected(prefs.getSection("trains").get("show.gtview", Boolean.class, true));
 
         // load preferences for last file chooser directories
         FileChooserFactory.getInstance().loadFromPreferences(prefs);

@@ -11,14 +11,14 @@ import java.awt.Color;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.output2.gt.GTDraw;
 
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +58,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "trains");
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("trains");
         int dividerLoc = section.get("divider", Integer.class, splitPane.getDividerLocation());
         int div = section.get("divider.2", Integer.class, trainsSplitPane.getDividerLocation());
         int preferredWidth = trainListView.getPreferredSize().width;
@@ -96,8 +96,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "trains");
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("trains");
         section.put("divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
         section.put("divider.2", trainsSplitPane.getDividerLocation());
         // save if the gtview in trains pane is visible

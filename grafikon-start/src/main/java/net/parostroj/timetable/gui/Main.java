@@ -35,7 +35,7 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
-        if (AppPreferences.getSection("debug").get("debug", Boolean.class, false)) {
+        if (AppPreferences.getPreferences().getSection("debug").get("debug", Boolean.class, false)) {
             setDebug();
         }
         setLookAndFeel();
@@ -58,16 +58,16 @@ public class Main {
     }
 
     private static void setDebug() throws IOException {
-        if (AppPreferences.getSection("debug").get("debug.edt", Boolean.class, false)) {
+        if (AppPreferences.getPreferences().getSection("debug").get("debug.edt", Boolean.class, false)) {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         }
-        String levelName = AppPreferences.getSection("debug").get("debug.log4j.level", "DEBUG");
+        String levelName = AppPreferences.getPreferences().getSection("debug").get("debug.log4j.level", "DEBUG");
         Level level = Level.toLevel(levelName, Level.DEBUG);
         setLoggingLevelImpl(level);
     }
 
     private static void setLookAndFeel() throws IOException {
-        String laf = AppPreferences.getSection("main").get("look.and.feel", "system");
+        String laf = AppPreferences.getPreferences().getSection("main").get("look.and.feel", "system");
         try {
             if (laf.equals("system")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

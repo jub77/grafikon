@@ -15,6 +15,8 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.dialogs.EditLocalizedStringOkCancelDialog;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -26,8 +28,6 @@ import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
-
-import org.ini4j.Ini;
 
 /**
  * Editing of circulations.
@@ -236,12 +236,12 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private javax.swing.JComboBox<Wrapper<TrainsCycleType>> typesComboBox;
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
         return trainsCyclesPane.saveToPreferences(prefs);
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
         return trainsCyclesPane.loadFromPreferences(prefs);
     }
 

@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.ini;
 
-import org.ini4j.Ini;
-
 /**
  * Interface for loading/saving data about GUI.
  *
@@ -9,7 +7,7 @@ import org.ini4j.Ini;
  */
 public interface StorableGuiData {
 
-    public Ini.Section saveToPreferences(Ini prefs);
+    public IniConfigSection saveToPreferences(IniConfig prefs);
 
-    public Ini.Section loadFromPreferences(Ini prefs);
+    public IniConfigSection loadFromPreferences(IniConfig prefs);
 }

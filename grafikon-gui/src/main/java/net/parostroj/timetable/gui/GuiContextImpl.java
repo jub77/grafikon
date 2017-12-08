@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.ini4j.Ini;
-import org.ini4j.Profile.Section;
-
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 
 /**
@@ -31,16 +29,16 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     private final Map<String, Map<String, String>> preferencesMap = new HashMap<>();
 
     // reference to ini
-    private Ini preferences;
+    private IniConfig preferences;
 
     @Override
-    public Section saveToPreferences(Ini prefs) {
-        Section section = AppPreferences.getSection(prefs, INI_SECTION);
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(INI_SECTION);
         dataMap.entrySet().forEach(entry -> section.put(entry.getKey(), this.dataToString(entry.getValue())));
         preferencesMap.entrySet().forEach(entry -> {
-            Section windowSection = AppPreferences.getSection(prefs, entry.getKey());
+            IniConfigSection windowSection = prefs.getSection(entry.getKey());
             if (entry.getValue() == null) {
-                prefs.remove(windowSection);
+                windowSection.removeSection();
             } else {
                 windowSection.clear();
                 windowSection.putAll(entry.getValue());
@@ -50,8 +48,8 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     }
 
     @Override
-    public Section loadFromPreferences(Ini prefs) {
-        Section section = AppPreferences.getSection(prefs, INI_SECTION);
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(INI_SECTION);
         section.entrySet().stream().forEach(
                 entry -> dataMap.put(entry.getKey(), this.dataFromString(entry.getValue())));
 
@@ -82,7 +80,8 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
             if (preferencesMap.containsKey(key)) {
                 map = preferencesMap.get(key);
             } else {
-                map = new HashMap<>(AppPreferences.getSection(preferences, key));
+                map = new HashMap<>();
+                preferences.getSection(key).copyToMap(map);
             }
             if (map == null) {
                 map = Collections.emptyMap();

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
-import org.ini4j.Ini;
-
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 
 /**
@@ -18,7 +18,7 @@ import net.parostroj.timetable.gui.ini.StorableGuiData;
 public class FloatingWindowsList extends ArrayList<FloatingWindow> implements StorableGuiData {
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
         for (FloatingWindow dialog : this) {
             dialog.saveToPreferences(prefs);
         }
@@ -26,7 +26,7 @@ public class FloatingWindowsList extends ArrayList<FloatingWindow> implements St
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
         for (FloatingWindow dialog : this) {
             dialog.loadFromPreferences(prefs);
         }

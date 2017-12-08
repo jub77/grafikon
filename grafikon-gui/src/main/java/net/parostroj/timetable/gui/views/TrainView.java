@@ -15,6 +15,8 @@ import javax.swing.table.TableColumnModel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
@@ -24,8 +26,6 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
-
-import org.ini4j.Ini;
 
 import com.google.common.collect.*;
 
@@ -317,12 +317,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private javax.swing.JTextField trainTextField;
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
         return columns.saveToPreferences(prefs);
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
         return columns.loadFromPreferences(prefs);
     }
 }

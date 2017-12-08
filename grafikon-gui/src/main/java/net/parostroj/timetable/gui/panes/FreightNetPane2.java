@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,8 @@ import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.MouseOverHandler;
 import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
 import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -285,15 +285,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "freigh.net");
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("freigh.net");
         section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
         return section;
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "freigh.net");
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("freigh.net");
         GTViewSettings gtvs = null;
         try {
             gtvs = GTViewSettings.parseStorageString(section.get("gtv"));

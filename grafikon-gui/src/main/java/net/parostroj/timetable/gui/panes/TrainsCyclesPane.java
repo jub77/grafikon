@@ -9,7 +9,8 @@ import java.awt.Color;
 import java.util.List;
 
 import net.parostroj.timetable.gui.components.*;
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
@@ -19,7 +20,6 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.output2.gt.GTDraw.TrainColors;
 import net.parostroj.timetable.output2.gt.*;
 
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,16 +137,16 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, getKey());
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(getKey());
         section.put("divider", splitPane.getDividerLocation());
         section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
         return section;
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, getKey());
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(getKey());
         splitPane.setDividerLocation(section.get("divider", Integer.class, -1));
         try {
             GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));

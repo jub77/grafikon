@@ -12,11 +12,11 @@ import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
@@ -42,10 +42,10 @@ public class TrainViewColumns implements StorableGuiData {
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = getTrainsSection(prefs);
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = getTrainsSection(prefs);
         // get displayed columns and save theirs order
-        prefs.remove(CURRENT_COLUMNS_KEY);
+        prefs.removeSection(CURRENT_COLUMNS_KEY);
         String order = createColumnConfiguration();
         if (order != null) {
             section.put(CURRENT_COLUMNS_KEY, order);
@@ -57,8 +57,8 @@ public class TrainViewColumns implements StorableGuiData {
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = getTrainsSection(prefs);
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = getTrainsSection(prefs);
         // set displayed columns (if the prefs are empty - show all)
         String cs = section.get(CURRENT_COLUMNS_KEY);
         cs = ObjectsUtil.checkAndTrim(cs);
@@ -162,7 +162,7 @@ public class TrainViewColumns implements StorableGuiData {
         columns.forEach(column -> trainTable.removeColumn(column));
     }
 
-    private Ini.Section getTrainsSection(Ini prefs) {
-        return AppPreferences.getSection(prefs, "trains");
+    private IniConfigSection getTrainsSection(IniConfig prefs) {
+        return prefs.getSection("trains");
     }
 }

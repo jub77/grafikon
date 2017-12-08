@@ -13,10 +13,8 @@ import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.ini4j.Ini;
-import org.ini4j.Profile.Section;
-
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -151,8 +149,8 @@ public class FileChooserFactory implements StorableGuiData {
     }
 
     @Override
-    public Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "main");
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("main");
         for (String key : locations.keySet()) {
             section.put(key, locations.get(key).getAbsolutePath());
         }
@@ -160,8 +158,8 @@ public class FileChooserFactory implements StorableGuiData {
     }
 
     @Override
-    public Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "main");
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("main");
         Set<String> keys = new HashSet<>();
         for (Type type : Type.values()) {
             keys.add(type.getKey());

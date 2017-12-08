@@ -4,9 +4,8 @@ import java.awt.Frame;
 
 import javax.swing.JComponent;
 
-import org.ini4j.Ini;
-
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -33,17 +32,17 @@ public class FloatingDialog extends javax.swing.JDialog implements FloatingWindo
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        prefs.remove(storageKeyPrefix);
-        Ini.Section section = prefs.add(storageKeyPrefix);
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        prefs.removeSection(storageKeyPrefix);
+        IniConfigSection section = prefs.getSection(storageKeyPrefix);
         section.put("position", GuiUtils.getPosition(this));
         section.put("visible", this.isVisible());
         return section;
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, storageKeyPrefix);
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection(storageKeyPrefix);
         // set position
         String positionStr = section.get("position");
         GuiUtils.setPosition(positionStr, this);
@@ -54,6 +53,7 @@ public class FloatingDialog extends javax.swing.JDialog implements FloatingWindo
         return section;
     }
 
+    @Override
     public void setVisibleOnInit() {
         if (this.visibleOnInit) {
             this.setVisible(true);

@@ -9,6 +9,8 @@ import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.NetEditView;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -19,7 +21,6 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.GTDraw;
 
-import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,8 +226,8 @@ public class FloatingWindowsFactory {
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.eventsviewer.title", "events.viewer") {
 
             @Override
-            public Ini.Section saveToPreferences(Ini prefs) {
-                Ini.Section section = super.saveToPreferences(prefs);
+            public IniConfigSection saveToPreferences(IniConfig prefs) {
+                IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("divider", panel.getDividerLocation());
                 section.put("limit", panel.getLimit());
                 section.put("show.time", panel.isShowTime());
@@ -235,8 +236,8 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public Ini.Section loadFromPreferences(Ini prefs) {
-                Ini.Section section = super.loadFromPreferences(prefs);
+            public IniConfigSection loadFromPreferences(IniConfig prefs) {
+                IniConfigSection section = super.loadFromPreferences(prefs);
                 int divider = section.get("divider", Integer.class, panel.getDividerLocation());
                 panel.setDividerLocation(divider);
                 int limit = section.get("limit", Integer.class, panel.getLimit());
@@ -272,16 +273,16 @@ public class FloatingWindowsFactory {
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
             @Override
-            public Ini.Section saveToPreferences(Ini prefs) {
-                Ini.Section section = super.saveToPreferences(prefs);
+            public IniConfigSection saveToPreferences(IniConfig prefs) {
+                IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("divider", panel.getDividerLocation());
                 section.put("divider2", panel.getDivider2Location());
                 return section;
             }
 
             @Override
-            public Ini.Section loadFromPreferences(Ini prefs) {
-                Ini.Section section = super.loadFromPreferences(prefs);
+            public IniConfigSection loadFromPreferences(IniConfig prefs) {
+                IniConfigSection section = super.loadFromPreferences(prefs);
                 int divider = section.get("divider", Integer.class, panel.getDividerLocation());
                 panel.setDividerLocation(divider);
                 divider = section.get("divider2", Integer.class, panel.getDivider2Location());
@@ -302,15 +303,15 @@ public class FloatingWindowsFactory {
         FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 
             @Override
-            public Ini.Section saveToPreferences(Ini prefs) {
-                Ini.Section section = super.saveToPreferences(prefs);
+            public IniConfigSection saveToPreferences(IniConfig prefs) {
+                IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("gtv", gtView.getSettings().getStorageString());
                 return section;
             }
 
             @Override
-            public Ini.Section loadFromPreferences(Ini prefs) {
-                Ini.Section section = super.loadFromPreferences(prefs);
+            public IniConfigSection loadFromPreferences(IniConfig prefs) {
+                IniConfigSection section = super.loadFromPreferences(prefs);
                 try {
                     GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
                     gtView.setSettings(gtView.getSettings().merge(gtvs));
@@ -388,8 +389,8 @@ public class FloatingWindowsFactory {
         });
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
             @Override
-            public Ini.Section saveToPreferences(Ini prefs) {
-                Ini.Section section = super.saveToPreferences(prefs);
+            public IniConfigSection saveToPreferences(IniConfig prefs) {
+                IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("size", panel.getSizeSlider());
                 section.put("zoom", panel.getZoomSlider());
                 section.put("type", panel.getDrawType());
@@ -397,8 +398,8 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public Ini.Section loadFromPreferences(Ini prefs) {
-                Ini.Section section = super.loadFromPreferences(prefs);
+            public IniConfigSection loadFromPreferences(IniConfig prefs) {
+                IniConfigSection section = super.loadFromPreferences(prefs);
                 panel.setSizeSlider(section.get("size", Integer.class, panel.getSizeSlider()));
                 panel.setZoomSlider(section.get("zoom", Integer.class, panel.getZoomSlider()));
                 panel.setDrawType(section.get("type", String.class, panel.getDrawType()));

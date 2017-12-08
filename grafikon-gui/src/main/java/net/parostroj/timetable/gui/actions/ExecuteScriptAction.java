@@ -139,7 +139,7 @@ public class ExecuteScriptAction extends AbstractAction {
     private void loadScriptFromPreferences() {
         String scriptStr = null;
         try {
-            scriptStr = AppPreferences.getSection("scripts").get("last.script");
+            scriptStr = AppPreferences.getPreferences().getSection("scripts").get("last.script");
             scriptStr = scriptStr != null ? EscapeTool.getInstance().unescape(scriptStr) : null;
         } catch (IOException ex) {
             log.error("Error reading script from preferences.", ex);
@@ -163,7 +163,7 @@ public class ExecuteScriptAction extends AbstractAction {
             try {
                 String scriptStr = lastScript.getLanguage().name() + ":" + lastScript.getSourceCode();
                 scriptStr = EscapeTool.getInstance().escape(scriptStr);
-                AppPreferences.getSection("scripts").put("last.script", scriptStr);
+                AppPreferences.getPreferences().getSection("scripts").put("last.script", scriptStr);
             } catch (IOException e) {
                 log.error("Error writing script to preferences.", e);
             }

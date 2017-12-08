@@ -7,7 +7,6 @@ import javax.swing.UIManager;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
-import org.ini4j.Ini;
 
 import com.github.zafarkhaja.semver.Version;
 
@@ -18,7 +17,8 @@ import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
-import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.IniConfig;
+import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
@@ -247,8 +247,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     @Override
-    public Ini.Section saveToPreferences(Ini prefs) {
-        Ini.Section section = AppPreferences.getSection(prefs, "model");
+    public IniConfigSection saveToPreferences(IniConfig prefs) {
+        IniConfigSection section = prefs.getSection("model");
         section.put("output.templates", getSerializedOutputTemplates());
         section.put("user.name", programSettings.getUserName());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
@@ -262,9 +262,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     @Override
-    public Ini.Section loadFromPreferences(Ini prefs) {
+    public IniConfigSection loadFromPreferences(IniConfig prefs) {
         guiContext.loadFromPreferences(prefs);
-        Ini.Section section = AppPreferences.getSection(prefs, "model");
+        IniConfigSection section = prefs.getSection("model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));

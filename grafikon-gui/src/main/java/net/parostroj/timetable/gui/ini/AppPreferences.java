@@ -14,29 +14,19 @@ public final class AppPreferences {
 
     private static final String PREFERENCES_NAME = ".grafikonrc";
     private static Ini instance = null;
+    private static IniConfig configInstance = null;
 
     private AppPreferences() {}
 
-    public static synchronized Ini getPreferences() throws IOException {
-        if (instance == null) {
+    public static synchronized IniConfig getPreferences() throws IOException {
+        if (configInstance == null) {
             instance = new Ini();
             instance.getConfig().setEscape(false);
             instance.getConfig().setEmptySection(true);
             load(instance);
+            configInstance = new IniConfigIni4j(instance);
         }
-        return instance;
-    }
-
-    public static synchronized Ini.Section getSection(String name) throws IOException {
-        Ini ini = getPreferences();
-        return getSection(ini, name);
-    }
-
-    public static Ini.Section getSection(Ini ini, String name) {
-        if (!ini.containsKey(name)) {
-            ini.add(name);
-        }
-        return ini.get(name);
+        return configInstance;
     }
 
     public static synchronized void storePreferences() throws IOException {
