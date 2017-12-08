@@ -56,6 +56,8 @@ import org.beanfabrics.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.zafarkhaja.semver.Version;
+
 /**
  * Main frame for the application.
  *
@@ -106,7 +108,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s%n%s", model.getVersionInfo().getVersion().toString(), txt);
+        Version completeVersion = model.getVersionInfo().getVersion();
+        Version version = new Version.Builder().setNormalVersion(completeVersion.getNormalVersion().toString())
+                .setPreReleaseVersion(completeVersion.getPreReleaseVersion().toString()).build();
+        return String.format("%s%n%s", version.toString(), txt);
     }
 
     public MainFrame() {
