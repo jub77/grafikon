@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import org.ini4j.Ini;
 
-import net.parostroj.timetable.gui.AppPreferences;
+import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 

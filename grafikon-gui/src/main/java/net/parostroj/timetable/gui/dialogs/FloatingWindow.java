@@ -2,7 +2,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Component;
 
-import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 
 /**
  * Floating dialog window.

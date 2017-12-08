@@ -8,9 +8,9 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.Color;
 import java.util.List;
 
-import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.*;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.TimeInterval;

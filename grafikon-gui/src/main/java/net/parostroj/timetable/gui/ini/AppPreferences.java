@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui;
+package net.parostroj.timetable.gui.ini;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui;
+package net.parostroj.timetable.gui.ini;
 
 import org.ini4j.Ini;
 

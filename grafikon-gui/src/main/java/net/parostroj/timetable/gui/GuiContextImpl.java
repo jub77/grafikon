@@ -15,6 +15,9 @@ import java.util.StringTokenizer;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
+
 /**
  * Helper class for window information.
  *

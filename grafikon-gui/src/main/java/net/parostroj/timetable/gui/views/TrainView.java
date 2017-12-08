@@ -15,6 +15,7 @@ import javax.swing.table.TableColumnModel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;

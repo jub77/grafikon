@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.markusbernhardt.proxy.ProxySearch;
 
+import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 
 /**

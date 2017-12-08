@@ -16,8 +16,8 @@ import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**

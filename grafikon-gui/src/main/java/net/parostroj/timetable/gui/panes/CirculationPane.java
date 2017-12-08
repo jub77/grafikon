@@ -12,10 +12,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.dialogs.EditLocalizedStringOkCancelDialog;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate;

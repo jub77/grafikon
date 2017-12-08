@@ -8,7 +8,7 @@ import javax.swing.JMenuItem;
 
 import org.ini4j.Ini;
 
-import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 
 /**
  * List of floating dialogs.

@@ -15,10 +15,10 @@ import javax.swing.AbstractAction;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
-import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.ScriptDialog;
 import net.parostroj.timetable.gui.dialogs.ScriptOutputDialog;
+import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;

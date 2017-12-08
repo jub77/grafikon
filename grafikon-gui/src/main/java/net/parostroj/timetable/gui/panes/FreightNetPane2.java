@@ -19,16 +19,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.MouseOverHandler;
 import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
 import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.FNConnection;

@@ -30,6 +30,8 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;

@@ -18,6 +18,8 @@ import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
 import net.parostroj.timetable.gui.utils.LanguageLoader;

@@ -16,8 +16,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 
-import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.ini.AppPreferences;
+import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
