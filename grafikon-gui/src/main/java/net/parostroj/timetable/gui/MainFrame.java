@@ -108,10 +108,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
+        Version version = getVersionWithoutBuild();
+        return String.format("%s%n%s", version.toString(), txt);
+    }
+
+    private Version getVersionWithoutBuild() {
         Version completeVersion = model.getVersionInfo().getVersion();
         Version version = new Version.Builder().setNormalVersion(completeVersion.getNormalVersion().toString())
                 .setPreReleaseVersion(completeVersion.getPreReleaseVersion().toString()).build();
-        return String.format("%s%n%s", version.toString(), txt);
+        return version;
     }
 
     public MainFrame() {
@@ -288,7 +293,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = model.getVersionInfo().getVersion().toString();
+        String version = getVersionWithoutBuild().toString();
         if (version != null) {
             title += " (" + version + ")";
         }
