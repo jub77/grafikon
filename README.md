@@ -18,6 +18,8 @@ Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa an
 ## Webstart
 ### Release
 http://jub.parostroj.net/grafikon/2.0/grafikon.jnlp
+### Pre-release
+http://jub.parostroj.net/grafikon/2.1/grafikon.jnlp
 ### Development
 http://jub.parostroj.net/grafikon/dev/grafikon.jnlp
 ### Previous release
