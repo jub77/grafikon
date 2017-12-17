@@ -291,7 +291,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.setTitle(this.getTitleString(b));
     }
 
-    private String getTitleString(boolean b) {
+    private String getTitleString(boolean changedModel) {
         String title = FRAME_TITLE;
         String version = getVersionWithoutBuild().toString();
         if (version != null) {
@@ -303,7 +303,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             } else {
                 title += " - " + model.getOpenedFile().getName();
             }
-            if (b) {
+            if (changedModel) {
                 title += " *";
             }
         }
