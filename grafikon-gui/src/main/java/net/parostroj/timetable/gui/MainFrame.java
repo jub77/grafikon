@@ -66,9 +66,10 @@ import com.github.zafarkhaja.semver.Version;
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
 
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
-    private static final String FRAME_TITLE = "Grafikon";
 
     private final ModelProvider provider = new ModelProvider();
+
+    private final FrameTitle frameTitle;
 
     private ApplicationModel model;
     private FloatingWindowsList floatingDialogsList;
@@ -79,6 +80,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         model = new ApplicationModel();
+        frameTitle = new FrameTitle(model);
         log.info("Version: {}", model.getVersionInfo().getVersion());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
@@ -108,19 +110,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        Version version = getVersionWithoutBuild();
+        Version version = frameTitle.getVersionWithoutBuild();
         return String.format("%s%n%s", version.toString(), txt);
-    }
-
-    private Version getVersionWithoutBuild() {
-        Version completeVersion = model.getVersionInfo().getVersion();
-        Version version = new Version.Builder().setNormalVersion(completeVersion.getNormalVersion().toString())
-                .setPreReleaseVersion(completeVersion.getPreReleaseVersion().toString()).build();
-        return version;
     }
 
     public MainFrame() {
         model = new ApplicationModel();
+        frameTitle = new FrameTitle(model);
         this.initializeFrame();
     }
 
@@ -288,26 +284,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void setTitleChanged(boolean b) {
-        this.setTitle(this.getTitleString(b));
-    }
-
-    private String getTitleString(boolean changedModel) {
-        String title = FRAME_TITLE;
-        String version = getVersionWithoutBuild().toString();
-        if (version != null) {
-            title += " (" + version + ")";
-        }
-        if (model != null && model.getDiagram() != null) {
-            if (model.getOpenedFile() == null) {
-                title += " - " + ResourceLoader.getString("title.new");
-            } else {
-                title += " - " + model.getOpenedFile().getName();
-            }
-            if (changedModel) {
-                title += " *";
-            }
-        }
-        return title;
+        this.setTitle(frameTitle.getTitleString(b));
     }
 
     private void updateView() {
@@ -345,7 +322,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         floatingDialogsList.addToMenuItem(viewsMenu);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle(this.getTitleString(false));
+        setTitle(frameTitle.getTitleString(false));
         setLocationByPlatform(true);
 
         tabbedPane.addTab(ResourceLoader.getString("tab.trains"), trainsPane); // NOI18N
