@@ -110,7 +110,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        Version version = frameTitle.getVersionWithoutBuild();
+        Version version = model.getVersionInfo().getVersionWithoutBuild();
         return String.format("%s%n%s", version.toString(), txt);
     }
 

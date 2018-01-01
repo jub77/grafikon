@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui;
 
-import com.github.zafarkhaja.semver.Version;
-
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -19,16 +17,9 @@ public class FrameTitle {
         this.model = model;
     }
 
-    public Version getVersionWithoutBuild() {
-        Version completeVersion = model.getVersionInfo().getVersion();
-        Version version = new Version.Builder().setNormalVersion(completeVersion.getNormalVersion().toString())
-                .setPreReleaseVersion(completeVersion.getPreReleaseVersion().toString()).build();
-        return version;
-    }
-
     public String getTitleString(boolean changedModel) {
         String title = FRAME_TITLE;
-        String version = getVersionWithoutBuild().toString();
+        String version = model.getVersionInfo().getVersionWithoutBuild().toString();
         if (version != null) {
             title += " (" + version + ")";
         }
