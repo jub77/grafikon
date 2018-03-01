@@ -8,7 +8,7 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
 1. download one of the releases (zip file - [releases](https://github.com/jub77/grafikon/releases))
 2. unpack it
 3. check if you have installed java
-4. start Grafikon 
+4. start Grafikon
     * using `java -jar grafikon.jar` from command line
     * or double click on `grafikon.jar`
     * or use `grafikon.cmd` (`grafikon.sh`)
@@ -17,13 +17,11 @@ Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa an
 
 ## Webstart
 ### Release
-http://jub.parostroj.net/grafikon/2.0/grafikon.jnlp
-### Pre-release
 http://jub.parostroj.net/grafikon/2.1/grafikon.jnlp
 ### Development
 http://jub.parostroj.net/grafikon/dev/grafikon.jnlp
 ### Previous release
-http://jub.parostroj.net/grafikon/1.2/grafikon.jnlp
+http://jub.parostroj.net/grafikon/2.0/grafikon.jnlp
 
 Grafikon is signed with self-signed certificate, so there is a need to add site `http://jub.parostroj.net` to security
 *Exception Site List* (in *Java Control Panel*) and lower the security level to *High*.
