@@ -44,13 +44,13 @@ subprojects { prj ->
 			dependencySubstitution subs
 		}
 		dependencies {
-			dependency 'org.jgrapht:jgrapht-core:1.0.1'
-			dependency 'org.mvel:mvel2:2.3.2.Final'
-			dependency 'org.codehaus.groovy:groovy-all:2.4.12'
+			dependency 'org.jgrapht:jgrapht-core:1.1.0'
+			dependency 'org.mvel:mvel2:2.4.0.Final'
+			dependency 'org.codehaus.groovy:groovy-all:2.4.14'
 			dependency 'org.slf4j:slf4j-api:1.7.25'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
 			dependency 'joda-time:joda-time:2.9.9'
-			dependency ('com.google.guava:guava:23.2-jre') {
+			dependency ('com.google.guava:guava:24.0-jre') {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -63,14 +63,14 @@ subprojects { prj ->
 				exclude 'xalan:xalan'
 				exclude 'xml-apis:xml-apis'
 			}
-			dependency 'com.github.akarnokd:rxjava2-swing:0.2.5'
+			dependency 'com.github.akarnokd:rxjava2-swing:0.2.10'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:2.6.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.3'
-			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.1'
+			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.10.0'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
 
 			dependency 'junit:junit:4.12'
