@@ -55,6 +55,7 @@ subprojects { prj ->
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
 				exclude 'org.codehaus.mojo:animal-sniffer-annotations'
+				exclude 'org.checkerframework:checker-compat-qual'
 			}
 			dependency ('org.apache.xmlgraphics:fop:2.2') {
 				exclude 'org.apache.xmlgraphics:batik-extension'
