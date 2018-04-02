@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -33,7 +33,7 @@ class RegionGraphDelegate {
         this.strategy = strategy;
     }
 
-    DirectedGraph<Node, DirectNodeConnection> getRegionGraph() {
+    Graph<Node, DirectNodeConnection> getRegionGraph() {
         SimpleDirectedWeightedGraph<Node, DirectNodeConnection> graph = new SimpleDirectedWeightedGraph<>(DirectNodeConnection.class);
         net.getNodes().stream().filter(Node::isCenterOfRegions).forEach(graph::addVertex);
         for (Node node : graph.vertexSet()) {
@@ -81,7 +81,7 @@ class RegionGraphDelegate {
     }
 
     protected <T extends NodeConnection> Collection<T> computeRegionConnectionsImpl(
-            DirectedGraph<Node, DirectNodeConnection> graph,
+            Graph<Node, DirectNodeConnection> graph,
             BiFunction<NodeConnection, GraphPath<Node, DirectNodeConnection>, T> conversion) {
         Collection<T> connections = new ArrayList<>();
         this.getAllConnectionVariants(graph).forEach(nodeConn -> {
@@ -94,7 +94,7 @@ class RegionGraphDelegate {
         return connections;
     }
 
-    private Stream<NodeConnection> getAllConnectionVariants(DirectedGraph<Node, DirectNodeConnection> graph) {
+    private Stream<NodeConnection> getAllConnectionVariants(Graph<Node, DirectNodeConnection> graph) {
         return graph.vertexSet().stream().flatMap(nodeFrom -> graph.vertexSet().stream().filter(node -> node != nodeFrom)
                 .map(nodeTo -> new NodeConnectionImpl(nodeFrom, nodeTo)));
     }

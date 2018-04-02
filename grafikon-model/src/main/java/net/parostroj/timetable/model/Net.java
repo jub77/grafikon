@@ -13,7 +13,8 @@ import net.parostroj.timetable.visitors.Visitable;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.ListenableUndirectedGraph;
+import org.jgrapht.graph.DefaultListenableGraph;
+import org.jgrapht.graph.SimpleGraph;
 
 /**
  * Special class for net.
@@ -26,7 +27,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     private final TrainDiagram diagram;
     private final ItemWithIdList<LineClass> lineClasses;
     private final ItemWithIdSet<Region> regions;
-    private final ListenableUndirectedGraph<Node, Line> netDelegate;
+    private final DefaultListenableGraph<Node, Line> netDelegate;
     private final SystemListener listener;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
@@ -37,7 +38,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
      */
     public Net(String id, TrainDiagram diagram) {
         this.itemLists = new LinkedList<>();
-        this.netDelegate = new ListenableUndirectedGraph<>(Line.class);
+        this.netDelegate = new DefaultListenableGraph<>(new SimpleGraph<>(Line.class));
         this.lineClasses = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.regions = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
