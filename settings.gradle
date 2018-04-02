@@ -1,3 +1,20 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "net.parostroj.versioning") {
+                useModule "net.parostroj.versioning:version-plugin:1.0.0"
+            }
+        }
+    }
+}
+
+includeBuild 'grafikon-version-plugin'
+
 rootProject.name = 'grafikon'
 
 include 'grafikon-model'

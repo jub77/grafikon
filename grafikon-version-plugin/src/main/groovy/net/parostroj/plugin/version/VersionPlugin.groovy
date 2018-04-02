@@ -1,13 +1,7 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-        classpath 'com.github.zafarkhaja:java-semver:0.9.0'
-    }
-}
+package net.parostroj.plugin.version
 
 import com.github.zafarkhaja.semver.*
+import org.gradle.api.*
 
 class VersionExtension {
 	def dirty
@@ -15,13 +9,15 @@ class VersionExtension {
 
 	def buildTimestamp
 	def buildId
-	
+
 	def projectVersion
 	def distVersion
 }
 
 class VersionPlugin implements Plugin<Project> {
 	void apply(Project project) {
+		project.pluginManager.apply(org.ajoberstar.grgit.gradle.GrgitPlugin)
+
 		def ver = project.extensions.create("scmVersion", VersionExtension.class)
 		def head = project.grgit.head()
 		ver.dirty = !project.grgit.status().clean
@@ -49,7 +45,7 @@ class VersionPlugin implements Plugin<Project> {
 			}
 			prerelease = tagVersion.preReleaseVersion as Boolean
 		}
-		
+
 		def baseVersion
 		if (ver.snapshot) {
 			if (prerelease) {
@@ -60,7 +56,7 @@ class VersionPlugin implements Plugin<Project> {
 		} else {
 			baseVersion = tagVersion.toString()
 		}
-		
+
 		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
 		def dirtySuffix = ver.dirty ? '.dirty' : ''
 		ver.distVersion = ver.snapshot
@@ -80,5 +76,3 @@ class VersionPlugin implements Plugin<Project> {
 		})
 	}
 }
-
-apply plugin: VersionPlugin

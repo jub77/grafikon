@@ -1,6 +1,6 @@
 plugins {
 	id 'io.spring.dependency-management' version '1.0.4.RELEASE' apply false
-	id 'org.ajoberstar.grgit' version '2.1.1' apply false
+	id 'net.parostroj.versioning' version '1.0.0' apply false
 }
 
 def nonJavaProjectsFilter = [
@@ -9,9 +9,8 @@ def nonJavaProjectsFilter = [
 ]
 
 subprojects { prj ->
-	apply plugin: 'org.ajoberstar.grgit'
+	apply plugin: 'net.parostroj.versioning'
 	apply plugin: 'io.spring.dependency-management'
-	apply from: "${rootProject.projectDir}/version.gradle"
 
 	group = 'net.parostroj'
 	version = scmVersion.projectVersion
@@ -21,7 +20,7 @@ subprojects { prj ->
 		mavenCentral()
 	}
 
-	def subs = { 
+	def subs = {
 		substitute module('net.parostroj:grafikon-model') with project(':grafikon-model')
 		substitute module('net.parostroj:grafikon-save') with project(':grafikon-save')
 		substitute module('net.parostroj:grafikon-ls') with project(':grafikon-ls')
@@ -50,14 +49,14 @@ subprojects { prj ->
 			dependency 'org.slf4j:slf4j-api:1.7.25'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
 			dependency 'joda-time:joda-time:2.9.9'
-			dependency ('com.google.guava:guava:24.0-jre') {
+			dependency 'com.google.guava:guava:24.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
 				exclude 'org.codehaus.mojo:animal-sniffer-annotations'
 				exclude 'org.checkerframework:checker-compat-qual'
 			}
-			dependency ('org.apache.xmlgraphics:fop:2.2') {
+			dependency 'org.apache.xmlgraphics:fop:2.2', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
