@@ -236,7 +236,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     }
 
     private void clearDirectory(File location) {
-        Files.fileTreeTraverser().postOrderTraversal(location).forEach(file -> {
+        Files.fileTraverser().depthFirstPostOrder(location).forEach(file -> {
             // try to delete - ignore if it doesn't succeed (successful operation is not required)
             if (!file.equals(location)) {
                 file.delete();
