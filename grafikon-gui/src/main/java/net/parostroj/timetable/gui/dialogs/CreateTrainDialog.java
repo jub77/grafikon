@@ -17,7 +17,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class CreateTrainDialog extends javax.swing.JDialog {
 
-    private net.parostroj.timetable.gui.views.CreateTrainView createTrainView;
+    private static final long serialVersionUID = 1L;
+
+	private net.parostroj.timetable.gui.views.CreateTrainView createTrainView;
 
     /**
      * Creates new form CreateTrainDialog.

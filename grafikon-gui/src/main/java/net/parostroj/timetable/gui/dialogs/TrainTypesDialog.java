@@ -16,7 +16,9 @@ import net.parostroj.timetable.model.TrainType;
  */
 public class TrainTypesDialog extends EditItemsDialog<TrainType, TrainDiagram> {
 
-    public TrainTypesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
+    private static final long serialVersionUID = 1L;
+
+	public TrainTypesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
             boolean multiple) {
         super(parent, modal, move, edit, newByName, copy, multiple);
     }

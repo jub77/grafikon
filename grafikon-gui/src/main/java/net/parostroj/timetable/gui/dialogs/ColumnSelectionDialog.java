@@ -27,7 +27,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColumns> implements GuiContextComponent {
 
-    private ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
+    private static final long serialVersionUID = 1L;
+
+	private ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
     private Supplier<Collection<? extends TrainTableColumn>> selected;
 
     public ColumnSelectionDialog(Window owner, boolean modal) {
@@ -69,7 +71,9 @@ public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColu
 
     private static class SelectionCheckBoxMenuItem extends JCheckBoxMenuItem {
 
-        TrainTableColumn column;
+        private static final long serialVersionUID = 1L;
+
+		TrainTableColumn column;
 
         public SelectionCheckBoxMenuItem(String text, TrainTableColumn column) {
             super(text);

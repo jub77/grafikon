@@ -28,7 +28,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class StatusBar extends javax.swing.JPanel implements ApplicationModelListener {
 
-    private static final int LEFT_SIDE_COLUMNS = 24;
+    private static final long serialVersionUID = 1L;
+
+	private static final int LEFT_SIDE_COLUMNS = 24;
     private static final int RIGHT_SIDE_COLUMNS = 34;
 
     private static final int TIMEOUT = 20000;

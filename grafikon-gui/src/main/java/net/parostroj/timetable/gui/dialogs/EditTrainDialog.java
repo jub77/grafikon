@@ -52,7 +52,9 @@ import javax.swing.Box;
  */
 public class EditTrainDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(EditTrainDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(EditTrainDialog.class);
 
     private static final String FROM_STATION = "${stations.first}";
     private static final String TO_STATION = "${stations.last}";

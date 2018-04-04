@@ -11,7 +11,9 @@ import javax.swing.text.*;
  */
 public class ColorTextPane extends JTextPane {
 
-    public void append(Color c, String s) {
+    private static final long serialVersionUID = 1L;
+
+	public void append(Color c, String s) {
         setEditable(true);
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);

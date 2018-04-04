@@ -37,7 +37,9 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public class TCListView extends javax.swing.JPanel implements TCDelegate.Listener, ListSelectionListener {
 
-    private TCDelegate delegate;
+    private static final long serialVersionUID = 1L;
+
+	private TCDelegate delegate;
 
     private final WrapperListModel<TrainsCycle> cycles;
 

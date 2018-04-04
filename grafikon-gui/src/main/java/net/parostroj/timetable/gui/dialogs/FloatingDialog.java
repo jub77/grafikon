@@ -16,7 +16,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class FloatingDialog extends javax.swing.JDialog implements FloatingWindow {
 
-    private final String storageKeyPrefix;
+    private static final long serialVersionUID = 1L;
+
+	private final String storageKeyPrefix;
     private boolean visibleOnInit;
 
     public FloatingDialog(Frame parent, JComponent panel, String titleKey, String storageKeyPrefix) {

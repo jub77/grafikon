@@ -10,7 +10,9 @@ import java.awt.event.ActionEvent;
  */
 public class ActionEventWithLocation extends ActionEvent {
 
-    private Point location;
+    private static final long serialVersionUID = 1L;
+
+	private Point location;
 
     public ActionEventWithLocation(Object source, int id, String command) {
         super(source, id, command);

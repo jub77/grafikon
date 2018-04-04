@@ -18,7 +18,9 @@ import net.parostroj.timetable.model.Track;
  */
 public class TrackCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private final JComboBox<Track> editor;
+    private static final long serialVersionUID = 1L;
+
+	private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
 
     public TrackCellEditor() {

@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
-    private static final Logger log = LoggerFactory.getLogger(SplashScreenFrame.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(SplashScreenFrame.class);
 
     private Dimension splSize;
     private ImagePanel imagePanel;
@@ -65,7 +67,9 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
 class ImagePanel extends JPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(ImagePanel.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(ImagePanel.class);
 
     private final Image image;
     private final int splashX;

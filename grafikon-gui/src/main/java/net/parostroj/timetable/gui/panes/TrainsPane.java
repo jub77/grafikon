@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainsPane.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TrainsPane.class);
 
     /** Creates new form TrainsPane */
     public TrainsPane() {

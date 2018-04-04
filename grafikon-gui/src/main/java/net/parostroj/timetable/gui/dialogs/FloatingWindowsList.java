@@ -17,7 +17,9 @@ import net.parostroj.timetable.gui.ini.StorableGuiData;
  */
 public class FloatingWindowsList extends ArrayList<FloatingWindow> implements StorableGuiData {
 
-    @Override
+    private static final long serialVersionUID = 1L;
+
+	@Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         for (FloatingWindow dialog : this) {
             dialog.saveToPreferences(prefs);
@@ -38,7 +40,10 @@ public class FloatingWindowsList extends ArrayList<FloatingWindow> implements St
             // use title for menu item text
             JMenuItem fdItem = new JMenuItem();
             fdItem.setAction(new AbstractAction(dialog.getTitle()) {
-                @Override
+
+                private static final long serialVersionUID = 1L;
+
+				@Override
                 public void actionPerformed(ActionEvent e) {
                     if (!dialog.isVisible())
                         dialog.setVisible(true);

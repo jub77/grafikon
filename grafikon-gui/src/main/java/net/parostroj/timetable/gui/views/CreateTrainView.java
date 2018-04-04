@@ -36,7 +36,9 @@ import javax.swing.JCheckBox;
  */
 public class CreateTrainView extends javax.swing.JPanel {
 
-    public static final TrainType NO_TYPE = new TrainType(null, null) {
+    private static final long serialVersionUID = 1L;
+
+	public static final TrainType NO_TYPE = new TrainType(null, null) {
         @Override
         public String toString() {return "-";}
     };

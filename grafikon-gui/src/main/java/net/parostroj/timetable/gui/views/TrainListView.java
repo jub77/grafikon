@@ -46,7 +46,9 @@ import com.google.common.base.Predicates;
  */
 public class TrainListView extends javax.swing.JPanel implements TreeSelectionListener {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainListView.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TrainListView.class);
 
     private ApplicationModel model;
     private ButtonGroup groupsBG;
@@ -63,7 +65,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private static class GroupMenuItem extends javax.swing.JRadioButtonMenuItem {
 
-        private final GroupSelect groupSelect;
+        private static final long serialVersionUID = 1L;
+
+		private final GroupSelect groupSelect;
 
         public GroupMenuItem(String text, GroupSelect groupSelect) {
             super(text);

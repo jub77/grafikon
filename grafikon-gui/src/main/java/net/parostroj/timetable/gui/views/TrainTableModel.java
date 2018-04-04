@@ -37,7 +37,9 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 class TrainTableModel extends AbstractTableModel {
 
-    /** Train. */
+    private static final long serialVersionUID = 1L;
+
+	/** Train. */
     private Train train;
     private int lastRow;
     private boolean editBlock;

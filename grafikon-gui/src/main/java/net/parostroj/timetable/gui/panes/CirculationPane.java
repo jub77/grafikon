@@ -36,7 +36,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class CirculationPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private TrainsCycleType type;
+    private static final long serialVersionUID = 1L;
+
+	private TrainsCycleType type;
     private TrainDiagram diagram;
     private TCDelegate delegate;
 
@@ -246,7 +248,10 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     }
 
     private class CPModel extends DefaultComboBoxModel<Wrapper<TrainsCycleType>> {
-        public void refreshSelected() {
+
+        private static final long serialVersionUID = 1L;
+
+		public void refreshSelected() {
             int index = getIndexOf(getSelectedItem());
             fireContentsChanged(this, index, index);
         }

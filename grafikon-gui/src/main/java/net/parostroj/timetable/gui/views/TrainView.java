@@ -42,9 +42,13 @@ import javax.swing.SwingConstants;
  */
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
-    private final class ToolTipHeaderWithPopupMenu extends ToolTipHeader {
+    private static final long serialVersionUID = 1L;
 
-        private ToolTipHeaderWithPopupMenu(TableColumnModel model) {
+	private final class ToolTipHeaderWithPopupMenu extends ToolTipHeader {
+
+        private static final long serialVersionUID = 1L;
+
+		private ToolTipHeaderWithPopupMenu(TableColumnModel model) {
             super(model);
         }
 

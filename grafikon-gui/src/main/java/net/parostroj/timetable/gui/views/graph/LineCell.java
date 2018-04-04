@@ -11,7 +11,9 @@ import com.mxgraph.model.mxCell;
  */
 public class LineCell extends mxCell {
 
-    public LineCell(Object object) {
+    private static final long serialVersionUID = 1L;
+
+	public LineCell(Object object) {
         super(object);
     }
 

@@ -22,7 +22,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ExitAction extends AbstractAction {
 
-    private static final Logger log = LoggerFactory.getLogger(ExitAction.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(ExitAction.class);
     private final ApplicationModel model;
     private final MainFrame parent;
 

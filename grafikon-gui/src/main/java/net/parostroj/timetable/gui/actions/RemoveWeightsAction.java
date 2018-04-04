@@ -20,7 +20,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RemoveWeightsAction extends AbstractAction {
 
-    private final ApplicationModel model;
+    private static final long serialVersionUID = 1L;
+
+	private final ApplicationModel model;
 
     public RemoveWeightsAction(ApplicationModel model) {
         this.model = model;

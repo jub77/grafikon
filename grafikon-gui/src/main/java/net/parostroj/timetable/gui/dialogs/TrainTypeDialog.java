@@ -36,7 +36,9 @@ import javax.swing.JButton;
  */
 public class TrainTypeDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainTypeDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TrainTypeDialog.class);
 
     private static final Wrapper<TrainTypeCategory> NONE_CATEGORY = Wrapper.getEmptyWrapper("-");
 

@@ -11,7 +11,9 @@ import net.parostroj.timetable.model.Train;
  */
 public class TrainTreeNode extends DefaultMutableTreeNode {
 
-    private final NodeDelegate nodeDelegate;
+    private static final long serialVersionUID = 1L;
+
+	private final NodeDelegate nodeDelegate;
     private final ChildrenDelegate childrenDelegate;
 
     public TrainTreeNode(Train train, NodeDelegate nodeDelegate, ChildrenDelegate childrenDelegate) {

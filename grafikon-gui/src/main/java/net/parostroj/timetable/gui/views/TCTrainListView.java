@@ -45,7 +45,9 @@ import net.parostroj.timetable.utils.*;
  */
 public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, RegionSelector<TimeInterval> {
 
-    private static final Logger log = LoggerFactory.getLogger(TCTrainListView.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TCTrainListView.class);
     private static final int BUTTON_MARGIN = 1;
 
     private static enum TrainFilter {

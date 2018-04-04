@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData, TCDelegate.Listener {
 
-    private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
 
     private TCDelegate delegate;
     private String key;

@@ -36,7 +36,9 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public class ImportAction extends AbstractAction {
 
-    static final Logger log = LoggerFactory.getLogger(ImportAction.class);
+    private static final long serialVersionUID = 1L;
+
+	static final Logger log = LoggerFactory.getLogger(ImportAction.class);
 
     private final GroupChooserFromToDialog groupDialog;
     private final ApplicationModel model;

@@ -4,7 +4,9 @@ import javax.swing.JFileChooser;
 
 public class CloseableFileChooser extends JFileChooser implements AutoCloseable {
 
-    public interface CloseAction {
+    private static final long serialVersionUID = 1L;
+
+	public interface CloseAction {
         void close(CloseableFileChooser chooser);
     }
 

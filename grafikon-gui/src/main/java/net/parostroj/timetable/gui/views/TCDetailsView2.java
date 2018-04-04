@@ -19,7 +19,9 @@ import net.parostroj.timetable.model.TrainsCycle;
  */
 public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Listener {
 
-    private TCDelegate delegate;
+    private static final long serialVersionUID = 1L;
+
+	private TCDelegate delegate;
 
     /** Creates new form ECDetailsView2 */
     public TCDetailsView2() {

@@ -35,7 +35,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class TCItemChangeDialog extends JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(TCItemChangeDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TCItemChangeDialog.class);
 
     private final javax.swing.JComboBox<Wrapper<TimeInterval>> fromComboBox;
     private final javax.swing.JComboBox<Wrapper<TimeInterval>> toComboBox;

@@ -42,7 +42,9 @@ import javax.swing.SwingConstants;
  */
 public class EditNodeDialog extends javax.swing.JDialog {
 
-    private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
+    private static final long serialVersionUID = 1L;
+
+	private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
     private static final BigDecimal DEFAULT_STRAIGHT_SPEED = new BigDecimal(100);
 
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);

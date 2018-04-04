@@ -18,7 +18,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RecalculateAction extends AbstractAction {
 
-    public static interface TrainAction {
+    private static final long serialVersionUID = 1L;
+
+	public static interface TrainAction {
         public void execute(Train train) throws Exception;
     }
 

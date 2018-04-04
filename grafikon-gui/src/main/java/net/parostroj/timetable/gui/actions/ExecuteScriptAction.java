@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ExecuteScriptAction extends AbstractAction {
 
-    public static final String MODEL_PREFIX = "model.";
+    private static final long serialVersionUID = 1L;
+
+	public static final String MODEL_PREFIX = "model.";
     public static final String GUI_PREFIX = "gui.";
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteScriptAction.class);

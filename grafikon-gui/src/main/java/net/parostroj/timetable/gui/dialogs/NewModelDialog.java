@@ -28,7 +28,9 @@ import org.beanfabrics.swing.BnComboBox;
  */
 public class NewModelDialog extends javax.swing.JDialog {
 
-    private final ModelProvider provider = new ModelProvider(NewModelPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider provider = new ModelProvider(NewModelPM.class);
 
     public NewModelDialog(java.awt.Window parent, boolean modal) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);

@@ -49,7 +49,9 @@ import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
-    private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
+    private static final long serialVersionUID = 1L;
+
+	private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
 
         private FNConnection selected = null;
 

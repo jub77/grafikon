@@ -19,7 +19,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow {
 
-    private static final Dimension SIZE = new Dimension(400, 300);
+    private static final long serialVersionUID = 1L;
+
+	private static final Dimension SIZE = new Dimension(400, 300);
 
     private final String storageKeyPrefix;
     private boolean visibleOnInit;

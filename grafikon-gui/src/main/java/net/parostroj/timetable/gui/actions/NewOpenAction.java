@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
  */
 public class NewOpenAction extends AbstractAction {
 
-    private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
     private final ApplicationModel model;
 
     private TemplateLoader<TrainDiagram> templateLoader;

@@ -23,7 +23,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class TrainsFilterDialog extends javax.swing.JDialog {
 
-    private static final int COLUMNS = 3;
+    private static final long serialVersionUID = 1L;
+
+	private static final int COLUMNS = 3;
 
     private List<Pair<TrainType,JCheckBox>> typesList;
     private Set<TrainType> selectedTypes;

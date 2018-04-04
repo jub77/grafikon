@@ -7,7 +7,9 @@ import javax.swing.table.TableColumnModel;
 
 class ToolTipHeader extends JTableHeader {
 
-    public ToolTipHeader(TableColumnModel model) {
+    private static final long serialVersionUID = 1L;
+
+	public ToolTipHeader(TableColumnModel model) {
         super(model);
     }
 

@@ -16,7 +16,9 @@ import net.parostroj.timetable.gui.ApplicationModel;
  */
 public class NetPane extends javax.swing.JPanel {
 
-    /** Creates new form NetPane */
+    private static final long serialVersionUID = 1L;
+
+	/** Creates new form NetPane */
     public NetPane() {
         initComponents();
     }

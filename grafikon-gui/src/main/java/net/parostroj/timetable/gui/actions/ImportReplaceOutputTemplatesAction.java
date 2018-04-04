@@ -22,7 +22,9 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 
 public class ImportReplaceOutputTemplatesAction extends AbstractAction {
 
-    static final Logger log = LoggerFactory.getLogger(ImportReplaceOutputTemplatesAction.class);
+    private static final long serialVersionUID = 1L;
+
+	static final Logger log = LoggerFactory.getLogger(ImportReplaceOutputTemplatesAction.class);
 
     private ApplicationModel model;
 

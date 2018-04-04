@@ -65,7 +65,9 @@ import com.github.zafarkhaja.semver.Version;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
 
-    private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
 
     private final ModelProvider provider = new ModelProvider();
 

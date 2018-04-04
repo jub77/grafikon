@@ -19,7 +19,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class SelectNodesDialog extends javax.swing.JDialog {
 
-    private Node selectedNode;
+    private static final long serialVersionUID = 1L;
+
+	private Node selectedNode;
 
     /** Creates new form SelectNodesDialog */
     public SelectNodesDialog(java.awt.Frame parent, boolean modal) {

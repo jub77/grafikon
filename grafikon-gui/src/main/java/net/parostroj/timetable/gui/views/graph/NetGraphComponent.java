@@ -22,7 +22,9 @@ import com.mxgraph.swing.handler.mxGraphHandler;
  */
 public class NetGraphComponent extends mxGraphComponent {
 
-    private final MouseWheelListener wheelTracker;
+    private static final long serialVersionUID = 1L;
+
+	private final MouseWheelListener wheelTracker;
 
     public NetGraphComponent(NetGraphAdapter graph) {
         super(graph);
@@ -75,7 +77,10 @@ public class NetGraphComponent extends mxGraphComponent {
 
     public mxGraphOutline createOutline() {
         mxGraphOutline outline = new mxGraphOutline(this) {
-            {
+
+            private static final long serialVersionUID = 1L;
+
+			{
                 outlineBorder = 5;
             }
         };

@@ -60,7 +60,9 @@ import com.mxgraph.view.mxCellState;
  */
 public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, mxIEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
 
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
@@ -94,7 +96,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class NewNodeAction extends AbstractAction {
 
-        @Override
+        private static final long serialVersionUID = 1L;
+
+		@Override
         public void actionPerformed(ActionEvent e) {
             if (model.getDiagram() != null) {
                 String result = ResourceLoader.getString("node.station.text") + " " + (++cnt);
@@ -121,7 +125,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class EditAction extends AbstractAction {
 
-        @Override
+        private static final long serialVersionUID = 1L;
+
+		@Override
         public void actionPerformed(ActionEvent e) {
             Collection<Object> objects = netEditModel.getSelectedObjects();
             if (!objects.isEmpty()) {
@@ -146,7 +152,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class DeleteAction extends AbstractAction {
 
-        @Override
+        private static final long serialVersionUID = 1L;
+
+		@Override
         public void actionPerformed(ActionEvent e) {
             Component comp = NetEditView.this;
             // delete all lines
@@ -202,7 +210,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class SaveNetImageAction extends AbstractAction {
 
-        private SaveImageDialog dialog;
+        private static final long serialVersionUID = 1L;
+
+		private SaveImageDialog dialog;
 
         public SaveNetImageAction(String name) {
             super(name);
@@ -306,14 +316,20 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         saveNetImageAction = new SaveNetImageAction(ResourceLoader.getString("net.edit.save.image") + " ...");
         saveNetImageAction.setEnabled(false);
         zoomInAction = new AbstractAction() {
-            @Override
+
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 if (graphComponent != null)
                     graphComponent.zoomIn();
             }
         };
         zoomOutAction = new AbstractAction() {
-            @Override
+
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 if (graphComponent != null)
                     graphComponent.zoomOut();

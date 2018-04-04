@@ -2,12 +2,14 @@ package net.parostroj.timetable.gui;
 
 /**
  * Application starter exception.
- * 
+ *
  * @author jub
  */
 public class ApplicationStarterException extends Exception {
 
-    public ApplicationStarterException(Throwable cause) {
+    private static final long serialVersionUID = 1L;
+
+	public ApplicationStarterException(Throwable cause) {
         super(cause);
     }
 

@@ -130,7 +130,10 @@ public class FloatingWindowsFactory {
             }
         });
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainzeroweights.title", "train.zero.weights") {
-            @Override
+
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public void setVisible(boolean b) {
                 if (b) {
                     panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
@@ -225,7 +228,9 @@ public class FloatingWindowsFactory {
         panel.addConverter(new ApplicationEventTypeConverter());
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.eventsviewer.title", "events.viewer") {
 
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public IniConfigSection saveToPreferences(IniConfig prefs) {
                 IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("divider", panel.getDividerLocation());
@@ -272,7 +277,9 @@ public class FloatingWindowsFactory {
         });
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public IniConfigSection saveToPreferences(IniConfig prefs) {
                 IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("divider", panel.getDividerLocation());
@@ -302,7 +309,9 @@ public class FloatingWindowsFactory {
 
         FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public IniConfigSection saveToPreferences(IniConfig prefs) {
                 IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("gtv", gtView.getSettings().getStorageString());
@@ -388,7 +397,9 @@ public class FloatingWindowsFactory {
             }
         });
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public IniConfigSection saveToPreferences(IniConfig prefs) {
                 IniConfigSection section = super.saveToPreferences(prefs);
                 section.put("size", panel.getSizeSlider());

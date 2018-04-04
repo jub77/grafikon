@@ -24,7 +24,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class TCDetailsViewDialog extends javax.swing.JDialog {
 
-    private static final int NAME_COLUMNS = 25;
+    private static final long serialVersionUID = 1L;
+
+	private static final int NAME_COLUMNS = 25;
     private static final Logger log = LoggerFactory.getLogger(TCDetailsViewDialog.class);
 
     private TCDelegate delegate;

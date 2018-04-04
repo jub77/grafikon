@@ -13,7 +13,9 @@ import com.mxgraph.shape.mxStencilRegistry;
  */
 public class NodeCell extends mxCell {
 
-    public NodeCell(Object value) {
+    private static final long serialVersionUID = 1L;
+
+	public NodeCell(Object value) {
         super(value);
     }
 

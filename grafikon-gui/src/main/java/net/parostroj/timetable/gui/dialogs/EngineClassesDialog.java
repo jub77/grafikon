@@ -29,9 +29,13 @@ import org.slf4j.LoggerFactory;
  */
 public class EngineClassesDialog extends javax.swing.JDialog {
 
-    private class WeightTableModel extends AbstractTableModel {
+    private static final long serialVersionUID = 1L;
 
-        private EngineClass getCurrentEngineClass() {
+	private class WeightTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 1L;
+
+		private EngineClass getCurrentEngineClass() {
             int selected = engineClassesList.getSelectedIndex();
             boolean one = engineClassesList.getSelectedIndices().length == 1;
             EngineClass clazz = selected != -1 && one ? listModel.getIndex(selected).getElement() : null;

@@ -36,9 +36,13 @@ import javax.swing.GroupLayout;
  */
 public class EditLineDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(EditLineDialog.class);
+    private static final long serialVersionUID = 1L;
+	private static final Logger log = LoggerFactory.getLogger(EditLineDialog.class);
 
-    private static class LTModel extends javax.swing.DefaultListModel<LineTrack> {}
+    private static class LTModel extends javax.swing.DefaultListModel<LineTrack> {
+
+        private static final long serialVersionUID = 1L;
+    }
 
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));

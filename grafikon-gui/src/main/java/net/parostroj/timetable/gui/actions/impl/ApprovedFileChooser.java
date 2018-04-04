@@ -14,7 +14,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ApprovedFileChooser extends CloseableFileChooser {
 
-    private boolean approve;
+    private static final long serialVersionUID = 1L;
+	private boolean approve;
 
     public ApprovedFileChooser() {
         this.approve = true;

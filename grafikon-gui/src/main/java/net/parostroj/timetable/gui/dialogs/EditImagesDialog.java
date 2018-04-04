@@ -38,7 +38,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class EditImagesDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(EditImagesDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(EditImagesDialog.class);
     private static JFileChooser fileChooserInstance;
 
     private TrainDiagram diagram;

@@ -29,7 +29,9 @@ import org.beanfabrics.swing.BnTextField;
  */
 public class CopyTrainDialog extends javax.swing.JDialog {
 
-    private final ModelProvider provider = new ModelProvider(CopyTrainPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider provider = new ModelProvider(CopyTrainPM.class);
 
     public CopyTrainDialog(Window parent, boolean modal, Train train) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);

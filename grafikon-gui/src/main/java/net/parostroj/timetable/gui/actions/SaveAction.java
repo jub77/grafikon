@@ -28,7 +28,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SaveAction extends AbstractAction {
 
-    private static final Logger log = LoggerFactory.getLogger(SaveAction.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(SaveAction.class);
     private final ApplicationModel model;
 
     public SaveAction(ApplicationModel model) {

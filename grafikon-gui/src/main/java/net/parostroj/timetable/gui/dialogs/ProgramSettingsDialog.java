@@ -29,7 +29,9 @@ import java.awt.event.ActionListener;
  */
 public class ProgramSettingsDialog extends javax.swing.JDialog {
 
-    private final ModelProvider provider = new ModelProvider(ProgramSettingsPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider provider = new ModelProvider(ProgramSettingsPM.class);
 
     /** Creates new form ProgramSettingsDialog */
     public ProgramSettingsDialog(Window parent, boolean modal) {

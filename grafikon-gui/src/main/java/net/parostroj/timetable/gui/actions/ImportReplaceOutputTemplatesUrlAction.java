@@ -18,7 +18,9 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 
 public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
-    static final Logger log = LoggerFactory.getLogger(ImportReplaceOutputTemplatesUrlAction.class);
+    private static final long serialVersionUID = 1L;
+
+	static final Logger log = LoggerFactory.getLogger(ImportReplaceOutputTemplatesUrlAction.class);
 
     private static final String TEMPLATE = "output_templates.gtml";
 
