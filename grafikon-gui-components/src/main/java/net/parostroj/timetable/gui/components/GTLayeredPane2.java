@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.components;
 
 public class GTLayeredPane2 extends GTLayeredPane {
 
-    private final GTVButtonPanel buttonPanel;
+    private static final long serialVersionUID = 1L;
+
+	private final GTVButtonPanel buttonPanel;
 
     public GTLayeredPane2(GraphicalTimetableView view) {
         super(view);

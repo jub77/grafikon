@@ -25,7 +25,9 @@ import org.beanfabrics.swing.BnTextField;
  */
 public class EditCompanyDialog extends JDialog {
 
-    private final ModelProvider provider = new ModelProvider(CompanyPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider provider = new ModelProvider(CompanyPM.class);
 
     public EditCompanyDialog(Window parent, boolean modal, Collection<Locale> locales) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);

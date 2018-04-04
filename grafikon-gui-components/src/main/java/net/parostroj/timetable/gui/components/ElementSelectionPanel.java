@@ -25,6 +25,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class ElementSelectionPanel<T> extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String LIST_PROTOTYPE_VALUE = "mmmmmmmmmmmmmmmmmmmmmm";
     private static final int LIST_DEFAULT_ROW_COUNT = 15;
 

@@ -18,7 +18,9 @@ import java.awt.FlowLayout;
  */
 public class ElementSelectionCheckBoxDialog<T> extends javax.swing.JDialog {
 
-    private boolean ok = false;
+    private static final long serialVersionUID = 1L;
+
+	private boolean ok = false;
 
     public ElementSelectionCheckBoxDialog(Window parent, boolean modal) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);

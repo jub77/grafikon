@@ -14,7 +14,9 @@ import javax.swing.JCheckBox;
 
 public class ExportImportSelectionDialog extends ExportImportSelectionBaseDialog {
 
-    private JComboBox<Wrapper<ImportMatch>> matchComboBox;
+    private static final long serialVersionUID = 1L;
+
+	private JComboBox<Wrapper<ImportMatch>> matchComboBox;
     private JCheckBox overwriteCheckBox;
 
     public ExportImportSelectionDialog(Window parent, boolean modal) {

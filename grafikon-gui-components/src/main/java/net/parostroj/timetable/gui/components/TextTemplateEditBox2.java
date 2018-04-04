@@ -34,7 +34,9 @@ import net.parostroj.timetable.model.TextTemplate.Language;
  */
 public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
-    private static final String SEARCH_ACTION = "search";
+    private static final long serialVersionUID = 1L;
+
+	private static final String SEARCH_ACTION = "search";
     private static final Map<Language, String> HIGHLIGHT;
 
     static {
@@ -166,7 +168,9 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
         templateTextArea.getInputMap().put(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK), SEARCH_ACTION);
         templateTextArea.getActionMap().put(SEARCH_ACTION, new AbstractAction() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 SearchDialog dialog = getSearchDialog();
                 if (!dialog.isVisible()) {

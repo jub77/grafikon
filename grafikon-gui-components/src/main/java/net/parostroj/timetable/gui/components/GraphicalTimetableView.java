@@ -48,7 +48,9 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
  */
 public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
-    public static String MOUSE_OVER_HANDLER_KEY = "mouse.over.handler";
+    private static final long serialVersionUID = 1L;
+
+	public static String MOUSE_OVER_HANDLER_KEY = "mouse.over.handler";
 
     private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableView.class);
 

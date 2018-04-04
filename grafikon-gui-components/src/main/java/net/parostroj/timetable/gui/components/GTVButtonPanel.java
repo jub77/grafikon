@@ -27,7 +27,9 @@ import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 
 public class GTVButtonPanel extends JPanel {
 
-    private final GraphicalTimetableView view;
+    private static final long serialVersionUID = 1L;
+
+	private final GraphicalTimetableView view;
     private JComboBox<Wrapper<Route>> comboBox;
     private WrapperListModel<Route> comboBoxModel;
     private JPanel panel;
@@ -50,7 +52,9 @@ public class GTVButtonPanel extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel backpanel = new JPanel() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public Dimension getPreferredSize() {
                 Dimension dimension = super.getPreferredSize();
                 if (!panel.isVisible()) {
@@ -80,7 +84,9 @@ public class GTVButtonPanel extends JPanel {
         panel.setVisible(false);
         panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
         AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<JPanel>() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             protected void processMouseEvent(MouseEvent e, JXLayer<? extends JPanel> l) {
                 super.processMouseEvent(e, l);
                 if (e.getID() == MouseEvent.MOUSE_ENTERED && !in) {

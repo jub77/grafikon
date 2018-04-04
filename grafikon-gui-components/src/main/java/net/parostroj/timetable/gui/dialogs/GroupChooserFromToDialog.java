@@ -19,7 +19,9 @@ import javax.swing.JCheckBox;
 
 public class GroupChooserFromToDialog extends JDialog {
 
-    private final GroupsComboBox fromGroupsComboBox;
+    private static final long serialVersionUID = 1L;
+
+	private final GroupsComboBox fromGroupsComboBox;
     private final GroupsComboBox toGroupsComboBox;
     private boolean ok;
     private final JCheckBox removeEtCheckBox;

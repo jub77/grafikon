@@ -21,7 +21,9 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 
 public class LocalizedStringField<T extends LocalizedStringPM> extends JPanel implements View<T>, ModelSubscriber {
 
-    private final ModelProvider localProvider = new ModelProvider();
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider localProvider = new ModelProvider();
     private final Link link = new Link(this);
     private final BnTextField textField;
     private final boolean doNotUseCurrent;

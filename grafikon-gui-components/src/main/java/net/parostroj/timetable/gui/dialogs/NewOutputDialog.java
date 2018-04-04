@@ -28,7 +28,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 public class NewOutputDialog extends JDialog implements View<OutputPM>, ModelSubscriber {
 
-    private ModelProvider provider;
+    private static final long serialVersionUID = 1L;
+
+	private ModelProvider provider;
     private Link link;
 
     public NewOutputDialog(Window window, boolean modal) {

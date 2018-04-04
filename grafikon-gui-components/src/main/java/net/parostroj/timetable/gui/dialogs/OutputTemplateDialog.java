@@ -52,7 +52,9 @@ import javax.swing.JButton;
  */
 public class OutputTemplateDialog extends javax.swing.JDialog implements GuiContextComponent {
 
-    private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
+    private static final long serialVersionUID = 1L;
+
+	private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
     private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw",
             "pdf.groovy", "xml"));
     private static final Collection<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableCollection(Arrays.asList(

@@ -31,7 +31,9 @@ import org.beanfabrics.swing.table.BnTable;
  */
 public class EditRegionDialog extends JDialog {
 
-    private static final int DEFAULT_ROW_COUNT = 3;
+    private static final long serialVersionUID = 1L;
+
+	private static final int DEFAULT_ROW_COUNT = 3;
 
     private final ModelProvider provider = new ModelProvider(RegionPM.class);
 

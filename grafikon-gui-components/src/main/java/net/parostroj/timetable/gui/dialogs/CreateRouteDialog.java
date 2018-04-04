@@ -21,7 +21,9 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 public class CreateRouteDialog extends JDialog {
 
-    private final JPanel contentPanel = new JPanel();
+    private static final long serialVersionUID = 1L;
+
+	private final JPanel contentPanel = new JPanel();
     private JTextField throughTextField;
     private ThroughNodesDialog tnDialog;
     private List<Node> throughNodes;

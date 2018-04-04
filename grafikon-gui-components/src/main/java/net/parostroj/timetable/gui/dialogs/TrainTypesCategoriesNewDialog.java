@@ -20,7 +20,9 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
 
-    private final JTextField nameTextField;
+    private static final long serialVersionUID = 1L;
+
+	private final JTextField nameTextField;
     private final JComboBox<String> keyTextField;
     private final JComboBox<Wrapper<TrainTypeCategory>> templateComboBox;
 

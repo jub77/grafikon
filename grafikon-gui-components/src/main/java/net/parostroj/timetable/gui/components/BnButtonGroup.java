@@ -16,13 +16,18 @@ import org.beanfabrics.event.WeakPropertyChangeListener;
 
 public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedValuesPM<T>>, ModelSubscriber {
 
+    private static final long serialVersionUID = 1L;
+
     private final Link link = new Link(this);
     private final BGListener listener = new BGListener();
     private final Map<ButtonModel, T> map = new HashMap<ButtonModel, T>();
     private IEnumeratedValuesPM<T> pModel;
 
     private class BGListener implements WeakPropertyChangeListener, Serializable {
-        public void propertyChange(PropertyChangeEvent evt) {
+
+        private static final long serialVersionUID = 1L;
+
+		public void propertyChange(PropertyChangeEvent evt) {
             setSelectedValue(pModel.getValue());
         }
     }

@@ -7,7 +7,9 @@ import javax.swing.JPanel;
 
 public class GTStationNamesOverlay extends JPanel {
 
-    private final GraphicalTimetableView view;
+    private static final long serialVersionUID = 1L;
+
+	private final GraphicalTimetableView view;
     private final int topBorder;
     private final int leftBorder;
 

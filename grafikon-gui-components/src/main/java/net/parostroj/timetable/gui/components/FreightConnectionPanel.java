@@ -44,7 +44,9 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class FreightConnectionPanel extends JPanel {
 
-    private static final int COMBO_BOX_LIST_SIZE = 12;
+    private static final long serialVersionUID = 1L;
+
+	private static final int COMBO_BOX_LIST_SIZE = 12;
 
     private final WrapperListModel<Node> fromNode;
     private final WrapperListModel<Node> toNode;

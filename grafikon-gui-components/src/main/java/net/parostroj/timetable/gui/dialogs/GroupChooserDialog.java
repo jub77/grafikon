@@ -17,7 +17,9 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 public class GroupChooserDialog extends JDialog {
 
-    private final JPanel contentPanel = new JPanel();
+    private static final long serialVersionUID = 1L;
+
+	private final JPanel contentPanel = new JPanel();
     private final GroupsComboBox groupsComboBox;
     private boolean ok;
 

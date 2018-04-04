@@ -19,7 +19,9 @@ import net.parostroj.timetable.model.TextTemplate;
  */
 public class TextTemplateEditBox extends javax.swing.JPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(TextTemplateEditBox.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(TextTemplateEditBox.class);
 
     private Collection<Language> languages;
 

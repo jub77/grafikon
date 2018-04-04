@@ -16,7 +16,9 @@ import javax.swing.ComboBoxModel;
  */
 public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implements ComboBoxModel<Wrapper<T>> {
 
-    public interface ObjectListener<T> {
+    private static final long serialVersionUID = 1L;
+
+	public interface ObjectListener<T> {
         void added(T object, int index);
         void removed(T object);
         void moved(T object, int fromIndex, int toIndex);

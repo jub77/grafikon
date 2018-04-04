@@ -15,7 +15,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class GTViewZoomDialog extends JDialog {
 
-    private boolean ok;
+    private static final long serialVersionUID = 1L;
+
+	private boolean ok;
     private final JSlider slider;
 
     public GTViewZoomDialog(Window owner, boolean modal) {

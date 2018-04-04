@@ -10,6 +10,8 @@ import net.parostroj.timetable.output2.gt.GTOrientation;
 
 public class GTLayeredPane extends JLayeredPane {
 
+    private static final long serialVersionUID = 1L;
+
     private final JScrollPane scrollPane;
     protected Insets borderInsets;
 

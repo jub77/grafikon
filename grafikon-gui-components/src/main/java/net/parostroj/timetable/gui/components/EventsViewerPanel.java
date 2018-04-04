@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class EventsViewerPanel extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(EventsViewerPanel.class);
     private static final int TIMEOUT = 100;
 
@@ -29,6 +31,8 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     private final Timer timer;
 
     class EventListModel extends AbstractListModel<Object> {
+
+        private static final long serialVersionUID = 1L;
 
         private final List<Triplet<Object, String, String>> eventList = new ArrayList<Triplet<Object, String, String>>();
         private int limit = 0;

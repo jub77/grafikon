@@ -20,7 +20,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 public class EditLocalizedStringPanel extends JPanel implements View<LocalizedStringPM>, ModelSubscriber {
 
-    private Link link;
+    private static final long serialVersionUID = 1L;
+
+	private Link link;
     private ModelProvider localModelProvider;
 
     public EditLocalizedStringPanel(int gap) {

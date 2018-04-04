@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
  */
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
 
-    private static final Logger log = LoggerFactory.getLogger(WaitDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(WaitDialog.class);
     private static final int WAIT_DIALOG_WIDTH = 300;
 
     private int level = 0;
@@ -55,14 +57,18 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
         java.awt.GridBagConstraints gridBagConstraints;
 
         messageLabel = new javax.swing.JLabel() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public Dimension getPreferredSize() {
                 Dimension size = super.getPreferredSize();
                 return new Dimension(Math.max(size.width, WAIT_DIALOG_WIDTH), size.height);
             }
         };
         progressBar = new javax.swing.JProgressBar() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public Dimension getPreferredSize() {
                 Dimension size = super.getPreferredSize();
                 return new Dimension(Math.max(size.width, WAIT_DIALOG_WIDTH), size.height);

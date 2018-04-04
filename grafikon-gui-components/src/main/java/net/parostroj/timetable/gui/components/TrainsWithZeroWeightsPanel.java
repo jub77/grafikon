@@ -16,7 +16,9 @@ import net.parostroj.timetable.model.Train;
  */
 public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
 
-    private final WrapperListModel<Train> listModel = new WrapperListModel<Train>();
+    private static final long serialVersionUID = 1L;
+
+	private final WrapperListModel<Train> listModel = new WrapperListModel<Train>();
 
     /** Creates new form TrainsWithConflictsPanel */
     public TrainsWithZeroWeightsPanel() {

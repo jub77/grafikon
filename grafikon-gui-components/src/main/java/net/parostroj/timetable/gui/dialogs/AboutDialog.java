@@ -25,7 +25,9 @@ import net.parostroj.timetable.utils.VersionInfo;
  */
 public class AboutDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(AboutDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(AboutDialog.class);
 
     private VersionInfo versionInfo;
 

@@ -8,7 +8,9 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagram> {
 
-    public EditLineClassesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName,
+    private static final long serialVersionUID = 1L;
+
+	public EditLineClassesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName,
             boolean copy, boolean multiple) {
         super(parent, modal, move, edit, newByName, copy, multiple);
     }

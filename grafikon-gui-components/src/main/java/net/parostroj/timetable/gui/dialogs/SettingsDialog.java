@@ -48,7 +48,9 @@ import javax.swing.JLabel;
  */
 public class SettingsDialog extends javax.swing.JDialog implements GuiContextComponent {
 
-    private static final Logger log = LoggerFactory.getLogger(SettingsDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(SettingsDialog.class);
 
     private static final String NO_UNIT = "-";
 

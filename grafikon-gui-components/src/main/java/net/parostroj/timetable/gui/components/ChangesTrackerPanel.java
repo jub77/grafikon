@@ -16,6 +16,8 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
  */
 public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTrackerListener {
 
+    private static final long serialVersionUID = 1L;
+
     private static class ChangeSetWrapper {
         public DiagramChangeSet set;
         public boolean current;
@@ -98,7 +100,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
     }
 
     private static class ChangesTrackerListModel extends DefaultListModel<Object> {
-        public void fireUpdated(int index) {
+
+        private static final long serialVersionUID = 1L;
+
+		public void fireUpdated(int index) {
             if (index != -1)
                 this.fireContentsChanged(this, index, index);
         }

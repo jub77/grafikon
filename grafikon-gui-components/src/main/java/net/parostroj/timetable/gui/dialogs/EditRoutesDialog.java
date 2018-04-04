@@ -33,7 +33,9 @@ import javax.swing.BoxLayout;
  */
 public class EditRoutesDialog extends javax.swing.JDialog {
 
-    private List<Node> throughNodes;
+    private static final long serialVersionUID = 1L;
+
+	private List<Node> throughNodes;
     private final ThroughNodesDialog tnDialog;
     private TrainDiagram diagram;
     private WrapperListModel<Route> routes;

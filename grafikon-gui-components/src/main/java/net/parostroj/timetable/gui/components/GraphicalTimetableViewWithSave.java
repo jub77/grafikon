@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewWithSave.class);
     private SaveImageDialog dialog;
 

@@ -28,7 +28,9 @@ import javax.swing.JCheckBox;
  */
 public class TextItemDialog extends javax.swing.JDialog {
 
-    public static class TextItemModel {
+    private static final long serialVersionUID = 1L;
+
+	public static class TextItemModel {
         TextTemplate template;
         boolean trainTimetableInfo;
 

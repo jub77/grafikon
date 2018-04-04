@@ -23,6 +23,8 @@ import net.parostroj.timetable.utils.AttributeReference;
 
 public class EditLocalizedStringListAddRemovePanel<T extends AttributeReference<LocalizedString>> extends JPanel implements View<ARLocalizedStringListPM<T>>, ModelSubscriber {
 
+    private static final long serialVersionUID = 1L;
+
     private Link link;
     private ModelProvider localModelProvider;
 

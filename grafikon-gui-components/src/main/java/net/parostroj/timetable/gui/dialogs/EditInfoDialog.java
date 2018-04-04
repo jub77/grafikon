@@ -29,7 +29,9 @@ import javax.swing.JLabel;
  */
 public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> {
 
-    private final ModelProvider provider = new ModelProvider(InfoPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider provider = new ModelProvider(InfoPM.class);
     private JTabbedPane tabbedPane;
 
     /** Creates new form EditInfoDialog */

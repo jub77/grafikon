@@ -43,7 +43,9 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class FreightTrainPathPanel extends JPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(FreightTrainPathPanel.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(FreightTrainPathPanel.class);
 
     private static final int COLUMNS_SHUNT_DURATION = 4;
     private static final int COMBO_BOX_LIST_SIZE = 12;

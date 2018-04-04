@@ -212,6 +212,8 @@ public class RxActionHandler {
 
     public static class RxActionHandlerException extends RuntimeException {
 
+        private static final long serialVersionUID = 1L;
+
         private final String text;
 
         public RxActionHandlerException(String text, String message, Throwable cause) {

@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
  */
 public class ChangedTrainsPanel extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private final WrapperListModel<Train> listModel = new WrapperListModel<Train>(false);
     private long limit = 0;
 

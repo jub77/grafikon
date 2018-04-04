@@ -16,7 +16,9 @@ import java.awt.FlowLayout;
 
 public class EditLocalizedStringOkCancelDialog extends EditLocalizedStringDialog {
 
-    private boolean ok = false;
+    private static final long serialVersionUID = 1L;
+
+	private boolean ok = false;
 
     public EditLocalizedStringOkCancelDialog(Window owner) {
         super(owner, true);

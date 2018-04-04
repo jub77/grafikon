@@ -34,7 +34,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class EditEngineClassDialog extends JDialog implements View<EngineClassPM>, ModelSubscriber {
 
-    private final ModelProvider localProvider = new ModelProvider(EngineClassPM.class);
+    private static final long serialVersionUID = 1L;
+
+	private final ModelProvider localProvider = new ModelProvider(EngineClassPM.class);
     private final Link link = new Link(this);
 
     public EditEngineClassDialog(Window parent, boolean modal) {

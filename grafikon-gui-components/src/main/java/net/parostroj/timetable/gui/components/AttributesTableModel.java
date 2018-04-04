@@ -18,6 +18,8 @@ import net.parostroj.timetable.model.events.AttributesListener;
  */
 public class AttributesTableModel extends AbstractTableModel {
 
+    private static final long serialVersionUID = 1L;
+
     private Attributes attributes;
     private AttributesListener listener;
     private List<String> userNames;

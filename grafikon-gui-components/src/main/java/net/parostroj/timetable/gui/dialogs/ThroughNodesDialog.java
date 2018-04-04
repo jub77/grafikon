@@ -18,7 +18,9 @@ import net.parostroj.timetable.model.Node;
  */
 public class ThroughNodesDialog extends javax.swing.JDialog {
 
-    private List<Node> nodes;
+    private static final long serialVersionUID = 1L;
+
+	private List<Node> nodes;
     private WrapperListModel<Node> nodeModel;
 
     /** Creates new form ThroughNodesDialog */

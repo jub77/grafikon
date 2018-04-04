@@ -27,6 +27,8 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class CirculationView extends javax.swing.JPanel implements SaveImageAction.DrawOutput {
 
+    private static final long serialVersionUID = 1L;
+
     private CirculationDraw draw;
     private TrainDiagram diagram;
     private TrainsCycleType type;

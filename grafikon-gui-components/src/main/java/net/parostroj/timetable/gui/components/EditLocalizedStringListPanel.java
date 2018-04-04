@@ -23,7 +23,9 @@ import javax.swing.ScrollPaneConstants;
 
 public class EditLocalizedStringListPanel<T extends Reference<LocalizedString>> extends JPanel implements View<LocalizedStringListPM<T>>, ModelSubscriber {
 
-    private Link link;
+    private static final long serialVersionUID = 1L;
+
+	private Link link;
     private ModelProvider localModelProvider;
     private BnList list;
 

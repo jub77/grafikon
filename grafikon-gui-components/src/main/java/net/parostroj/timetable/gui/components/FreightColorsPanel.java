@@ -15,6 +15,8 @@ import net.parostroj.timetable.model.FreightColor;
  */
 public class FreightColorsPanel extends Panel {
 
+    private static final long serialVersionUID = 1L;
+
     private final Map<FreightColor, JCheckBox> checks = new LinkedHashMap<FreightColor, JCheckBox>();
 
     public FreightColorsPanel() {

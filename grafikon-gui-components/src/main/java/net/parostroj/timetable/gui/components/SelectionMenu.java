@@ -13,7 +13,9 @@ import com.google.common.collect.HashBiMap;
 
 public class SelectionMenu<T> extends JMenu {
 
-    public interface Listener<V> {
+    private static final long serialVersionUID = 1L;
+
+	public interface Listener<V> {
         public void selected(V value);
     }
 

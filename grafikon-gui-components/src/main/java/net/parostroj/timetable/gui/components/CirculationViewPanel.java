@@ -31,6 +31,8 @@ import net.parostroj.timetable.output2.gt.DrawUtils;
  */
 public class CirculationViewPanel extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int BASE_WIDTH_OFFSET = 5;
     private static final float BASE_ZOOM_OFFSET = 0.5f;
     private static final float ZOOM_SLIDER_RATIO = 0.1f;
@@ -356,7 +358,9 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
     static class LimitedSlider extends javax.swing.JSlider {
 
-        private static final int DEFAULT_SLIDER_WIDTH_IN_CHARS = 10;
+        private static final long serialVersionUID = 1L;
+
+		private static final int DEFAULT_SLIDER_WIDTH_IN_CHARS = 10;
 
         private int widthInChar = DEFAULT_SLIDER_WIDTH_IN_CHARS;
 

@@ -18,7 +18,9 @@ import net.parostroj.timetable.model.TrainsCycleType;
 
 public class CirculationSequenceDialog extends JDialog {
 
-    private final ElementSelectionPanel<TrainsCycle> elementSelectionPanel;
+    private static final long serialVersionUID = 1L;
+
+	private final ElementSelectionPanel<TrainsCycle> elementSelectionPanel;
     private TrainsCycle circulation;
 
     public CirculationSequenceDialog(Window window, ModalityType modality) {

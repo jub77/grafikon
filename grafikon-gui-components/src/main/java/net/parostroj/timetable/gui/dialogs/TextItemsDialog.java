@@ -23,7 +23,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class TextItemsDialog extends javax.swing.JDialog {
 
-    private TrainDiagram diagram;
+    private static final long serialVersionUID = 1L;
+
+	private TrainDiagram diagram;
     private final WrapperListModel<TextItem> itemsModel;
     private TextItem selectedItem;
 

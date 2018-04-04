@@ -14,7 +14,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class ScriptOutputDialog extends javax.swing.JDialog {
 
-    private final JTextArea textArea;
+    private static final long serialVersionUID = 1L;
+
+	private final JTextArea textArea;
 
     public void setText(String text) {
         textArea.setText(text);

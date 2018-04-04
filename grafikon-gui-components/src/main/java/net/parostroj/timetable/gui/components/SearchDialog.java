@@ -18,7 +18,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class SearchDialog extends JDialog {
 
-    private static final int DEFAULT_TEXT_FIELD_WIDTH = 25;
+    private static final long serialVersionUID = 1L;
+
+	private static final int DEFAULT_TEXT_FIELD_WIDTH = 25;
 
     public interface SearchData {
         String getText();

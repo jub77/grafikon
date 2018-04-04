@@ -17,6 +17,8 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public class GroupsComboBox extends JComboBox<Wrapper<Group>> {
 
+    private static final long serialVersionUID = 1L;
+
     private final Wrapper<Group> all = Wrapper.getPrototypeWrapper("<" + ResourceLoader.getString("groups.all") + ">");
     private final Wrapper<Group> none = Wrapper.getPrototypeWrapper("<" + ResourceLoader.getString("groups.none") + ">");
     private final boolean allOption;

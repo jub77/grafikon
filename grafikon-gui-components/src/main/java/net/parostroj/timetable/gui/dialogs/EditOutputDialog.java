@@ -40,7 +40,9 @@ import javax.swing.JLabel;
 
 public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSubscriber, GuiContextComponent {
 
-    private Link link = new Link(this);
+    private static final long serialVersionUID = 1L;
+
+	private Link link = new Link(this);
     private ModelProvider provider = new ModelProvider();
 
     public EditOutputDialog(Window window, boolean modal) {

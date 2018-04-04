@@ -22,7 +22,9 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
  */
 public class ElementSelectionCheckBoxPanel<T> extends JPanel {
 
-    private static final int VISIBLE_ROW_COUNT = 8;
+    private static final long serialVersionUID = 1L;
+
+	private static final int VISIBLE_ROW_COUNT = 8;
 
     private int visibleRows = VISIBLE_ROW_COUNT;
     private List<Wrapper<T>> items;
@@ -45,7 +47,9 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
         setLayout(new BorderLayout());
 
         JScrollPane scrollPane = new JScrollPane() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public Dimension getPreferredSize() {
                 Dimension size = super.getPreferredSize();
                 int itemsSize = items.isEmpty() ? 1 : items.size();

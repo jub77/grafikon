@@ -14,7 +14,9 @@ import net.parostroj.timetable.model.Route;
 
 public class RouteSelectionDialog extends JDialog {
 
-    public static interface RSListener {
+    private static final long serialVersionUID = 1L;
+
+	public static interface RSListener {
         public void routeSelected(Route route);
     }
 

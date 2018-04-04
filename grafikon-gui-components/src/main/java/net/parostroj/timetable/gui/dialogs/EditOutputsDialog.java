@@ -47,7 +47,9 @@ import net.parostroj.timetable.output2.OutputWriter.Settings;
 
 public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> implements GuiContextComponent, View<GenerateOutputPM>, ModelSubscriber {
 
-    private static final String INI_KEY_CLEAR_DIRECTORY = "clear.directory";
+    private static final long serialVersionUID = 1L;
+
+	private static final String INI_KEY_CLEAR_DIRECTORY = "clear.directory";
 
     private ModelProvider provider;
     private Link link;

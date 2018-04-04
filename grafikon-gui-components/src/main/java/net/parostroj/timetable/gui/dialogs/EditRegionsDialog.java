@@ -13,7 +13,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
-    private Collection<Locale> locales;
+    private static final long serialVersionUID = 1L;
+
+	private Collection<Locale> locales;
 
     public EditRegionsDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName, boolean copy,
             boolean multiple) {

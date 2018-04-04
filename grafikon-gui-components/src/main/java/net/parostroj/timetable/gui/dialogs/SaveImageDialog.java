@@ -16,7 +16,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class SaveImageDialog extends javax.swing.JDialog {
 
-    public static enum Type {
+    private static final long serialVersionUID = 1L;
+
+	public static enum Type {
         PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"), SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg");
 
         private String name;
@@ -70,7 +72,9 @@ public class SaveImageDialog extends javax.swing.JDialog {
     private static synchronized JFileChooser getFileChooser() {
         if (fileChooserInstance == null)
             fileChooserInstance = new JFileChooser() {
-                @Override
+                private static final long serialVersionUID = 1L;
+
+				@Override
                 public void approveSelection() {
                     if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
                         int result = JOptionPane.showConfirmDialog(this,

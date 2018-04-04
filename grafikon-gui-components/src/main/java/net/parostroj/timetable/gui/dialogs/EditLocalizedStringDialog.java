@@ -18,7 +18,9 @@ import net.parostroj.timetable.gui.pm.LocalizedStringPM;
 
 public class EditLocalizedStringDialog extends JDialog implements ModelSubscriber, View<LocalizedStringPM> {
 
-    private ModelProvider localProvider;
+    private static final long serialVersionUID = 1L;
+
+	private ModelProvider localProvider;
     private Link link;
 
     public EditLocalizedStringDialog(Window owner, boolean modal) {

@@ -22,7 +22,9 @@ import javax.swing.JComboBox;
 
 public class ExportImportSelectionPanel extends JPanel {
 
-    protected static class Selection {
+    private static final long serialVersionUID = 1L;
+
+	protected static class Selection {
         public ImportComponent type;
         public List<Wrapper<ObjectWithId>> notSelected;
         public List<Wrapper<ObjectWithId>> selected;

@@ -24,7 +24,9 @@ import net.parostroj.timetable.model.Script;
  */
 public class ScriptDialog extends javax.swing.JDialog implements GuiContextComponent {
 
-    private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
 
     private BiFunction<Script, Window, Object> executor;
     private int counter;

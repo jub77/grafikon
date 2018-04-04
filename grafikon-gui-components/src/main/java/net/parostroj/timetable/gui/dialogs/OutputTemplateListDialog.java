@@ -46,7 +46,9 @@ import javax.swing.ScrollPaneConstants;
  */
 public class OutputTemplateListDialog extends javax.swing.JDialog implements GuiContextComponent {
 
-    private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
     private WrapperListModel<OutputTemplate> templatesModel;

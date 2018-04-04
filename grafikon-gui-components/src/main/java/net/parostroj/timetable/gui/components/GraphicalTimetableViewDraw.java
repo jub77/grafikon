@@ -33,7 +33,9 @@ import org.slf4j.LoggerFactory;
  */
 public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Scrollable {
 
-    private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewDraw.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewDraw.class);
 
     protected final static int WIDTH_STEPS = 10;
 

@@ -34,7 +34,9 @@ import javax.swing.SwingConstants;
  */
 public abstract class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
-    protected E element;
+    private static final long serialVersionUID = 1L;
+
+	protected E element;
     protected WrapperListModel<T> listModel;
 
     private final boolean move;

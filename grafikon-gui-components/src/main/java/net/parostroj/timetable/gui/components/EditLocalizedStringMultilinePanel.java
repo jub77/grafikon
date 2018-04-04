@@ -24,7 +24,9 @@ import javax.swing.ListSelectionModel;
 
 public class EditLocalizedStringMultilinePanel extends JPanel implements View<LocalizedStringPM>, ModelSubscriber {
 
-    private Link link;
+    private static final long serialVersionUID = 1L;
+
+	private Link link;
     private ModelProvider localModelProvider;
     private WeakPropertyChangeListener listener;
 

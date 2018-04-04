@@ -18,6 +18,8 @@ import net.parostroj.timetable.utils.Reference;
  */
 public class EditGroupsAction extends AbstractAction {
 
+    private static final long serialVersionUID = 1L;
+
     private final Reference<TrainDiagram> diagramReference;
 
     /**

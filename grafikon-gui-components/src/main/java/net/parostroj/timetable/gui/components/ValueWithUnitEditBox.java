@@ -22,7 +22,9 @@ import javax.swing.SwingConstants;
  */
 public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(ValueWithUnitEditBox.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(ValueWithUnitEditBox.class);
     private BigDecimal value;
     private List<? extends Unit> units;
 

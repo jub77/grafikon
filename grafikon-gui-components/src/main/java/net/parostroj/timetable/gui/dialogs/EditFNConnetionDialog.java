@@ -28,7 +28,9 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public class EditFNConnetionDialog extends javax.swing.JDialog {
 
-    enum FilterType {
+    private static final long serialVersionUID = 1L;
+
+	enum FilterType {
 
         TO_NODES(FNConnection.ATTR_TO_NODES, "edit.fnc.to.nodes"),
         FROM_NODES(FNConnection.ATTR_FROM_NODES, "edit.fnc.from.nodes"),

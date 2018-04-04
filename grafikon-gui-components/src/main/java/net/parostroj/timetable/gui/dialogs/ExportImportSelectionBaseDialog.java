@@ -18,7 +18,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 public class ExportImportSelectionBaseDialog extends JDialog {
 
-    protected ExportImportSelectionPanel exportImportSelectionPanel;
+    private static final long serialVersionUID = 1L;
+
+	protected ExportImportSelectionPanel exportImportSelectionPanel;
     protected boolean cancelled;
 
     public ExportImportSelectionBaseDialog(Window parent, boolean modal) {

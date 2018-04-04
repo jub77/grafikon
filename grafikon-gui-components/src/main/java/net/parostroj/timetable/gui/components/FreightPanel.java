@@ -15,6 +15,8 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public class FreightPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private final FreightDestinationPanel destinationPanel;
     private final FreightConnectionPanel connectionPanel;
     private final FreightTrainPathPanel oneConnectionPanel;

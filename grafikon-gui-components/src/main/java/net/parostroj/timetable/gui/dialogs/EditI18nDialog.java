@@ -28,7 +28,9 @@ import net.parostroj.timetable.utils.Reference;
 
 public class EditI18nDialog extends JDialog implements GuiContextComponent {
 
-    private ModelProvider provider;
+    private static final long serialVersionUID = 1L;
+
+	private ModelProvider provider;
 
     public EditI18nDialog(Window parent, boolean modal) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);

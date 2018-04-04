@@ -26,7 +26,9 @@ import net.parostroj.timetable.model.OutputTemplate;
  */
 public class EditAttachmentsDialog extends EditItemsDialog<Attachment, OutputTemplate> {
 
-    private static final Logger log = LoggerFactory.getLogger(EditAttachmentsDialog.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(EditAttachmentsDialog.class);
 
     private JFileChooser chooser;
 

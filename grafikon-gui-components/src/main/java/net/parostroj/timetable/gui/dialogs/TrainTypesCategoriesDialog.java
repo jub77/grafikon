@@ -34,9 +34,13 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
-    private class TrainTypeCategoriesListModel extends AbstractListModel<TrainTypeCategory> {
+    private static final long serialVersionUID = 1L;
 
-        @Override
+	private class TrainTypeCategoriesListModel extends AbstractListModel<TrainTypeCategory> {
+
+        private static final long serialVersionUID = 1L;
+
+		@Override
         public int getSize() {
             if (diagram == null) {
                 return 0;
@@ -78,7 +82,9 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
     private class PenaltyTableModel extends AbstractTableModel {
 
-        private TrainTypeCategory getCurrentTrainTypeCategory() {
+        private static final long serialVersionUID = 1L;
+
+		private TrainTypeCategory getCurrentTrainTypeCategory() {
             TrainTypeCategory category = trainTypeCategoriesList.getSelectedValue();
             return category;
         }

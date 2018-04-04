@@ -43,7 +43,9 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class FreightDestinationPanel extends JPanel {
 
-    private static final int COMBO_BOX_LIST_SIZE = 12;
+    private static final long serialVersionUID = 1L;
+
+	private static final int COMBO_BOX_LIST_SIZE = 12;
 
     private final WrapperListModel<Node> nodesModel;
     private final DestinationTableModel tableModel;
@@ -237,7 +239,9 @@ public class FreightDestinationPanel extends JPanel {
 
     protected static final class DataModel extends ArrayList<Tuple<String>> {
 
-        public void addLines(Collection<Tuple<String>> lines) {
+        private static final long serialVersionUID = 1L;
+
+		public void addLines(Collection<Tuple<String>> lines) {
             addAll(lines);
         }
 
@@ -255,7 +259,9 @@ public class FreightDestinationPanel extends JPanel {
 
     protected static final class DestinationTableModel extends AbstractTableModel {
 
-        private final DataModel data = new DataModel();
+        private static final long serialVersionUID = 1L;
+
+		private final DataModel data = new DataModel();
 
         @Override
         public int getRowCount() {

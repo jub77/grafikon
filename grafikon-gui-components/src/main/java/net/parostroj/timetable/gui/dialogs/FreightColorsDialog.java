@@ -17,7 +17,9 @@ import javax.swing.border.EmptyBorder;
 
 public class FreightColorsDialog extends JDialog {
 
-    private final FreightColorsPanel panel;
+    private static final long serialVersionUID = 1L;
+
+	private final FreightColorsPanel panel;
     private boolean ok;
 
     public FreightColorsDialog(Window owner) {

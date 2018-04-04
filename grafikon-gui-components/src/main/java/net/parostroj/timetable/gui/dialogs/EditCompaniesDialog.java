@@ -16,7 +16,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> {
 
-    private Collection<Locale> locales;
+    private static final long serialVersionUID = 1L;
+
+	private Collection<Locale> locales;
 
     public EditCompaniesDialog(Window parent, boolean modal, boolean move, boolean edit, boolean newByName,
             boolean copy, boolean multiple) {

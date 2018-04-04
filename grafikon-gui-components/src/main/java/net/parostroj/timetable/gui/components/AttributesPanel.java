@@ -47,7 +47,10 @@ import java.util.function.Function;
  */
 public class AttributesPanel extends javax.swing.JPanel implements ModelSubscriber, View<ModelAttributesPM> {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int SHOWN_ROW_COUNT = 7;
+
     private AttributesTableModel attributesTableModel;
     private String category;
     private Function<String, String> nameTranslation;
@@ -113,6 +116,8 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
         attributesTable = new javax.swing.JTable() {
+
+            private static final long serialVersionUID = 1L;
 
             private Class<?> editingClass;
 

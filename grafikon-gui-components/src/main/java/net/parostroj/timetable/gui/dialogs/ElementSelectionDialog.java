@@ -20,7 +20,9 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class ElementSelectionDialog<T> extends javax.swing.JDialog {
 
-    private boolean ok = false;
+    private static final long serialVersionUID = 1L;
+
+	private boolean ok = false;
 
     /** Creates new form ElementSelectionDialog */
     public ElementSelectionDialog(Window parent, boolean modal) {

@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 public class NumberTextField extends JFormattedTextField {
 
-    private static final Logger log = LoggerFactory.getLogger(NumberTextField.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(NumberTextField.class);
 
     public NumberTextField() {
         this("#0.########");
