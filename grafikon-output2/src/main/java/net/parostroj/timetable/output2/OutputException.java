@@ -7,7 +7,9 @@ package net.parostroj.timetable.output2;
  */
 public class OutputException extends Exception {
 
-    public OutputException(String message, Throwable cause) {
+    private static final long serialVersionUID = 1L;
+
+	public OutputException(String message, Throwable cause) {
         super(message, cause);
     }
 

@@ -9,7 +9,9 @@ import java.util.HashMap;
  */
 public class OutputParams extends HashMap<String, OutputParam> {
 
-    public OutputParams setParam(String name, Object value) {
+    private static final long serialVersionUID = 1L;
+
+	public OutputParams setParam(String name, Object value) {
         OutputParam param = this.get(name);
         if (param == null) {
             param = new OutputParam(name, value);
