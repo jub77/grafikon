@@ -108,5 +108,8 @@ public class FreightFactory {
         }
     }
 
-    private static class TrainPathImpl extends ArrayList<TrainConnection> implements TrainPath {}
+    private static class TrainPathImpl extends ArrayList<TrainConnection> implements TrainPath {
+
+        private static final long serialVersionUID = 1L;
+    }
 }

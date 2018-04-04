@@ -7,7 +7,9 @@ package net.parostroj.timetable.model;
  */
 public class GrafikonException extends RuntimeException {
 
-    public enum Type {
+    private static final long serialVersionUID = 1L;
+
+	public enum Type {
         TEXT_TEMPLATE, SCRIPT, ATTRIBUTE;
     }
 

@@ -201,6 +201,8 @@ class RegionGraphDelegate {
 
     static class DirectNodeConnectionImpl extends DefaultWeightedEdge implements DirectNodeConnection {
 
+        private static final long serialVersionUID = 1L;
+
         protected final Set<TrainPath> connections;
 
         DirectNodeConnectionImpl(TrainPath connection) {

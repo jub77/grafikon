@@ -2,7 +2,9 @@ package net.parostroj.timetable.model.ls;
 
 public class LSException extends Exception {
 
-    /**
+    private static final long serialVersionUID = 1L;
+
+	/**
      * Default constructor.
      */
     public LSException() {

@@ -9,7 +9,9 @@ import java.util.*;
  */
 public class TimeIntervalList extends ArrayList<TimeInterval> {
 
-    /**
+    private static final long serialVersionUID = 1L;
+
+	/**
      * returns time interval relative to the one passed as an argument.
      *
      * @param i reference interval
