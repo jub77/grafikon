@@ -16,7 +16,8 @@ import net.parostroj.timetable.model.TranslatedString;
  *
  * @author jub
  */
-@XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "stop", "track", "technologicalTime", "occupied", "comment",
+@XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "stop", "track",
+    "fromTrack", "toTrack", "technologicalTime", "occupied", "comment",
     "engine", "trainUnit", "cycle", "length", "freightTo", "freightFromTrain", "freightToTrain"})
 public class StationTimetableRow {
 
@@ -28,6 +29,8 @@ public class StationTimetableRow {
     private String end;
     private Integer stop;
     private String track;
+    private String fromTrack;
+    private String toTrack;
     private boolean technologicalTime;
     private boolean occupied;
     private LocalizedString comment;
@@ -108,6 +111,22 @@ public class StationTimetableRow {
 
     public void setTrack(String track) {
         this.track = track;
+    }
+
+    public String getFromTrack() {
+        return fromTrack;
+    }
+
+    public void setFromTrack(String fromTrack) {
+        this.fromTrack = fromTrack;
+    }
+
+    public String getToTrack() {
+        return toTrack;
+    }
+
+    public void setToTrack(String toTrack) {
+        this.toTrack = toTrack;
     }
 
     @XmlJavaTypeAdapter(TStringAdapter.class)
