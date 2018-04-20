@@ -119,10 +119,20 @@ public class StationTimetablesExtractor {
                 : converter.convertIntToXml(interval.getEnd());
         StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime,
                 toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
+        this.addFromAndToTrack(row, from, to);
         row.setStop(interval.getLength());
         this.addOtherData(interval, row);
         row.setRef(interval);
         return row;
+    }
+
+    private void addFromAndToTrack(StationTimetableRow row, TimeInterval from, TimeInterval to) {
+        if (from != null && from.getOwner().getTracks().size() > 1) {
+            row.setFromTrack(from.getTrack().getNumber());
+        }
+        if (to != null && to.getOwner().getTracks().size() > 1) {
+            row.setToTrack(to.getTrack().getNumber());
+        }
     }
 
     private void addOtherData(TimeInterval interval, StationTimetableRow row) {
