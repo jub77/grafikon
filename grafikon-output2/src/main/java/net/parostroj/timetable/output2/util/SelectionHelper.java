@@ -90,8 +90,7 @@ public final class SelectionHelper {
         Collection<Node> nodes = params.paramExistWithValue("stations")
                 ? ObjectsUtil.copyToList(params.getParamValue("stations", Collection.class), Node.class)
                 : diagram.getNet().getNodes();
-        ElementSort<Node> s = new ElementSort<>(new NodeComparator(),
-                node -> node.getType().isStation() || node.getType().isStop());
+        ElementSort<Node> s = new ElementSort<>(new NodeComparator());
         return s.sort(nodes);
     }
 
