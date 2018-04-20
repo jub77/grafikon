@@ -49,7 +49,8 @@ public class StationTimetablesExtractor {
     private final Locale locale;
     private final FreightConnectionStrategy strategy;
 
-    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, boolean adjacentSessions, Locale locale) {
+    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime,
+            boolean adjacentSessions, Locale locale) {
         this.diagram = diagram;
         this.nodes = nodes;
         this.techTime = techTime;
@@ -109,11 +110,15 @@ public class StationTimetablesExtractor {
 
         String fromNodeName = TransformUtil.getFromAbbr(interval);
         String toNodeName = TransformUtil.getToAbbr(interval);
-        String endNodeName = (interval.isLast() || interval.isTechnological()) ? null : interval.getTrain().getEndNode().getAbbr();
+        String endNodeName = (interval.isLast() || interval.isTechnological()) ? null
+                : interval.getTrain().getEndNode().getAbbr();
 
-        String fromTime = (from == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getStart());
-        String toTime = (to == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getEnd());
-        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
+        String fromTime = (from == null && !interval.isTechnological()) ? null
+                : converter.convertIntToXml(interval.getStart());
+        String toTime = (to == null && !interval.isTechnological()) ? null
+                : converter.convertIntToXml(interval.getEnd());
+        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime,
+                toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         row.setStop(interval.getLength());
         this.addOtherData(interval, row);
         row.setRef(interval);
@@ -254,7 +259,8 @@ public class StationTimetablesExtractor {
         LengthInfo lengthInfo = null;
         Train train = interval.getTrain();
         TrainType trainType = train.getType();
-        if (!interval.isLast() && interval.isStop() && trainType != null && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
+        if (!interval.isLast() && interval.isStop() && trainType != null
+                && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
             Pair<Node, Integer> length = getNextLength(interval.getOwnerAsNode(), train, NextType.LAST_STATION);
             // if length was calculated
             if (length != null && length.second != null) {
