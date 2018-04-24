@@ -28,7 +28,7 @@ public class NetItemConversionUtil {
     public String collectRoutesString(Line line) {
         return collectRoutes(line)
                 .map(route -> route.getName())
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(", "));
     }
 
     public Stream<Route> collectRoutes(Line line) {

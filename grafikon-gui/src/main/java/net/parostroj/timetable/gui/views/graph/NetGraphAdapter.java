@@ -116,7 +116,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         result.append(conv.getLineLengthString(line, appModel.getProgramSettings().getLengthUnit()));
         Integer topSpeed = line.getTopSpeed();
         if (topSpeed != null) {
-            result.append('(').append(conv.getLineSpeedString(line, appModel.getProgramSettings().getSpeedUnit())).append(')');
+            result.append(" (").append(conv.getLineSpeedString(line, appModel.getProgramSettings().getSpeedUnit())).append(')');
         }
         return result.toString();
     }
