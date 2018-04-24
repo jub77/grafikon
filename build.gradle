@@ -69,7 +69,6 @@ subprojects { prj ->
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:2.6.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
-//			dependency 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
 			dependency 'com.github.jgraph:jgraphx:v3.9.3'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.3'
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.10.0'
