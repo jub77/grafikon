@@ -251,6 +251,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         IniConfigSection section = prefs.getSection("model");
         section.put("output.templates", getSerializedOutputTemplates());
         section.put("user.name", programSettings.getUserName());
+        prefs.getSection("debug").put("debug", programSettings.isDebugLogging());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
         section.remove("last.opened");
@@ -267,6 +268,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         IniConfigSection section = prefs.getSection("model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
+        programSettings.setDebugLogging(prefs.getSection("debug").get("debug", Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);

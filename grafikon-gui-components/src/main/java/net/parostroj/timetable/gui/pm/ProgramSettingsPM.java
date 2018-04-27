@@ -15,6 +15,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
     final TextPM user = new TextPM();
     final IEnumeratedValuesPM<SpeedUnit> speed;
     final IEnumeratedValuesPM<LengthUnit> length;
+    final BooleanPM debugLogging = new BooleanPM();
 
     final OperationPM ok = new OperationPM();
 
@@ -34,6 +35,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
         speed.setValue(settings.getSpeedUnit());
         length.setValue(settings.getLengthUnit());
         user.setText(settings.getUserName());
+        debugLogging.setBoolean(settings.isDebugLogging());
     }
 
     private void writeResult() {
@@ -42,6 +44,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
             settings.setUserName(user.getText());
             settings.setSpeedUnit(speed.getValue());
             settings.setLengthUnit(length.getValue());
+            settings.setDebugLogging(debugLogging.getBoolean());
         }
     }
 

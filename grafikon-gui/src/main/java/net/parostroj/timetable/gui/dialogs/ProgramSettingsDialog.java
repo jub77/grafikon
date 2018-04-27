@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnCheckBox;
 import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
@@ -54,6 +55,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
+        BnCheckBox debugLoggingCheckBox = new BnCheckBox();
 
         setTitle(ResourceLoader.getString("program.settings.title")); // NOI18N
         setResizable(false);
@@ -98,6 +100,16 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         BnComboBox speedUnitComboBox = new BnComboBox();
         unitsPanel.add(speedUnitComboBox);
 
+        debugLoggingCheckBox.setText(ResourceLoader.getString("program.settings.debug.logging")); // NOI18N
+        GridBagConstraints gridBagConstraints_log = new java.awt.GridBagConstraints();
+        gridBagConstraints_log.gridwidth = 4;
+        gridBagConstraints_log.gridx = 0;
+        gridBagConstraints_log.gridy = 2;
+        gridBagConstraints_log.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints_log.weightx = 1.0;
+        gridBagConstraints_log.insets = new Insets(0, 5, 0, 5);
+        dataPanel.add(debugLoggingCheckBox, gridBagConstraints_log);
+
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
@@ -118,6 +130,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         speedUnitComboBox.setPath(new Path("speed"));
         lengthUnitComboBox.setModelProvider(provider);
         lengthUnitComboBox.setPath(new Path("length"));
+        debugLoggingCheckBox.setModelProvider(provider);
+        debugLoggingCheckBox.setPath(new Path("debugLogging"));
         okButton.setModelProvider(provider);
         okButton.setPath(new Path("ok"));
     }

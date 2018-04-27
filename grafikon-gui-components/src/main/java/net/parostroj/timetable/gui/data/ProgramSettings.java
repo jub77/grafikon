@@ -14,6 +14,7 @@ public class ProgramSettings {
     private String userName;
     private LengthUnit lengthUnit;
     private SpeedUnit speedLengthUnit;
+    private boolean debugLogging;
 
     public String getUserName() {
         return userName;
@@ -49,5 +50,13 @@ public class ProgramSettings {
 
     public void setSpeedUnit(SpeedUnit speedLengthUnit) {
         this.speedLengthUnit = speedLengthUnit;
+    }
+
+    public boolean isDebugLogging() {
+        return debugLogging;
+    }
+
+    public void setDebugLogging(boolean debugLogging) {
+        this.debugLogging = debugLogging;
     }
 }
