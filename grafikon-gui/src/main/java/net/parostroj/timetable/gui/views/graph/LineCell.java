@@ -13,13 +13,16 @@ public class LineCell extends mxCell {
 
     private static final long serialVersionUID = 1L;
 
-	public LineCell(Object object) {
+    public LineCell(Object object) {
         super(object);
     }
 
     @Override
     public String getStyle() {
-        String style = ((Line) value).getTracks().size() == 1 ? "" : "strokeWidth=2;";
-        return style + super.getStyle();
+        Line line = (Line) value;
+        StringBuilder style = new StringBuilder(super.getStyle());
+        StyleHelper.multiTrack(style, line);
+        StyleHelper.colorOfLine(style, line);
+        return style.toString();
     }
 }

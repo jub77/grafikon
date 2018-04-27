@@ -125,14 +125,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     public mxRectangle getPreferredSizeForCell(Object cell) {
         mxRectangle result = null;
         if (cell instanceof NodeCell) {
-            // compute size of rectangle relative to some predefined width
-            // (height?)
-            NodeShape shape = ((NodeCell) cell).getShape();
-            if (shape != null) {
-                result = new mxRectangle(0, 0, shape.getWidth() / 2, shape.getHeight() / 2);
-            } else {
-                result = new mxRectangle(0, 0, 100, 100);
-            }
+            return ((NodeCell) cell).getPreferredSize();
         } else {
             result = super.getPreferredSizeForCell(cell);
         }

@@ -5,6 +5,7 @@ import net.parostroj.timetable.model.NodeType;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.shape.mxStencilRegistry;
+import com.mxgraph.util.mxRectangle;
 
 /**
  * Cell for nodes.
@@ -15,22 +16,29 @@ public class NodeCell extends mxCell {
 
     private static final long serialVersionUID = 1L;
 
-	public NodeCell(Object value) {
+    public NodeCell(Node value) {
         super(value);
-    }
-
-    public NodeShape getShape() {
-        return getShapeForNode((Node) value);
     }
 
     @Override
     public String getStyle() {
-        NodeShape shape = getShapeForNode((Node) value);
-        return "shape=" + shape.getName() + ";" + super.getStyle();
+        Node node = (Node) value;
+        StringBuilder style = new StringBuilder(super.getStyle());
+        NodeShape shape = getShapeForNode(node);
+        StyleHelper.nodeShape(style, shape);
+        StyleHelper.colorOfNode(style, node);
+        return style.toString();
     }
 
-    private NodeShape getShapeForNode(Node vertex) {
-        NodeType type = vertex.getType();
+    public mxRectangle getPreferredSize() {
+        NodeShape shape = getShapeForNode((Node) value);
+        return shape != null
+                ? new mxRectangle(0, 0, shape.getWidth() / 2, shape.getHeight() / 2)
+                : new mxRectangle(0, 0, 100, 100);
+    }
+
+    private NodeShape getShapeForNode(Node node) {
+        NodeType type = node.getType();
         NodeShape shape = type != null ? (NodeShape) mxStencilRegistry.getStencil(type.getKey()) : null;
         if (shape == null) {
             // shape for station should always exist
