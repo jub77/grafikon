@@ -2,6 +2,5 @@ dependencies {
 	compile 'net.parostroj:grafikon-gui-components'
 
 	compile 'org.ini4j:ini4j'
-//	compile 'org.tinyjee.jgraphx:jgraphx'
 	compile 'com.github.jgraph:jgraphx'
 }
