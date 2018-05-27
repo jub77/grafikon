@@ -12,6 +12,7 @@ class VersionExtension {
 
 	def projectVersion
 	def distVersion
+	def baseVersion
 }
 
 class VersionPlugin implements Plugin<Project> {
@@ -62,9 +63,11 @@ class VersionPlugin implements Plugin<Project> {
 		ver.distVersion = ver.snapshot
 			? "${baseVersion}-dev.${commitTimestamp}${dirtySuffix}+${ver.buildId}"
 			: "${baseVersion}${dirtySuffix}+${ver.buildId}"
+		ver.baseVersion = baseVersion
 
 		project.tasks.create('version', {
 			doLast {
+				project.logger.lifecycle("Base version: {}", project.scmVersion.baseVersion)
 				project.logger.lifecycle("Git describe: {}", describe)
 				project.logger.lifecycle("Tag version: {}", tagVersion)
 				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
