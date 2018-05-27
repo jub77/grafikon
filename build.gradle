@@ -94,9 +94,9 @@ subprojects { prj ->
 	jar {
 		manifest {
 			attributes(
-				"Specification-Title": "${prj.group}:${prj.name}",
+				"Specification-Title": prj.name,
 				"Specification-Version": scmVersion.baseVersion,
-				"Implementation-Title": "${prj.group}:${prj.name}",
+				"Implementation-Title": prj.name,
 				"Implementation-Version": scmVersion.distVersion,
 				"Build-Id": scmVersion.buildId,
 				"Build-Time": scmVersion.buildTimestamp,
