@@ -20,7 +20,7 @@ compileJava.doFirst {
 		manifest {
 			attributes(
 				'Main-Class': 'net.parostroj.timetable.gui.Main',
-				'Class-Path' : configurations.runtime.files.collect { file -> file.name }.join(' ')
+				'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
 			)
 		}
 	}
