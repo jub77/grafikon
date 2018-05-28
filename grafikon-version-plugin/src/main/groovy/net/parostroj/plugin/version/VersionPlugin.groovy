@@ -51,11 +51,14 @@ class VersionPlugin implements Plugin<Project> {
 		if (ver.snapshot) {
 			if (prerelease) {
 				baseVersion = tagVersion.normalVersion
+				ver.baseVersion = tagVersion.normalVersion
 			} else {
 				baseVersion = tagVersion.incrementPatchVersion().toString()
+				ver.baseVersion = tagVersion.incrementPatchVersion().normalVersion
 			}
 		} else {
 			baseVersion = tagVersion.toString()
+			ver.baseVersion = tagVersion.normalVersion
 		}
 
 		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
@@ -63,7 +66,6 @@ class VersionPlugin implements Plugin<Project> {
 		ver.distVersion = ver.snapshot
 			? "${baseVersion}-dev.${commitTimestamp}${dirtySuffix}+${ver.buildId}"
 			: "${baseVersion}${dirtySuffix}+${ver.buildId}"
-		ver.baseVersion = baseVersion
 
 		project.tasks.create('version', {
 			doLast {
@@ -73,6 +75,7 @@ class VersionPlugin implements Plugin<Project> {
 				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
 				project.logger.lifecycle("Dist version: {}", project.scmVersion.distVersion)
 				project.logger.lifecycle("Snapshot: {}", project.scmVersion.snapshot)
+				project.logger.lifecycle("Dirty: {}", project.scmVersion.dirty)
 				project.logger.lifecycle("Build timestamp: {}", project.scmVersion.buildTimestamp)
 				project.logger.lifecycle("Build id: {}", project.scmVersion.buildId)
 			}
