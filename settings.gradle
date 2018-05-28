@@ -13,6 +13,8 @@ pluginManagement {
     }
 }
 
+enableFeaturePreview('IMPROVED_POM_SUPPORT')
+
 includeBuild 'grafikon-version-plugin'
 
 rootProject.name = 'grafikon'
