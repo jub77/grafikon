@@ -34,4 +34,8 @@ public interface TrackConnector extends ObjectWithId, ItemListObject, Attributes
     NodeTrack getStraightNodeTrack();
 
     Set<NodeTrack> getNodeTracks();
+
+    TrackConnector getNextInMultiline();
+
+    void setNextInMultiline(TrackConnector connector);
 }

@@ -92,6 +92,15 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
+    public TrackConnector getNextInMultiline() {
+        return null;
+    }
+
+    @Override
+    public void setNextInMultiline(TrackConnector connector) {
+    }
+
+    @Override
     public Attributes getAttributes() {
         return attributes;
     }
