@@ -139,21 +139,21 @@ public class GTEventOutputVisitor implements EventVisitor {
             str.append(node.getAbbr());
             str.append(']');
             if (full) {
-                str.append('\n');
-                str.append("  Node: ").append(node.getName()).append('\n');
-                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                str.append("\n  Node: ").append(node.getName());
+                str.append("\n  Type: ").append(event.getType().toString());
                 if (event.getObject() instanceof TimeInterval) {
                     TimeInterval interval = (TimeInterval) event.getObject();
-                    str.append("    Train: ").append(interval.getTrain().getDefaultName()).append('\n');
-                    str.append("    Track: ").append(interval.getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(c.convertIntToText(interval.getStart()));
+                    str.append("\n    Train: ").append(interval.getTrain().getDefaultName());
+                    str.append("\n    Track: ").append(interval.getTrack().getNumber());
+                    str.append("\n    Time:  ").append(c.convertIntToText(interval.getStart()));
                     str.append("-").append(c.convertIntToText(interval.getEnd()));
-                    str.append('\n');
                 }
                 if (event.getObject() instanceof Track)
-                    str.append("    Track: ").append(((Track) event.getObject()).getNumber()).append('\n');
+                    str.append("\n    Track: ").append(((Track) event.getObject()).getNumber());
+                if (event.getObject() instanceof TrackConnector)
+                    str.append("\n    Track connector: ").append(((TrackConnector) event.getObject()).toString());
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+                    str.append("\n    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
