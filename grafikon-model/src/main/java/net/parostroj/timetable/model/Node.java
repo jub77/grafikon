@@ -29,6 +29,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     private NodeType type;
     /** Location of node. */
     private Location location;
+    /** Track connectors. */
+    private ItemWithIdList<TrackConnector> connectors;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -82,6 +84,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
+        this.connectors = new ItemWithIdListImpl<>(this::fireCollectionEventListObject);
     }
 
     @Override
@@ -252,6 +255,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
     }
 
+    public ItemWithIdList<TrackConnector> getConnectors() {
+        return connectors;
+    }
+
     /**
      * accepts visitor.
      *
@@ -283,6 +290,26 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     @Override
     public boolean isNode() {
         return true;
+    }
+
+    private void fireCollectionEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
+        Event event = new Event(this, type, item, ListData.createData(oldIndex, newIndex));
+        this.listenerSupport.fireEvent(event);
+    }
+
+    private void fireCollectionEventListObject(Event.Type type, ItemListObject item, Integer newIndex,
+            Integer oldIndex) {
+        fireCollectionEvent(type, item, newIndex, oldIndex);
+        switch (type) {
+            case ADDED:
+                item.added();
+                break;
+            case REMOVED:
+                item.removed();
+                break;
+            default: // nothing
+                break;
+        }
     }
 
     private class NodeRegionHierarchy extends RegionHierarchyImpl {
