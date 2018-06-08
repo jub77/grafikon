@@ -10,11 +10,20 @@ import java.util.Set;
  *
  * @author jub
  */
-public interface TrackConnector extends ObjectWithId, ItemListObject {
+public interface TrackConnector extends ObjectWithId, ItemListObject, AttributesHolder {
+
+    String ATTR_NAME = "name";
+    String ATTR_ORIENTATION = "orientation";
 
     enum Orientation { LEFT, RIGHT }
 
     Orientation getOrientation();
+
+    void setOrientation(Orientation orientation);
+
+    String getName();
+
+    void setName(String name);
 
     Node getNode();
 

@@ -294,7 +294,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     private void fireCollectionEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
         Event event = new Event(this, type, item, ListData.createData(oldIndex, newIndex));
-        this.listenerSupport.fireEvent(event);
+        this.fireEvent(event);
     }
 
     private void fireCollectionEventListObject(Event.Type type, ItemListObject item, Integer newIndex,
@@ -310,6 +310,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             default: // nothing
                 break;
         }
+    }
+
+    protected void fireEvent(Event event) {
+        listenerSupport.fireEvent(event);
     }
 
     private class NodeRegionHierarchy extends RegionHierarchyImpl {

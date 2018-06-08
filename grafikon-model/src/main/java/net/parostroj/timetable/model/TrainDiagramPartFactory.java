@@ -41,17 +41,20 @@ public class TrainDiagramPartFactory implements PartFactory {
         return new Line(id, diagram, length, from, to, topSpeed);
     }
 
-    /**
-     * create new node.
-     *
-     * @param id id
-     * @param type node type
-     * @param name name
-     * @param abbr abbreviation
-     * @return a new node
-     */
+    @Override
     public Node createNode(String id, NodeType type, String name, String abbr) {
         return new Node(id, diagram, type, name, abbr);
+    }
+
+    /**
+     * Creates new track connector for node.
+     *
+     * @param id id
+     * @param node node
+     * @return a new connector
+     */
+    public TrackConnector createConnector(String id, Node node) {
+        return new TrackConnectorImpl(id, node);
     }
 
     /**
@@ -60,6 +63,7 @@ public class TrainDiagramPartFactory implements PartFactory {
      * @param id id
      * @return a new train type
      */
+    @Override
     public TrainType createTrainType(String id) {
         return new TrainType(id, diagram);
     }
