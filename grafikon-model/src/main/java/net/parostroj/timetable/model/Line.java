@@ -51,7 +51,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
     }
 
     @Override
-	public Attributes getAttributes() {
+    public Attributes getAttributes() {
         return attributes;
     }
 
