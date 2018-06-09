@@ -14,6 +14,11 @@ public interface TrackConnector extends ObjectWithId, ItemListObject, Attributes
 
     String ATTR_NAME = "name";
     String ATTR_ORIENTATION = "orientation";
+    String ATTR_LINE = "line";
+    String ATTR_LINE_TRACK = "line.track";
+    String ATTR_STRAIGHT_TRACK = "straight.track";
+    String ATTR_TRACKS = "tracks";
+    String ATTR_MULTITRACK = "multitrack";
 
     enum Orientation { LEFT, RIGHT }
 
@@ -31,11 +36,13 @@ public interface TrackConnector extends ObjectWithId, ItemListObject, Attributes
 
     LineTrack getLineTrack();
 
+    void setLineAndTrack(Line line, LineTrack lineTrack);
+
     NodeTrack getStraightNodeTrack();
 
     Set<NodeTrack> getNodeTracks();
 
-    TrackConnector getNextInMultiline();
+    boolean isNextMultiTrack();
 
-    void setNextInMultiline(TrackConnector connector);
+    void setNextMultiTrack(boolean multiTrack);
 }
