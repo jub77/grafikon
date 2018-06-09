@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     compile 'com.github.zafarkhaja:java-semver:0.9.0'
-    compile 'org.ajoberstar:grgit:2.2.0'
+    compile 'org.ajoberstar:grgit:2.2.1'
 }
 
 gradlePlugin {
