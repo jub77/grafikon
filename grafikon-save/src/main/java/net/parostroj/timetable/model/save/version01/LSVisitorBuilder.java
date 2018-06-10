@@ -13,7 +13,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 public class LSVisitorBuilder implements LSVisitor {
 
     private TrainDiagram diagram;
-    private final Map<Integer, Object> ids = new HashMap<Integer, Object>();
+    private final Map<Integer, Object> ids = new HashMap<>();
     private final LSTrainTypeList trainTypeList;
     // last station
     private Node lastStation;
@@ -23,7 +23,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
     public LSVisitorBuilder(LSTrainTypeList list) {
         this.trainTypeList = list;
-        this.trains = new LinkedList<Train>();
+        this.trains = new LinkedList<>();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
         // add to net
         Net net = diagram.getNet();
-        net.addLine(from, to, line);
+        net.addLine(line);
     }
 
     @Override

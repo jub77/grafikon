@@ -757,7 +757,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             srcNode, dstNode, null);
                     LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
                     l.addTrack(track);
-                    model.getDiagram().getNet().addLine(srcNode, dstNode, l);
+                    model.getDiagram().getNet().addLine(l);
 
                     graph.removeCells(new Object[] { result });
                 }

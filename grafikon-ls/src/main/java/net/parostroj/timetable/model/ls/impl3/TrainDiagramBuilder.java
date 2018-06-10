@@ -61,9 +61,7 @@ public class TrainDiagramBuilder {
         if (lsNet.getLines() != null)
             for (LSLine lsLine : lsNet.getLines()) {
                 Line line = lsLine.createLine(diagram);
-                Node from = net.getNodeById(lsLine.getFrom());
-                Node to = net.getNodeById(lsLine.getTo());
-                net.addLine(from, to, line);
+                net.addLine(line);
             }
     }
 

@@ -92,7 +92,9 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return netDelegate.getEdge(node1, node2);
     }
 
-    public void addLine(Node from, Node to, Line line) {
+    public void addLine(Line line) {
+        Node from = line.getFrom();
+        Node to = line.getTo();
         netDelegate.addEdge(from, to, line);
         this.fireEvent(new Event(this, Event.Type.ADDED, line));
         // adapt from and to straight
