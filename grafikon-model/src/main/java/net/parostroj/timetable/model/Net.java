@@ -270,7 +270,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         Net.this.fireEvent(event);
     }
 
-    private void fireCollectionEvent(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+    private void fireCollectionEvent(Event.Type type, ItemCollectionObject item, Integer newIndex, Integer oldIndex) {
         fireEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:

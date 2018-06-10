@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemListObject, Observable, LineClassAttributes {
+public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, Observable, LineClassAttributes {
 
     private final String id;
     private String name;

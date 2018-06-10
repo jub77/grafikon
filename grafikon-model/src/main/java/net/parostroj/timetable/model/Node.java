@@ -296,7 +296,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         this.fireEvent(new Event(this, type, item));
     }
 
-    private void fireCollectionEventListObject(Event.Type type, ItemListObject item) {
+    private void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item) {
         fireCollectionEvent(type, item);
         switch (type) {
             case ADDED:

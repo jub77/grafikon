@@ -10,7 +10,7 @@ import java.util.Set;
  *
  * @author jub
  */
-public interface TrackConnector extends ObjectWithId, ItemListObject, AttributesHolder {
+public interface TrackConnector extends ObjectWithId, ItemCollectionObject, AttributesHolder {
 
     String ATTR_NAME = "name";
     String ATTR_ORIENTATION = "orientation";

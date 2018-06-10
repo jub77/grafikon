@@ -21,7 +21,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart, ItemListObject {
+public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart, ItemCollectionObject {
 
     private final TrainDiagram diagram;
     private final String id;

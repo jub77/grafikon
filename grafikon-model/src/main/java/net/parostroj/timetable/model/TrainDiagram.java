@@ -477,7 +477,7 @@ public class TrainDiagram
         TrainDiagram.this.fireEvent(event);
     }
 
-    private void fireCollectionEventListObject(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+    private void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item, Integer newIndex, Integer oldIndex) {
         fireCollectionEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:

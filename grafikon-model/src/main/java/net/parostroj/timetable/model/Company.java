@@ -11,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart, ItemListObject {
+public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart, ItemCollectionObject {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -37,6 +37,7 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
         return diagram;
     }
 
+    @Override
     public Attributes getAttributes() {
         return attributes;
     }
