@@ -100,16 +100,6 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public boolean isNextMultiTrack() {
-        return attributes.getBool(ATTR_MULTITRACK);
-    }
-
-    @Override
-    public void setNextMultiTrack(boolean multiTrack) {
-        attributes.setBool(ATTR_MULTITRACK, multiTrack);
-    }
-
-    @Override
     public Attributes getAttributes() {
         return attributes;
     }

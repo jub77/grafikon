@@ -18,7 +18,6 @@ public interface TrackConnector extends ObjectWithId, ItemListObject, Attributes
     String ATTR_LINE_TRACK = "line.track";
     String ATTR_STRAIGHT_TRACK = "straight.track";
     String ATTR_TRACKS = "tracks";
-    String ATTR_MULTITRACK = "multitrack";
 
     enum Orientation { LEFT, RIGHT }
 
@@ -41,8 +40,4 @@ public interface TrackConnector extends ObjectWithId, ItemListObject, Attributes
     NodeTrack getStraightNodeTrack();
 
     Set<NodeTrack> getNodeTracks();
-
-    boolean isNextMultiTrack();
-
-    void setNextMultiTrack(boolean multiTrack);
 }
