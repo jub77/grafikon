@@ -16,6 +16,11 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<LineTrack>, AttributesHolder, ObjectWithId, Visitable,
         LineAttributes, TrainDiagramPart {
 
+    interface Endpoint {
+        Line getLine();
+        LineTrack getTrack();
+    }
+
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Length in mm. */
@@ -173,6 +178,21 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
             result = getAttribute(ATTR_CLASS, LineClass.class);
         }
         return result;
+    }
+
+    public Endpoint createEndpoint(LineTrack track) {
+        return new Endpoint() {
+
+            @Override
+            public LineTrack getTrack() {
+                return track;
+            }
+
+            @Override
+            public Line getLine() {
+                return Line.this;
+            }
+        };
     }
 
     /**
