@@ -71,22 +71,13 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public Line getLine() {
-        return attributes.get(ATTR_LINE, Line.class);
+    public Line.Endpoint getLineEndPoint() {
+        return attributes.get(ATTR_LINE_ENDPOINT, Line.Endpoint.class);
     }
 
     @Override
-    public LineTrack getLineTrack() {
-        return attributes.get(ATTR_LINE_TRACK, LineTrack.class);
-    }
-
-    @Override
-    public void setLineAndTrack(Line line, LineTrack lineTrack) {
-        if (line == null && lineTrack != null || line != null && lineTrack == null) {
-            throw new IllegalArgumentException("Both line and line track has to have value or not");
-        }
-        attributes.setRemove(ATTR_LINE, line);
-        attributes.setRemove(ATTR_LINE_TRACK, lineTrack);
+    public void setLineEndpoint(Line.Endpoint lineEndpoint) {
+        attributes.setRemove(ATTR_LINE_ENDPOINT, lineEndpoint);
     }
 
     @Override

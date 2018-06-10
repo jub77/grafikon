@@ -16,7 +16,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<LineTrack>, AttributesHolder, ObjectWithId, Visitable,
         LineAttributes, TrainDiagramPart {
 
-    interface Endpoint {
+    public interface Endpoint {
         Line getLine();
         LineTrack getTrack();
     }
@@ -181,6 +181,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
     }
 
     public Endpoint createEndpoint(LineTrack track) {
+        Objects.requireNonNull(track, "Track of the endpoint cannot be null");
         return new Endpoint() {
 
             @Override
