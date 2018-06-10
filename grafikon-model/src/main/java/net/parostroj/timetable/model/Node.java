@@ -30,7 +30,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     /** Location of node. */
     private Location location;
     /** Track connectors. */
-    private ItemWithIdList<TrackConnector> connectors;
+    private ItemWithIdSet<TrackConnector> connectors;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -84,7 +84,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
-        this.connectors = new ItemWithIdListImpl<>(this::fireCollectionEventListObject);
+        this.connectors = new ItemWithIdSetImpl<>(this::fireCollectionEventListObject);
     }
 
     @Override
@@ -255,7 +255,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
     }
 
-    public ItemWithIdList<TrackConnector> getConnectors() {
+    public ItemWithIdSet<TrackConnector> getConnectors() {
         return connectors;
     }
 
@@ -292,14 +292,12 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return true;
     }
 
-    private void fireCollectionEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
-        Event event = new Event(this, type, item, ListData.createData(oldIndex, newIndex));
-        this.fireEvent(event);
+    private void fireCollectionEvent(Event.Type type, Object item) {
+        this.fireEvent(new Event(this, type, item));
     }
 
-    private void fireCollectionEventListObject(Event.Type type, ItemListObject item, Integer newIndex,
-            Integer oldIndex) {
-        fireCollectionEvent(type, item, newIndex, oldIndex);
+    private void fireCollectionEventListObject(Event.Type type, ItemListObject item) {
+        fireCollectionEvent(type, item);
         switch (type) {
             case ADDED:
                 item.added();
