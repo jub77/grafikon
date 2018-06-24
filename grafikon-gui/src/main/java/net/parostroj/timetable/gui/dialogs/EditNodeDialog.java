@@ -44,7 +44,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private static final long serialVersionUID = 1L;
 
-	private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
+    private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
     private static final BigDecimal DEFAULT_STRAIGHT_SPEED = new BigDecimal(100);
 
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
@@ -107,26 +107,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
         lengthCheckBox = new javax.swing.JCheckBox();
         lengthPanel.add(lengthCheckBox, BorderLayout.EAST);
-        lengthCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                lengthCheckBoxItemStateChanged(evt);
-            }
-        });
+        lengthCheckBox.addItemListener(evt -> lengthCheckBoxItemStateChanged(evt));
         nsSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
-        nsSpeedCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                nsSpeedCheckBoxItemStateChanged(evt);
-            }
-        });
+        nsSpeedCheckBox.addItemListener(evt -> nsSpeedCheckBoxItemStateChanged(evt));
         sSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
-        sSpeedCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                sSpeedCheckBoxItemStateChanged(evt);
-            }
-        });
+        sSpeedCheckBox.addItemListener(evt -> sSpeedCheckBoxItemStateChanged(evt));
     }
 
     public void showDialog(Node node, LengthUnit unit, SpeedUnit speedUnit) {
