@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.Objects;
+import java.util.Collections;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
@@ -13,20 +13,20 @@ import net.parostroj.timetable.model.events.Event;
 public class TrackConnectorImpl implements TrackConnector {
 
     private final String id;
-    private final Node node;
+    private final NodePort nodePort;
     private final Attributes attributes;
 
     private boolean events = false;
 
-    TrackConnectorImpl(String id, Node node) {
+    TrackConnectorImpl(String id, NodePort nodePort) {
         this.id = id;
-        this.node = node;
+        this.nodePort = nodePort;
         this.attributes = new Attributes((attrs, change) -> {
             if (events) {
+                Node node = nodePort.getNode();
                 node.fireEvent(new Event(node, TrackConnectorImpl.this, change));
             }
         });
-        this.attributes.set(ATTR_ORIENTATION, Orientation.LEFT);
     }
 
     @Override
@@ -45,29 +45,8 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public Orientation getOrientation() {
-        return attributes.get(ATTR_ORIENTATION, Orientation.class);
-    }
-
-    @Override
-    public void setOrientation(Orientation orientation) {
-        Objects.requireNonNull(orientation, "Orientation cannot be null");
-        attributes.set(ATTR_ORIENTATION, orientation);
-    }
-
-    @Override
-    public String getName() {
-        return attributes.get(ATTR_NAME, String.class);
-    }
-
-    @Override
-    public void setName(String name) {
-        attributes.setRemove(ATTR_NAME, name);
-    }
-
-    @Override
-    public Node getNode() {
-        return node;
+    public NodePort getNodePort() {
+        return nodePort;
     }
 
     @Override
@@ -87,7 +66,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public Set<NodeTrack> getNodeTracks() {
-        return attributes.getAsSet(ATTR_TRACKS, NodeTrack.class);
+        return attributes.getAsSet(ATTR_TRACKS, NodeTrack.class, Collections.emptySet());
     }
 
     @Override
@@ -97,7 +76,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public String toString() {
-        String name = getName();
-        return name != null ? name : "-";
+        NodeTrack straight = getStraightNodeTrack();
+        return String.format("%s,%s", straight != null ? straight.toString() : "-", getNodeTracks());
     }
 }

@@ -193,6 +193,11 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
             public Line getLine() {
                 return Line.this;
             }
+
+            @Override
+            public String toString() {
+                return String.format("%s[%s]", getLine(), getTrack());
+            }
         };
     }
 

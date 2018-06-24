@@ -152,6 +152,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("\n    Track: ").append(((Track) event.getObject()).getNumber());
                 if (event.getObject() instanceof TrackConnector)
                     str.append("\n    Track connector: ").append(((TrackConnector) event.getObject()).toString());
+                if (event.getObject() instanceof NodePort)
+                    str.append("\n    Node port: ").append(((NodePort) event.getObject()).toString());
                 if (event.getAttributeChange() != null)
                     str.append("\n    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }

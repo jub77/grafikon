@@ -12,23 +12,11 @@ import java.util.Set;
  */
 public interface TrackConnector extends ObjectWithId, ItemCollectionObject, AttributesHolder {
 
-    String ATTR_NAME = "name";
-    String ATTR_ORIENTATION = "orientation";
     String ATTR_LINE_ENDPOINT = "line.endpoint";
     String ATTR_STRAIGHT_TRACK = "straight.track";
     String ATTR_TRACKS = "tracks";
 
-    enum Orientation { LEFT, RIGHT }
-
-    Orientation getOrientation();
-
-    void setOrientation(Orientation orientation);
-
-    String getName();
-
-    void setName(String name);
-
-    Node getNode();
+    NodePort getNodePort();
 
     Line.Endpoint getLineEndPoint();
 

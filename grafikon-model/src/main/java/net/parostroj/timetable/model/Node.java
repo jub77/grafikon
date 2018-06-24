@@ -1,8 +1,12 @@
 package net.parostroj.timetable.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -17,6 +21,8 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>, AttributesHolder,
         ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
 
+    public enum Side { LEFT, RIGHT }
+
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Name of the node. */
@@ -29,8 +35,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     private NodeType type;
     /** Location of node. */
     private Location location;
-    /** Track connectors. */
-    private ItemWithIdSet<TrackConnector> connectors;
+    /** Node ports. */
+    private final ItemSet<NodePort> ports;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -84,7 +90,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
-        this.connectors = new ItemWithIdSetImpl<>(this::fireCollectionEventListObject);
+        this.ports = new ItemSetImpl<>(this::fireCollectionEvent);
     }
 
     @Override
@@ -255,10 +261,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         getAttributes().setRemove(ATTR_FREIGHT_COLORS, ObjectsUtil.checkEmpty(freightColors));
     }
 
-    public ItemWithIdSet<TrackConnector> getConnectors() {
-        return connectors;
-    }
-
     /**
      * accepts visitor.
      *
@@ -292,11 +294,15 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return true;
     }
 
-    private void fireCollectionEvent(Event.Type type, Object item) {
+    public ItemSet<NodePort> getPorts() {
+        return ports;
+    }
+
+    void fireCollectionEvent(Event.Type type, Object item) {
         this.fireEvent(new Event(this, type, item));
     }
 
-    private void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item) {
+    void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item, Integer from, Integer to) {
         fireCollectionEvent(type, item);
         switch (type) {
             case ADDED:
@@ -312,6 +318,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     protected void fireEvent(Event event) {
         listenerSupport.fireEvent(event);
+    }
+
+    protected NodePort createNodePort(final Side side) {
+        return new NodePortImpl(this, side);
     }
 
     private class NodeRegionHierarchy extends RegionHierarchyImpl {
