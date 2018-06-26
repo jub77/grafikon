@@ -195,7 +195,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         // update line tracks back - remove
         for (LineTrack tbr : removed) {
             if (line.getTracks().contains(tbr))
-                line.removeTrack(tbr);
+                line.getTracks().remove(tbr);
         }
         Object[] els = ((LTModel)trackList.getModel()).toArray();
         for (Object el : els) {
@@ -207,7 +207,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             if (toT != track.getToStraightTrack())
                 track.setToStraightTrack(toT);
             if (!line.getTracks().contains(track))
-                line.addTrack(track);
+                line.getTracks().add(track);
         }
 
         Boolean bool = line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class);

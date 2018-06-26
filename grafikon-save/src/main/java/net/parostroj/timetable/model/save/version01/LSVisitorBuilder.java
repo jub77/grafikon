@@ -71,7 +71,7 @@ public class LSVisitorBuilder implements LSVisitor {
         stationTrack.setPlatform(lsNodeTrack.isPlatform());
 
         // add to last station
-        lastStation.addTrack(stationTrack);
+        lastStation.getTracks().add(stationTrack);
     }
 
     /**
@@ -90,7 +90,7 @@ public class LSVisitorBuilder implements LSVisitor {
         Node to = (Node) ids.get(lsLine.getTargetId());
         Line line = diagram.getPartFactory().createLine(this.createId(), lsLine.getLength(), from, to, null);
         LineTrack lt = new LineTrack(this.createId(), "1");
-        line.addTrack(lt);
+        line.getTracks().add(lt);
         lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
         lt.setToStraightTrack((NodeTrack) ids.get(lsLine.getTargetTrackId()));
         ids.put(lsLine.getId(), line);

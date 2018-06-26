@@ -52,7 +52,7 @@ public class CopyFactory {
             NodeTrack copyTrack = new NodeTrack(IdGenerator.getInstance().getId(), track.getNumber());
             copyTrack.setPlatform(track.isPlatform());
             copyTrack.getAttributes().add(track.getAttributes());
-            copy.addTrack(copyTrack);
+            copy.getTracks().add(copyTrack);
         }
 
         // copy location

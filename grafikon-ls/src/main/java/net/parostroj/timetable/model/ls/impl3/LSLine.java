@@ -33,7 +33,7 @@ public class LSLine {
         this.from = line.getFrom().getId();
         this.to = line.getTo().getId();
         this.attributes = new LSAttributes(line.getAttributes());
-        this.tracks = new LinkedList<LSLineTrack>();
+        this.tracks = new LinkedList<>();
         for (LineTrack track : line.getTracks()) {
             this.tracks.add(new LSLineTrack(track));
         }
@@ -114,7 +114,7 @@ public class LSLine {
             NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
             lineTrack.setFromStraightTrack(fromStraight);
             lineTrack.setToStraightTrack(toStraight);
-            line.addTrack(lineTrack);
+            line.getTracks().add(lineTrack);
         }
         return line;
     }

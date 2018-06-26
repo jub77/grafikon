@@ -47,7 +47,7 @@ class NodeImport extends Import {
             NodeTrack track = new NodeTrack(this.getId(importedTrack), importedTrack.getNumber());
             track.setPlatform(importedTrack.isPlatform());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
-            node.addTrack(track);
+            node.getTracks().add(track);
         }
 
         // add to diagram

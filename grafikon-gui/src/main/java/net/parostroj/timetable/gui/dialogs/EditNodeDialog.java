@@ -253,7 +253,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // remove removed tracks
         for (EditTrack ret : removed) {
             if (node.getTracks().contains(ret.track))
-                node.removeTrack(ret.track);
+                node.getTracks().remove(ret.track);
         }
         // add/modify new/existing
         for (int i = 0; i < tracks.getSize(); i++) {
@@ -262,7 +262,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             t.writeValuesBack();
             // add new track
             if (!node.getTracks().contains(t.track))
-                node.addTrack(t.track);
+                node.getTracks().add(t.track);
         }
 
         // colors

@@ -55,7 +55,7 @@ public class LineImport extends Import {
         for (LineTrack importedTrack : importedLine.getTracks()) {
             LineTrack track = new LineTrack(this.getId(importedTrack), importedTrack.getNumber());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
-            line.addTrack(track);
+            line.getTracks().add(track);
         }
 
         // add to diagram

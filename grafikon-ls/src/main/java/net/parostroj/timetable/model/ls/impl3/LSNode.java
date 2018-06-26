@@ -36,7 +36,7 @@ public class LSNode {
         this.type = node.getType().toString();
         this.x = node.getLocation().getX();
         this.y = node.getLocation().getY();
-        this.tracks = new LinkedList<LSNodeTrack>();
+        this.tracks = new LinkedList<>();
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
         }
@@ -117,7 +117,7 @@ public class LSNode {
         node.setLocation(new Location(x, y));
         // tracks
         for (LSNodeTrack track : getTracks()) {
-            node.addTrack(track.createNodeTrack());
+            node.getTracks().add(track.createNodeTrack());
         }
         return node;
     }

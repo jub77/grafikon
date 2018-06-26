@@ -120,7 +120,7 @@ public class LSNode {
         // tracks
         if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
-                node.addTrack(track.createNodeTrack(mapping));
+                node.getTracks().add(track.createNodeTrack(mapping));
             }
         }
         return node;

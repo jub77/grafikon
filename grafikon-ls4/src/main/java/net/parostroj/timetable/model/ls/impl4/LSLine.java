@@ -122,7 +122,7 @@ public class LSLine {
                 NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
                 lineTrack.setFromStraightTrack(fromStraight);
                 lineTrack.setToStraightTrack(toStraight);
-                line.addTrack(lineTrack);
+                line.getTracks().add(lineTrack);
             }
         return line;
     }

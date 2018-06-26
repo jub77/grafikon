@@ -17,13 +17,13 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
     /** Id of an object. */
     private final String id;
     /** List of tracks. */
-    protected final List<T> tracks;
+    protected final ItemList<T> tracks;
 
     protected final ListenerSupport listenerSupport;
 
     public RouteSegmentImpl(String id) {
         this.id = id;
-        this.tracks = new LinkedList<>();
+        this.tracks = new ItemListImpl<>(this::fireTrackEvent);
         this.listenerSupport = new ListenerSupport();
     }
 
@@ -56,33 +56,9 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
 
     }
 
-    public void addTrack(T track) {
-        track.changeCallback = this::fireTrackAttributeChanged;
-        tracks.add(track);
-        this.fireTrackEvent(track, Event.Type.ADDED, null, null);
-    }
-
-    public void addTrack(T track, int position) {
-        track.changeCallback = this::fireTrackAttributeChanged;
-        tracks.add(position, track);
-        this.fireTrackEvent(track, Event.Type.ADDED, null, null);
-    }
-
-    public void removeTrack(T track) {
-        track.changeCallback = this::fireTrackAttributeChanged;
-        tracks.remove(track);
-        this.fireTrackEvent(track, Event.Type.REMOVED, null, null);
-    }
-
-    public void moveTrack(int fromIndex, int toIndex) {
-        T track = tracks.remove(fromIndex);
-        tracks.add(toIndex, track);
-        this.fireTrackEvent(track, Event.Type.MOVED, fromIndex, toIndex);
-    }
-
     @Override
-    public List<T> getTracks() {
-        return Collections.unmodifiableList(tracks);
+    public ItemList<T> getTracks() {
+        return tracks;
     }
 
     @Override
@@ -136,7 +112,8 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
         this.listenerSupport.fireEvent(new Event(this, track, change));
     }
 
-    private void fireTrackEvent(Track track, Event.Type eventType, Integer from, Integer to) {
+    private void fireTrackEvent(Event.Type eventType, Track track, Integer from, Integer to) {
+        track.changeCallback = this::fireTrackAttributeChanged;
         if (from == null && to == null) {
             this.listenerSupport.fireEvent(new Event(this, eventType, track));
         } else {

@@ -78,7 +78,7 @@ public class LSVisitorBuilder implements LSVisitor {
         if (lsNodeTrack.getAttributes() != null) {
             nodeTrack.getAttributes().add(lsNodeTrack.getAttributes().convertToAttributes());        // add to last node
         }
-        lastNode.addTrack(nodeTrack);
+        lastNode.getTracks().add(nodeTrack);
     }
 
     /**
@@ -118,7 +118,7 @@ public class LSVisitorBuilder implements LSVisitor {
         if (lsLineTrack.getAttributes() != null) {
             lineTrack.getAttributes().add(lsLineTrack.getAttributes().convertToAttributes());        // add to last line
         }
-        lastLine.addTrack(lineTrack);
+        lastLine.getTracks().add(lineTrack);
     }
 
     @Override
