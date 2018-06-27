@@ -20,7 +20,7 @@ public class EditLocalizedStringDialog extends JDialog implements ModelSubscribe
 
     private static final long serialVersionUID = 1L;
 
-	private ModelProvider localProvider;
+    private ModelProvider localProvider;
     private Link link;
 
     public EditLocalizedStringDialog(Window owner, boolean modal) {

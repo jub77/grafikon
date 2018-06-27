@@ -25,13 +25,13 @@ public class EditLocalizedStringListPanel<T extends Reference<LocalizedString>> 
 
     private static final long serialVersionUID = 1L;
 
-	private Link link;
+    private Link link;
     private ModelProvider localModelProvider;
     private BnList list;
 
     public EditLocalizedStringListPanel(int gap) {
         localModelProvider = new ModelProvider();
-        link = new  Link(this);
+        link = new Link(this);
 
         setLayout(new BorderLayout(gap, gap));
 

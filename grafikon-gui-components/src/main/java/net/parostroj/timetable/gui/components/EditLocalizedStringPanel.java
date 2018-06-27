@@ -22,7 +22,7 @@ public class EditLocalizedStringPanel extends JPanel implements View<LocalizedSt
 
     private static final long serialVersionUID = 1L;
 
-	private Link link;
+    private Link link;
     private ModelProvider localModelProvider;
 
     public EditLocalizedStringPanel(int gap) {
