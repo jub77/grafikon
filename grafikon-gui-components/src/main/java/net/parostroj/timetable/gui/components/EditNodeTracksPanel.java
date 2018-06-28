@@ -59,28 +59,28 @@ public class EditNodeTracksPanel extends BaseEditPanel<NodePM> {
 
         BnButton createButton = GuiComponentUtils.createBnButton(GuiIcon.ADD, 2);
         createButton.setModelProvider(localProvider);
-        createButton.setPath(new Path("createTrack"));
+        createButton.setPath(new Path("tracks.create"));
         buttonPanel.add(createButton);
 
         buttonPanel.add(Box.createVerticalStrut(3));
 
         BnButton deleteButton = GuiComponentUtils.createBnButton(GuiIcon.REMOVE, 2);
         deleteButton.setModelProvider(localProvider);
-        deleteButton.setPath(new Path("deleteTracks"));
+        deleteButton.setPath(new Path("tracks.delete"));
         buttonPanel.add(deleteButton);
 
         buttonPanel.add(Box.createVerticalStrut(3));
 
         BnButton moveUpButton = GuiComponentUtils.createBnButton(GuiIcon.GO_UP, 2);
         moveUpButton.setModelProvider(localProvider);
-        moveUpButton.setPath(new Path("moveTrackUp"));
+        moveUpButton.setPath(new Path("tracks.moveUp"));
         buttonPanel.add(moveUpButton);
 
         buttonPanel.add(Box.createVerticalStrut(3));
 
         BnButton moveDownButton = GuiComponentUtils.createBnButton(GuiIcon.GO_DOWN, 2);
         moveDownButton.setModelProvider(localProvider);
-        moveDownButton.setPath(new Path("moveTrackDown"));
+        moveDownButton.setPath(new Path("tracks.moveDown"));
         buttonPanel.add(moveDownButton);
 
 
