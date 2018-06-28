@@ -12,12 +12,17 @@ import net.parostroj.timetable.model.Node;
 public class NodePM extends AbstractPM implements IPM<Node> {
 
     ItemListPM<NodeTrackPM> tracks;
+    ItemListPM<NodePortPM> ports;
 
     public NodePM() {
         this.tracks = new ItemListPM<>(() -> {
             NodeTrackPM trackPm = new NodeTrackPM();
             trackPm.number.setText("-");
             return trackPm;
+        });
+        this.ports = new ItemListPM<>(() -> {
+            NodePortPM nodePortPM = new NodePortPM();
+            return nodePortPM;
         });
         PMManager.setup(this);
     }
@@ -35,9 +40,19 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             nodeTrackPm.init(track);
             tracks.add(nodeTrackPm);
         });
+        this.ports.clear();
+        node.getPorts().forEach(port -> {
+            NodePortPM nodePortPm = new NodePortPM();
+            nodePortPm.init(port);
+            ports.add(nodePortPm);
+        });
     }
 
     public ListPM<NodeTrackPM> getTracks() {
         return tracks;
+    }
+
+    public ListPM<NodePortPM> getPorts() {
+        return ports;
     }
 }

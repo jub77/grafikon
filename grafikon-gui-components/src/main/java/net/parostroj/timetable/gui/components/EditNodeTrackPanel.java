@@ -10,7 +10,7 @@ import net.parostroj.timetable.gui.pm.NodeTrackPM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
- * Edit dialog for Node
+ * Panel for editing track.
  *
  * @author jub
  */

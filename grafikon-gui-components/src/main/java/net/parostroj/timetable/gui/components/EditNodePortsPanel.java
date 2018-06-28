@@ -17,38 +17,40 @@ import org.beanfabrics.swing.list.BnList;
 import org.beanfabrics.swing.list.CellConfig;
 
 import net.parostroj.timetable.gui.pm.NodePM;
-import net.parostroj.timetable.gui.pm.NodeTrackPM;
+import net.parostroj.timetable.gui.pm.NodePortPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 
 /**
- * Panel for editing tracks.
+ * Panel for editing ports.
  *
  * @author jub
  */
-public class EditNodeTracksPanel extends BaseEditPanel<NodePM> {
+public class EditNodePortsPanel extends BaseEditPanel<NodePM> {
 
     private static final int DEFAULT_VISIBLE_ROW_COUNT = 10;
 
     private PropertyChangeListener listener;
 
-    public EditNodeTracksPanel() {
-        BnList trackList = new BnList();
-        trackList.setPath(new Path("tracks"));
-        trackList.setModelProvider(localProvider);
-        trackList.setCellConfig(new CellConfig(new Path("number")));
-        trackList.setVisibleRowCount(DEFAULT_VISIBLE_ROW_COUNT);
+    public EditNodePortsPanel() {
+        BnList portList = new BnList();
+        portList.setPath(new Path("ports"));
+        portList.setModelProvider(localProvider);
+        portList.setCellConfig(new CellConfig(new Path("portId")));
+        portList.setVisibleRowCount(DEFAULT_VISIBLE_ROW_COUNT);
 
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
         listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 0));
-        JScrollPane trackScrollPane = new JScrollPane(trackList);
-        EditNodeTrackPanel trackPanel = new EditNodeTrackPanel();
+        JScrollPane portScrollPane = new JScrollPane(portList);
+        listPanel.add(portScrollPane, BorderLayout.CENTER);
+
+        EditNodePortPanel portPanel = new EditNodePortPanel();
+
         listener = evt -> {
-            Selection<NodeTrackPM> selection = getPresentationModel().getTracks().getSelection();
-            trackPanel.setPresentationModel(selection.getIndexes().length == 1 ? selection.getFirst() : null);
+            Selection<NodePortPM> selection = getPresentationModel().getPorts().getSelection();
+            portPanel.setPresentationModel(selection.getIndexes().length == 1 ? selection.getFirst() : null);
         };
-        listPanel.add(trackScrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 5, 5, 5));
@@ -59,34 +61,19 @@ public class EditNodeTracksPanel extends BaseEditPanel<NodePM> {
 
         BnButton createButton = GuiComponentUtils.createBnButton(GuiIcon.ADD, 2);
         createButton.setModelProvider(localProvider);
-        createButton.setPath(new Path("tracks.create"));
+        createButton.setPath(new Path("ports.create"));
         buttonPanel.add(createButton);
 
         buttonPanel.add(Box.createVerticalStrut(3));
 
         BnButton deleteButton = GuiComponentUtils.createBnButton(GuiIcon.REMOVE, 2);
         deleteButton.setModelProvider(localProvider);
-        deleteButton.setPath(new Path("tracks.delete"));
+        deleteButton.setPath(new Path("ports.delete"));
         buttonPanel.add(deleteButton);
-
-        buttonPanel.add(Box.createVerticalStrut(3));
-
-        BnButton moveUpButton = GuiComponentUtils.createBnButton(GuiIcon.GO_UP, 2);
-        moveUpButton.setModelProvider(localProvider);
-        moveUpButton.setPath(new Path("tracks.moveUp"));
-        buttonPanel.add(moveUpButton);
-
-        buttonPanel.add(Box.createVerticalStrut(3));
-
-        BnButton moveDownButton = GuiComponentUtils.createBnButton(GuiIcon.GO_DOWN, 2);
-        moveDownButton.setModelProvider(localProvider);
-        moveDownButton.setPath(new Path("tracks.moveDown"));
-        buttonPanel.add(moveDownButton);
-
 
         this.setLayout(new BorderLayout());
         this.add(listPanel, BorderLayout.CENTER);
-        this.add(trackPanel, BorderLayout.SOUTH);
+        this.add(portPanel, BorderLayout.SOUTH);
         this.add(buttonPanel, BorderLayout.EAST);
     }
 
@@ -94,11 +81,11 @@ public class EditNodeTracksPanel extends BaseEditPanel<NodePM> {
     public void setPresentationModel(NodePM pModel) {
         PresentationModel oldModel = super.getPresentationModel();
         if (oldModel != null) {
-            oldModel.removePropertyChangeListener("tracks", listener);
+            oldModel.removePropertyChangeListener("ports", listener);
         }
         super.setPresentationModel(pModel);
         if (pModel != null) {
-            pModel.addPropertyChangeListener("tracks", listener);
+            pModel.addPropertyChangeListener("ports", listener);
         }
     }
 }
