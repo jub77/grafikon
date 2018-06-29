@@ -16,6 +16,8 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class EditNodeTrackPanel extends BaseEditPanel<NodeTrackPM> {
 
+    private static final long serialVersionUID = 1L;
+
     public EditNodeTrackPanel() {
         BnTextField numberTextField = new BnTextField();
         numberTextField.setColumns(20);

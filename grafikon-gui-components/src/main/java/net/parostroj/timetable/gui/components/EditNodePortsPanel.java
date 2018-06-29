@@ -28,6 +28,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
  */
 public class EditNodePortsPanel extends BaseEditPanel<NodePM> {
 
+    private static final long serialVersionUID = 1L;
     private static final int DEFAULT_VISIBLE_ROW_COUNT = 10;
 
     private PropertyChangeListener listener;

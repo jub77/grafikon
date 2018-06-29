@@ -14,6 +14,8 @@ import net.parostroj.timetable.gui.pm.NodePortPM;
  */
 public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
 
+    private static final long serialVersionUID = 1L;
+
     public EditNodePortPanel() {
         BnTextField xTextField = new BnTextField();
         xTextField.setHorizontalAlignment(BnTextField.RIGHT);
