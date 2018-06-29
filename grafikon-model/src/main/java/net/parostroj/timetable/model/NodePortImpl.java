@@ -8,14 +8,14 @@ import net.parostroj.timetable.model.Node.Side;
 class NodePortImpl implements NodePort {
 
     private final Node owner;
-    private final Side side;
+    private Side orientation;
     private final ItemWithIdList<TrackConnector> connectors;
-    private Location location;
+    private int position;
 
     NodePortImpl(Node owner, Side side) {
         this.owner = owner;
-        this.side = side;
-        this.location = new Location(0, 0);
+        this.orientation = side;
+        this.position = 0;
         this.connectors = new ItemWithIdListImpl<>(owner::fireCollectionEventListObject);
     }
 
@@ -34,17 +34,22 @@ class NodePortImpl implements NodePort {
 
     @Override
     public Side getOrientation() {
-        return side;
+        return orientation;
     }
 
     @Override
-    public Location getLocation() {
-        return location;
+    public void setOrientation(Side orientation) {
+        this.orientation = orientation;
     }
 
     @Override
-    public void setLocation(Location location) {
-        this.location = location;
+    public int getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override
@@ -54,6 +59,6 @@ class NodePortImpl implements NodePort {
 
     @Override
     public String toString() {
-        return String.format("port: %s [%s]", getOrientation(), getLocation());
+        return String.format("port: %s [%s]", getOrientation(), getPosition());
     }
 }

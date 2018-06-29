@@ -9,9 +9,11 @@ public interface NodePort extends ItemCollectionObject {
 
     Node.Side getOrientation();
 
-    Location getLocation();
+    void setOrientation(Node.Side orientation);
 
-    void setLocation(Location location);
+    int getPosition();
+
+    void setPosition(int position);
 
     ItemWithIdList<TrackConnector> getConnectors();
 }

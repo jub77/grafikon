@@ -1,11 +1,14 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.Arrays;
+
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.IntegerPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.OnChange;
 
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodePort;
 
 /**
@@ -14,32 +17,31 @@ import net.parostroj.timetable.model.NodePort;
 public class NodePortPM extends AbstractPM implements IPM<NodePort> {
 
     TextPM portId;
-    IntegerPM x;
-    IntegerPM y;
+    IntegerPM position;
+    EnumeratedValuesPM<Node.Side> orientation;
 
     public NodePortPM() {
-        this.x = new IntegerPM(0);
-        this.x.setMandatory(true);
-        this.y = new IntegerPM(0);
-        this.y.setMandatory(true);
+        this.position = new IntegerPM(0);
+        this.position.setMandatory(true);
         this.portId = new TextPM();
+        this.orientation = new EnumeratedValuesPM<>(
+                EnumeratedValuesPM.createValueMap(Arrays.asList(Node.Side.values()), v -> v.toString()));
         PMManager.setup(this);
         updatePortId();
     }
 
-    @OnChange(path = { "x", "y" })
+    @OnChange(path = { "position", "orientation" })
     public void updatePortId() {
-        boolean xv = x.isValid();
-        boolean yv = y.isValid();
-        if (xv && yv) {
-            portId.setText(String.format("[%d,%d]", x.getInteger(), y.getInteger()));
+        boolean valid = position.isValid();
+        if (valid) {
+            portId.setText(String.format("[%s,%d]", orientation.getText(), position.getInteger()));
         }
     }
 
 
     @Override
     public void init(NodePort port) {
-        this.x.setInteger(port.getLocation().getX());
-        this.y.setInteger(port.getLocation().getY());
+        this.position.setInteger(port.getPosition());
+        this.orientation.setValue(port.getOrientation());;
     }
 }

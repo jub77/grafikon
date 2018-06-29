@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.FlowLayout;
 
 import org.beanfabrics.Path;
+import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
 import net.parostroj.timetable.gui.pm.NodePortPM;
@@ -16,21 +17,21 @@ public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unchecked")
     public EditNodePortPanel() {
-        BnTextField xTextField = new BnTextField();
-        xTextField.setHorizontalAlignment(BnTextField.RIGHT);
-        xTextField.setColumns(2);
-        xTextField.setModelProvider(localProvider);
-        xTextField.setPath(new Path("x"));
+        BnComboBox orientationComboBox = new BnComboBox();
+        orientationComboBox.setModelProvider(localProvider);
+        orientationComboBox.setPrototypeDisplayValue("MMMMMMMMM");
+        orientationComboBox.setPath(new Path("orientation"));
 
-        BnTextField yTextField = new BnTextField();
-        yTextField.setHorizontalAlignment(BnTextField.RIGHT);
-        yTextField.setColumns(2);
-        yTextField.setModelProvider(localProvider);
-        yTextField.setPath(new Path("y"));
+        BnTextField positionTextField = new BnTextField();
+        positionTextField.setHorizontalAlignment(BnTextField.RIGHT);
+        positionTextField.setColumns(2);
+        positionTextField.setModelProvider(localProvider);
+        positionTextField.setPath(new Path("position"));
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
-        this.add(xTextField);
-        this.add(yTextField);
+        this.add(orientationComboBox);
+        this.add(positionTextField);
     }
 }
