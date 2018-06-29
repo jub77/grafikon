@@ -19,7 +19,9 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
 
     public NodePortPM() {
         this.x = new IntegerPM(0);
+        this.x.setMandatory(true);
         this.y = new IntegerPM(0);
+        this.y.setMandatory(true);
         this.portId = new TextPM();
         PMManager.setup(this);
         updatePortId();
@@ -27,7 +29,11 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
 
     @OnChange(path = { "x", "y" })
     public void updatePortId() {
-        portId.setText(String.format("[%d,%d]", x.getInteger(), y.getInteger()));
+        boolean xv = x.isValid();
+        boolean yv = y.isValid();
+        if (xv && yv) {
+            portId.setText(String.format("[%d,%d]", x.getInteger(), y.getInteger()));
+        }
     }
 
 
