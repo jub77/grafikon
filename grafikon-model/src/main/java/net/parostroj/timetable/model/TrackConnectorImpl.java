@@ -35,6 +35,16 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
+    public String getNumber() {
+        return attributes.get(ATTR_NUMBER, String.class);
+    }
+
+    @Override
+    public void setNumber(String number) {
+        attributes.setRemove(ATTR_NUMBER, number);
+    }
+
+    @Override
     public void added() {
         events = true;
     }

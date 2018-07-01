@@ -15,8 +15,13 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
     String ATTR_LINE_ENDPOINT = "line.endpoint";
     String ATTR_STRAIGHT_TRACK = "straight.track";
     String ATTR_TRACKS = "tracks";
+    String ATTR_NUMBER = "number";
 
     NodePort getNodePort();
+
+    String getNumber();
+
+    void setNumber(String number);
 
     Line.Endpoint getLineEndPoint();
 
