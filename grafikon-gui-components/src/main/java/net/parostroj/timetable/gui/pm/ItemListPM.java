@@ -1,11 +1,16 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EventObject;
 import java.util.function.Supplier;
 
 import org.beanfabrics.model.ListPM;
 import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.PresentationModel;
+import org.beanfabrics.model.SortKey;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
 
@@ -17,7 +22,10 @@ public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
     OperationPM moveUp;
     OperationPM moveDown;
 
-    Supplier<T> createNew;
+    private Supplier<T> createNew;
+    private Collection<SortKey> sortKeys;
+
+    private boolean sorting;
 
     public ItemListPM(Supplier<T> createNew) {
         super();
@@ -26,7 +34,29 @@ public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
         this.moveUp = new OperationPM();
         this.moveDown = new OperationPM();
         this.createNew = createNew;
+        this.sortKeys = Collections.emptyList();
         PMManager.setup(this);
+    }
+
+    public boolean isSorted() {
+        return !sortKeys.isEmpty();
+    }
+
+    public void setSorted(Collection<SortKey> sortKeys) {
+        this.sortKeys = new ArrayList<>(sortKeys);
+    }
+
+    @Override
+    protected void onEntriesChanged(EventObject evt) {
+        super.onEntriesChanged(evt);
+        if (isSorted() && !sorting) {
+            sorting = true;
+            try {
+                this.sortBy(sortKeys);
+            } finally {
+                sorting = false;
+            }
+        }
     }
 
     @Operation(path = { "moveUp" })
