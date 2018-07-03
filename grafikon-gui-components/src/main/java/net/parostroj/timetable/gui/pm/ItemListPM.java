@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.function.Supplier;
 
 import org.beanfabrics.model.ListPM;
@@ -24,8 +23,6 @@ public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
     private Supplier<T> createNew;
     private Collection<SortKey> sortKeys;
 
-    private boolean sorting;
-
     public ItemListPM(Supplier<T> createNew) {
         super();
         this.create = new OperationPM();
@@ -43,19 +40,6 @@ public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
 
     public void setSorted(Collection<SortKey> sortKeys) {
         this.sortKeys = new ArrayList<>(sortKeys);
-    }
-
-    @Override
-    protected void onEntriesChanged(EventObject evt) {
-        super.onEntriesChanged(evt);
-        if (isSorted() && !sorting) {
-            sorting = true;
-            try {
-                this.sortBy(sortKeys);
-            } finally {
-                sorting = false;
-            }
-        }
     }
 
     @Operation(path = { "moveUp" })

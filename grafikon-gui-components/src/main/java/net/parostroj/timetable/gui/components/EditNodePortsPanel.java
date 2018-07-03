@@ -1,13 +1,11 @@
 package net.parostroj.timetable.gui.components;
 
-import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
 import org.beanfabrics.Path;
-import org.beanfabrics.model.PresentationModel;
-import org.beanfabrics.model.Selection;
 
 import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.pm.NodePortPM;
@@ -21,8 +19,6 @@ public class EditNodePortsPanel extends BaseEditPanel<NodePM> {
 
     private static final long serialVersionUID = 1L;
 
-    private PropertyChangeListener listener;
-
     public EditNodePortsPanel() {
 
         ItemSetEditPanel<NodePortPM> portsPanel = new ItemSetEditPanel<>(new Path("portId"), 5);
@@ -33,12 +29,11 @@ public class EditNodePortsPanel extends BaseEditPanel<NodePM> {
 
         EditNodePortTrackConnectorsPanel connectorsPanel = new EditNodePortTrackConnectorsPanel();
 
-        listener = evt -> {
-            Selection<NodePortPM> selection = getPresentationModel().getPorts().getSelection();
-            NodePortPM portModel = selection.getIndexes().length == 1 ? selection.getFirst() : null;
-            portPanel.setPresentationModel(portModel);
-            connectorsPanel.setPresentationModel(portModel);
-        };
+        ListSelectionSupport<NodePortPM> support = new ListSelectionSupport<>(
+                Arrays.asList(connectorsPanel, portPanel),
+                () -> getPresentationModel().getPorts());
+
+        localProvider.addModelProviderListener(new Path("ports"), support);
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         Box combinedPortsPanel = Box.createVerticalBox();
@@ -48,17 +43,5 @@ public class EditNodePortsPanel extends BaseEditPanel<NodePM> {
         this.add(combinedPortsPanel);
         this.add(Box.createHorizontalStrut(5));
         this.add(connectorsPanel);
-    }
-
-    @Override
-    public void setPresentationModel(NodePM pModel) {
-        PresentationModel oldModel = super.getPresentationModel();
-        if (oldModel != null) {
-            oldModel.removePropertyChangeListener("ports", listener);
-        }
-        super.setPresentationModel(pModel);
-        if (pModel != null) {
-            pModel.addPropertyChangeListener("ports", listener);
-        }
     }
 }
