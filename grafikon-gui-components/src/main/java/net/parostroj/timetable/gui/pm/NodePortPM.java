@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.IntegerPM;
+import org.beanfabrics.model.ListPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.OnChange;
@@ -19,6 +20,7 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
     TextPM portId;
     IntegerPM position;
     EnumeratedValuesPM<Node.Side> orientation;
+    ItemListPM<TrackConnectorPM> connectors;
 
     public NodePortPM() {
         this.position = new IntegerPM(0);
@@ -26,6 +28,11 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
         this.portId = new TextPM();
         this.orientation = new EnumeratedValuesPM<>(
                 EnumeratedValuesPM.createValueMap(Arrays.asList(Node.Side.values()), v -> v.toString()));
+        this.connectors = new ItemListPM<>(() -> {
+            TrackConnectorPM tc = new TrackConnectorPM();
+            tc.number.setText("1");
+            return tc;
+        });
         PMManager.setup(this);
         updatePortId();
     }
@@ -42,6 +49,14 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
     @Override
     public void init(NodePort port) {
         this.position.setInteger(port.getPosition());
-        this.orientation.setValue(port.getOrientation());;
+        this.orientation.setValue(port.getOrientation());
+        this.connectors.clear();
+        port.getConnectors().forEach(connector -> {
+            this.connectors.add(new TrackConnectorPM(connector));
+        });
+    }
+
+    public ListPM<TrackConnectorPM> getConnectors() {
+        return connectors;
     }
 }

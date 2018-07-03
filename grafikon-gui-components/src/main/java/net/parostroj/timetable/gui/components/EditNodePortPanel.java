@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.FlowLayout;
 
+import javax.swing.Box;
+
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
@@ -19,6 +21,8 @@ public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
 
     @SuppressWarnings("unchecked")
     public EditNodePortPanel() {
+        this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
         BnComboBox orientationComboBox = new BnComboBox();
         orientationComboBox.setModelProvider(localProvider);
         orientationComboBox.setPrototypeDisplayValue("MMMMMMMMM");
@@ -30,8 +34,8 @@ public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
         positionTextField.setModelProvider(localProvider);
         positionTextField.setPath(new Path("position"));
 
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.add(orientationComboBox);
+        this.add(Box.createHorizontalStrut(5));
         this.add(positionTextField);
     }
 }

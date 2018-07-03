@@ -1,8 +1,12 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.Arrays;
+
+import org.beanfabrics.Path;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.ListPM;
 import org.beanfabrics.model.PMManager;
+import org.beanfabrics.model.SortKey;
 
 import net.parostroj.timetable.model.Node;
 
@@ -24,6 +28,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             NodePortPM nodePortPM = new NodePortPM();
             return nodePortPM;
         });
+        this.ports.setSorted(Arrays.asList(new SortKey(true, new Path("orientation")), new SortKey(true, new Path("position"))));
         PMManager.setup(this);
     }
 

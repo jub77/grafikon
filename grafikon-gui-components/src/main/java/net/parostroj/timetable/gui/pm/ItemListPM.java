@@ -16,7 +16,6 @@ import org.beanfabrics.support.Validation;
 
 public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
 
-    ListPM<T> items;
     OperationPM create;
     OperationPM delete;
     OperationPM moveUp;

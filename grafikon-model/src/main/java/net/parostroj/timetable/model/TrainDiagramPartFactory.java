@@ -51,10 +51,11 @@ public class TrainDiagramPartFactory implements PartFactory {
      *
      * @param id id
      * @param nodePort node port
+     * @param number number of the connector
      * @return a new connector
      */
-    public TrackConnector createConnector(String id, NodePort nodePort) {
-        return new TrackConnectorImpl(id, nodePort);
+    public TrackConnector createConnector(String id, NodePort nodePort, String number) {
+        return new TrackConnectorImpl(id, nodePort, number);
     }
 
     /**

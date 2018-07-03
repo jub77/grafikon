@@ -18,7 +18,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     private boolean events = false;
 
-    TrackConnectorImpl(String id, NodePort nodePort) {
+    TrackConnectorImpl(String id, NodePort nodePort, String number) {
         this.id = id;
         this.nodePort = nodePort;
         this.attributes = new Attributes((attrs, change) -> {
@@ -27,6 +27,7 @@ public class TrackConnectorImpl implements TrackConnector {
                 node.fireEvent(new Event(node, TrackConnectorImpl.this, change));
             }
         });
+        this.setNumber(number);
     }
 
     @Override

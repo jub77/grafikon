@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.FlowLayout;
 
+import javax.swing.Box;
+
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnCheckBox;
 import org.beanfabrics.swing.BnTextField;
@@ -29,8 +31,9 @@ public class EditNodeTrackPanel extends BaseEditPanel<NodeTrackPM> {
         platformCheckBox.setPath(new Path("platform"));
         platformCheckBox.setText(ResourceLoader.getString("ne.platform"));
 
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.add(numberTextField);
+        this.add(Box.createHorizontalStrut(5));
         this.add(platformCheckBox);
     }
 }
