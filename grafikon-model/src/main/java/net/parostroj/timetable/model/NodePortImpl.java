@@ -3,6 +3,8 @@ package net.parostroj.timetable.model;
 import net.parostroj.timetable.model.Node.Side;
 
 /**
+ * Implementation of {@link NodePort}.
+ *
  * @author jub
  */
 class NodePortImpl implements NodePort {
