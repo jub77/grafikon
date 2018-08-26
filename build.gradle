@@ -70,7 +70,9 @@ subprojects { prj ->
 			dependency 'com.fifesoft:rsyntaxtextarea:2.6.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.jgraph:jgraphx:v3.9.8'
-			dependency 'com.github.markusbernhardt:proxy-vole:1.0.3'
+			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5', {
+				exclude 'org.webjars.bower:js-beautify'
+			}
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.10.0'
 			dependency 'org.apache.logging.log4j:log4j-core:2.10.0'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
