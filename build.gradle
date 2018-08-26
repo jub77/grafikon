@@ -44,7 +44,7 @@ subprojects { prj ->
 			dependencySubstitution subs
 		}
 		dependencies {
-			dependency 'org.jgrapht:jgrapht-core:1.1.0'
+			dependency 'org.jgrapht:jgrapht-core:1.2.0'
 			dependency 'org.mvel:mvel2:2.4.0.Final'
 			dependency 'org.codehaus.groovy:groovy-all:2.4.15'
 			dependency 'org.slf4j:slf4j-api:1.7.25'
