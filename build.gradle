@@ -57,7 +57,7 @@ subprojects { prj ->
 				exclude 'org.codehaus.mojo:animal-sniffer-annotations'
 				exclude 'org.checkerframework:checker-compat-qual'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.2', {
+			dependency 'org.apache.xmlgraphics:fop:2.3', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
