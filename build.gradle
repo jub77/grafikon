@@ -49,7 +49,7 @@ subprojects { prj ->
 			dependency 'org.codehaus.groovy:groovy-all:2.4.15'
 			dependency 'org.slf4j:slf4j-api:1.7.25'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
-			dependency 'joda-time:joda-time:2.9.9'
+			dependency 'joda-time:joda-time:2.10'
 			dependency 'com.google.guava:guava:26.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
