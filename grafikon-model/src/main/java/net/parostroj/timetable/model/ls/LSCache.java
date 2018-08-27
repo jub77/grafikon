@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.UnaryOperator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -25,11 +26,13 @@ class LSCache<T extends LSVersions> {
     private final Class<T> cacheType;
     private final String versionKey;
     private final String metadataFile;
+    private final UnaryOperator<T> loadWrapper;
 
-    public LSCache(Class<T> clazz, String versionKey, String metadataFile) {
+    public LSCache(Class<T> clazz, String versionKey, String metadataFile, UnaryOperator<T> loadWrapper) {
         this.cacheType = clazz;
         this.versionKey = versionKey;
         this.metadataFile = metadataFile;
+        this.loadWrapper = loadWrapper;
         ServiceLoader<T> loader = ServiceLoader.load(clazz);
         for (T fls : loader) {
             List<ModelVersion> versions = fls.getLoadVersions();
@@ -129,7 +132,7 @@ class LSCache<T extends LSVersions> {
             T instance = cacheType.cast(clazz.newInstance());
             List<ModelVersion> versions = instance.getLoadVersions();
             logVersions(modelVersion, versions);
-            return instance;
+            return loadWrapper.apply(instance);
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new LSException(ex);
         }

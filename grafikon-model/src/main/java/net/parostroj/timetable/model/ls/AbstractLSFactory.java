@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls;
 
 import java.io.File;
+import java.util.function.UnaryOperator;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -12,8 +13,8 @@ class AbstractLSFactory<T extends LSVersions> {
 
     private final LSCache<T> lsFileCache;
 
-    public AbstractLSFactory(Class<T> cacheType, String versionKey, String metadataFile) {
-        lsFileCache = new LSCache<>(cacheType, versionKey, metadataFile);
+    public AbstractLSFactory(Class<T> cacheType, String versionKey, String metadataFile, UnaryOperator<T> loadWrapper) {
+        lsFileCache = new LSCache<>(cacheType, versionKey, metadataFile, loadWrapper);
     }
 
     public T createForSave() throws LSException {
