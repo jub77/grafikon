@@ -25,14 +25,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     /** Train diagram. */
     private final TrainDiagram diagram;
-    /** Name of the node. */
-    private String name;
-    /** Abbreviation. */
-    private String abbr;
     /** Attributes of the node. */
     private Attributes attributes;
-    /** Node type. */
-    private NodeType type;
     /** Location of node. */
     private Location location;
     /** Node ports. */
@@ -83,11 +77,11 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
      */
     Node(String id, TrainDiagram diagram, NodeType type, String name, String abbr) {
         super(id);
-        this.name = name;
-        this.type = type;
-        this.abbr = abbr;
         this.diagram = diagram;
         init();
+        this.setName(name);
+        this.setType(type);
+        this.setAbbr(abbr);
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
         this.ports = new ItemSetImpl<>(this::fireCollectionEvent);
@@ -123,39 +117,27 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     }
 
     public String getName() {
-        return name;
+        return this.attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
-        }
+        this.attributes.setRemove(ATTR_NAME, name);
     }
 
     public String getAbbr() {
-        return abbr;
+        return this.attributes.get(ATTR_ABBR, String.class);
     }
 
     public void setAbbr(String abbr) {
-        if (!ObjectsUtil.compareWithNull(abbr, this.abbr)) {
-            String oldAbbr = this.abbr;
-            this.abbr = abbr;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
-        }
+        this.attributes.setRemove(ATTR_ABBR, abbr);
     }
 
     public NodeType getType() {
-        return type;
+        return this.attributes.get(ATTR_TYPE, NodeType.class);
     }
 
     public void setType(NodeType type) {
-        if (type != this.type) {
-            NodeType oldType = this.type;
-            this.type = type;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
-        }
+        this.attributes.setRemove(ATTR_TYPE, type);
     }
 
     public Location getLocation() {
