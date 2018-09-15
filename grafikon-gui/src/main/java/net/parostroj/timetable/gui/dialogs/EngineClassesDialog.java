@@ -394,6 +394,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                 // create new LineClass
                 EngineClass clazz = new CopyFactory(diagram.getPartFactory()).copy(copiedClazz,
                         IdGenerator.getInstance().getId());
+                clazz.setName(ObjectsUtil.checkAndTrim(nameTextField.getText()));
                 listModel.addWrapper(Wrapper.getWrapper(clazz));
                 nameTextField.setText("");
                 int index = listModel.getIndexOfObject(clazz);
