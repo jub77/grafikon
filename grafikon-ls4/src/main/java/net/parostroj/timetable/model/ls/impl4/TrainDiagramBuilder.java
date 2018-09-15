@@ -12,7 +12,6 @@ import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.FreightNet;
-import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Output;
@@ -122,8 +121,7 @@ public class TrainDiagramBuilder {
         // create lines ...
         if (lsNet.getLines() != null) {
             for (LSLine lsLine : lsNet.getLines()) {
-                Line line = lsLine.createLine(diagram);
-                net.addLine(line);
+                lsLine.createLine(diagram);
             }
         }
     }

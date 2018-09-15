@@ -62,7 +62,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private static final long serialVersionUID = 1L;
 
-	private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
+    private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
 
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
@@ -753,11 +753,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     Node srcNode = (Node) ((NodeCell) cell.getSource()).getValue();
                     Node dstNode = (Node) ((NodeCell) cell.getTarget()).getValue();
                     TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
-                    Line l = factory.createLine(factory.createId(), 1000,
-                            srcNode, dstNode, null);
+                    Line l = factory.createLine(factory.createId());
+                    l.setLength(1000);
                     LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
                     l.getTracks().add(track);
-                    model.getDiagram().getNet().addLine(l);
+                    model.getDiagram().getNet().addLine(l, srcNode, dstNode);
 
                     graph.removeCells(new Object[] { result });
                 }

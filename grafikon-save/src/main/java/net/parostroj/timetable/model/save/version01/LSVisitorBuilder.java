@@ -88,7 +88,8 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSLine lsLine) {
         Node from = (Node) ids.get(lsLine.getSourceId());
         Node to = (Node) ids.get(lsLine.getTargetId());
-        Line line = diagram.getPartFactory().createLine(this.createId(), lsLine.getLength(), from, to, null);
+        Line line = diagram.getPartFactory().createLine(this.createId());
+        line.setLength(lsLine.getLength());
         LineTrack lt = new LineTrack(this.createId(), "1");
         line.getTracks().add(lt);
         lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
@@ -99,7 +100,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
         // add to net
         Net net = diagram.getNet();
-        net.addLine(line);
+        net.addLine(line, from, to);
     }
 
     @Override

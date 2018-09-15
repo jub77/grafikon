@@ -47,8 +47,9 @@ public class LineImport extends Import {
             return null;
         }
 
-        Line line = getDiagram().getPartFactory().createLine(this.getId(importedLine), importedLine.getLength(),
-                iNodeFrom, iNodeTo, importedLine.getTopSpeed());
+        Line line = getDiagram().getPartFactory().createLine(this.getId(importedLine));
+        line.setLength(importedLine.getLength());
+        line.setTopSpeed(importedLine.getTopSpeed());
         line.getAttributes().add(this.importAttributes(importedLine.getAttributes()));
 
         // tracks
@@ -59,7 +60,7 @@ public class LineImport extends Import {
         }
 
         // add to diagram
-        this.getDiagram().getNet().addLine(line);
+        this.getDiagram().getNet().addLine(line, iNodeFrom, iNodeTo);
         this.addImportedObject(line);
         log.trace("Successfully imported line: {}", line);
         return line;

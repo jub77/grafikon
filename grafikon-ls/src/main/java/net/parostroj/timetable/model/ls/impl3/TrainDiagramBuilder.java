@@ -60,8 +60,7 @@ public class TrainDiagramBuilder {
         // create lines ...
         if (lsNet.getLines() != null)
             for (LSLine lsLine : lsNet.getLines()) {
-                Line line = lsLine.createLine(diagram);
-                net.addLine(line);
+                lsLine.createLine(diagram);
             }
     }
 

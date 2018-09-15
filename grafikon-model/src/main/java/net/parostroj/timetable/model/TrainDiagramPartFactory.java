@@ -31,14 +31,10 @@ public class TrainDiagramPartFactory implements PartFactory {
      * create new line.
      *
      * @param id line id
-     * @param length length
-     * @param from from node
-     * @param to to node
-     * @param topSpeed top speed
      * @return a new line
      */
-    public Line createLine(String id, int length, Node from, Node to, Integer topSpeed) {
-        return new Line(id, diagram, length, from, to, topSpeed);
+    public Line createLine(String id) {
+        return new Line(id, diagram);
     }
 
     @Override

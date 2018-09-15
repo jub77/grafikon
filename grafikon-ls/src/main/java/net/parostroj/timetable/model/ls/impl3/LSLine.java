@@ -105,7 +105,9 @@ public class LSLine {
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
         TrainDiagramPartFactory factory = diagram.getPartFactory();
-        Line line = factory.createLine(id, length, fromNode, toNode, speed > 0 ? speed : null);
+        Line line = factory.createLine(id);
+        line.setLength(length);
+        line.setTopSpeed(speed > 0 ? speed : null);
         line.getAttributes().add(attributes.createAttributes(diagram));
         // tracks
         for (LSLineTrack lsLineTrack : getTracks()) {
@@ -116,6 +118,7 @@ public class LSLine {
             lineTrack.setToStraightTrack(toStraight);
             line.getTracks().add(lineTrack);
         }
+        diagram.getNet().addLine(line, fromNode, toNode);
         return line;
     }
 }

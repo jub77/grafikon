@@ -24,30 +24,18 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
     private final TrainDiagram diagram;
     /** Attributes. */
     private final Attributes attributes;
-    /** Starting point. */
-    private final Node from;
-    /** Ending point. */
-    private final Node to;
 
     /**
      * creates track with specified length.
      *
      * @param id id
      * @param diagram train diagram
-     * @param length length of the track in milimeters
-     * @param from starting point
-     * @param to end point
-     * @param topSpeed top speed
      */
-    Line(String id, TrainDiagram diagram, int length, Node from, Node to, Integer topSpeed) {
+    Line(String id, TrainDiagram diagram) {
         super(id);
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(Line.this, change)));
-        this.setLength(length);
-        this.from = from;
-        this.to = to;
         this.diagram = diagram;
-        this.setTopSpeed(topSpeed);
     }
 
     @Override
@@ -65,7 +53,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
      * @return track length
      */
     public int getLength() {
-        return this.attributes.get(ATTR_LENGTH, Integer.class);
+        return this.attributes.get(ATTR_LENGTH, Integer.class, 0);
     }
 
     /**
@@ -141,19 +129,19 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
     }
 
     public Node getFrom() {
-        return from;
+        return diagram.getNet().getFrom(this);
     }
 
     public Node getTo() {
-        return to;
+        return diagram.getNet().getTo(this);
     }
 
     public Node getFrom(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? from : to;
+        return (direction == TimeIntervalDirection.FORWARD) ? getFrom() : getTo();
     }
 
     public Node getTo(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? to : from;
+        return (direction == TimeIntervalDirection.FORWARD) ? getTo() : getFrom();
     }
 
     public LineClass getLineClass(TimeIntervalDirection direction) {

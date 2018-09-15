@@ -95,14 +95,16 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSLine lsLine) {
         Node from = (Node) ids.get(lsLine.getSourceId());
         Node to = (Node) ids.get(lsLine.getTargetId());
-        Line line = diagram.getPartFactory().createLine(lsLine.getUuid(), lsLine.getLength(), from, to, lsLine.getTopSpeed());
+        Line line = diagram.getPartFactory().createLine(lsLine.getUuid());
+        line.setLength(lsLine.getLength());
+        line.setTopSpeed(lsLine.getTopSpeed());
         ids.put(lsLine.getId(), line);
 
         if (lsLine.getAttributes() != null) {
             line.getAttributes().add(lsLine.getAttributes().convertToAttributes());        // add to net
         }
         Net net = diagram.getNet();
-        net.addLine(line);
+        net.addLine(line, from, to);
 
         // add as last line
         lastLine = line;

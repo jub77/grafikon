@@ -112,10 +112,12 @@ public class LSLine {
         if (speed != null && speed <= 0) {
             speed = null;
         }
-        Line line = diagram.getPartFactory().createLine(id, length, fromNode, toNode, speed);
+        Line line = diagram.getPartFactory().createLine(id);
+        line.setLength(length);
+        line.setTopSpeed(speed);
         line.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         // tracks
-        if (this.tracks != null)
+        if (this.tracks != null) {
             for (LSLineTrack lsLineTrack : this.tracks) {
                 LineTrack lineTrack = lsLineTrack.createLineTrack(diagram::getObjectById);
                 NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
@@ -124,6 +126,8 @@ public class LSLine {
                 lineTrack.setToStraightTrack(toStraight);
                 line.getTracks().add(lineTrack);
             }
+        }
+        diagram.getNet().addLine(line, fromNode, toNode);
         return line;
     }
 }

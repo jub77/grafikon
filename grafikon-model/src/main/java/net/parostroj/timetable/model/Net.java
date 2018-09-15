@@ -85,9 +85,15 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
         return netDelegate.getEdge(node1, node2);
     }
 
-    public void addLine(Line line) {
-        Node from = line.getFrom();
-        Node to = line.getTo();
+    Node getFrom(Line line) {
+        return netDelegate.getEdgeSource(line);
+    }
+
+    Node getTo(Line line) {
+        return netDelegate.getEdgeTarget(line);
+    }
+
+    public void addLine(Line line, Node from, Node to) {
         netDelegate.addEdge(from, to, line);
         this.fireEvent(new Event(this, Event.Type.ADDED, line));
         // adapt from and to straight
