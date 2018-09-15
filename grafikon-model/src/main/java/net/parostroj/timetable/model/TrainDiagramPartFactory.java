@@ -139,8 +139,8 @@ public class TrainDiagramPartFactory implements PartFactory {
      * @param id id
      * @return new freight net
      */
-    public FreightNet createFreightNet(String id) {
-        return new FreightNet(id, diagram);
+    public FreightNet createFreightNet() {
+        return new FreightNet(diagram);
     }
 
     /**

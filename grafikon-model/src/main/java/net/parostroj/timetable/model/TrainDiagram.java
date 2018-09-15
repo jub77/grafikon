@@ -9,7 +9,6 @@ import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Observable;
 import net.parostroj.timetable.model.validators.*;
-import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -102,7 +101,7 @@ public class TrainDiagram
         this.companies = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.trainTypeCategories = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
-        this.net = new Net(IdGenerator.getInstance().getId(), this);
+        this.net = new Net(this);
         this.trainTypes = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
@@ -112,7 +111,7 @@ public class TrainDiagram
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
-        this.freightNet = partFactory.createFreightNet(IdGenerator.getInstance().getId());
+        this.freightNet = partFactory.createFreightNet();
         this.freightNet.addListener(listener);
         this.validators = new ArrayList<>();
         this.validators.add(new TrainNamesValidator(this));

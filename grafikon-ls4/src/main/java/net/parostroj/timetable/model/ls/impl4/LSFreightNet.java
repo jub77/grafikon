@@ -25,7 +25,6 @@ public class LSFreightNet {
     }
 
     public LSFreightNet(FreightNet net) {
-        this.id = net.getId();
         this.attributes = new LSAttributes(net.getAttributes());
         this.connections = new ArrayList<>();
         for (FNConnection connection : net.getConnections()) {
@@ -64,7 +63,7 @@ public class LSFreightNet {
     }
 
     public FreightNet createFreightNet(TrainDiagram diagram) throws LSException {
-        FreightNet net = diagram.getPartFactory().createFreightNet(this.getId());
+        FreightNet net = diagram.getPartFactory().createFreightNet();
         net.getAttributes().add(this.getAttributes().createAttributes(diagram::getObjectById));
         return net;
     }

@@ -26,20 +26,19 @@ public class LSNet {
     private List<LSRegion> regions;
 
     public LSNet(Net net) {
-        this.id = net.getId();
-        this.nodes = new LinkedList<LSNode>();
+        this.nodes = new LinkedList<>();
         for (Node node : net.getNodes()) {
             this.nodes.add(new LSNode(node));
         }
-        this.lines = new LinkedList<LSLine>();
+        this.lines = new LinkedList<>();
         for (Line line : net.getLines()) {
             this.lines.add(new LSLine(line));
         }
-        this.lineClasses = new LinkedList<LSLineClass>();
+        this.lineClasses = new LinkedList<>();
         for (LineClass lineClass : net.getLineClasses()) {
             this.lineClasses.add(new LSLineClass(lineClass));
         }
-        this.regions = new LinkedList<LSRegion>();
+        this.regions = new LinkedList<>();
         for (Region region : net.getRegions()) {
             this.regions.add(new LSRegion(region));
         }
@@ -97,7 +96,7 @@ public class LSNet {
     }
 
     public Net createNet(TrainDiagram diagram) {
-        Net net = new Net(getId(), diagram);
+        Net net = new Net(diagram);
         return net;
     }
 }

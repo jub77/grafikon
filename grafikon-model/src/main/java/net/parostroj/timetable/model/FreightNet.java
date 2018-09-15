@@ -28,11 +28,10 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class FreightNet
-        implements Visitable, ObjectWithId, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
+        implements Visitable, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
 
     private static final ConnectionStrategyType DEFAULT_STRATEGY = ConnectionStrategyType.REGION;
 
-    private final String id;
     private final TrainDiagram diagram;
     private final Attributes attributes;
     private final AttributesListener defaultAttributesListener;
@@ -45,8 +44,7 @@ public class FreightNet
 
     private FreightConnectionStrategy _strategy;
 
-    FreightNet(String id, TrainDiagram diagram) {
-        this.id = id;
+    FreightNet(TrainDiagram diagram) {
         this.diagram = diagram;
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attrs, change) -> {
@@ -173,11 +171,6 @@ public class FreightNet
 
     private void fireEvent(Event event) {
         this.listenerSupport.fireEvent(event);
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override

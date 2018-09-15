@@ -21,9 +21,8 @@ import org.jgrapht.graph.SimpleGraph;
  *
  * @author jub
  */
-public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observable, CompounedObservable {
+public class Net implements Visitable, TrainDiagramPart, Observable, CompounedObservable {
 
-    private final String id;
     private final TrainDiagram diagram;
     private final ItemWithIdList<LineClass> lineClasses;
     private final ItemWithIdSet<Region> regions;
@@ -36,7 +35,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     /**
      * Constructor.
      */
-    public Net(String id, TrainDiagram diagram) {
+    public Net(TrainDiagram diagram) {
         this.itemLists = new LinkedList<>();
         this.netDelegate = new DefaultListenableGraph<>(new SimpleGraph<>(Line.class));
         this.lineClasses = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
@@ -45,14 +44,8 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.listener = this::fireNestedEvent;
-        this.id = id;
         this.diagram = diagram;
         Collections.addAll(itemLists, lineClasses, regions);
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override
@@ -247,9 +240,6 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     }
 
     public ObjectWithId getObjectById(String id) {
-        if (getId().equals(id)) {
-            return this;
-        }
         ObjectWithId object;
         for (ItemWithIdIterable<? extends ObjectWithId> itemList : itemLists) {
             object = itemList.getById(id);
