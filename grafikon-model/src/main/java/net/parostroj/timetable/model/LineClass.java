@@ -1,10 +1,8 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.Observable;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -16,29 +14,24 @@ import net.parostroj.timetable.visitors.Visitable;
 public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, Observable, LineClassAttributes {
 
     private final String id;
-    private String name;
     private final Attributes attributes;
 
     private final ListenerSupport listenerSupport;
 
     public LineClass(String id, String name) {
         this.id = id;
-        this.name = name;
         this.listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(LineClass.this, change)));
+        this.setName(name);
     }
 
     public String getName() {
-        return name;
+        return this.attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, this.name)));
-        }
+        this.attributes.setRemove(ATTR_NAME, name);
     }
 
     @Override
@@ -58,7 +51,7 @@ public class LineClass implements AttributesHolder, ObjectWithId, Visitable, Ite
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     @Override
