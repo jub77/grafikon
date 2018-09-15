@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -10,10 +9,6 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class NodeTrack extends Track implements Visitable {
-
-    /** Platform. */
-    private boolean platform;
-
     /**
      * Constructor.
      *
@@ -42,18 +37,14 @@ public class NodeTrack extends Track implements Visitable {
      * @return the platform
      */
     public boolean isPlatform() {
-        return platform;
+        return this.getAttributes().getBool(ATTR_PLATFORM);
     }
 
     /**
      * @param platform the platform to set
      */
     public void setPlatform(boolean platform) {
-        boolean oldPlatform = this.platform;
-        if (oldPlatform != platform) {
-            this.platform = platform;
-            this.fireAttributeChanged(new AttributeChange(ATTR_PLATFORM, oldPlatform, platform));
-        }
+        this.getAttributes().setBool(ATTR_PLATFORM, platform);
     }
 
     /**

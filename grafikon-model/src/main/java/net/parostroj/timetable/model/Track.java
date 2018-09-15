@@ -14,8 +14,6 @@ import net.parostroj.timetable.model.events.AttributeChange;
 public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes, Iterable<TimeInterval> {
     /** ID. */
     private final String id;
-    /** Track number. */
-    private String number;
     /** Interval list. */
     private final TimeIntervalList intervalList;
     /** Attributes. */
@@ -61,16 +59,14 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
      * @return track number
      */
     public String getNumber() {
-        return number;
+        return this.attributes.get(ATTR_NUMBER, String.class);
     }
 
     /**
      * @param number track number to be set
      */
     public void setNumber(String number) {
-        String oldNumber = this.number;
-        this.number = number;
-        this.fireAttributeChanged(new AttributeChange(ATTR_NUMBER, oldNumber, number));
+        this.attributes.setRemove(ATTR_NUMBER, number);
     }
 
     /**
@@ -121,7 +117,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
 
     @Override
     public String toString() {
-        return number;
+        return getNumber();
     }
 
     public boolean isEmpty() {

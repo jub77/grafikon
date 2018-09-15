@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -11,10 +9,6 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class LineTrack extends Track implements Visitable {
-
-    private NodeTrack fromStraightTrack;
-    private NodeTrack toStraightTrack;
-
     /**
      * Constructor.
      *
@@ -35,35 +29,27 @@ public class LineTrack extends Track implements Visitable {
     }
 
     public NodeTrack getFromStraightTrack() {
-        return fromStraightTrack;
+        return this.getAttributes().get(ATTR_FROM_STRAIGHT, NodeTrack.class);
     }
 
     public void setFromStraightTrack(NodeTrack fromStraightTrack) {
-        NodeTrack oldTrack = this.fromStraightTrack;
-        if (!ObjectsUtil.compareWithNull(oldTrack, fromStraightTrack)) {
-            this.fromStraightTrack = fromStraightTrack;
-            this.fireAttributeChanged(new AttributeChange(ATTR_FROM_STRAIGHT, oldTrack, fromStraightTrack));
-        }
+        this.getAttributes().setRemove(ATTR_FROM_STRAIGHT, fromStraightTrack);
     }
 
     public NodeTrack getToStraightTrack() {
-        return toStraightTrack;
+        return this.getAttributes().get(ATTR_TO_STRAIGHT, NodeTrack.class);
     }
 
     public void setToStraightTrack(NodeTrack toStraightTrack) {
-        NodeTrack oldTrack = this.toStraightTrack;
-        if (!ObjectsUtil.compareWithNull(oldTrack, toStraightTrack)) {
-            this.toStraightTrack = toStraightTrack;
-            this.fireAttributeChanged(new AttributeChange(ATTR_TO_STRAIGHT, oldTrack, toStraightTrack));
-        }
+        this.getAttributes().setRemove(ATTR_TO_STRAIGHT, toStraightTrack);
     }
 
     public NodeTrack getFromStraightTrack(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? fromStraightTrack : toStraightTrack;
+        return (direction == TimeIntervalDirection.FORWARD) ? getFromStraightTrack() : getToStraightTrack();
     }
 
     public NodeTrack getToStraightTrack(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? toStraightTrack : fromStraightTrack;
+        return (direction == TimeIntervalDirection.FORWARD) ? getToStraightTrack() : getFromStraightTrack();
     }
 
     /**
