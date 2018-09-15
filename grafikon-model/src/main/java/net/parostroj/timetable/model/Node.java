@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -27,8 +26,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     private final TrainDiagram diagram;
     /** Attributes of the node. */
     private Attributes attributes;
-    /** Location of node. */
-    private Location location;
     /** Node ports. */
     private final ItemSet<NodePort> ports;
 
@@ -41,7 +38,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
      */
     @SuppressWarnings("unchecked")
     private void init() {
-        location = new Location(0, 0);
         attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(Node.this, change)));
         attributes.addListener((attrs, change) -> {
@@ -64,6 +60,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
                 }
             }
         });
+        this.setLocation(new Location(0, 0));
     }
 
     /**
@@ -141,15 +138,11 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     }
 
     public Location getLocation() {
-        return location;
+        return this.attributes.get(ATTR_LOCATION, Location.class);
     }
 
     public void setLocation(Location location) {
-        if (!ObjectsUtil.compareWithNull(location, this.location)) {
-            Location oldLocation = this.location;
-            this.location = location;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_LOCATION, oldLocation, location)));
-        }
+        this.attributes.setRemove(ATTR_LOCATION, location);
     }
 
     @Override
