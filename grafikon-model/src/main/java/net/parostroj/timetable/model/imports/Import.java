@@ -197,8 +197,7 @@ public abstract class Import {
         } else {
             return diagram.getRoutes()
                     .find(route -> route.getName().equals(origRoute.getName())
-                            && route.isNetPart() == origRoute.isNetPart()
-                            && route.isTrainRoute() == origRoute.isTrainRoute());
+                            && route.isNetPart() == origRoute.isNetPart());
         }
     }
 

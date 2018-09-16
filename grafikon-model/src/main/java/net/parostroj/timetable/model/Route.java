@@ -21,7 +21,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
     private List<RouteSegment<? extends Track>> segments;
     private String name;
     private boolean netPart;
-    private boolean trainRoute;
 
     /**
      * Constructor.
@@ -78,14 +77,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
 
     public void setNetPart(boolean netPart) {
         this.netPart = netPart;
-    }
-
-    public boolean isTrainRoute() {
-        return trainRoute;
-    }
-
-    public void setTrainRoute(boolean trainRoute) {
-        this.trainRoute = trainRoute;
     }
 
     @Override
