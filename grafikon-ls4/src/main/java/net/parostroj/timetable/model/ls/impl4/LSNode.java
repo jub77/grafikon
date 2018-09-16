@@ -114,7 +114,10 @@ public class LSNode {
     }
 
     public Node createNode(PartFactory partFactory, Function<String, ObjectWithId> mapping) throws LSException {
-        Node node = partFactory.createNode(id, NodeType.fromString(type), name, abbr);
+        Node node = partFactory.createNode(id);
+        node.setType(NodeType.fromString(type));
+        node.setName(name);
+        node.setAbbr(abbr);
         node.getAttributes().add(attributes.createAttributes(mapping));
         node.setLocation(new Location(x, y));
         // tracks

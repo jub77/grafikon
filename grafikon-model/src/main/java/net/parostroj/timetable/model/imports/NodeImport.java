@@ -38,8 +38,7 @@ class NodeImport extends Import {
         }
 
         // create new node
-        Node node = getDiagram().getPartFactory().createNode(this.getId(importedNode), importedNode.getType(),
-                importedNode.getName(), importedNode.getAbbr());
+        Node node = getDiagram().getPartFactory().createNode(this.getId(importedNode));
         node.getAttributes().add(this.importAttributes(importedNode.getAttributes()));
         node.setLocation(importedNode.getLocation());
         // tracks

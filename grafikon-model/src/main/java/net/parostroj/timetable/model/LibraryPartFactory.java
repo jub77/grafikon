@@ -13,8 +13,8 @@ public class LibraryPartFactory implements PartFactory {
     }
 
     @Override
-    public Node createNode(String id, NodeType type, String name, String abbr) {
-        return new Node(id, null, type, name, abbr);
+    public Node createNode(String id) {
+        return new Node(id, null);
     }
 
     public EngineClass createEngineClass(String id, String name) {

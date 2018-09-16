@@ -43,7 +43,7 @@ public class CopyFactory {
     }
 
     public Node copy(Node node, String id) {
-        Node copy = partFactory.createNode(id, node.getType(), node.getName(), node.getAbbr());
+        Node copy = partFactory.createNode(id);
 
         copy.getAttributes().add(node.getAttributes());
 

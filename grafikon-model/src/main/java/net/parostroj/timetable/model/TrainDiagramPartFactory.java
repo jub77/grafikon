@@ -38,8 +38,8 @@ public class TrainDiagramPartFactory implements PartFactory {
     }
 
     @Override
-    public Node createNode(String id, NodeType type, String name, String abbr) {
-        return new Node(id, diagram, type, name, abbr);
+    public Node createNode(String id) {
+        return new Node(id, diagram);
     }
 
     /**

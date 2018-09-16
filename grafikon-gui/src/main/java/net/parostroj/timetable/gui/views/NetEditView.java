@@ -112,8 +112,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     location = new Point(20, 20);
                 }
                 TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
-                Node n = factory.createNode(factory.createId(), NodeType.STATION, result,
-                        result.substring(0, 1) + cnt);
+                Node n = factory.createNode(factory.createId());
+                n.setType(NodeType.STATION);
+                n.setName(result);
+                n.setAbbr(result.substring(0, 1) + cnt);
                 NodeTrack track = new NodeTrack(factory.createId(), "1");
                 track.setPlatform(true);
                 n.getTracks().add(track);

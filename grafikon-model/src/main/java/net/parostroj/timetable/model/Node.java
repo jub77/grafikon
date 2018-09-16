@@ -68,17 +68,11 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
      *
      * @param id id
      * @param diagram train diagram
-     * @param type type
-     * @param name name
-     * @param abbr abbreviation
      */
-    Node(String id, TrainDiagram diagram, NodeType type, String name, String abbr) {
+    Node(String id, TrainDiagram diagram) {
         super(id);
         this.diagram = diagram;
         init();
-        this.setName(name);
-        this.setType(type);
-        this.setAbbr(abbr);
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
         this.ports = new ItemSetImpl<>(this::fireCollectionEvent);

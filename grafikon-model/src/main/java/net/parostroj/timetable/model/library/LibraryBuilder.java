@@ -160,7 +160,11 @@ public class LibraryBuilder {
     }
 
     public LibraryItem addNode(String id, NodeType type, String name, String abbr) {
-        return addImpl(factory.createNode(id, type, name, abbr), LibraryItemType.NODE);
+        Node node = factory.createNode(id);
+        node.setType(type);
+        node.setName(name);
+        node.setAbbr(abbr);
+        return addImpl(node, LibraryItemType.NODE);
     }
 
     public LibraryItem addEngineClass(String id, String name) {
