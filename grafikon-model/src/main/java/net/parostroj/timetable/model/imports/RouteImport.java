@@ -48,8 +48,8 @@ public class RouteImport extends Import {
             return null;
         }
 
-        Route route = new Route(this.getId(importedRoute), getDiagram(), importedRoute.getName(), segments);
-        route.setNetPart(importedRoute.isNetPart());
+        Route route = new Route(this.getId(importedRoute), getDiagram(), segments);
+        route.getAttributes().add(this.importAttributes(importedRoute.getAttributes()));
 
         // add to diagram
         this.getDiagram().getRoutes().add(route);

@@ -13,14 +13,16 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? extends Track>>, TrainDiagramPart {
+public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterable<RouteSegment<? extends Track>>, TrainDiagramPart {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_NET_PART = "net.part";
 
     private final TrainDiagram diagram;
     private final String id;
+    private final Attributes attributes;
     /** Route parts. */
     private List<RouteSegment<? extends Track>> segments;
-    private String name;
-    private boolean netPart;
 
     /**
      * Constructor.
@@ -28,22 +30,16 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
     public Route(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        segments = new LinkedList<>();
-    }
-
-    /**
-     * Constructor with name.
-     */
-    public Route(String id, TrainDiagram diagram, String name) {
-        this(id, diagram);
-        this.name = name;
+        this.attributes = new Attributes();
+        this.segments = new LinkedList<>();
     }
 
     /**
      * Copy constructor.
      */
     public Route(String id, Route route) {
-        this(id, route.diagram, route.name);
+        this(id, route.diagram);
+        this.setName(route.getName());
         segments = new LinkedList<>(route.segments);
     }
 
@@ -56,7 +52,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
     @SafeVarargs
     public Route(String id, TrainDiagram diagram, String name, RouteSegment<? extends Track>... segments) {
         this(id, diagram, segments);
-        this.name = name;
+        this.setName(name);
     }
 
     public List<RouteSegment<? extends Track>> getSegments() {
@@ -64,19 +60,19 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
     }
 
     public String getName() {
-        return name;
+        return this.attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.attributes.setRemove(ATTR_NAME, name);
     }
 
     public boolean isNetPart() {
-        return netPart;
+        return this.attributes.getBool(ATTR_NET_PART);
     }
 
     public void setNetPart(boolean netPart) {
-        this.netPart = netPart;
+        this.attributes.setBool(ATTR_NET_PART, netPart);
     }
 
     @Override
@@ -87,6 +83,11 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? e
     @Override
     public TrainDiagram getDiagram() {
         return diagram;
+    }
+
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
     }
 
     /**
