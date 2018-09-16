@@ -5,7 +5,7 @@ import net.parostroj.timetable.model.LineClass;
 
 /**
  * Storage for line class.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"id", "name"})
@@ -37,9 +37,10 @@ public class LSLineClass {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public LineClass createLineClass() {
-        LineClass lineClass = new LineClass(id, name);
+        LineClass lineClass = new LineClass(id);
+        lineClass.setName(name);
         return lineClass;
     }
 }

@@ -52,7 +52,8 @@ public class LSLineClass {
     }
 
     public LineClass createLineClass() throws LSException {
-        LineClass lineClass = new LineClass(id, name);
+        LineClass lineClass = new LineClass(id);
+        lineClass.setName(name);
         if (this.attributes != null) {
             lineClass.getAttributes().add(this.attributes.createAttributes());
         }

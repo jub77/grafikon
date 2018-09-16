@@ -18,12 +18,11 @@ public class LineClass implements AttributesHolder, ObjectWithId, Visitable, Ite
 
     private final ListenerSupport listenerSupport;
 
-    public LineClass(String id, String name) {
+    public LineClass(String id) {
         this.id = id;
         this.listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(LineClass.this, change)));
-        this.setName(name);
     }
 
     public String getName() {

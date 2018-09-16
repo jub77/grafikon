@@ -21,8 +21,8 @@ public class LibraryPartFactory implements PartFactory {
         return new EngineClass(id);
     }
 
-    public LineClass createLineClass(String id, String name) {
-        return new LineClass(id, name);
+    public LineClass createLineClass(String id) {
+        return new LineClass(id);
     }
 
     @Override

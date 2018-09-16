@@ -54,7 +54,9 @@ public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagr
 
     @Override
     protected LineClass createNew(String name) {
-        return new LineClass(IdGenerator.getInstance().getId(), name);
+        LineClass lineClass = new LineClass(IdGenerator.getInstance().getId());
+        lineClass.setName(name);
+        return lineClass;
     }
 
 }

@@ -45,7 +45,12 @@ public class EditLineDialog extends javax.swing.JDialog {
     }
 
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
-    private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
+    private static final LineClass noneLineClass;
+
+    static {
+        noneLineClass = new LineClass(null);
+        noneLineClass.setName(ResourceLoader.getString("line.class.none"));
+    }
 
     private Line line;
     private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<>();

@@ -168,13 +168,15 @@ public class LibraryBuilder {
     }
 
     public LibraryItem addEngineClass(String id, String name) {
-        EngineClass clazz = factory.createEngineClass(id);
-        clazz.setName(name);
-        return addImpl(clazz, LibraryItemType.ENGINE_CLASS);
+        EngineClass engineClass = factory.createEngineClass(id);
+        engineClass.setName(name);
+        return addImpl(engineClass, LibraryItemType.ENGINE_CLASS);
     }
 
     public LibraryItem addLineClass(String id, String name) {
-        return addImpl(factory.createLineClass(id, name), LibraryItemType.LINE_CLASS);
+        LineClass lineClass = factory.createLineClass(id);
+        lineClass.setName(name);
+        return addImpl(lineClass, LibraryItemType.LINE_CLASS);
     }
 
     public LibraryItem addTrainType(String id, LocalizedString desc) {
