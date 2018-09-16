@@ -11,7 +11,6 @@ import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.FNConnection;
-import net.parostroj.timetable.model.FreightNet;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Output;
@@ -91,8 +90,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setNet(LSNet lsNet) throws LSException {
-        Net net = lsNet.createNet(this.diagram);
-        this.diagram.setNet(net);
+        Net net = this.diagram.getNet();
         // add regions
         if (lsNet.getRegions() != null) {
             Collection<DelayedAttributes<Region>> regions = new ArrayList<>();
@@ -127,8 +125,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setFreightNet(LSFreightNet lsFreightNet) throws LSException {
-        FreightNet net = lsFreightNet.createFreightNet(diagram);
-        this.diagram.setFreightNet(net);
+        lsFreightNet.createFreightNet(diagram);
         for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
             Train from = diagram.getTrains().getById(lsConnection.getTrainFrom());
             Train to = diagram.getTrains().getById(lsConnection.getTrainTo());

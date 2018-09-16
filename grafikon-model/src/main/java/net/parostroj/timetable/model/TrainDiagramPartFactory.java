@@ -130,16 +130,6 @@ public class TrainDiagramPartFactory implements PartFactory {
     }
 
     /**
-     * Creates new freight net.
-     *
-     * @param id id
-     * @return new freight net
-     */
-    public FreightNet createFreightNet() {
-        return new FreightNet(diagram);
-    }
-
-    /**
      * Creates new output template.
      *
      * @param id id

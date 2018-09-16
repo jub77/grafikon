@@ -111,7 +111,7 @@ public class TrainDiagram
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
-        this.freightNet = partFactory.createFreightNet();
+        this.freightNet = new FreightNet(this);
         this.freightNet.addListener(listener);
         this.validators = new ArrayList<>();
         this.validators.add(new TrainNamesValidator(this));
@@ -140,28 +140,11 @@ public class TrainDiagram
         return net;
     }
 
-    public void setNet(Net net) {
-        if (net != this.net) {
-            if (this.net != null) {
-                this.net.removeAllEventListener(listener);
-            }
-            Net oldNet = this.net;
-            this.net = net;
-            this.net.addAllEventListener(listener);
-            this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_NET, oldNet, net)));
-        }
-    }
-
-    public void setFreightNet(FreightNet freightNet) {
-        if (freightNet != this.freightNet) {
-            if (this.freightNet != null) {
-                this.freightNet.removeListener(listener);
-            }
-            FreightNet oldFreightNet = this.freightNet;
-            this.freightNet = freightNet;
-            this.freightNet.addListener(listener);
-            this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_FREIGHT_NET, oldFreightNet, freightNet)));
-        }
+    /**
+     * @return freight net
+     */
+    public FreightNet getFreightNet() {
+        return freightNet;
     }
 
     public ChangesTracker getChangesTracker() {
@@ -227,10 +210,6 @@ public class TrainDiagram
 
     public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
         return getById(id, type.getCycles());
-    }
-
-    public FreightNet getFreightNet() {
-        return freightNet;
     }
 
     private <T extends ObjectWithId> T getById(String id, Iterable<T> items) {
