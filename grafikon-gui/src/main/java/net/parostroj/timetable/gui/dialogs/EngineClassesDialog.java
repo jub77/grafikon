@@ -310,7 +310,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
         if (newName != null) {
             // create new LineClass
-            EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
+            EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId());
+            clazz.setName(newName);
             listModel.addWrapper(Wrapper.getWrapper(clazz));
             nameTextField.setText("");
             int index = listModel.getIndexOfObject(clazz);

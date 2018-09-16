@@ -62,7 +62,8 @@ public class CopyFactory {
     }
 
     public EngineClass copy(EngineClass engineClass, String id) {
-        EngineClass copy = new EngineClass(id, engineClass.getName());
+        EngineClass copy = new EngineClass(id);
+        copy.getAttributes().add(engineClass.getAttributes());
         // copy all data
         for (WeightTableRow row : engineClass.getWeightTable()) {
             WeightTableRow newRow = copy.createWeightTableRow(row.getSpeed());

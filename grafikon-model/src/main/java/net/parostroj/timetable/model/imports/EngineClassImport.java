@@ -45,7 +45,8 @@ public class EngineClassImport extends Import {
         }
 
         // create new engine class
-        EngineClass engineClass = new EngineClass(this.getId(importedEngineClass), importedEngineClass.getName());
+        EngineClass engineClass = new EngineClass(this.getId(importedEngineClass));
+        engineClass.getAttributes().add(this.importAttributes(importedEngineClass.getAttributes()));
 
         // process weight rows
         for (WeightTableRow impRow : importedEngineClass.getWeightTable()) {

@@ -17,8 +17,8 @@ public class LibraryPartFactory implements PartFactory {
         return new Node(id, null);
     }
 
-    public EngineClass createEngineClass(String id, String name) {
-        return new EngineClass(id, name);
+    public EngineClass createEngineClass(String id) {
+        return new EngineClass(id);
     }
 
     public LineClass createLineClass(String id, String name) {

@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Observable;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -17,13 +16,11 @@ import net.parostroj.timetable.visitors.Visitable;
 public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, EngineClassAttributes {
 
     private final String id;
-    private String name;
     private final List<WeightTableRow> weightTable;
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
 
-    public EngineClass(String id, String name) {
-        this.name = name;
+    public EngineClass(String id) {
         this.id = id;
         this.weightTable = new LinkedList<>();
         this.listenerSupport = new ListenerSupport();
@@ -32,15 +29,11 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
     }
 
     public String getName() {
-        return name;
+        return this.attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(this.name, name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
-        }
+        this.attributes.setRemove(ATTR_NAME, name);
     }
 
     public String getGroupKey() {
@@ -134,7 +127,7 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     /**

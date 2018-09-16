@@ -75,7 +75,8 @@ public class LSEngineClass {
     }
 
     public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) throws LSException {
-        EngineClass ec = new EngineClass(id, name);
+        EngineClass ec = new EngineClass(id);
+        ec.setName(name);
         if (this.rows != null) {
             for (LSWeightTableRow lsRow : this.rows) {
                 ec.addWeightTableRow(lsRow.createWeightTableRow(lineClassMapping, ec));

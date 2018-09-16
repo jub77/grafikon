@@ -168,7 +168,9 @@ public class LibraryBuilder {
     }
 
     public LibraryItem addEngineClass(String id, String name) {
-        return addImpl(factory.createEngineClass(id, name), LibraryItemType.ENGINE_CLASS);
+        EngineClass clazz = factory.createEngineClass(id);
+        clazz.setName(name);
+        return addImpl(clazz, LibraryItemType.ENGINE_CLASS);
     }
 
     public LibraryItem addLineClass(String id, String name) {
