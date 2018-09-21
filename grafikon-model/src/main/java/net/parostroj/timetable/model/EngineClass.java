@@ -13,19 +13,21 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, EngineClassAttributes {
+public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, EngineClassAttributes, ItemCollectionObject {
 
     private final String id;
     private final List<WeightTableRow> weightTable;
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
 
+    private boolean events;
+
     public EngineClass(String id) {
         this.id = id;
         this.weightTable = new LinkedList<>();
         this.listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new Event(EngineClass.this, change)));
+                (attrs, change) -> this.fireEvent(new Event(EngineClass.this, change)));
     }
 
     public String getName() {
@@ -146,7 +148,9 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
      * @param event event
      */
     protected void fireEvent(Event event) {
-        listenerSupport.fireEvent(event);
+        if (events) {
+            listenerSupport.fireEvent(event);
+        }
     }
 
     @Override
@@ -166,5 +170,15 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
     @Override
     public Attributes getAttributes() {
         return attributes;
+    }
+
+    @Override
+    public void added() {
+        events = true;
+    }
+
+    @Override
+    public void removed() {
+        events = false;
     }
 }
