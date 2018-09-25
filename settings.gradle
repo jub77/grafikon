@@ -3,19 +3,10 @@ pluginManagement {
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
-    }/*
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "net.parostroj.versioning") {
-                useModule "net.parostroj.versioning:version-plugin:1.0.0"
-            }
-        }
-    }*/
+    }
 }
 
 enableFeaturePreview('IMPROVED_POM_SUPPORT')
-
-//includeBuild 'grafikon-version-plugin'
 
 rootProject.name = 'grafikon'
 
