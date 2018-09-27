@@ -1,6 +1,7 @@
 plugins {
-	id 'io.spring.dependency-management' version '1.0.5.RELEASE' apply false
+	id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
 	id 'net.parostroj.versioning' apply false
+	id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
 def nonJavaProjectsFilter = [
@@ -45,7 +46,7 @@ subprojects { prj ->
 		}
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.2.0'
-			dependency 'org.mvel:mvel2:2.4.0.Final'
+			dependency 'org.mvel:mvel2:2.4.2.Final'
 			dependency 'org.codehaus.groovy:groovy-all:2.4.15'
 			dependency 'org.slf4j:slf4j-api:1.7.25'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
@@ -65,12 +66,12 @@ subprojects { prj ->
 				exclude 'xalan:xalan'
 				exclude 'xml-apis:xml-apis'
 			}
-			dependency 'com.github.akarnokd:rxjava2-swing:0.3.0'
+			dependency 'com.github.akarnokd:rxjava2-swing:0.3.2'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:2.6.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
-			dependency 'com.github.jgraph:jgraphx:v3.9.8'
+			dependency 'com.github.jgraph:jgraphx:v3.9.9'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5', {
 				exclude 'org.webjars.bower:js-beautify'
 			}

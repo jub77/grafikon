@@ -13,3 +13,4 @@ buildSrc/build/*
 .settings
 .gradle
 /*.txt
+/build
