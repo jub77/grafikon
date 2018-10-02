@@ -1,7 +1,7 @@
 dependencies {
 	compile 'org.jgrapht:jgrapht-core'
 	compile 'org.mvel:mvel2'
-	compile group: 'org.codehaus.groovy', name: 'groovy-all', classifier: 'indy'
+	compile 'org.codehaus.groovy:groovy-all'
 	compile 'org.slf4j:slf4j-api'
 	compile 'joda-time:joda-time'
 	compile 'com.google.guava:guava'
