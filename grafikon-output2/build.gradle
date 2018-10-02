@@ -1,5 +1,5 @@
 dependencies {
-	compile 'net.parostroj:grafikon-model'
+	compile project(':grafikon-model')
 
 	compile 'org.slf4j:slf4j-api'
 	compile 'org.slf4j:jcl-over-slf4j'

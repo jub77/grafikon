@@ -22,28 +22,7 @@ subprojects { prj ->
 		maven { url 'https://jitpack.io' }
 	}
 
-	def subs = {
-		substitute module('net.parostroj:grafikon-model') with project(':grafikon-model')
-		substitute module('net.parostroj:grafikon-save') with project(':grafikon-save')
-		substitute module('net.parostroj:grafikon-ls') with project(':grafikon-ls')
-		substitute module('net.parostroj:grafikon-ls4') with project(':grafikon-ls4')
-		substitute module('net.parostroj:grafikon-templates') with project(':grafikon-templates')
-		substitute module('net.parostroj:grafikon-output2') with project(':grafikon-output2')
-		substitute module('net.parostroj:grafikon-gui-components') with project(':grafikon-gui-components')
-		substitute module('net.parostroj:grafikon-gui') with project(':grafikon-gui')
-		substitute module('net.parostroj:grafikon-start') with project(':grafikon-start')
-	}
-
-	configurations.all {
-		resolutionStrategy {
-			dependencySubstitution subs
-		}
-	}
-
 	dependencyManagement {
-		resolutionStrategy {
-			dependencySubstitution subs
-		}
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.2.0'
 			dependency 'org.mvel:mvel2:2.4.2.Final'
@@ -88,6 +67,15 @@ subprojects { prj ->
 	}
 
 	apply plugin: 'java'
+	apply plugin: 'maven-publish'
+
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				from components.java
+			}
+		}
+	}
 
 	compileJava {
 		sourceCompatibility = 1.8

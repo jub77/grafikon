@@ -4,11 +4,12 @@ task run(type: JavaExec) {
 }
 
 dependencies {
-	compile 'net.parostroj:grafikon-gui'
-	compile 'net.parostroj:grafikon-save'
-	compile 'net.parostroj:grafikon-ls'
-	compile 'net.parostroj:grafikon-ls4'
-	compile 'net.parostroj:grafikon-templates'
+	compile project(':grafikon-gui')
+	compile project(':grafikon-save')
+	compile project(':grafikon-templates')
+
+	runtime project(':grafikon-ls')
+	runtime project(':grafikon-ls4')
 
 	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
 	compile 'org.apache.logging.log4j:log4j-core'

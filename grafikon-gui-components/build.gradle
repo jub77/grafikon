@@ -1,7 +1,7 @@
 dependencies {
-	compile 'net.parostroj:grafikon-model'
-	compile 'net.parostroj:grafikon-output2'
-	compile 'net.parostroj:grafikon-templates'
+	compile project(':grafikon-model')
+	compile project(':grafikon-output2')
+	compile project(':grafikon-templates')
 
 	compile 'com.github.akarnokd:rxjava2-swing'
 	compile 'org.beanfabrics:beanfabrics-swing'
