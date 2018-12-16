@@ -4,3 +4,5 @@
 *.properties    text
 *.xml           text
 *.md            text
+
+*.sh            text eol=lf
