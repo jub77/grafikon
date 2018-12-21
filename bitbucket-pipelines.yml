@@ -1,4 +1,4 @@
-image: gradle:jdk8-alpine
+image: openjdk:8
 
 pipelines:
   default:
@@ -6,4 +6,4 @@ pipelines:
         caches:
           - gradle
         script:
-          - gradle build
+          - bash ./gradlew build
