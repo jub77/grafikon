@@ -1,8 +1,10 @@
 grafikon-*/bin/*
 grafikon-*/build/*
+grafikon-*/out/*
 grafikon-webstart/src/main/keystore/grafikon.ks
 buildSrc/bin/*
 buildSrc/build/*
+buildSrc/out/*
 /*.cmd
 /*.sh
 /*.groovy
@@ -14,3 +16,5 @@ buildSrc/build/*
 .gradle
 /*.txt
 /build
+/*.iml
+.idea
