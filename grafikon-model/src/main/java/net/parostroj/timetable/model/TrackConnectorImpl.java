@@ -61,13 +61,13 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public Line.Endpoint getLineEndPoint() {
-        return attributes.get(ATTR_LINE_ENDPOINT, Line.Endpoint.class);
+    public LineTrack getLineTrack() {
+        return attributes.get(ATTR_LINE_TRACK, LineTrack.class);
     }
 
     @Override
-    public void setLineEndpoint(Line.Endpoint lineEndpoint) {
-        attributes.setRemove(ATTR_LINE_ENDPOINT, lineEndpoint);
+    public void setLineTrack(LineTrack lineTrack) {
+        attributes.setRemove(ATTR_LINE_TRACK, lineTrack);
     }
 
     @Override

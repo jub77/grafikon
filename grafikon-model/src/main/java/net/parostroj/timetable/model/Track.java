@@ -14,6 +14,8 @@ import net.parostroj.timetable.model.events.AttributeChange;
 public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes, Iterable<TimeInterval> {
     /** ID. */
     private final String id;
+    /** Owner of the track. */
+    private RouteSegment owner;
     /** Interval list. */
     private final TimeIntervalList intervalList;
     /** Attributes. */
@@ -29,9 +31,11 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
      * Constructor.
      *
      * @param id id
+     * @param owner owner of the track
      */
-    public Track(String id) {
+    public Track(String id, RouteSegment owner) {
         this.id = id;
+        this.owner = owner;
         this.intervalList = new TimeIntervalList();
         this.attributes = new Attributes(
                 (attrs, change) -> fireAttributeChanged(change));
@@ -40,10 +44,13 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /**
      * creates instance with specified track number.
      *
+     * @param id id
+     * @param owner owner of the track
      * @param number track number
+     *
      */
-    public Track(String id, String number) {
-        this(id);
+    public Track(String id, RouteSegment owner, String number) {
+        this(id, owner);
         this.setNumber(number);
     }
 
@@ -54,6 +61,11 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     public String getId() {
         return id;
     }
+
+    /**
+     * @return owner of the track
+     */
+    public RouteSegment getOwner() { return owner; }
 
     /**
      * @return track number

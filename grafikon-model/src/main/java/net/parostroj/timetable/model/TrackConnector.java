@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public interface TrackConnector extends ObjectWithId, ItemCollectionObject, AttributesHolder {
 
-    String ATTR_LINE_ENDPOINT = "line.endpoint";
+    String ATTR_LINE_TRACK = "line.track";
     String ATTR_STRAIGHT_TRACK = "straight.track";
     String ATTR_TRACKS = "tracks";
     String ATTR_NUMBER = "number";
@@ -23,9 +23,9 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
 
     void setNumber(String number);
 
-    Line.Endpoint getLineEndPoint();
+    LineTrack getLineTrack();
 
-    void setLineEndpoint(Line.Endpoint lineEndpoint);
+    void setLineTrack(LineTrack lineTrack);
 
     NodeTrack getStraightNodeTrack();
 

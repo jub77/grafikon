@@ -590,7 +590,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
         if (name != null && !name.equals("")) {
-            NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), name);
+            NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), node, name);
             NodeType nodeType = this.types.getSelectedObject();
             if (nodeType.isPassenger()) {
                 track.setPlatform(true);

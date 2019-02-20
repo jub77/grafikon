@@ -4,6 +4,8 @@ import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.ls.LSException;
@@ -46,8 +48,8 @@ public class LSLineTrack extends LSTrack {
         this.toStraightTrack = toStraightTrack;
     }
 
-    public LineTrack createLineTrack(Function<String, ObjectWithId> mapping) throws LSException {
-        LineTrack lineTrack = new LineTrack(this.getId());
+    public LineTrack createLineTrack(Line line, Function<String, ObjectWithId> mapping) throws LSException {
+        LineTrack lineTrack = new LineTrack(this.getId(), line);
         this.addValuesTrack(mapping, lineTrack);
         return lineTrack;
     }

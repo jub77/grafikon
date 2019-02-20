@@ -54,7 +54,7 @@ public class LineImport extends Import {
 
         // tracks
         for (LineTrack importedTrack : importedLine.getTracks()) {
-            LineTrack track = new LineTrack(this.getId(importedTrack), importedTrack.getNumber());
+            LineTrack track = new LineTrack(this.getId(importedTrack), line, importedTrack.getNumber());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             line.getTracks().add(track);
         }

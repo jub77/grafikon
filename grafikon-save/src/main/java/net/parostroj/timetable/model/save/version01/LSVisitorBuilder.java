@@ -68,7 +68,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSNodeTrack lsNodeTrack) {
-        NodeTrack stationTrack = new NodeTrack(this.createId(), lsNodeTrack.getNumber());
+        NodeTrack stationTrack = new NodeTrack(this.createId(), lastStation, lsNodeTrack.getNumber());
         ids.put(lsNodeTrack.getId(), stationTrack);
 
         stationTrack.setPlatform(lsNodeTrack.isPlatform());
@@ -93,7 +93,7 @@ public class LSVisitorBuilder implements LSVisitor {
         Node to = (Node) ids.get(lsLine.getTargetId());
         Line line = diagram.getPartFactory().createLine(this.createId());
         line.setLength(lsLine.getLength());
-        LineTrack lt = new LineTrack(this.createId(), "1");
+        LineTrack lt = new LineTrack(this.createId(), line, "1");
         line.getTracks().add(lt);
         lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
         lt.setToStraightTrack((NodeTrack) ids.get(lsLine.getTargetTrackId()));

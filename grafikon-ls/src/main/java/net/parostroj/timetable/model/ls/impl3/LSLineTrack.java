@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
 
 /**
@@ -39,8 +41,8 @@ public class LSLineTrack extends LSTrack {
         this.toStraightTrack = toStraightTrack;
     }
 
-    public LineTrack createLineTrack() {
-        LineTrack lineTrack = new LineTrack(this.getId());
+    public LineTrack createLineTrack(Line line) {
+        LineTrack lineTrack = new LineTrack(this.getId(), line);
         this.addValuesTrack(lineTrack);
         return lineTrack;
     }

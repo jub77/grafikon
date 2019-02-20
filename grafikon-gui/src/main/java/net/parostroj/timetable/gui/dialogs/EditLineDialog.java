@@ -44,7 +44,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         private static final long serialVersionUID = 1L;
     }
 
-    private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
+    private static final NodeTrack noneTrack = new NodeTrack(null, null, ResourceLoader.getString("node.track.none"));
     private static final LineClass noneLineClass;
 
     static {
@@ -403,7 +403,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         // show dialog with name question
         String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
         if (name != null && !name.equals("")) {
-            LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), name);
+            LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), line, name);
             ((LTModel) trackList.getModel()).addElement(track);
             connections.put(track, new Tuple<NodeTrack>(null, null));
             this.updateSelectedTrack(track);

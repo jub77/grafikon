@@ -49,7 +49,7 @@ public class CopyFactory {
 
         // copy tracks
         for (NodeTrack track : node.getTracks()) {
-            NodeTrack copyTrack = new NodeTrack(IdGenerator.getInstance().getId(), track.getNumber());
+            NodeTrack copyTrack = new NodeTrack(IdGenerator.getInstance().getId(), copy, track.getNumber());
             copyTrack.setPlatform(track.isPlatform());
             copyTrack.getAttributes().add(track.getAttributes());
             copy.getTracks().add(copyTrack);

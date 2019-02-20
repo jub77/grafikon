@@ -13,19 +13,26 @@ public class NodeTrack extends Track implements Visitable {
      * Constructor.
      *
      * @param id id
+     * @param owner owner of the track
      */
-    public NodeTrack(String id) {
-        super(id);
+    public NodeTrack(String id, Node owner) {
+        super(id, owner);
     }
 
     /**
      * creates instance with specified track number.
      *
      * @param id id
+     * @param owner owner of the track
      * @param number track number
      */
-    public NodeTrack(String id, String number) {
-        super(id, number);
+    public NodeTrack(String id, Node owner, String number) {
+        super(id, owner, number);
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node) super.getOwner();
     }
 
     @Override

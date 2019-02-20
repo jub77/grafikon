@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.function.Function;
 
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.ls.LSException;
@@ -31,8 +32,8 @@ public class LSNodeTrack extends LSTrack {
         this.platform = platform;
     }
 
-    public NodeTrack createNodeTrack(Function<String, ObjectWithId> mapping) throws LSException {
-        NodeTrack nodeTrack = new NodeTrack(this.getId());
+    public NodeTrack createNodeTrack(Node node, Function<String, ObjectWithId> mapping) throws LSException {
+        NodeTrack nodeTrack = new NodeTrack(this.getId(), node);
         this.addValuesTrack(mapping, nodeTrack);
         nodeTrack.setPlatform(platform);
         return nodeTrack;

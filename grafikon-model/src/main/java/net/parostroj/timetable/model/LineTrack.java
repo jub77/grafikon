@@ -13,19 +13,26 @@ public class LineTrack extends Track implements Visitable {
      * Constructor.
      *
      * @param id id
+     * @param owner owner of the track
      */
-    public LineTrack(String id) {
-        super(id);
+    public LineTrack(String id, Line owner) {
+        super(id, owner);
+    }
+
+    @Override
+    public Line getOwner() {
+        return (Line) super.getOwner();
     }
 
     /**
      * Constructor with number of the track.
      *
      * @param id id
+     * @param owner owner of the track
      * @param number track number
      */
-    public LineTrack(String id, String number) {
-        super(id, number);
+    public LineTrack(String id, Line owner, String number) {
+        super(id, owner, number);
     }
 
     public NodeTrack getFromStraightTrack() {

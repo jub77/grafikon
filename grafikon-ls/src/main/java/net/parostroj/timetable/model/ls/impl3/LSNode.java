@@ -120,7 +120,7 @@ public class LSNode {
         node.setLocation(new Location(x, y));
         // tracks
         for (LSNodeTrack track : getTracks()) {
-            node.getTracks().add(track.createNodeTrack());
+            node.getTracks().add(track.createNodeTrack(node));
         }
         return node;
     }

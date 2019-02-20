@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl3;
 
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 
 /**
@@ -27,8 +28,8 @@ public class LSNodeTrack extends LSTrack {
         this.platform = platform;
     }
 
-    public NodeTrack createNodeTrack() {
-        NodeTrack nodeTrack = new NodeTrack(this.getId());
+    public NodeTrack createNodeTrack(Node node) {
+        NodeTrack nodeTrack = new NodeTrack(this.getId(), node);
         this.addValuesTrack(nodeTrack);
         nodeTrack.setPlatform(platform);
         return nodeTrack;

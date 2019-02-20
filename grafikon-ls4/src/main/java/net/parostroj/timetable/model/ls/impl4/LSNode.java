@@ -123,7 +123,7 @@ public class LSNode {
         // tracks
         if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
-                node.getTracks().add(track.createNodeTrack(mapping));
+                node.getTracks().add(track.createNodeTrack(node, mapping));
             }
         }
         return node;

@@ -43,7 +43,7 @@ class NodeImport extends Import {
         node.setLocation(importedNode.getLocation());
         // tracks
         for (NodeTrack importedTrack : importedNode.getTracks()) {
-            NodeTrack track = new NodeTrack(this.getId(importedTrack), importedTrack.getNumber());
+            NodeTrack track = new NodeTrack(this.getId(importedTrack), node, importedTrack.getNumber());
             track.setPlatform(importedTrack.isPlatform());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             node.getTracks().add(track);

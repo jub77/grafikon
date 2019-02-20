@@ -111,7 +111,7 @@ public class LSLine {
         line.getAttributes().add(attributes.createAttributes(diagram));
         // tracks
         for (LSLineTrack lsLineTrack : getTracks()) {
-            LineTrack lineTrack = lsLineTrack.createLineTrack();
+            LineTrack lineTrack = lsLineTrack.createLineTrack(line);
             NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
             NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
             lineTrack.setFromStraightTrack(fromStraight);
