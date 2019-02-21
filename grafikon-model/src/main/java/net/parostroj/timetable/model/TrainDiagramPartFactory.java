@@ -58,11 +58,10 @@ public class TrainDiagramPartFactory implements PartFactory {
      * Creates new node port for node.
      *
      * @param node node
-     * @param side side of the node port
      * @return a new node port
      */
-    public NodePort createNodePort(Node node, Node.Side side) {
-        return node.createNodePort(side);
+    public NodePort createNodePort(Node node) {
+        return node.createNodePort();
     }
 
     /**

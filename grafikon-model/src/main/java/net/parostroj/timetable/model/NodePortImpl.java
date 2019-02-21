@@ -14,9 +14,9 @@ class NodePortImpl implements NodePort {
     private final ItemWithIdList<TrackConnector> connectors;
     private int position;
 
-    NodePortImpl(Node owner, Side side) {
+    NodePortImpl(Node owner) {
         this.owner = owner;
-        this.orientation = side;
+        this.orientation = Side.LEFT;
         this.position = 0;
         this.connectors = new ItemWithIdListImpl<>(owner::fireCollectionEventListObject);
     }

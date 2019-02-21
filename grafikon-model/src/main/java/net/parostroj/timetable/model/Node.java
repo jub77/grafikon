@@ -289,8 +289,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         listenerSupport.fireEvent(event);
     }
 
-    protected NodePort createNodePort(final Side side) {
-        return new NodePortImpl(this, side);
+    protected NodePort createNodePort() {
+        return new NodePortImpl(this);
     }
 
     private class NodeRegionHierarchy extends RegionHierarchyImpl {
