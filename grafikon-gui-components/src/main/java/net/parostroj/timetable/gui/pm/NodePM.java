@@ -1,14 +1,13 @@
 package net.parostroj.timetable.gui.pm;
 
-import java.util.Arrays;
-
+import net.parostroj.timetable.model.Node;
 import org.beanfabrics.Path;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.ListPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.SortKey;
 
-import net.parostroj.timetable.model.Node;
+import java.util.Arrays;
 
 /**
  * @author jub
@@ -48,7 +47,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.ports.clear();
         node.getPorts().forEach(port -> {
             NodePortPM nodePortPm = new NodePortPM();
-            nodePortPm.init(port);
+            nodePortPm.init(port, this);
             ports.add(nodePortPm);
         });
     }

@@ -15,7 +15,7 @@ import net.parostroj.timetable.model.NodePort;
 /**
  * @author jub
  */
-public class NodePortPM extends AbstractPM implements IPM<NodePort> {
+public class NodePortPM extends AbstractPM {
 
     TextPM portId;
     IntegerPM position;
@@ -45,15 +45,11 @@ public class NodePortPM extends AbstractPM implements IPM<NodePort> {
         }
     }
 
-
-    @Override
-    public void init(NodePort port) {
+    public void init(NodePort port, NodePM nodePM) {
         this.position.setInteger(port.getPosition());
         this.orientation.setValue(port.getOrientation());
         this.connectors.clear();
-        port.getConnectors().forEach(connector -> {
-            this.connectors.add(new TrackConnectorPM(connector));
-        });
+        port.getConnectors().forEach(connector -> this.connectors.add(new TrackConnectorPM(connector, nodePM)));
     }
 
     public ListPM<TrackConnectorPM> getConnectors() {
