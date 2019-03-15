@@ -76,6 +76,9 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
+    public void setStraightNodeTrack(NodeTrack nodeTrack) { attributes.setRemove(ATTR_STRAIGHT_TRACK, nodeTrack); }
+
+    @Override
     public Set<NodeTrack> getNodeTracks() {
         return attributes.getAsSet(ATTR_TRACKS, NodeTrack.class, Collections.emptySet());
     }

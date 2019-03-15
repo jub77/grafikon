@@ -29,5 +29,7 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
 
     NodeTrack getStraightNodeTrack();
 
+    void setStraightNodeTrack(NodeTrack nodeTrack);
+
     Set<NodeTrack> getNodeTracks();
 }
