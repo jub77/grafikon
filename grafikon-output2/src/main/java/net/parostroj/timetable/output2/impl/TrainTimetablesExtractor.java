@@ -345,7 +345,7 @@ public class TrainTimetablesExtractor {
     private boolean checkRoute(Line line, List<RouteSegment<?>> segments) {
         for (RouteSegment<?> seg : segments) {
             // sequence line - node
-            if (seg.asLine() != null && seg.asLine() == line)
+            if (seg instanceof Line && seg == line)
                 return true;
         }
         return false;
@@ -363,10 +363,10 @@ public class TrainTimetablesExtractor {
             // compute distance
             long length = 0;
             for (RouteSegment<?> seg : foundRoute.getSegments()) {
-                if (seg.asNode() == pair.second) {
+                if (seg == pair.second) {
                     break;
-                } else if (seg.asLine() != null) {
-                    length += seg.asLine().getLength();
+                } else if (seg instanceof Line) {
+                    length += ((Line) seg).getLength();
                 }
             }
             double ratio = UnitUtil.getRouteLengthRatio(diagram);

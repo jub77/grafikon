@@ -184,8 +184,8 @@ public abstract class GTDrawBase implements GTDraw {
         if (!snWidthFixed) {
             int max = 0;
             for (RouteSegment<?> seg : getRoute().getSegments()) {
-                if (seg.isNode()) {
-                    Node n = seg.asNode();
+                if (seg instanceof Node) {
+                    Node n = (Node) seg;
                     String name = TransformUtil.transformStation(n).trim();
                     int nameWidth = DrawUtils.getStringWidth(g, name);
                     int w = (int) (nameWidth + lmSize.getWidth());

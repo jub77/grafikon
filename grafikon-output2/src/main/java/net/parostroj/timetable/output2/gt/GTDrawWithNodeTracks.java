@@ -66,11 +66,11 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         int completeLength = 0;
         int trackGaps = 0;
         for (RouteSegment<?> segment : route.getSegments()) {
-            if (segment.asLine() != null) {
-                completeLength = completeLength + segment.asLine().getLength();
+            if (segment instanceof Line) {
+                completeLength = completeLength + ((Line) segment).getLength();
             }
-            if (segment.asNode() != null) {
-                trackGaps = trackGaps + segment.asNode().getTracks().size() - 1;
+            if (segment instanceof Node) {
+                trackGaps = trackGaps + segment.getTracks().size() - 1;
             }
         }
 
@@ -78,11 +78,11 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         int height = orientationDelegate.getStationsSize(size) - trackGaps * trackGap;
         double step = (double)height / (double)completeLength;
         for (RouteSegment<?> segment : route.getSegments()) {
-            if (segment.asLine() != null) {
-                position = position + segment.asLine().getLength() * step;
+            if (segment instanceof Line) {
+                position = position + ((Line) segment).getLength() * step;
             }
-            if (segment.asNode() != null) {
-                Node node = segment.asNode();
+            if (segment instanceof Node) {
+                Node node = (Node) segment;
                 stations.add(node);
                 int tracks = node.getTracks().size();
                 positions.put(node, (int)position + (((tracks - 1) * trackGap) / 2));

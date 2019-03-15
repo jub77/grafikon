@@ -52,19 +52,19 @@ public class GTDrawClassic extends GTDrawBase {
 
         int completeLength = 0;
         for (RouteSegment<?> segment : route.getSegments()) {
-            if (segment.asLine() != null) {
-                completeLength = completeLength + segment.asLine().getLength();
+            if (segment instanceof Line) {
+                completeLength = completeLength + ((Line) segment).getLength();
             }
         }
 
         int incrementalLength = 0;
         for (RouteSegment<?> segment : route.getSegments()) {
-            if (segment.asLine() != null) {
-                incrementalLength = incrementalLength + segment.asLine().getLength();
+            if (segment instanceof Line) {
+                incrementalLength = incrementalLength + ((Line) segment).getLength();
             }
-            if (segment.asNode() != null) {
-                stations.add(segment.asNode());
-                positions.put(segment.asNode(), (int)(((double)incrementalLength) / completeLength *
+            if (segment instanceof Node) {
+                stations.add((Node) segment);
+                positions.put((Node) segment, (int)(((double)incrementalLength) / completeLength *
                         orientationDelegate.getStationsSize(size)));
             }
         }

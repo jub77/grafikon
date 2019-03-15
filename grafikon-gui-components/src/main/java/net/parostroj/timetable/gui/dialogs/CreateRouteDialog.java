@@ -148,8 +148,8 @@ public class CreateRouteDialog extends JDialog {
             toComboBox.setSelectedItem(Wrapper.getWrapper(route.get(route.size() - 1)));
             for (int i = 1; i < route.size() - 1; i++) {
                 RouteSegment<?> segment = route.get(i);
-                if (segment.isNode()) {
-                    throughNodes.add(segment.asNode());
+                if (segment instanceof Node) {
+                    throughNodes.add((Node) segment);
                 }
             }
         }

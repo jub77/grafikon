@@ -95,32 +95,12 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
     }
 
     @Override
-    public boolean isLine() {
-        return true;
-    }
-
-    @Override
-    public boolean isNode() {
-        return false;
-    }
-
-    @Override
     public String toString() {
         return this.toString(TimeIntervalDirection.FORWARD);
     }
 
     public String toString(TimeIntervalDirection direction) {
         return String.format("%s-%s", this.getFrom(direction).getAbbr(), this.getTo(direction).getAbbr());
-    }
-
-    @Override
-    public Line asLine() {
-        return this;
-    }
-
-    @Override
-    public Node asNode() {
-        return null;
     }
 
     public Node getFrom() {

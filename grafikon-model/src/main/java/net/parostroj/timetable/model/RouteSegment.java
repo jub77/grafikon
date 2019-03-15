@@ -14,28 +14,20 @@ import java.util.List;
  */
 public interface RouteSegment<T extends Track> extends ObjectWithId, Iterable<TimeInterval>, AttributesHolder {
 
-    public Line asLine();
+    void addTimeInterval(TimeInterval interval);
 
-    public Node asNode();
+    void removeTimeInterval(TimeInterval interval);
 
-    public boolean isLine();
+    void updateTimeInterval(TimeInterval interval);
 
-    public boolean isNode();
+    List<T> getTracks();
 
-    public void addTimeInterval(TimeInterval interval);
-
-    public void removeTimeInterval(TimeInterval interval);
-
-    public void updateTimeInterval(TimeInterval interval);
-
-    public List<T> getTracks();
-
-    public boolean isEmpty();
+    boolean isEmpty();
 
     @Override
-    public String getId();
+    String getId();
 
-    public T getTrackById(String id);
+    T getTrackById(String id);
 
-    public T getTrackByNumber(String name);
+    T getTrackByNumber(String name);
 }

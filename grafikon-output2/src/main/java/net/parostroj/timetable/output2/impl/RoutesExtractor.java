@@ -24,8 +24,8 @@ public class RoutesExtractor {
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {
                 for (RouteSegment<?> seg : route.getSegments()) {
-                    if (seg.asLine() != null && !routeMap.containsKey(seg.asLine())) {
-                        routeMap.put(seg.asLine(), route);
+                    if (seg instanceof Line && !routeMap.containsKey(seg)) {
+                        routeMap.put((Line) seg, route);
                     }
                 }
             }
@@ -129,15 +129,15 @@ public class RoutesExtractor {
                 info.setName(route.getName());
                 long length = 0;
                 for (RouteSegment<?> seg : route.getSegments()) {
-                    if (seg.isNode()) {
-                        Node node = seg.asNode();
+                    if (seg instanceof Node) {
+                        Node node = (Node) seg;
                         RouteSegmentInfo rsInfo = new RouteSegmentInfo();
                         rsInfo.setName(node.getName());
                         rsInfo.setType(node.getType().getKey());
                         rsInfo.setDistance(UnitUtil.convertRouteLenght(length, diagram, ratio));
                         info.getSegments().add(rsInfo);
                     } else {
-                        Line line = seg.asLine();
+                        Line line = (Line) seg;
                         length += line.getLength();
                     }
                 }

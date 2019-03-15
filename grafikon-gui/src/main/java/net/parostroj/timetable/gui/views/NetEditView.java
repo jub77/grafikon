@@ -393,8 +393,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         if (event.getObject() instanceof Route) {
                             Route route = (Route) event.getObject();
                             for (RouteSegment<?> seg : route.getSegments()) {
-                                if (seg.asLine() != null) {
-                                    updateLine(seg.asLine());
+                                if (seg instanceof Line) {
+                                    updateLine((Line) seg);
                                 }
                             }
                         }

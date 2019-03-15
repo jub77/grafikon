@@ -149,16 +149,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return getName();
     }
 
-    @Override
-    public Line asLine() {
-        return null;
-    }
-
-    @Override
-    public Node asNode() {
-        return this;
-    }
-
     /**
      * returns set of overlapping intervals for all node tracks for given
      * time interval.
@@ -251,16 +241,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             track.accept(visitor);
         }
         visitor.visitAfter(this);
-    }
-
-    @Override
-    public boolean isLine() {
-        return false;
-    }
-
-    @Override
-    public boolean isNode() {
-        return true;
     }
 
     public ItemSet<NodePort> getPorts() {
