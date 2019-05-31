@@ -15,7 +15,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public static final int DAY = 24 * 3600;
     public static final int HOUR = 3600;
     public static final int MINUTE = 60;
-    public static final int SECUNDA = 1;
+    public static final int SECOND = 1;
 
     private final String id;
     /** Interval. */
