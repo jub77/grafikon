@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -102,8 +103,8 @@ class LSCache<T extends LSVersions> {
             Class<? extends LSVersions> clazz = cacheSave.get(modelVersion);
             if (clazz == null)
                 throw new LSException("No LS registered for version: " + modelVersion.getVersion());
-            return cacheType.cast(clazz.newInstance());
-        } catch (InstantiationException | IllegalAccessException ex) {
+            return cacheType.cast(clazz.getDeclaredConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             throw new LSException(ex);
         }
     }
@@ -129,11 +130,11 @@ class LSCache<T extends LSVersions> {
             Class<? extends LSVersions> clazz = cacheLoad.get(modelVersion);
             if (clazz == null)
                 throw new LSException("No LS registered for version: " + modelVersion.getVersion());
-            T instance = cacheType.cast(clazz.newInstance());
+            T instance = cacheType.cast(clazz.getDeclaredConstructor().newInstance());
             List<ModelVersion> versions = instance.getLoadVersions();
             logVersions(modelVersion, versions);
             return loadWrapper.apply(instance);
-        } catch (InstantiationException | IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             throw new LSException(ex);
         }
     }

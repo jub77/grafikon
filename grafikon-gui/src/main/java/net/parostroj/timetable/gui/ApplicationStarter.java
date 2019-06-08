@@ -73,7 +73,7 @@ public class ApplicationStarter<T extends JFrame> {
             return applicationClass.getConstructor(SplashScreenInfo.class).newInstance(splash);
         } catch (NoSuchMethodException e) {
             try {
-                return applicationClass.newInstance();
+                return applicationClass.getDeclaredConstructor().newInstance();
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw new ApplicationStarterException(ex);

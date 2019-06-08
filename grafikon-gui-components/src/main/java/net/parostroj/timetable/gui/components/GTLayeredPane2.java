@@ -9,6 +9,6 @@ public class GTLayeredPane2 extends GTLayeredPane {
     public GTLayeredPane2(GraphicalTimetableView view) {
         super(view);
         buttonPanel = new GTVButtonPanel(view, borderInsets);
-        this.add(buttonPanel, new Integer(600));
+        this.add(buttonPanel, Integer.valueOf(600));
     }
 }

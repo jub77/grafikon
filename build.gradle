@@ -87,6 +87,7 @@ subprojects { prj ->
 		targetCompatibility = 1.8
 		options.encoding = 'utf-8'
 		options.compilerArgs << "-proc:none"
+		options.compilerArgs << "-Xlint:deprecation"
 	}
 
 	jar {

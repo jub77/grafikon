@@ -50,7 +50,7 @@ public abstract class OutputFactory {
         } else {
             try {
                 // create new instance
-                return clazz.newInstance();
+                return clazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 LoggerFactory.getLogger(OutputFactory.class).error("Cannot create instance.", e);
             }
