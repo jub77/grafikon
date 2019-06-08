@@ -5,7 +5,7 @@ import javax.swing.BoxLayout;
 
 import org.beanfabrics.Path;
 
-import net.parostroj.timetable.gui.pm.NodePortPM;
+import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.pm.TrackConnectorPM;
 
 /**
@@ -13,16 +13,16 @@ import net.parostroj.timetable.gui.pm.TrackConnectorPM;
  *
  * @author jub
  */
-public class EditNodePortTrackConnectorsPanel extends BaseEditPanel<NodePortPM> {
+public class EditNodeTrackConnectorsPanel extends BaseEditPanel<NodePM> {
 
     private static final long serialVersionUID = 1L;
 
-    public EditNodePortTrackConnectorsPanel() {
-        ItemListEditPanel<TrackConnectorPM> connectorsPanel = new ItemListEditPanel<>(new Path("number"), 5);
+    public EditNodeTrackConnectorsPanel() {
+        ItemListEditPanel<TrackConnectorPM> connectorsPanel = new ItemListEditPanel<>(new Path("connectorId"), 5);
         connectorsPanel.setModelProvider(localProvider);
         connectorsPanel.setPath(new Path("connectors"));
 
-        EditNodePortTrackConnectorPanel connectorPanel = new EditNodePortTrackConnectorPanel();
+        EditNodeTrackConnectorPanel connectorPanel = new EditNodeTrackConnectorPanel();
 
         ListSelectionSupport<TrackConnectorPM> support = new ListSelectionSupport<>(
                 connectorPanel,

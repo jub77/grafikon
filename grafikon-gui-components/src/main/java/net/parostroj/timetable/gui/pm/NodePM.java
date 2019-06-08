@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class NodePM extends AbstractPM implements IPM<Node> {
 
     ItemListPM<NodeTrackPM> tracks;
-    ItemListPM<NodePortPM> ports;
+    ItemListPM<TrackConnectorPM> connectors;
 
     public NodePM() {
         this.tracks = new ItemListPM<>(() -> {
@@ -23,11 +23,12 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             trackPm.number.setText("-");
             return trackPm;
         });
-        this.ports = new ItemListPM<>(() -> {
-            NodePortPM nodePortPM = new NodePortPM();
-            return nodePortPM;
+        this.connectors = new ItemListPM<>(() -> {
+            TrackConnectorPM tc = new TrackConnectorPM();
+            tc.number.setText("1");
+            return tc;
         });
-        this.ports.setSorted(Arrays.asList(new SortKey(true, new Path("orientation")), new SortKey(true, new Path("position"))));
+        this.connectors.setSorted(Arrays.asList(new SortKey(true, new Path("orientation")), new SortKey(true, new Path("position"))));
         PMManager.setup(this);
     }
 
@@ -44,11 +45,10 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             nodeTrackPm.init(track);
             tracks.add(nodeTrackPm);
         });
-        this.ports.clear();
-        node.getPorts().forEach(port -> {
-            NodePortPM nodePortPm = new NodePortPM();
-            nodePortPm.init(port, this);
-            ports.add(nodePortPm);
+        this.connectors.clear();
+        node.getConnectors().forEach(connector -> {
+            TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this);
+            connectors.add(connectorPm);
         });
     }
 
@@ -56,7 +56,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         return tracks;
     }
 
-    public ListPM<NodePortPM> getPorts() {
-        return ports;
+    public ListPM<TrackConnectorPM> getConnectors() {
+        return connectors;
     }
 }

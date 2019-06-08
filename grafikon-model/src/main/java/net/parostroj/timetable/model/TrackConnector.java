@@ -16,8 +16,18 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
     String ATTR_STRAIGHT_TRACK = "straight.track";
     String ATTR_TRACKS = "tracks";
     String ATTR_NUMBER = "number";
+    String ATTR_ORIENTATION = "orientation";
+    String ATTR_POSITION = "position";
 
-    NodePort getNodePort();
+    Node getNode();
+
+    Node.Side getOrientation();
+
+    void setOrientation(Node.Side orientation);
+
+    int getPosition();
+
+    void setPosition(int position);
 
     String getNumber();
 

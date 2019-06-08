@@ -26,8 +26,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     private final TrainDiagram diagram;
     /** Attributes of the node. */
     private Attributes attributes;
-    /** Node ports. */
-    private final ItemSet<NodePort> ports;
+    /** Track connectors. */
+    private final ItemSet<TrackConnector> connectors;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -75,7 +75,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
-        this.ports = new ItemSetImpl<>(this::fireCollectionEvent);
+        this.connectors = new ItemSetImpl<>(this::fireCollectionEvent);
     }
 
     @Override
@@ -243,8 +243,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         visitor.visitAfter(this);
     }
 
-    public ItemSet<NodePort> getPorts() {
-        return ports;
+    public ItemSet<TrackConnector> getConnectors() {
+        return connectors;
     }
 
     void fireCollectionEvent(Event.Type type, Object item) {
@@ -267,10 +267,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     protected void fireEvent(Event event) {
         listenerSupport.fireEvent(event);
-    }
-
-    protected NodePort createNodePort() {
-        return new NodePortImpl(this);
     }
 
     private class NodeRegionHierarchy extends RegionHierarchyImpl {

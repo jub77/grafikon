@@ -12,18 +12,17 @@ import net.parostroj.timetable.model.events.Event;
  */
 public class TrackConnectorImpl implements TrackConnector {
 
+    private final Node node;
     private final String id;
-    private final NodePort nodePort;
     private final Attributes attributes;
 
     private boolean events = false;
 
-    TrackConnectorImpl(String id, NodePort nodePort, String number) {
+    TrackConnectorImpl(String id, Node node, String number) {
         this.id = id;
-        this.nodePort = nodePort;
+        this.node = node;
         this.attributes = new Attributes((attrs, change) -> {
             if (events) {
-                Node node = nodePort.getNode();
                 node.fireEvent(new Event(node, TrackConnectorImpl.this, change));
             }
         });
@@ -33,6 +32,31 @@ public class TrackConnectorImpl implements TrackConnector {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public Node getNode() {
+        return node;
+    }
+
+    @Override
+    public Node.Side getOrientation() {
+        return attributes.get(ATTR_ORIENTATION, Node.Side.class);
+    }
+
+    @Override
+    public void setOrientation(Node.Side orientation) {
+        attributes.setRemove(ATTR_ORIENTATION, orientation);
+    }
+
+    @Override
+    public int getPosition() {
+        return attributes.get(ATTR_POSITION, Integer.class);
+    }
+
+    @Override
+    public void setPosition(int position) {
+        attributes.set(ATTR_POSITION, position);
     }
 
     @Override
@@ -53,11 +77,6 @@ public class TrackConnectorImpl implements TrackConnector {
     @Override
     public void removed() {
         events = false;
-    }
-
-    @Override
-    public NodePort getNodePort() {
-        return nodePort;
     }
 
     @Override

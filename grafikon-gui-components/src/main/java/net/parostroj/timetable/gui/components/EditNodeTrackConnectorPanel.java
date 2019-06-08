@@ -8,19 +8,19 @@ import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
-import net.parostroj.timetable.gui.pm.NodePortPM;
+import net.parostroj.timetable.gui.pm.TrackConnectorPM;
 
 /**
- * Panel for editing port.
+ * Panel for editing track.
  *
  * @author jub
  */
-public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
+public class EditNodeTrackConnectorPanel extends BaseEditPanel<TrackConnectorPM> {
 
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unchecked")
-    public EditNodePortPanel() {
+    public EditNodeTrackConnectorPanel() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
         BnComboBox orientationComboBox = new BnComboBox();
@@ -34,8 +34,15 @@ public class EditNodePortPanel extends BaseEditPanel<NodePortPM> {
         positionTextField.setModelProvider(localProvider);
         positionTextField.setPath(new Path("position"));
 
+        BnTextField numberTextField = new BnTextField();
+        numberTextField.setColumns(5);
+        numberTextField.setModelProvider(localProvider);
+        numberTextField.setPath(new Path("number"));
+
         this.add(orientationComboBox);
         this.add(Box.createHorizontalStrut(5));
         this.add(positionTextField);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(numberTextField);
     }
 }
