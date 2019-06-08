@@ -14,6 +14,7 @@ dependencies {
 	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
 	compile 'org.apache.logging.log4j:log4j-core'
 	compile 'com.github.markusbernhardt:proxy-vole'
+	compile 'org.glassfish.jaxb:jaxb-runtime'
 }
 
 compileJava.doFirst {

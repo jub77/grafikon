@@ -7,6 +7,7 @@ dependencies {
 	compile 'joda-time:joda-time'
 	compile 'com.google.guava:guava'
 	compile 'com.github.zafarkhaja:java-semver'
+	compile 'jakarta.xml.bind:jakarta.xml.bind-api'
 
 	testCompile 'junit:junit'
 }

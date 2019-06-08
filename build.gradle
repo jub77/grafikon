@@ -24,14 +24,14 @@ subprojects { prj ->
 
 	dependencyManagement {
 		dependencies {
-			dependency 'org.jgrapht:jgrapht-core:1.3.0'
-			dependency 'org.mvel:mvel2:2.4.4.Final'
+			dependency 'org.jgrapht:jgrapht-core:1.2.0'
+			dependency 'org.mvel:mvel2:2.4.2.Final'
 			dependency 'org.codehaus.groovy:groovy-templates:2.5.7'
 			dependency 'org.codehaus.groovy:groovy-jsr223:2.5.7'
-			dependency 'org.slf4j:slf4j-api:1.7.26'
-			dependency 'org.slf4j:jcl-over-slf4j:1.7.26'
-			dependency 'joda-time:joda-time:2.10.2'
-			dependency 'com.google.guava:guava:28.0-jre', {
+			dependency 'org.slf4j:slf4j-api:1.7.25'
+			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
+			dependency 'joda-time:joda-time:2.10'
+			dependency 'com.google.guava:guava:26.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -56,6 +56,12 @@ subprojects { prj ->
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2'
 			dependency 'org.apache.logging.log4j:log4j-core:2.11.2'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
+			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.2', {
+				exclude 'com.sun.xml.fastinfoset:FastInfoset'
+				exclude 'org.glassfish.jaxb:txw2'
+				exclude 'org.jvnet.staxex:stax-ex'
+			}
+			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
 
 			dependency 'junit:junit:4.12'
 		}
