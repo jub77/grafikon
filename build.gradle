@@ -1,5 +1,5 @@
 plugins {
-	id 'io.spring.dependency-management' version '1.0.7.RELEASE' apply false
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
 	id 'net.parostroj.versioning' apply false
 	id 'com.github.ben-manes.versions' version '0.21.0'
 }
@@ -31,7 +31,7 @@ subprojects { prj ->
 			dependency 'org.slf4j:slf4j-api:1.7.26'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.26'
 			dependency 'joda-time:joda-time:2.10.2'
-			dependency 'com.google.guava:guava:27.1-jre', {
+			dependency 'com.google.guava:guava:28.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
