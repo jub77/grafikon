@@ -123,6 +123,7 @@ public class ItemSelectionPanel<T extends PresentationModel> extends BaseEditPan
                 BnCheckBox checkBox = new BnCheckBox();
                 checkBox.setPresentationModel(bPm);
                 checkBox.setBackground(UIManager.getColor("List.background"));
+                checkBox.setBorder(BorderFactory.createEmptyBorder());
 
                 checkBoxMap.put(tPm, checkBox);
                 checkBox.setText(tPm.getText());
