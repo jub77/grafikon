@@ -62,6 +62,10 @@ public class TrackConnectorPM extends AbstractPM {
                 .forEach(
                         ntPM -> nodeTracks.add(new SelectedItemPM<>(nt.contains(ntPM.getReference()), ntPM)));
     }
+    
+    public ListPM<SelectedItemPM<NodeTrackPM>> getNodeTracks() {
+		return nodeTracks;
+	}
 
     public void writeResult() {
         if (reference != null) {
