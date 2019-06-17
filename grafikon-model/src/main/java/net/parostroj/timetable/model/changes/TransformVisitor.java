@@ -49,7 +49,7 @@ public class TransformVisitor implements EventVisitor {
         if (type != null) {
             if (action == null)
                 throw new IllegalArgumentException("Action missing: " + event.getType());
-            change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
+            change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
         }
@@ -66,13 +66,16 @@ public class TransformVisitor implements EventVisitor {
             }
             change = new DiagramChange(type, action, o.getId());
         } else {
-            Object source = event.getSource();
-            String id = source instanceof ObjectWithId ? ((ObjectWithId) source).getId() : "FREIGHT_NET";
-            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, id);
-            if (action == null) {
-                throw new IllegalArgumentException("Action missing: " + event.getType());
-            }
-            this.addDescription(event);
+        	Object object = event.getObject();
+        	if (object instanceof ObjectWithId) {
+        		change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, ((ObjectWithId) event.getObject()).getId());
+        		if (action == null) {
+        			throw new IllegalArgumentException("Action missing: " + event.getType());
+        		}
+        		this.addDescription(event);
+        	} else {
+        		throw new IllegalArgumentException("Object with missing id: " + event.getSource().getClass());
+        	}
         }
         if (o != null) {
             change.setObject(this.getObjectStr(o));
