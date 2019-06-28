@@ -1,19 +1,37 @@
 package net.parostroj.timetable.gui.components;
 
-import org.beanfabrics.Path;
-import org.beanfabrics.PathEvaluation;
-import org.beanfabrics.event.*;
-import org.beanfabrics.model.*;
-import org.beanfabrics.swing.BnRadioButton;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import org.beanfabrics.Path;
+import org.beanfabrics.PathEvaluation;
+import org.beanfabrics.event.BnPropertyChangeEvent;
+import org.beanfabrics.event.ElementsAddedEvent;
+import org.beanfabrics.event.ElementsRemovedEvent;
+import org.beanfabrics.event.ElementsReplacedEvent;
+import org.beanfabrics.event.WeakPropertyChangeListener;
+import org.beanfabrics.model.IBooleanPM;
+import org.beanfabrics.model.ITextPM;
+import org.beanfabrics.model.ListPM;
+import org.beanfabrics.model.PresentationModel;
+import org.beanfabrics.swing.BnRadioButton;
 
 /**
  * Panel with selection of element from list. The list contains presentation models
@@ -138,9 +156,12 @@ public class ItemChoicePanel<T extends PresentationModel> extends BaseEditPanel<
             }
             this.add(Box.createVerticalGlue());
         } else {
-            this.add(new JLabel(" "));
+            JLabel label = new JLabel(" ");
+            label.setBorder(BorderFactory.createEmptyBorder());
+			this.add(label);
         }
         this.revalidate();
+        this.repaint();
     }
 
     private <X> X getModelForPath(PresentationModel model, Path path, Class<X> clazz) {
@@ -152,7 +173,7 @@ public class ItemChoicePanel<T extends PresentationModel> extends BaseEditPanel<
     public Dimension getPreferredScrollableViewportSize() {
         Dimension size = super.getPreferredSize();
         ListPM<?> pm = localProvider.getPresentationModel();
-        int itemCount = pm == null ? 1 : pm.size();
+        int itemCount = pm == null ? 1 : pm.size() == 0 ? 1 : pm.size();
         size.height = size.height * visibleRows / itemCount;
         return size;
     }

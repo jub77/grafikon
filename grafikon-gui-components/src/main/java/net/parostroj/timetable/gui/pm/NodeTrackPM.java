@@ -33,4 +33,13 @@ public class NodeTrackPM extends AbstractPM implements IPM<NodeTrack> {
     public NodeTrack getReference() {
         return this.reference;
     }
+
+    public TextPM getNumber() {
+        return number;
+    }
+
+    @Override
+    public String toString() {
+        return this.number.getText();
+    }
 }

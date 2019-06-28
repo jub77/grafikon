@@ -76,6 +76,17 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         this.getOptionsImpl().putAll(valueMap);
     }
 
+    public void addValues(Iterable<E> values, WrapperConversion<E> conversion, String nullValueText) {
+    	this.getOptionsImpl().put(null, nullValueText);
+    	this.addValues(values, conversion);
+    }
+
+    public void addValues(Iterable<E> values, WrapperConversion<E> conversion) {
+    	for (E item : values) {
+    		this.getOptionsImpl().put(item, conversion.toString(item));
+    	}
+    }
+
     @Override
     public boolean removeValue(E value) {
         Options<E> options = this.getOptionsImpl();

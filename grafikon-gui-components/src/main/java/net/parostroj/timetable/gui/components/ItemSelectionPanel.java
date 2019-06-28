@@ -134,9 +134,12 @@ public class ItemSelectionPanel<T extends PresentationModel> extends BaseEditPan
             }
             this.add(Box.createVerticalGlue());
         } else {
-            this.add(new JLabel(" "));
+            JLabel label = new JLabel(" ");
+            label.setBorder(BorderFactory.createEmptyBorder());
+			this.add(label);
         }
         this.revalidate();
+        this.repaint();
     }
 
     private <X> X getModelForPath(PresentationModel model, Path path, Class<X> clazz) {
@@ -148,7 +151,7 @@ public class ItemSelectionPanel<T extends PresentationModel> extends BaseEditPan
     public Dimension getPreferredScrollableViewportSize() {
         Dimension size = super.getPreferredSize();
         ListPM<?> pm = localProvider.getPresentationModel();
-        int itemCount = pm == null ? 1 : pm.size();
+        int itemCount = pm == null ? 1 : pm.size() == 0 ? 1 : pm.size();
         size.height = size.height * visibleRows / itemCount;
         return size;
     }
