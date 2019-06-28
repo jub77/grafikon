@@ -36,6 +36,9 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.connectors = new ItemListPM<>(() -> {
             TrackConnectorPM tc = new TrackConnectorPM();
             tc.number.setText("1");
+            tracks.forEach(track -> {
+                tc.nodeTracks.add(new SelectedItemPM<>(false, track));
+            });
             return tc;
         });
         this.connectors.setSorted(Arrays.asList(new SortKey(true, new Path("orientation")), new SortKey(true, new Path("position"))));
@@ -59,7 +62,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             tracks.add(nodeTrackPm);
         });
         node.getConnectors().forEach(connector -> {
-            TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this);
+            TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this.tracks);
             connectors.add(connectorPm);
         });
     }

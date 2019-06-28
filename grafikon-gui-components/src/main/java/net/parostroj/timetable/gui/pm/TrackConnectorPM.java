@@ -52,9 +52,9 @@ public class TrackConnectorPM extends AbstractPM {
         }
     }
 
-    public TrackConnectorPM(TrackConnector connector, NodePM nodePM) {
+    public TrackConnectorPM(TrackConnector connector, IListPM<NodeTrackPM> tracksPm) {
         this();
-        this.init(connector, nodePM.tracks);
+        this.init(connector, tracksPm);
     }
 
     public void init(TrackConnector connector, IListPM<NodeTrackPM> tracksPm) {
