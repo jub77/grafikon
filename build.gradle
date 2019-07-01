@@ -48,15 +48,15 @@ subprojects { prj ->
 				exclude 'xalan:xalan'
 				exclude 'xml-apis:xml-apis'
 			}
-			dependency 'com.github.akarnokd:rxjava2-swing:0.3.5'
+			dependency 'com.github.akarnokd:rxjava2-swing:0.3.7'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:3.0.3'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.jgraph:jgraphx:v4.0.0'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5'
-			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2'
-			dependency 'org.apache.logging.log4j:log4j-core:2.11.2'
+			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.12.0'
+			dependency 'org.apache.logging.log4j:log4j-core:2.12.0'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.2', {
 				exclude 'com.sun.xml.fastinfoset:FastInfoset'
