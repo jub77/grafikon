@@ -30,7 +30,6 @@ public class EditNodeTrackConnectorsPanel extends BaseEditPanel<NodePM> {
 
         localProvider.addModelProviderListener(new Path("connectors"), support);
 
-
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(connectorsPanel);
         this.add(Box.createVerticalStrut(5));
