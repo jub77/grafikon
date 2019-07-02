@@ -11,9 +11,12 @@ import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.OnChange;
 
+import com.google.common.collect.FluentIterable;
+
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
+import net.parostroj.timetable.model.TrackConnectorSwitch;
 
 /**
  * Presentation model for {@link TrackConnector}.
@@ -60,7 +63,8 @@ public class TrackConnectorPM extends AbstractPM {
     public void init(TrackConnector connector, IListPM<NodeTrackPM> tracksPm) {
         this.reference = connector;
         this.number.setText(connector.getNumber());
-        Set<NodeTrack> nt = connector.getNodeTracks();
+        Set<TrackConnectorSwitch> switches = connector.getSwitches();
+        Set<NodeTrack> nt = FluentIterable.from(switches).transform(sw -> sw.getNodeTrack()).toSet();
         tracksPm.forEach(ntPM -> nodeTracks
                 .add(new SelectedItemPM<>(nt.contains(ntPM.getReference()), ntPM)));
     }

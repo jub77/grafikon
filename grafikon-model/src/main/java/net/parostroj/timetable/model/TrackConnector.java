@@ -13,7 +13,7 @@ import java.util.Set;
 public interface TrackConnector extends ObjectWithId, ItemCollectionObject, AttributesHolder {
 
     String ATTR_LINE_TRACK = "line.track";
-    String ATTR_TRACKS = "tracks";
+    String ATTR_SWITCHES = "switches";
     String ATTR_NUMBER = "number";
     String ATTR_ORIENTATION = "orientation";
     String ATTR_POSITION = "position";
@@ -36,5 +36,7 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
 
     void setLineTrack(LineTrack lineTrack);
 
-    Set<NodeTrack> getNodeTracks();
+    Set<TrackConnectorSwitch> getSwitches();
+
+    void setSwitches(Set<TrackConnectorSwitch> switches);
 }

@@ -90,8 +90,13 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public Set<NodeTrack> getNodeTracks() {
-        return attributes.getAsSet(ATTR_TRACKS, NodeTrack.class, Collections.emptySet());
+    public Set<TrackConnectorSwitch> getSwitches() {
+        return attributes.getAsSet(ATTR_SWITCHES, TrackConnectorSwitch.class, Collections.emptySet());
+    }
+
+    @Override
+    public void setSwitches(Set<TrackConnectorSwitch> switches) {
+        attributes.setRemove(ATTR_SWITCHES, switches);
     }
 
     @Override
@@ -101,6 +106,6 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public String toString() {
-        return String.format("%s", getNodeTracks());
+        return String.format("%s", getSwitches());
     }
 }
