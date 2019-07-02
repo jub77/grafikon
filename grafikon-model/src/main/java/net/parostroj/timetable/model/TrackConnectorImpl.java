@@ -90,14 +90,6 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public NodeTrack getStraightNodeTrack() {
-        return attributes.get(ATTR_STRAIGHT_TRACK, NodeTrack.class);
-    }
-
-    @Override
-    public void setStraightNodeTrack(NodeTrack nodeTrack) { attributes.setRemove(ATTR_STRAIGHT_TRACK, nodeTrack); }
-
-    @Override
     public Set<NodeTrack> getNodeTracks() {
         return attributes.getAsSet(ATTR_TRACKS, NodeTrack.class, Collections.emptySet());
     }
@@ -109,7 +101,6 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public String toString() {
-        NodeTrack straight = getStraightNodeTrack();
-        return String.format("%s,%s", straight != null ? straight.toString() : "-", getNodeTracks());
+        return String.format("%s", getNodeTracks());
     }
 }
