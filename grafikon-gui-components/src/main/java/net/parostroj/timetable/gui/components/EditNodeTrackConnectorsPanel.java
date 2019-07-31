@@ -18,7 +18,7 @@ public class EditNodeTrackConnectorsPanel extends BaseEditPanel<NodePM> {
     private static final long serialVersionUID = 1L;
 
     public EditNodeTrackConnectorsPanel() {
-        ItemListEditPanel<TrackConnectorPM> connectorsPanel = new ItemListEditPanel<>(new Path("connectorId"), 5);
+        ItemSetEditPanel<TrackConnectorPM> connectorsPanel = new ItemSetEditPanel<>(new Path("connectorId"), 5);
         connectorsPanel.setModelProvider(localProvider);
         connectorsPanel.setPath(new Path("connectors"));
 

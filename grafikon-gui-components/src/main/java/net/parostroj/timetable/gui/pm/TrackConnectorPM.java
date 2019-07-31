@@ -12,6 +12,7 @@ import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.OnChange;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableMap;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
@@ -29,7 +30,7 @@ public class TrackConnectorPM extends AbstractPM {
     TextPM number;
     IntegerPM position;
     EnumeratedValuesPM<Node.Side> orientation;
-    ListPM<SelectedItemPM<NodeTrackPM>> nodeTracks;
+    ListPM<TrackConnectorSwitchPM> nodeTracks;
 
     private TrackConnector reference;
 
@@ -64,12 +65,16 @@ public class TrackConnectorPM extends AbstractPM {
         this.reference = connector;
         this.number.setText(connector.getNumber());
         Set<TrackConnectorSwitch> switches = connector.getSwitches();
-        Set<NodeTrack> nt = FluentIterable.from(switches).transform(sw -> sw.getNodeTrack()).toSet();
-        tracksPm.forEach(ntPM -> nodeTracks
-                .add(new SelectedItemPM<>(nt.contains(ntPM.getReference()), ntPM)));
+        ImmutableMap<NodeTrack ,TrackConnectorSwitch> nt = FluentIterable.from(switches).uniqueIndex(sw -> sw.getNodeTrack());
+        tracksPm.forEach(ntPM -> {
+            boolean contains = nt.keySet().contains(ntPM.getReference());
+            boolean straight = contains ? nt.get(ntPM.getReference()).isStraight() : false;
+            nodeTracks
+                    .add(new TrackConnectorSwitchPM(ntPM, contains, straight));
+        });
     }
 
-    public ListPM<SelectedItemPM<NodeTrackPM>> getNodeTracks() {
+    public ListPM<TrackConnectorSwitchPM> getNodeTracks() {
         return nodeTracks;
     }
 

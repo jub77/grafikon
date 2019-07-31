@@ -16,11 +16,16 @@ import org.beanfabrics.model.SortKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author jub
  */
 public class NodePM extends AbstractPM implements IPM<Node> {
+
+    private static final List<SortKey> CONNECTOR_SORT_KEY = Arrays.asList(
+            new SortKey(true, new Path("orientation")),
+            new SortKey(true, new Path("position")));
 
     ItemListPM<NodeTrackPM> tracks;
     ItemListPM<TrackConnectorPM> connectors;
@@ -37,11 +42,11 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             TrackConnectorPM tc = new TrackConnectorPM();
             tc.number.setText("1");
             tracks.forEach(track -> {
-                tc.nodeTracks.add(new SelectedItemPM<>(false, track));
+                tc.nodeTracks.add(new TrackConnectorSwitchPM(track, false, false));
             });
             return tc;
         });
-        this.connectors.setSorted(Arrays.asList(new SortKey(true, new Path("orientation")), new SortKey(true, new Path("position"))));
+        this.connectors.setSorted(CONNECTOR_SORT_KEY);
         this.tracksListener = new TracksListener(this.connectors);
         this.tracks.addListListener(tracksListener);
         PMManager.setup(this);
@@ -92,7 +97,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                 NodeTrackPM trackPm = source.getAt(i);
                 final int pos = i;
                 connectors.forEach(connector -> {
-                    connector.nodeTracks.add(pos, new SelectedItemPM<NodeTrackPM>(false, trackPm));
+                    connector.nodeTracks.add(pos, new TrackConnectorSwitchPM(trackPm, false, false));
                 });
             }
         }
@@ -101,11 +106,11 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         public void elementsRemoved(ElementsRemovedEvent evt) {
             Collection<? extends PresentationModel> removed = evt.getRemoved();
             connectors.forEach(connector -> {
-                ListPM<SelectedItemPM<NodeTrackPM>> tracks = connector.nodeTracks;
-                Iterator<SelectedItemPM<NodeTrackPM>> iterator = tracks.iterator();
+                ListPM<TrackConnectorSwitchPM> tracks = connector.nodeTracks;
+                Iterator<TrackConnectorSwitchPM> iterator = tracks.iterator();
                 while (iterator.hasNext()) {
-                    SelectedItemPM<NodeTrackPM> trackSi = iterator.next();
-                    if (removed.contains(trackSi.item)) {
+                    TrackConnectorSwitchPM trackSi = iterator.next();
+                    if (removed.contains(trackSi.track)) {
                         iterator.remove();
                     }
                 }
