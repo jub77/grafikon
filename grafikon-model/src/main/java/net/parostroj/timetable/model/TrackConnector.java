@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.Set;
-
 /**
  * Track connector between line and node. Line track is connected
  * a certain connection point. The connection point is connected
@@ -36,7 +34,5 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
 
     void setLineTrack(LineTrack lineTrack);
 
-    Set<TrackConnectorSwitch> getSwitches();
-
-    void setSwitches(Set<TrackConnectorSwitch> switches);
+    ItemSet<TrackConnectorSwitch> getSwitches();
 }

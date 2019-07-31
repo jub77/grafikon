@@ -1,8 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.Collections;
-import java.util.Set;
-
 import net.parostroj.timetable.model.events.Event;
 
 /**
@@ -16,6 +13,8 @@ public class TrackConnectorImpl implements TrackConnector {
     private final String id;
     private final Attributes attributes;
 
+    private final ItemSet<TrackConnectorSwitch> switches;
+
     private boolean events = false;
 
     TrackConnectorImpl(String id, Node node, String number) {
@@ -27,6 +26,9 @@ public class TrackConnectorImpl implements TrackConnector {
             }
         });
         this.setNumber(number);
+        this.switches = new ItemSetImpl<>((type, item) -> {
+            node.fireEvent(new Event(TrackConnectorImpl.this, type, item));
+        });
     }
 
     @Override
@@ -90,13 +92,8 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public Set<TrackConnectorSwitch> getSwitches() {
-        return attributes.getAsSet(ATTR_SWITCHES, TrackConnectorSwitch.class, Collections.emptySet());
-    }
-
-    @Override
-    public void setSwitches(Set<TrackConnectorSwitch> switches) {
-        attributes.setRemove(ATTR_SWITCHES, switches);
+    public ItemSet<TrackConnectorSwitch> getSwitches() {
+        return switches;
     }
 
     @Override
