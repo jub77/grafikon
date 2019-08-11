@@ -105,7 +105,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public TrackConnectorSwitch createSwitch(String id, NodeTrack track) {
-        return new TrackConnectorSwitchImpl(id, node);
+        return new TrackConnectorSwitchImpl(id, track);
     }
 
     @Override

@@ -14,13 +14,15 @@ public class TrackConnectorSwitchImpl implements TrackConnectorSwitch {
 
     private boolean events = false;
 
-    public TrackConnectorSwitchImpl(String id, Node node) {
+    public TrackConnectorSwitchImpl(String id, NodeTrack nodeTrack) {
+        final Node node = nodeTrack.getOwner();
         this.id = id;
         this.attributes = new Attributes((attrs, change) -> {
             if (events) {
                 node.fireEvent(new Event(node, TrackConnectorSwitchImpl.this, change));
             }
         });
+        this.setNodeTrack(nodeTrack);
     }
 
     @Override
@@ -61,5 +63,10 @@ public class TrackConnectorSwitchImpl implements TrackConnectorSwitch {
     @Override
     public void setStraight(boolean straight) {
         this.attributes.setBool(ATTR_STRAIGHT, straight);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%b", getNodeTrack().getNumber(), isStraight());
     }
 }
