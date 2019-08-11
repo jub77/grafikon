@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -16,8 +17,8 @@ public interface ItemSet<T> extends Set<T> {
         this.addAll(list);
     }
 
-    default T find(Predicate<T> predicate) {
-        return Iterables.tryFind(this, predicate::test).orNull();
+    default Optional<T> find(Predicate<T> predicate) {
+        return Iterables.tryFind(this, predicate::test).toJavaUtil();
     }
 
     default Set<T> findAll(Predicate<T> predicate) {

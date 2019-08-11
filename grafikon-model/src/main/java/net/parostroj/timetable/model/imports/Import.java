@@ -99,8 +99,10 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getTrainTypes().getById(origType.getId());
         } else {
-            return diagram.getTrainTypes().find(
-                    type -> type.getDefaultAbbr().equals(origType.getDefaultAbbr()) && type.getDesc().equals(origType.getDesc()));
+            return diagram.getTrainTypes()
+                    .find(type -> type.getDefaultAbbr().equals(origType.getDefaultAbbr())
+                            && type.getDesc().equals(origType.getDesc()))
+                    .orElse(null);
         }
     }
 
@@ -108,7 +110,8 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getGroups().getById(origGroup.getId());
         } else {
-            return diagram.getGroups().find(group -> group.getName().equals(origGroup.getName()));
+            return diagram.getGroups().find(group -> group.getName().equals(origGroup.getName()))
+                    .orElse(null);
         }
     }
 
@@ -117,7 +120,7 @@ public abstract class Import {
             return diagram.getCompanies().getById(origCompany.getId());
         } else {
             return diagram.getCompanies()
-                    .find(company -> company.getAbbr().equals(origCompany.getAbbr()));
+                    .find(company -> company.getAbbr().equals(origCompany.getAbbr())).orElse(null);
         }
     }
 
@@ -126,7 +129,7 @@ public abstract class Import {
             return diagram.getNet().getRegions().getById(origRegion.getId());
         } else {
             return diagram.getNet().getRegions()
-                    .find(region -> region.getName().equals(origRegion.getName()));
+                    .find(region -> region.getName().equals(origRegion.getName())).orElse(null);
         }
     }
 
@@ -197,7 +200,7 @@ public abstract class Import {
         } else {
             return diagram.getRoutes()
                     .find(route -> route.getName().equals(origRoute.getName())
-                            && route.isNetPart() == origRoute.isNetPart());
+                            && route.isNetPart() == origRoute.isNetPart()).orElse(null);
         }
     }
 
@@ -229,7 +232,8 @@ public abstract class Import {
             return diagram.getNet().getLineClasses().getById(origLineClass.getId());
         else {
             return diagram.getNet().getLineClasses()
-                    .find(lineClass -> lineClass.getName().equals(origLineClass.getName()));
+                    .find(lineClass -> lineClass.getName().equals(origLineClass.getName()))
+                    .orElse(null);
         }
     }
 
@@ -238,7 +242,8 @@ public abstract class Import {
             return diagram.getEngineClasses().getById(origEngineClass.getId());
         else {
             return diagram.getEngineClasses()
-                    .find(engineClass -> engineClass.getName().equals(origEngineClass.getName()));
+                    .find(engineClass -> engineClass.getName().equals(origEngineClass.getName()))
+                    .orElse(null);
         }
     }
 
@@ -247,7 +252,7 @@ public abstract class Import {
             return diagram.getOutputTemplates().getById(origTemplate.getId());
         else {
             return diagram.getOutputTemplates()
-                    .find(template -> template.getKey().equals(origTemplate.getKey()));
+                    .find(template -> template.getKey().equals(origTemplate.getKey())).orElse(null);
         }
     }
 

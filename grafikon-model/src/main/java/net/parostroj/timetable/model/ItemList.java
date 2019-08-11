@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.google.common.collect.FluentIterable;
@@ -18,8 +19,8 @@ public interface ItemList<T> extends List<T> {
 
     void move(int oldIndex, int newIndex);
 
-    default T find(Predicate<T> predicate) {
-        return Iterables.tryFind(this, predicate::test).orNull();
+    default Optional<T> find(Predicate<T> predicate) {
+        return Iterables.tryFind(this, predicate::test).toJavaUtil();
     }
 
     default List<T> findAll(Predicate<T> predicate) {
