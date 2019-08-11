@@ -38,6 +38,9 @@ public class TrackConnectorSwitchPM extends AbstractPM {
         return straight;
     }
 
+    /**
+     * Disable straight property if the track is not connected.
+     */
     @OnChange(path = { "connected" })
     public void enableDisableStraight() {
         boolean c = connected.getBoolean();

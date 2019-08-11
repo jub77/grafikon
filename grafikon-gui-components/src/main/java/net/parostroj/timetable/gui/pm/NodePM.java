@@ -1,6 +1,13 @@
 package net.parostroj.timetable.gui.pm;
 
-import net.parostroj.timetable.model.Node;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.beanfabrics.Path;
 import org.beanfabrics.event.ElementsAddedEvent;
 import org.beanfabrics.event.ElementsRemovedEvent;
@@ -9,14 +16,18 @@ import org.beanfabrics.event.ListListener;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.IListPM;
 import org.beanfabrics.model.ListPM;
+import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.PresentationModel;
 import org.beanfabrics.model.SortKey;
+import org.beanfabrics.support.Operation;
+import org.beanfabrics.support.Validation;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.FluentIterable;
+
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.TrackConnector;
 
 /**
  * @author jub
@@ -30,7 +41,11 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     ItemListPM<NodeTrackPM> tracks;
     ItemListPM<TrackConnectorPM> connectors;
 
+    OperationPM ok = new OperationPM();
+
     private ListListener tracksListener;
+
+    private Node reference;
 
     public NodePM() {
         this.tracks = new ItemListPM<>(() -> {
@@ -42,7 +57,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             TrackConnectorPM tc = new TrackConnectorPM();
             tc.number.setText("1");
             tracks.forEach(track -> {
-                tc.nodeTracks.add(new TrackConnectorSwitchPM(track, false, false));
+                tc.getSwitches().add(new TrackConnectorSwitchPM(track, false, false));
             });
             return tc;
         });
@@ -59,6 +74,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     @Override
     public void init(Node node) {
+        this.reference = node;
         this.tracks.clear();
         this.connectors.clear();
         node.getTracks().forEach(track -> {
@@ -80,6 +96,49 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         return connectors;
     }
 
+    public Node getReference() {
+        return reference;
+    }
+
+    public void writeResult() {
+        if (reference != null) {
+            // remove
+            Set<NodeTrack> keptTracks = FluentIterable.from(tracks)
+                    .transform(NodeTrackPM::getReference).filter(Objects::nonNull).toSet();
+            Set<NodeTrack> toBeDeletedTracks = new HashSet<>(reference.getTracks());
+            toBeDeletedTracks.removeAll(keptTracks);
+            reference.getTracks().removeAll(toBeDeletedTracks);
+            // update
+            int position = 0;
+            for (NodeTrackPM track : tracks) {
+                track.writeResult(reference, position);
+                position++;
+            }
+
+            // remove
+            Set<TrackConnector> keptConns = FluentIterable.from(connectors)
+                    .transform(TrackConnectorPM::getReference).filter(Objects::nonNull).toSet();
+            Set<TrackConnector> toBeDeletedConns = new HashSet<>(reference.getConnectors());
+            toBeDeletedConns.removeAll(keptConns);
+            reference.getConnectors().removeAll(toBeDeletedConns);
+            // update
+            for (TrackConnectorPM connector : connectors) {
+                connector.writeResult(reference);
+            }
+        }
+    }
+
+    @Validation(path = { "ok" })
+    public boolean canWrite() {
+        return isValid();
+    }
+
+    @Operation(path = "ok")
+    public boolean ok() {
+        writeResult();
+        return true;
+    }
+
     private static class TracksListener extends ListAdapter {
 
         private IListPM<TrackConnectorPM> connectors;
@@ -97,7 +156,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                 NodeTrackPM trackPm = source.getAt(i);
                 final int pos = i;
                 connectors.forEach(connector -> {
-                    connector.nodeTracks.add(pos, new TrackConnectorSwitchPM(trackPm, false, false));
+                    connector.getSwitches().add(pos, new TrackConnectorSwitchPM(trackPm, false, false));
                 });
             }
         }
@@ -106,7 +165,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         public void elementsRemoved(ElementsRemovedEvent evt) {
             Collection<? extends PresentationModel> removed = evt.getRemoved();
             connectors.forEach(connector -> {
-                ListPM<TrackConnectorSwitchPM> tracks = connector.nodeTracks;
+                ListPM<TrackConnectorSwitchPM> tracks = connector.getSwitches();
                 Iterator<TrackConnectorSwitchPM> iterator = tracks.iterator();
                 while (iterator.hasNext()) {
                     TrackConnectorSwitchPM trackSi = iterator.next();
