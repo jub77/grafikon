@@ -35,4 +35,6 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
     void setLineTrack(LineTrack lineTrack);
 
     ItemSet<TrackConnectorSwitch> getSwitches();
+
+    TrackConnectorSwitch createSwitch(String id, NodeTrack track);
 }

@@ -29,6 +29,8 @@ public class TrackConnectorImpl implements TrackConnector {
         this.switches = new ItemSetImpl<>((type, item) -> {
             node.fireEvent(new Event(TrackConnectorImpl.this, type, item));
         });
+        this.setOrientation(Node.Side.LEFT);
+        this.setPosition(0);
     }
 
     @Override
@@ -43,7 +45,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public Node.Side getOrientation() {
-        return attributes.get(ATTR_ORIENTATION, Node.Side.class);
+        return attributes.get(ATTR_ORIENTATION, Node.Side.class, Node.Side.LEFT);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public int getPosition() {
-        return attributes.get(ATTR_POSITION, Integer.class);
+        return attributes.get(ATTR_POSITION, Integer.class, 0);
     }
 
     @Override
@@ -102,7 +104,16 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
+    public TrackConnectorSwitch createSwitch(String id, NodeTrack track) {
+        return new TrackConnectorSwitchImpl(id, node);
+    }
+
+    @Override
     public String toString() {
-        return String.format("%s", getSwitches());
+        return String.format("%s[%s,%d]/%s",
+                getNumber(),
+                getOrientation(),
+                getPosition(),
+                getSwitches());
     }
 }
