@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JOptionPane;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -27,7 +26,6 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
-import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -51,41 +49,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
 
-    private static class EditTrack {
-        public NodeTrack track;
-        public String number;
-        public boolean platform;
-        public boolean lineEnd;
-        public boolean straight;
-
-        public EditTrack(NodeTrack track) {
-            this.track = track;
-            this.number = track.getNumber();
-            this.platform = track.isPlatform();
-            this.lineEnd = track.getAttributes().getBool(Track.ATTR_LINE_END);
-            this.straight = track.getAttributes().getBool(Track.ATTR_NODE_TRACK_STRAIGHT);
-        }
-
-        @Override
-        public String toString() {
-            return number;
-        }
-
-        /**
-         * writes changed values back to track.
-         */
-        private void writeValuesBack() {
-            if (!number.equals(track.getNumber()))
-                track.setNumber(number);
-            if (platform != track.isPlatform())
-                track.setPlatform(platform);
-            track.getAttributes().setBool(Track.ATTR_LINE_END, lineEnd);
-            track.getAttributes().setBool(Track.ATTR_NODE_TRACK_STRAIGHT, straight);
-        }
-    }
-
     private Node node;
-    private List<EditTrack> removed;
     private Set<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
@@ -124,20 +88,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         this.setVisible(true);
     }
 
-    private void updateSelectedTrack(EditTrack track) {
-        boolean enabled = track != null;
-        lineEndCheckBox.setEnabled(enabled);
-        platformCheckBox.setEnabled(enabled);
-        straightCheckBox.setEnabled(enabled);
-        if (enabled) {
-            platformCheckBox.setSelected(track.platform);
-            lineEndCheckBox.setSelected(track.lineEnd);
-            straightCheckBox.setSelected(track.straight);
-        }
-    }
-
     private void updateValues() {
-        removed = new LinkedList<>();
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
@@ -166,16 +117,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // set speed for straight drive through
         Integer sSpeed = node.getAttribute(Node.ATTR_SPEED, Integer.class);
         this.setBoxValue(sSpeedEditBox, sSpeedCheckBox, sSpeed, SpeedUnit.KMPH, BigDecimal.ZERO);
-
-        // get node tracks
-        tracks = new javax.swing.DefaultListModel<>();
-        for (NodeTrack track : node.getTracks()) {
-            tracks.addElement(new EditTrack(track));
-        }
-        trackList.setModel(tracks);
-        if (!tracks.isEmpty()) {
-            trackList.setSelectedIndex(0);
-        }
 
         types.setSelectedObject(node.getType());
 
@@ -250,21 +191,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // s speed
         this.getBoxValue(sSpeedEditBox, sSpeedCheckBox, SpeedUnit.KMPH, Node.ATTR_SPEED);
 
-        // remove removed tracks
-        for (EditTrack ret : removed) {
-            if (node.getTracks().contains(ret.track))
-                node.getTracks().remove(ret.track);
-        }
-        // add/modify new/existing
-        for (int i = 0; i < tracks.getSize(); i++) {
-            EditTrack t = tracks.getElementAt(i);
-            // modify value
-            t.writeValuesBack();
-            // add new track
-            if (!node.getTracks().contains(t.track))
-                node.getTracks().add(t.track);
-        }
-
         // colors
         if (colors.isEmpty()) {
             colors = null;
@@ -305,16 +231,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        trackList = new javax.swing.JList<>();
-        newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
         renameTrackButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
-        deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
-        platformCheckBox = new javax.swing.JCheckBox();
-        lineEndCheckBox = new javax.swing.JCheckBox();
-        straightCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
@@ -343,15 +262,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
 
-        trackList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        trackList.addListSelectionListener(evt -> trackListValueChanged(evt));
-        scrollPane.setViewportView(trackList);
-
-        newTrackButton.addActionListener(evt -> newTrackButtonActionPerformed(evt));
-
-        renameTrackButton.addActionListener(evt -> renameTrackButtonActionPerformed(evt));
-
-        deleteTrackButton.addActionListener(evt -> deleteTrackButtonActionPerformed(evt));
+        renameTrackButton.addActionListener(evt -> {
+            // TODO open dialog for editing tracks and connectors
+        });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(evt -> {
@@ -361,14 +274,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(evt -> setVisible(false));
-
-        platformCheckBox.setText(ResourceLoader.getString("ne.platform")); // NOI18N
-        platformCheckBox.setEnabled(false);
-        platformCheckBox.addItemListener(evt -> platformCheckBoxItemStateChanged(evt));
-
-        lineEndCheckBox.setText(ResourceLoader.getString("ne.line.end")); // NOI18N
-        lineEndCheckBox.setEnabled(false);
-        lineEndCheckBox.addItemListener(evt -> lineEndCheckBoxItemStateChanged(evt));
 
         jLabel4.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
@@ -386,10 +291,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         });
 
         lengthPanel = new javax.swing.JPanel();
-
-        straightCheckBox.setText(ResourceLoader.getString("ne.straight")); // NOI18N
-        straightCheckBox.setEnabled(false);
-        straightCheckBox.addItemListener(evt -> straightCheckBoxItemStateChanged(evt));
 
         javax.swing.JLabel label = new javax.swing.JLabel();
         label.setText(ResourceLoader.getString("ne.not.straight.speed")); // NOI18N
@@ -424,20 +325,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(platformCheckBox)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(lineEndCheckBox)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(straightCheckBox))
-                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(newTrackButton)
-                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(renameTrackButton)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(deleteTrackButton)
                             .addGap(18)
                             .addComponent(colorsButton)
                             .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -533,18 +423,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addGap(10)))
                     .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(platformCheckBox)
-                        .addComponent(lineEndCheckBox)
-                        .addComponent(straightCheckBox))
-                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(newTrackButton)
-                            .addComponent(renameTrackButton)
-                            .addComponent(deleteTrackButton))
+                            .addComponent(renameTrackButton))
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(cancelButton)
                             .addComponent(okButton)
@@ -587,44 +469,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         pack();
     }
 
-    private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
-        if (name != null && !name.equals("")) {
-            NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), node, name);
-            NodeType nodeType = this.types.getSelectedObject();
-            if (nodeType.isPassenger()) {
-                track.setPlatform(true);
-            }
-            tracks.addElement(new EditTrack(track));
-        }
-    }
-
-    private void renameTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (!trackList.isSelectionEmpty()) {
-            EditTrack track = trackList.getSelectedValue();
-            String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, track.number);
-            if (name != null && !name.equals("")) {
-                track.number = name;
-            }
-            trackList.repaint();
-        }
-    }
-
-    private void deleteTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // removing
-        if (!trackList.isSelectionEmpty()) {
-            EditTrack track = trackList.getSelectedValue();
-            // test node track
-            if (!track.track.isEmpty() || tracks.getSize() == 1) {
-                JOptionPane.showMessageDialog(this, ResourceLoader.getString("nl.error.notempty"), null, JOptionPane.ERROR_MESSAGE);
-            } else {
-                tracks.removeElement(track);
-                // add to removed
-                removed.add(track);
-            }
-        }
-    }
-
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // selected ... (SIGNAL disables editing of length)
@@ -634,34 +478,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 this.lengthCheckBox.setSelected(false);
             }
             this.lengthCheckBox.setEnabled(!signal);
-        }
-    }
-
-    private void trackListValueChanged(javax.swing.event.ListSelectionEvent evt) {
-        if (!evt.getValueIsAdjusting()) {
-            EditTrack selected = trackList.getSelectedValue();
-            this.updateSelectedTrack(selected);
-        }
-    }
-
-    private void platformCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {
-        EditTrack selected = trackList.getSelectedValue();
-        if ((evt.getStateChange() == ItemEvent.SELECTED || evt.getStateChange() == ItemEvent.DESELECTED) && selected != null) {
-            selected.platform = platformCheckBox.isSelected();
-        }
-    }
-
-    private void straightCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {
-        EditTrack selected = trackList.getSelectedValue();
-        if ((evt.getStateChange() == ItemEvent.SELECTED || evt.getStateChange() == ItemEvent.DESELECTED) && selected != null) {
-            selected.straight = straightCheckBox.isSelected();
-        }
-    }
-
-    private void lineEndCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {
-        EditTrack selected = trackList.getSelectedValue();
-        if ((evt.getStateChange() == ItemEvent.SELECTED || evt.getStateChange() == ItemEvent.DESELECTED) && selected != null) {
-            selected.lineEnd = lineEndCheckBox.isSelected();
         }
     }
 
@@ -683,16 +499,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private javax.swing.JTextField abbrTextField;
     private javax.swing.JCheckBox controlCheckBox;
-    private javax.swing.JButton deleteTrackButton;
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
-    private javax.swing.JCheckBox lineEndCheckBox;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton newTrackButton;
-    private javax.swing.JCheckBox platformCheckBox;
     private javax.swing.JButton renameTrackButton;
     private javax.swing.JCheckBox signalsCheckBox;
-    private javax.swing.JList<EditTrack> trackList;
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox<Wrapper<NodeType>> typeComboBox;
     private javax.swing.JTextField regionsTextField;
@@ -700,14 +511,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
     private javax.swing.JButton colorsButton;
     private javax.swing.JPanel lengthPanel;
-    private javax.swing.JCheckBox straightCheckBox;
     private ValueWithUnitEditBox nsSpeedEditBox;
     private javax.swing.JCheckBox nsSpeedCheckBox;
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
 
     private WrapperListModel<Company> companies;
-    private javax.swing.DefaultListModel<EditTrack> tracks;
     private Set<Region> regions;
     private Set<Region> centerRegions;
 }
