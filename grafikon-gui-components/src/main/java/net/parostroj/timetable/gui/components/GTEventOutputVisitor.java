@@ -201,6 +201,7 @@ public class GTEventOutputVisitor implements EventVisitor {
         try {
             TrackConnector conn = (TrackConnector) event.getSource();
             str.append("TrackConnectorEvent[");
+            str.append(conn.getNode().getAbbr()).append('-');
             str.append(conn.getNumber());
             str.append(']');
             if (full) {
