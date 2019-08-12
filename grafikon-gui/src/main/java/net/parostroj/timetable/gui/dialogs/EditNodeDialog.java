@@ -18,6 +18,7 @@ import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
+import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.NodeTypeWrapperDelegate;
@@ -29,6 +30,8 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.SwingConstants;
@@ -50,6 +53,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
 
     private Node node;
+    private ModelProvider modelProvider = new ModelProvider();
     private Set<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
@@ -80,6 +84,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     public void showDialog(Node node, LengthUnit unit, SpeedUnit speedUnit) {
         this.node = node;
+        this.modelProvider.setPresentationModel(new NodePM(node));
         this.lengthEditBox.setUnit(unit);
         this.nsSpeedEditBox.setUnit(speedUnit);
         this.sSpeedEditBox.setUnit(speedUnit);
@@ -207,6 +212,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // center of regions
         node.setRemoveAttribute(
                 Node.ATTR_CENTER_OF_REGIONS, this.centerRegions.isEmpty() ? null : this.centerRegions);
+
+        NodePM pm = modelProvider.getPresentationModel();
+        pm.writeResult();
     }
 
     private void getBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Unit unit, String attribute) {
@@ -239,6 +247,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
+        tracksAndConnectorsDialog = new EditNodeTracksAndConnectorsDialog(this, false);
+        tracksAndConnectorsDialog.setModelProvider(modelProvider);
+        tracksAndConnectorsDialog.setPath(new Path("this"));
+
         regionsTextField = new javax.swing.JTextField();
         regionsTextField.setEditable(false);
         centerRegionsTextField = new javax.swing.JTextField();
@@ -263,7 +275,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
 
         renameTrackButton.addActionListener(evt -> {
-            // TODO open dialog for editing tracks and connectors
+            tracksAndConnectorsDialog.setLocationRelativeTo(this);
+            tracksAndConnectorsDialog.setVisible(true);
         });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
@@ -515,6 +528,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox nsSpeedCheckBox;
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
+    private EditNodeTracksAndConnectorsDialog tracksAndConnectorsDialog;
 
     private WrapperListModel<Company> companies;
     private Set<Region> regions;
