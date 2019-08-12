@@ -16,7 +16,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Node.Side;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
@@ -74,6 +73,8 @@ public class TrackConnectorPM extends AbstractPM {
             boolean straight = contains ? nt.get(ntPM.getReference()).isStraight() : false;
             this.switches.add(new TrackConnectorSwitchPM(ntPM, contains, straight));
         });
+        orientation.setValue(connector.getOrientation());
+        position.setInteger(connector.getPosition());
     }
 
     public ListPM<TrackConnectorSwitchPM> getSwitches() {
@@ -90,16 +91,14 @@ public class TrackConnectorPM extends AbstractPM {
                 // new (no reference)
                 TrackConnector newConn = node.getDiagram().getPartFactory()
                         .createConnector(IdGenerator.getInstance().getId(), node, number.getText());
-                newConn.setOrientation(Side.LEFT);
-                newConn.setPosition(0);
+                this.setConnectorValues(newConn);
                 // no node tracks switches
                 node.getConnectors().add(newConn);
                 reference = newConn;
             } else {
                 // modify existing
                 reference.setNumber(number.getText());
-                reference.setPosition(position.getInteger());
-                reference.setOrientation(orientation.getValue());
+                this.setConnectorValues(reference);
                 // remove non-connected switches
                 Set<NodeTrack> connectedTracks = FluentIterable.from(switches)
                         .filter(sw -> sw.getConnected().getBoolean())
@@ -118,11 +117,21 @@ public class TrackConnectorPM extends AbstractPM {
                             TrackConnectorSwitch t = reference.createSwitch(
                                     IdGenerator.getInstance().getId(),
                                     sw.getTrack().getReference());
+                            setSwitchValues(t, sw);
                             reference.getSwitches().add(t);
                             return t;
                         });
-                        tcs.setStraight(sw.getStraight().getBoolean());
+                        setSwitchValues(tcs, sw);
                     });
         }
+    }
+
+    private void setSwitchValues(TrackConnectorSwitch sw, TrackConnectorSwitchPM swPm) {
+        sw.setStraight(swPm.getStraight().getBoolean());
+    }
+
+    private void setConnectorValues(TrackConnector conn) {
+        conn.setPosition(position.getInteger());
+        conn.setOrientation(orientation.getValue());
     }
 }
