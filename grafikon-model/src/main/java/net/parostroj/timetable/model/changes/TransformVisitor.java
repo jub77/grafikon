@@ -100,6 +100,15 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitTrackConnectorEvent(Event event) {
+        TrackConnector conn = (TrackConnector) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.NODE, conn.getNode().getId());
+        change.setObject(conn.getNumber());
+        change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
+    }
+
+    @Override
     public void visitTrainEvent(Event event) {
         Train train = (Train) event.getSource();
         change = new DiagramChange(DiagramChange.Type.TRAIN, train.getId());

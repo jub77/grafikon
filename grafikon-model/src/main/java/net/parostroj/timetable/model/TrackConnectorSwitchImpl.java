@@ -14,12 +14,12 @@ public class TrackConnectorSwitchImpl implements TrackConnectorSwitch {
 
     private boolean events = false;
 
-    public TrackConnectorSwitchImpl(String id, NodeTrack nodeTrack) {
+    TrackConnectorSwitchImpl(String id, NodeTrack nodeTrack, TrackConnector connector) {
         final Node node = nodeTrack.getOwner();
         this.id = id;
         this.attributes = new Attributes((attrs, change) -> {
             if (events) {
-                node.fireEvent(new Event(node, TrackConnectorSwitchImpl.this, change));
+                node.fireEvent(new Event(connector, TrackConnectorSwitchImpl.this, change));
             }
         });
         this.setNodeTrack(nodeTrack);

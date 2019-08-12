@@ -40,4 +40,6 @@ public interface EventVisitor {
     void visitOtherEvent(Event event);
 
     void visitTrainTypeCategoryEvent(Event event);
+
+    void visitTrackConnectorEvent(Event event);
 }

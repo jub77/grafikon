@@ -249,20 +249,21 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     void fireCollectionEvent(Event.Type type, Object item) {
         this.fireEvent(new Event(this, type, item));
+        if (item instanceof ItemCollectionObject) {
+            switch (type) {
+                case ADDED:
+                    ((ItemCollectionObject) item).added();
+                    break;
+                case REMOVED:
+                    ((ItemCollectionObject) item).removed();
+                default: // nothing
+                    break;
+            }
+        }
     }
 
-    void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item, Integer from, Integer to) {
+    void fireCollectionEventListObject(Event.Type type, Object item, Integer from, Integer to) {
         fireCollectionEvent(type, item);
-        switch (type) {
-            case ADDED:
-                item.added();
-                break;
-            case REMOVED:
-                item.removed();
-                break;
-            default: // nothing
-                break;
-        }
     }
 
     protected void fireEvent(Event event) {

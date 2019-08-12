@@ -20,6 +20,11 @@ public class GTEventsReceiverColleague extends AbstractColleague {
             }
 
             @Override
+            public void visitTrackConnectorEvent(Event event) {
+                processGTEvent(event);
+            }
+
+            @Override
             public void visitOutputEvent(Event event) {
                 processGTEvent(event);
             }

@@ -22,12 +22,25 @@ public class TrackConnectorImpl implements TrackConnector {
         this.node = node;
         this.attributes = new Attributes((attrs, change) -> {
             if (events) {
-                node.fireEvent(new Event(node, TrackConnectorImpl.this, change));
+                node.fireEvent(new Event(TrackConnectorImpl.this, change));
             }
         });
         this.setNumber(number);
         this.switches = new ItemSetImpl<>((type, item) -> {
-            node.fireEvent(new Event(TrackConnectorImpl.this, type, item));
+            if (events) {
+                node.fireEvent(new Event(TrackConnectorImpl.this, type, item));
+            }
+            // add/remove
+            switch (type) {
+                case ADDED:
+                    item.added();
+                    break;
+                case REMOVED:
+                    item.removed();
+                    break;
+                default: // nothing
+                    break;
+            }
         });
         this.setOrientation(Node.Side.LEFT);
         this.setPosition(0);
@@ -105,7 +118,7 @@ public class TrackConnectorImpl implements TrackConnector {
 
     @Override
     public TrackConnectorSwitch createSwitch(String id, NodeTrack track) {
-        return new TrackConnectorSwitchImpl(id, track);
+        return new TrackConnectorSwitchImpl(id, track, this);
     }
 
     @Override

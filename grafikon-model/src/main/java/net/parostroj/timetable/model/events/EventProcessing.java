@@ -43,6 +43,8 @@ public class EventProcessing {
             visitor.visitOutputEvent(event);
         } else if (source instanceof TrainTypeCategory) {
             visitor.visitTrainTypeCategoryEvent(event);
+        } else if (source instanceof TrackConnector) {
+            visitor.visitTrackConnectorEvent(event);
         } else {
             visitor.visitOtherEvent(event);
         }

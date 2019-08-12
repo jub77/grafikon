@@ -197,6 +197,29 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitTrackConnectorEvent(Event event) {
+        try {
+            TrackConnector conn = (TrackConnector) event.getSource();
+            str.append("TrackConnectorEvent[");
+            str.append(conn.getNumber());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Connector: ").append(conn.getNumber()).append('\n');
+                str.append("  Type: ").append(event.getType().toString());
+                if (event.getObject() instanceof TrackConnectorSwitch) {
+                    TrackConnectorSwitch sw = (TrackConnectorSwitch) event.getObject();
+                    str.append("\n    Switch: ").append(sw.getNodeTrack().getNumber());
+                }
+                if (event.getAttributeChange() != null)
+                    str.append("\n    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+            }
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void visitTrainEvent(Event event) {
         try {
             Train train = (Train) event.getSource();
