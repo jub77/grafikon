@@ -32,6 +32,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
+import org.beanfabrics.swing.BnButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.SwingConstants;
@@ -212,9 +213,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // center of regions
         node.setRemoveAttribute(
                 Node.ATTR_CENTER_OF_REGIONS, this.centerRegions.isEmpty() ? null : this.centerRegions);
-
-        NodePM pm = modelProvider.getPresentationModel();
-        pm.writeResult();
     }
 
     private void getBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Unit unit, String attribute) {
@@ -232,19 +230,19 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(40);
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
+        javax.swing.JLabel abbrLabel = new javax.swing.JLabel();
         abbrTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
+        javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
         editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        javax.swing.JButton okButton = new javax.swing.JButton();
+        BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
-        javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
+        javax.swing.JLabel lengthLabel = new javax.swing.JLabel();
+        javax.swing.JLabel regionsLabel = new javax.swing.JLabel();
+        javax.swing.JLabel centerRegionsLabel = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
         tracksAndConnectorsDialog = new EditNodeTracksAndConnectorsDialog(this, false);
@@ -260,17 +258,19 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         setResizable(false);
 
-        jLabel1.setText(ResourceLoader.getString("ne.name")); // NOI18N
+        nameLabel.setText(ResourceLoader.getString("ne.name")); // NOI18N
 
-        jLabel2.setText(ResourceLoader.getString("ne.abbr")); // NOI18N
+        abbrLabel.setText(ResourceLoader.getString("ne.abbr")); // NOI18N
 
-        jLabel3.setText(ResourceLoader.getString("ne.type")); // NOI18N
+        typeLabel.setText(ResourceLoader.getString("ne.type")); // NOI18N
 
-        jLabel5.setText(ResourceLoader.getString("ne.regions") + ":"); // NOI18N
+        regionsLabel.setText(ResourceLoader.getString("ne.regions") + ":"); // NOI18N
 
-        jLabel6.setText(ResourceLoader.getString("ne.center.regions") + ":"); // NOI18N
+        centerRegionsLabel.setText(ResourceLoader.getString("ne.center.regions") + ":"); // NOI18N
 
         companyLabel.setText(ResourceLoader.getString("ne.company") + ":"); // NOI18N
+
+        lengthLabel.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
         typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
 
@@ -284,11 +284,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
             writeValuesBack();
             setVisible(false);
         });
+        okButton.setModelProvider(modelProvider);
+        okButton.setPath(new Path("ok"));
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(evt -> setVisible(false));
-
-        jLabel4.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
         javax.swing.JPanel panel = new javax.swing.JPanel();
 
@@ -305,13 +305,13 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         lengthPanel = new javax.swing.JPanel();
 
-        javax.swing.JLabel label = new javax.swing.JLabel();
-        label.setText(ResourceLoader.getString("ne.not.straight.speed")); // NOI18N
+        javax.swing.JLabel nsSpeedLabel = new javax.swing.JLabel();
+        nsSpeedLabel.setText(ResourceLoader.getString("ne.not.straight.speed")); // NOI18N
 
         javax.swing.JPanel nsSpeedPanel = new javax.swing.JPanel();
 
-        javax.swing.JLabel label_1 = new javax.swing.JLabel();
-        label_1.setText(ResourceLoader.getString("ne.straight.speed")); // NOI18N
+        javax.swing.JLabel sSpeedLabel = new javax.swing.JLabel();
+        sSpeedLabel.setText(ResourceLoader.getString("ne.straight.speed")); // NOI18N
 
         javax.swing.JPanel sSpeedPanel = new javax.swing.JPanel();
         sSpeedPanel.setLayout(new BorderLayout(0, 0));
@@ -348,13 +348,13 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(regionsLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(regionsTextField, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(editRegionsButton))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel6, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(centerRegionsLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(centerRegionsTextField, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -364,27 +364,27 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(companyComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(nameTextField))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel2)
+                            .addComponent(abbrLabel)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lengthLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(lengthPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(typeLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(typeComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(label, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nsSpeedLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(nsSpeedPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(label_1)
+                            .addComponent(sSpeedLabel)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(sSpeedPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addContainerGap())
@@ -395,27 +395,27 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1))
+                        .addComponent(nameLabel))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel2)
+                        .addComponent(abbrLabel)
                         .addComponent(abbrTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.CENTER)
-                        .addComponent(label_1)
+                        .addComponent(sSpeedLabel)
                         .addComponent(sSpeedPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(7)
                     .addGroup(layout.createParallelGroup(Alignment.CENTER)
-                        .addComponent(label)
+                        .addComponent(nsSpeedLabel)
                         .addComponent(nsSpeedPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(6)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel5)
+                        .addComponent(regionsLabel)
                         .addComponent(regionsTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(editRegionsButton))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel6)
+                        .addComponent(centerRegionsLabel)
                         .addComponent(centerRegionsTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(editCenterRegionsButton))
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -424,7 +424,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                         .addComponent(companyComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel3)
+                        .addComponent(typeLabel)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(7)
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
@@ -432,7 +432,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(lengthPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel4)
+                            .addComponent(lengthLabel)
                             .addGap(10)))
                     .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -446,7 +446,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(colorsButton)))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4, jLabel5, jLabel6, companyLabel, label, label_1});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel});
 
         sSpeedEditBox = new ValueWithUnitEditBox();
         sSpeedPanel.add(sSpeedEditBox, BorderLayout.CENTER);
