@@ -92,6 +92,12 @@ subprojects { prj ->
 		options.compilerArgs << "-Xlint:deprecation"
 	}
 
+	compileTestJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+		options.encoding = 'utf-8'
+	}
+
 	jar {
 		manifest {
 			attributes(
