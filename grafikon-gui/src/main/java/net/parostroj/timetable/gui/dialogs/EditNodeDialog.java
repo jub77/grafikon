@@ -30,7 +30,6 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
-import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ import javax.swing.SwingConstants;
  *
  * @author jub
  */
-public class EditNodeDialog extends javax.swing.JDialog {
+public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,7 +53,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
 
     private Node node;
-    private ModelProvider modelProvider = new ModelProvider();
     private Set<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
@@ -85,7 +83,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     public void showDialog(Node node, LengthUnit unit, SpeedUnit speedUnit) {
         this.node = node;
-        this.modelProvider.setPresentationModel(new NodePM(node));
+        this.setPresentationModel(new NodePM(node));
         this.lengthEditBox.setUnit(unit);
         this.nsSpeedEditBox.setUnit(speedUnit);
         this.sSpeedEditBox.setUnit(speedUnit);
@@ -237,7 +235,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
-        editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
         javax.swing.JLabel lengthLabel = new javax.swing.JLabel();
@@ -246,7 +244,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
         tracksAndConnectorsDialog = new EditNodeTracksAndConnectorsDialog(this, false);
-        tracksAndConnectorsDialog.setModelProvider(modelProvider);
+        tracksAndConnectorsDialog.setModelProvider(localProvider);
         tracksAndConnectorsDialog.setPath(new Path("this"));
 
         regionsTextField = new javax.swing.JTextField();
@@ -284,7 +282,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             writeValuesBack();
             setVisible(false);
         });
-        okButton.setModelProvider(modelProvider);
+        okButton.setModelProvider(localProvider);
         okButton.setPath(new Path("ok"));
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
@@ -340,9 +338,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(editTracksButton)
-                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(colorsButton)
+                            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editTracksButton)
                             .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
