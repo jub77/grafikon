@@ -15,6 +15,7 @@ import org.beanfabrics.support.OnChange;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
@@ -43,8 +44,9 @@ public class TrackConnectorPM extends AbstractPM {
         this.number = new TextPM();
         this.number.setMandatory(true);
         this.orientation = new EnumeratedValuesPM<>(EnumeratedValuesPM
-                .createValueMap(Arrays.asList(Node.Side.values()), v -> v.toString()));
+                .createValueMap(Arrays.asList(Node.Side.values()), v -> getSideString(v)));
         this.switches = new ListPM<>();
+        this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
         PMManager.setup(this);
         updateConnectorId();
     }
@@ -53,8 +55,11 @@ public class TrackConnectorPM extends AbstractPM {
     public void updateConnectorId() {
         boolean valid = position.isValid();
         if (valid) {
-            connectorId.setText(String.format("[%s,%d] %s", orientation.getText(),
-                    position.getInteger(), number.getText()));
+            connectorId.setText(
+                    String.format("%s (%s, %d)",
+                    number.getText(),
+                    getSideString(orientation.getValue()),
+                    position.getInteger()));
         }
     }
 
@@ -97,7 +102,6 @@ public class TrackConnectorPM extends AbstractPM {
                 reference = newConn;
             } else {
                 // modify existing
-                reference.setNumber(number.getText());
                 this.setConnectorValues(reference);
                 // remove non-connected switches
                 Set<NodeTrack> connectedTracks = FluentIterable.from(switches)
@@ -131,7 +135,12 @@ public class TrackConnectorPM extends AbstractPM {
     }
 
     private void setConnectorValues(TrackConnector conn) {
+        conn.setNumber(number.getText().trim());
         conn.setPosition(position.getInteger());
         conn.setOrientation(orientation.getValue());
+    }
+
+    public static String getSideString(Node.Side side) {
+        return ResourceLoader.getString("ne.side." + (side == Node.Side.LEFT ? "left" : "right"));
     }
 }

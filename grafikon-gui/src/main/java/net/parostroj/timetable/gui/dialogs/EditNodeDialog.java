@@ -239,7 +239,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
-        renameTrackButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
+        editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
@@ -274,7 +274,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
 
-        renameTrackButton.addActionListener(evt -> {
+        editTracksButton.addActionListener(evt -> {
             tracksAndConnectorsDialog.setLocationRelativeTo(this);
             tracksAndConnectorsDialog.setVisible(true);
         });
@@ -340,8 +340,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(renameTrackButton)
-                            .addGap(18)
+                            .addComponent(editTracksButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(colorsButton)
                             .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(okButton)
@@ -439,7 +439,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(renameTrackButton))
+                            .addComponent(editTracksButton))
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(cancelButton)
                             .addComponent(okButton)
@@ -515,7 +515,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton renameTrackButton;
+    private javax.swing.JButton editTracksButton;
     private javax.swing.JCheckBox signalsCheckBox;
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox<Wrapper<NodeType>> typeComboBox;

@@ -17,6 +17,7 @@ import net.parostroj.timetable.gui.components.ItemSelectionPanel;
 import net.parostroj.timetable.gui.components.ListSelectionSupport;
 import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.pm.TrackConnectorSwitchPM;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
  * Dialog for editing node tracks and connectors.
@@ -32,20 +33,28 @@ public class EditNodeTracksAndConnectorsDialog extends BaseEditDialog<NodePM> {
 
         EditNodeTracksPanel tracksPanel = new EditNodeTracksPanel();
         EditNodeTrackConnectorsPanel connectorsPanel = new EditNodeTrackConnectorsPanel();
-        ItemSelectionPanel<TrackConnectorSwitchPM> connTracksPanel = new ItemSelectionPanel<>(
+        ItemSelectionPanel<TrackConnectorSwitchPM> switchesPanel = new ItemSelectionPanel<>(
                 new Path("connected"), new Path("track.number"));
-        ItemSelectionPanel<TrackConnectorSwitchPM> straightTracksPanel = new ItemSelectionPanel<>(
+        ItemSelectionPanel<TrackConnectorSwitchPM> straightSwitchesPanel = new ItemSelectionPanel<>(
                 new Path("straight"), new Path("track.number"));
 
         Box box = Box.createVerticalBox();
         box.add(tracksPanel);
         box.add(connectorsPanel);
-        box.add(new JScrollPane(connTracksPanel));
-        box.add(new JScrollPane(straightTracksPanel));
+        JScrollPane switchesScrollPane = new JScrollPane(switchesPanel);
+        box.add(switchesScrollPane);
+        JScrollPane straightSwitchesScrollPane = new JScrollPane(straightSwitchesPanel);
+        box.add(straightSwitchesScrollPane);
         this.setLayout(new BorderLayout());
         this.add(box, BorderLayout.CENTER);
-        tracksPanel.setBorder(BorderFactory.createTitledBorder("Tracks"));
-        connectorsPanel.setBorder(BorderFactory.createTitledBorder("Connectors"));
+        tracksPanel
+                .setBorder(BorderFactory.createTitledBorder(ResourceLoader.getString("ne.tracks")));
+        connectorsPanel.setBorder(
+                BorderFactory.createTitledBorder(ResourceLoader.getString("ne.connectors")));
+        switchesScrollPane.setBorder(
+                BorderFactory.createTitledBorder(ResourceLoader.getString("ne.switches")));
+        straightSwitchesScrollPane.setBorder(
+                BorderFactory.createTitledBorder(ResourceLoader.getString("ne.switches.straight")));
 
         // model
         tracksPanel.setModelProvider(localProvider);
@@ -54,7 +63,7 @@ public class EditNodeTracksAndConnectorsDialog extends BaseEditDialog<NodePM> {
         connectorsPanel.setPath(new Path("this"));
 
         ListSelectionSupport<ListPM<TrackConnectorSwitchPM>> support = new ListSelectionSupport<>(
-                Arrays.asList(connTracksPanel, straightTracksPanel),
+                Arrays.asList(switchesPanel, straightSwitchesPanel),
                 () -> getPresentationModel().getConnectors(),
                 conn -> conn != null ? conn.getSwitches() : null);
         localProvider.addModelProviderListener(new Path("connectors"), support);

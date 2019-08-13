@@ -21,6 +21,7 @@ public class NodeTrackPM extends AbstractPM implements IPM<NodeTrack> {
 
     public NodeTrackPM() {
         this.number = new TextPM();
+        this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
         this.number.setMandatory(true);
         this.platform = new BooleanPM();
         PMManager.setup(this);
@@ -45,12 +46,12 @@ public class NodeTrackPM extends AbstractPM implements IPM<NodeTrack> {
         if (node != null) {
             if (reference == null) {
                 // new (no reference)
-                NodeTrack newTrack = new NodeTrack(IdGenerator.getInstance().getId(), node, number.getText());
+                NodeTrack newTrack = new NodeTrack(IdGenerator.getInstance().getId(), node, number.getText().trim());
                 node.getTracks().add(index, newTrack);
                 reference = newTrack;
             } else {
                 // modify existing
-                reference.setNumber(number.getText());
+                reference.setNumber(number.getText().trim());
                 reference.setPlatform(platform.getBoolean());
                 int currentIndex = node.getTracks().indexOf(reference);
                 if (index != currentIndex) {
