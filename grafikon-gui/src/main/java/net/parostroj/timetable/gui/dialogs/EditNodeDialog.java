@@ -27,11 +27,11 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.SwingConstants;
@@ -93,8 +93,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     }
 
     private void updateValues() {
-        nameTextField.setText(node.getName());
-        abbrTextField.setText(node.getAbbr());
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
         controlCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_CONTROL_STATION));
         trapezoidCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN));
@@ -172,15 +170,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     }
 
     private void writeValuesBack() {
-        String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
-        if (newName != null) {
-            node.setName(newName);
-        }
-        String newAbbr = ObjectsUtil.checkAndTrim(abbrTextField.getText());
-        if (newAbbr != null) {
-            node.setAbbr(newAbbr);
-        }
-
         node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? Node.IP_NEW_SIGNALS : null);
 
         node.setType(types.getSelectedObject());
@@ -229,10 +218,14 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
     private void initComponents() {
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
-        nameTextField = new javax.swing.JTextField();
+        nameTextField = new BnTextField();
         nameTextField.setColumns(40);
+        nameTextField.setModelProvider(localProvider);
+        nameTextField.setPath(new Path("name"));
         javax.swing.JLabel abbrLabel = new javax.swing.JLabel();
-        abbrTextField = new javax.swing.JTextField();
+        abbrTextField = new BnTextField();
+        abbrTextField.setModelProvider(localProvider);
+        abbrTextField.setPath(new Path("abbr"));
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
         editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
@@ -508,11 +501,11 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         sSpeedEditBox.setValueInUnit(selected ? DEFAULT_STRAIGHT_SPEED : BigDecimal.ZERO, SpeedUnit.KMPH);
     }
 
-    private javax.swing.JTextField abbrTextField;
+    private BnTextField nameTextField;
+    private BnTextField abbrTextField;
     private javax.swing.JCheckBox controlCheckBox;
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
-    private javax.swing.JTextField nameTextField;
     private javax.swing.JButton editTracksButton;
     private javax.swing.JCheckBox signalsCheckBox;
     private javax.swing.JCheckBox trapezoidCheckBox;

@@ -20,6 +20,7 @@ import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.PresentationModel;
 import org.beanfabrics.model.SortKey;
+import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
 
@@ -40,6 +41,8 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     ItemListPM<NodeTrackPM> tracks;
     ItemListPM<TrackConnectorPM> connectors;
+    TextPM name;
+    TextPM abbr;
 
     OperationPM ok = new OperationPM();
 
@@ -64,6 +67,12 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.connectors.setSorted(CONNECTOR_SORT_KEY);
         this.tracksListener = new TracksListener(this.connectors);
         this.tracks.addListListener(tracksListener);
+        this.name = new TextPM();
+        this.name.setMandatory(true);
+        this.name.getValidator().add(new EmptySpacesValidationRule(this.name));
+        this.abbr = new TextPM();
+        this.abbr.setMandatory(true);
+        this.abbr.getValidator().add(new EmptySpacesValidationRule(this.abbr));
         PMManager.setup(this);
     }
 
@@ -86,6 +95,8 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this.tracks);
             connectors.add(connectorPm);
         });
+        this.name.setText(node.getName());
+        this.abbr.setText(node.getAbbr());
     }
 
     public ListPM<NodeTrackPM> getTracks() {
@@ -125,6 +136,8 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             for (TrackConnectorPM connector : connectors) {
                 connector.writeResult(reference);
             }
+            reference.setName(name.getText());
+            reference.setAbbr(abbr.getText());
         }
     }
 
