@@ -16,6 +16,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
@@ -33,6 +35,7 @@ public class TrackConnectorPM extends AbstractPM {
     TextPM number;
     IntegerPM position;
     EnumeratedValuesPM<Node.Side> orientation;
+    EnumeratedValuesPM<LineTrack> lineTrack;
     ListPM<TrackConnectorSwitchPM> switches;
 
     private TrackConnector reference;
@@ -45,6 +48,7 @@ public class TrackConnectorPM extends AbstractPM {
         this.number.setMandatory(true);
         this.orientation = new EnumeratedValuesPM<>(EnumeratedValuesPM
                 .createValueMap(Arrays.asList(Node.Side.values()), v -> getSideString(v)));
+        this.lineTrack = new EnumeratedValuesPM<>();
         this.switches = new ListPM<>();
         this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
         PMManager.setup(this);
@@ -63,13 +67,16 @@ public class TrackConnectorPM extends AbstractPM {
         }
     }
 
-    public TrackConnectorPM(TrackConnector connector, IListPM<NodeTrackPM> tracksPm) {
+    public TrackConnectorPM(TrackConnector connector, IListPM<NodeTrackPM> tracksPm,
+            Iterable<LineTrack> lineTracks) {
         this();
-        this.init(connector, tracksPm);
+        this.init(connector, tracksPm, lineTracks);
     }
 
-    public void init(TrackConnector connector, IListPM<NodeTrackPM> tracksPm) {
+    public void init(TrackConnector connector, IListPM<NodeTrackPM> tracksPm,
+            Iterable<LineTrack> lineTracks) {
         this.reference = connector;
+        this.switches.clear();
         this.number.setText(connector.getNumber());
         Set<TrackConnectorSwitch> switches = connector.getSwitches();
         ImmutableMap<NodeTrack ,TrackConnectorSwitch> nt = FluentIterable.from(switches).uniqueIndex(sw -> sw.getNodeTrack());
@@ -80,6 +87,24 @@ public class TrackConnectorPM extends AbstractPM {
         });
         orientation.setValue(connector.getOrientation());
         position.setInteger(connector.getPosition());
+        // line connection
+        this.initLineTrack(connector.getNode(), lineTracks);
+        lineTrack.setValue(lineTrack.getValue());
+    }
+
+    public void initLineTrack(Node node, Iterable<LineTrack> lineTracks) {
+        lineTrack.removeAllValues();
+        lineTrack.addValues(lineTracks, t -> this.getTextForLineTrack(node, t), "-");
+        lineTrack.setValue(null);
+    }
+
+    private String getTextForLineTrack(Node node, LineTrack track) {
+        Line line = track.getOwner();
+        Node fromNode = line.getFrom();
+        if (fromNode == node) {
+            fromNode = line.getTo();
+        }
+        return String.format("%s [%s]", fromNode.getAbbr(), track.getNumber());
     }
 
     public ListPM<TrackConnectorSwitchPM> getSwitches() {
@@ -138,6 +163,7 @@ public class TrackConnectorPM extends AbstractPM {
         conn.setNumber(number.getText().trim());
         conn.setPosition(position.getInteger());
         conn.setOrientation(orientation.getValue());
+        conn.setLineTrack(lineTrack.getValue());
     }
 
     public static String getSideString(Node.Side side) {

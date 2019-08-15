@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.pm;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.beanfabrics.support.Validation;
 
 import com.google.common.collect.FluentIterable;
 
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
@@ -49,6 +52,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     private ListListener tracksListener;
 
     private Node reference;
+    private Iterable<LineTrack> lineTracks = Collections.emptyList();
 
     public NodePM() {
         this.tracks = new ItemListPM<>(() -> {
@@ -62,6 +66,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             tracks.forEach(track -> {
                 tc.getSwitches().add(new TrackConnectorSwitchPM(track, false, false));
             });
+            tc.initLineTrack(reference, lineTracks);
             return tc;
         });
         this.connectors.setSorted(CONNECTOR_SORT_KEY);
@@ -86,13 +91,18 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.reference = node;
         this.tracks.clear();
         this.connectors.clear();
+
+        Set<Line> lines = node.getDiagram().getNet().getLinesOf(node);
+        lineTracks = FluentIterable.from(lines)
+                .transformAndConcat(line -> line.getTracks());
+
         node.getTracks().forEach(track -> {
             NodeTrackPM nodeTrackPm = new NodeTrackPM();
             nodeTrackPm.init(track);
             tracks.add(nodeTrackPm);
         });
         node.getConnectors().forEach(connector -> {
-            TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this.tracks);
+            TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this.tracks, lineTracks);
             connectors.add(connectorPm);
         });
         this.name.setText(node.getName());

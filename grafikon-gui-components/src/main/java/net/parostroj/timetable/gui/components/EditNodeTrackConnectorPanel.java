@@ -37,11 +37,18 @@ public class EditNodeTrackConnectorPanel extends BaseEditPanel<TrackConnectorPM>
         numberTextField.setModelProvider(localProvider);
         numberTextField.setPath(new Path("number"));
 
+        BnComboBox lineTrackComboBox = new BnComboBox();
+        lineTrackComboBox.setModelProvider(localProvider);
+        lineTrackComboBox.setPrototypeDisplayValue("MMMMMMMMMM");
+        lineTrackComboBox.setPath(new Path("lineTrack"));
+
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.add(numberTextField);
         this.add(Box.createHorizontalStrut(5));
         this.add(orientationComboBox);
         this.add(Box.createHorizontalStrut(5));
         this.add(positionTextField);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(lineTrackComboBox);
     }
 }
