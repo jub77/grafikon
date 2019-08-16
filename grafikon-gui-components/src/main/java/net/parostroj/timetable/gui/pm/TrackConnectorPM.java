@@ -55,15 +55,16 @@ public class TrackConnectorPM extends AbstractPM {
         updateConnectorId();
     }
 
-    @OnChange(path = { "position", "orientation", "number" })
+    @OnChange(path = { "position", "orientation", "number", "lineTrack" })
     public void updateConnectorId() {
         boolean valid = position.isValid();
         if (valid) {
             connectorId.setText(
-                    String.format("%s (%s, %d)",
+                    String.format("%s [%s, %d] - %s",
                     number.getText(),
                     getSideString(orientation.getValue()),
-                    position.getInteger()));
+                    position.getInteger(),
+                    lineTrack.getText()));
         }
     }
 
