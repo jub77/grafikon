@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import java.util.Optional;
+
 /**
  * Track connector between line and node. Line track is connected
  * a certain connection point. The connection point is connected
@@ -37,4 +39,8 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
     ItemSet<TrackConnectorSwitch> getSwitches();
 
     TrackConnectorSwitch createSwitch(String id, NodeTrack track);
+
+    default Optional<NodeTrack> getStraightNodeTrack() {
+        return getSwitches().find(sw -> sw.isStraight()).map(sw -> sw.getNodeTrack());
+    }
 }

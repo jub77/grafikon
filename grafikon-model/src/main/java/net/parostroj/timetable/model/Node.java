@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
@@ -245,6 +246,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     public ItemSet<TrackConnector> getConnectors() {
         return connectors;
+    }
+
+    public Optional<TrackConnector> getConnectorForLineTrack(LineTrack lineTrack) {
+        return connectors.find(conn -> conn.getLineTrack() == lineTrack);
     }
 
     void fireCollectionEvent(Event.Type type, Object item) {
