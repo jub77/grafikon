@@ -66,7 +66,9 @@ public class TransformVisitor implements EventVisitor {
             }
             change = new DiagramChange(type, action, o.getId());
         } else {
-            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, ((ObjectWithId) event.getSource()).getId());
+            Object source = event.getSource();
+            String id = source instanceof ObjectWithId ? ((ObjectWithId) source).getId() : "FREIGHT_NET";
+            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, id);
             if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             }
