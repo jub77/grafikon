@@ -1,28 +1,16 @@
 package net.parostroj.timetable.gui.pm;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableMap;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.IdGenerator;
+import org.beanfabrics.model.*;
+import org.beanfabrics.support.OnChange;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-
-import org.beanfabrics.model.AbstractPM;
-import org.beanfabrics.model.IListPM;
-import org.beanfabrics.model.IntegerPM;
-import org.beanfabrics.model.ListPM;
-import org.beanfabrics.model.PMManager;
-import org.beanfabrics.model.TextPM;
-import org.beanfabrics.support.OnChange;
-
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
-
-import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.TrackConnector;
-import net.parostroj.timetable.model.TrackConnectorSwitch;
-import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Presentation model for {@link TrackConnector}.
@@ -110,6 +98,10 @@ public class TrackConnectorPM extends AbstractPM {
 
     public ListPM<TrackConnectorSwitchPM> getSwitches() {
         return switches;
+    }
+
+    public EnumeratedValuesPM<LineTrack> getLineTrack() {
+        return lineTrack;
     }
 
     public TrackConnector getReference() {
