@@ -1,16 +1,28 @@
 package net.parostroj.timetable.gui.pm;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.IdGenerator;
-import org.beanfabrics.model.*;
-import org.beanfabrics.support.OnChange;
-
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import org.beanfabrics.model.AbstractPM;
+import org.beanfabrics.model.IListPM;
+import org.beanfabrics.model.IntegerPM;
+import org.beanfabrics.model.ListPM;
+import org.beanfabrics.model.PMManager;
+import org.beanfabrics.model.TextPM;
+import org.beanfabrics.support.OnChange;
+
+import com.google.common.collect.FluentIterable;
+
+import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.LineTrack;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.TrackConnector;
+import net.parostroj.timetable.model.TrackConnectorSwitch;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Presentation model for {@link TrackConnector}.
@@ -35,7 +47,7 @@ public class TrackConnectorPM extends AbstractPM {
         this.number = new TextPM();
         this.number.setMandatory(true);
         this.orientation = new EnumeratedValuesPM<>(EnumeratedValuesPM
-                .createValueMap(Arrays.asList(Node.Side.values()), v -> getSideString(v)));
+                .createValueMap(Arrays.asList(Node.Side.values()), TrackConnectorPM::getSideString));
         this.lineTrack = new EnumeratedValuesPM<>();
         this.switches = new ListPM<>();
         this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
@@ -68,10 +80,11 @@ public class TrackConnectorPM extends AbstractPM {
         this.switches.clear();
         this.number.setText(connector.getNumber());
         Set<TrackConnectorSwitch> switches = connector.getSwitches();
-        ImmutableMap<NodeTrack ,TrackConnectorSwitch> nt = FluentIterable.from(switches).uniqueIndex(sw -> sw.getNodeTrack());
+        Map<NodeTrack, TrackConnectorSwitch> nt = FluentIterable.from(switches)
+                .uniqueIndex(TrackConnectorSwitch::getNodeTrack);
         tracksPm.forEach(ntPM -> {
-            boolean contains = nt.keySet().contains(ntPM.getReference());
-            boolean straight = contains ? nt.get(ntPM.getReference()).isStraight() : false;
+            boolean contains = nt.containsKey(ntPM.getReference());
+            boolean straight = contains && nt.get(ntPM.getReference()).isStraight();
             this.switches.add(new TrackConnectorSwitchPM(ntPM, contains, straight));
         });
         orientation.setValue(connector.getOrientation());

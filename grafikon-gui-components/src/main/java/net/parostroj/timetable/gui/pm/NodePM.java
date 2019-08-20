@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.pm;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +11,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.beanfabrics.Path;
-import org.beanfabrics.event.*;
+import org.beanfabrics.event.BnPropertyChangeEvent;
+import org.beanfabrics.event.ElementsAddedEvent;
+import org.beanfabrics.event.ElementsRemovedEvent;
+import org.beanfabrics.event.ListAdapter;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.IListPM;
 import org.beanfabrics.model.ListPM;
