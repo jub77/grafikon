@@ -183,6 +183,7 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
         ttSize.height = 5 * tracksTable.getRowHeight();
         ttSize.width = 0;
         tracksTable.setPreferredScrollableViewportSize(ttSize);
+        tracksTable.setTableHeader(null);
         scrollPane.setViewportView(tracksTable);
 
         tracksTable.addColumn(new BnColumn(new Path("number"), ResourceLoader.getString("editline.track")));
