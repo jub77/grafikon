@@ -91,7 +91,7 @@ public class TrackConnectorPM extends AbstractPM {
         position.setInteger(connector.getPosition());
         // line connection
         this.initLineTrack(connector.getNode(), lineTracks);
-        lineTrack.setValue(lineTrack.getValue());
+        lineTrack.setValue(connector.getLineTrack());
     }
 
     public void initLineTrack(Node node, Iterable<LineTrack> lineTracks) {
