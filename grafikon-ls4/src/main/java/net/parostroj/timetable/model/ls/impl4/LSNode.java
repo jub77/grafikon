@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,26 +23,29 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSNode {
 
     private String id;
+    // deprecated
     private String name;
+    // deprecated
     private String abbr;
     private LSAttributes attributes;
     private List<LSNodeTrack> tracks;
+    // deprecated
     private String type;
-    private int x;
-    private int y;
+    // deprecated
+    private Integer x;
+    // deprecated
+    private Integer y;
+
+    private int version;
 
     public LSNode(Node node) {
         this.id = node.getId();
-        this.name = node.getName();
-        this.abbr = node.getAbbr();
         this.attributes = new LSAttributes(node.getAttributes());
-        this.type = node.getType().toString();
-        this.x = node.getLocation().getX();
-        this.y = node.getLocation().getY();
         this.tracks = new LinkedList<>();
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
         }
+        version = 1;
     }
 
     public LSNode() {
@@ -97,29 +101,41 @@ public class LSNode {
         this.type = type;
     }
 
-    public int getX() {
+    public Integer getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(Integer x) {
         this.x = x;
     }
 
-    public int getY() {
+    public Integer getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(Integer y) {
         this.y = y;
+    }
+
+    @XmlAttribute
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public Node createNode(PartFactory partFactory, Function<String, ObjectWithId> mapping) throws LSException {
         Node node = partFactory.createNode(id);
-        node.setType(NodeType.fromString(type));
-        node.setName(name);
-        node.setAbbr(abbr);
+        // if version < 1 - use deprecated properties
+        if (version < 1) {
+            node.setType(NodeType.fromString(type));
+            node.setName(name);
+            node.setAbbr(abbr);
+            node.setLocation(new Location(x, y));
+        }
         node.getAttributes().add(attributes.createAttributes(mapping));
-        node.setLocation(new Location(x, y));
         // tracks
         if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
