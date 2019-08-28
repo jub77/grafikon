@@ -22,7 +22,9 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSTrainTypeCategory {
 
     private String id;
+    // deprecated
     private String name;
+    // deprecated
     private String key;
     private List<LSPenaltyTableRow> rows;
     private LSAttributes attributes;
