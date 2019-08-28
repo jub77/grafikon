@@ -45,7 +45,7 @@ public class LSNode {
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
         }
-        version = 1;
+        this.version = 1;
     }
 
     public LSNode() {

@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.function.Function;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.ObjectWithId;
@@ -17,13 +18,16 @@ import net.parostroj.timetable.model.ls.LSException;
 abstract public class LSTrack {
 
     private String id;
+    // deprecated
     private String number;
     private LSAttributes attributes;
 
+    private int version;
+
     public LSTrack(Track track) {
         this.id = track.getId();
-        this.number = track.getNumber();
         this.attributes = new LSAttributes(track.getAttributes());
+        this.version = 1;
     }
 
     public LSTrack() {
@@ -53,8 +57,19 @@ abstract public class LSTrack {
         this.number = number;
     }
 
+    @XmlAttribute
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     protected void addValuesTrack(Function<String, ObjectWithId> mapping, Track track) throws LSException {
         track.getAttributes().add(attributes.createAttributes(mapping));
-        track.setNumber(number);
+        if (version == 0) {
+            track.setNumber(number);
+        }
     }
 }

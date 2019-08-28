@@ -14,28 +14,30 @@ import net.parostroj.timetable.model.ls.LSException;
  */
 public class LSNodeTrack extends LSTrack {
 
-    private boolean platform;
+    // deprecated
+    private Boolean platform;
 
     public LSNodeTrack(NodeTrack track) {
         super(track);
-        this.platform = track.isPlatform();
     }
 
     public LSNodeTrack() {
     }
 
-    public boolean isPlatform() {
+    public Boolean isPlatform() {
         return platform;
     }
 
-    public void setPlatform(boolean platform) {
+    public void setPlatform(Boolean platform) {
         this.platform = platform;
     }
 
     public NodeTrack createNodeTrack(Node node, Function<String, ObjectWithId> mapping) throws LSException {
         NodeTrack nodeTrack = new NodeTrack(this.getId(), node);
         this.addValuesTrack(mapping, nodeTrack);
-        nodeTrack.setPlatform(platform);
+        if (getVersion() == 0) {
+            nodeTrack.setPlatform(platform);
+        }
         return nodeTrack;
     }
 }
