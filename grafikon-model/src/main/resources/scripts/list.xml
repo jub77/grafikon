@@ -48,4 +48,10 @@
         <language>GROOVY</language>
         <location>copy_output_templates_to_outputs.groovy</location>
     </script>
+    <script>
+    	<id>fix_connectors</id>
+    	<name>Fix connector sides</name>
+    	<language>GROOVY</language>
+    	<location>fix_connectors.groovy</location>
+    </script>
 </scripts>
