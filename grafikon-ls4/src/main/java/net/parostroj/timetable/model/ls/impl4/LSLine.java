@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,17 +29,19 @@ import net.parostroj.timetable.utils.IdGenerator;
 public class LSLine {
 
     private String id;
-    private int length;
+    // deprecated
+    private Integer length;
+    // deprecated
     private Integer speed;
     private String from;
     private String to;
     private LSAttributes attributes;
     private List<LSLineTrack> tracks;
 
+    private int version;
+
     public LSLine(Line line) {
         this.id = line.getId();
-        this.length = line.getLength();
-        this.speed = line.getTopSpeed();
         this.from = line.getFrom().getId();
         this.to = line.getTo().getId();
         this.attributes = new LSAttributes(line.getAttributes());
@@ -46,6 +49,7 @@ public class LSLine {
         for (LineTrack track : line.getTracks()) {
             this.tracks.add(new LSLineTrack(track));
         }
+        this.version = 1;
     }
 
     public LSLine() {
@@ -67,11 +71,11 @@ public class LSLine {
         this.id = id;
     }
 
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
@@ -109,16 +113,27 @@ public class LSLine {
         this.to = to;
     }
 
+    @XmlAttribute
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     public Line createLine(TrainDiagram diagram) throws LSException {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
-        if (speed != null && speed <= 0) {
-            speed = null;
-        }
         Line line = diagram.getPartFactory().createLine(id);
-        line.setLength(length);
-        line.setTopSpeed(speed);
+        if (this.version == 0) {
+            if (speed != null && speed <= 0) {
+                speed = null;
+            }
+            line.setLength(length);
+            line.setTopSpeed(speed);
+        }
         line.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         // tracks
         if (this.tracks != null) {
@@ -127,9 +142,10 @@ public class LSLine {
                 NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
                 NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
                 line.getTracks().add(lineTrack);
-                // TODO create connectors only in case of non-existing ones
-                this.createConnectors(diagram, fromNode, toNode, fromStraight, toStraight,
-                        lineTrack);
+                if (this.version == 0) {
+                    this.createConnectors(diagram, fromNode, toNode, fromStraight, toStraight,
+                            lineTrack);
+                }
             }
         }
         diagram.getNet().addLine(line, fromNode, toNode);
