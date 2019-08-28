@@ -411,12 +411,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @return if the current interval is straight from previous one
      */
     public boolean isFromStraight() {
-        if (isLineOwner()) {
-            return this.getFromTrackConnector().map(conn -> conn.getLineTrack() == getTrack())
-                    .orElse(false);
+        if (isNodeOwner()) {
+            return this.getFromTrackConnector()
+                    .map(c -> c.getStraightNodeTrack().orElse(null) == getTrack()).orElse(false);
         } else {
-            TimeInterval previousInterval = this.getPreviousTrainInterval();
-            return previousInterval != null ? previousInterval.isToStraight() : false;
+            return this.getPreviousTrainInterval().isToStraight();
         }
     }
 
@@ -424,31 +423,33 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @return if the current interval is straight to next one
      */
     public boolean isToStraight() {
-        if (isLineOwner()) {
-            return this.getToTrackConnector().map(conn -> conn.getLineTrack() == getTrack())
-                    .orElse(false);
+        if (isNodeOwner()) {
+            return this.getToTrackConnector()
+                    .map(c -> c.getStraightNodeTrack().orElse(null) == getTrack()).orElse(false);
         } else {
-            TimeInterval nextInterval = this.getNextTrainInterval();
-            return nextInterval != null ? nextInterval.isFromStraight() : false;
+            return this.getNextTrainInterval().isFromStraight();
         }
     }
 
     public Optional<TrackConnector> getFromTrackConnector() {
-        if (isLineOwner()) {
-            return ((LineTrack) getTrack()).getFromTrackConnector(getDirection());
+        TimeInterval previousInterval = this.getPreviousTrainInterval();
+        if (isNodeOwner()) {
+            Node node = getOwnerAsNode();
+            return previousInterval == null ? Optional.empty() :
+                node.getConnectorForLineTrack((LineTrack) previousInterval.getTrack());
         } else {
-            TimeInterval previousInterval = this.getPreviousTrainInterval();
-            return previousInterval == null ? Optional.empty()
-                    : previousInterval.getToTrackConnector();
+            return previousInterval.getToTrackConnector();
         }
     }
 
     public Optional<TrackConnector> getToTrackConnector() {
-        if (isLineOwner()) {
-            return ((LineTrack) getTrack()).getToTrackConnector(getDirection());
+        TimeInterval nextInterval = this.getNextTrainInterval();
+        if (isNodeOwner()) {
+            Node node = getOwnerAsNode();
+            return nextInterval == null ? Optional.empty() :
+                node.getConnectorForLineTrack((LineTrack) nextInterval.getTrack());
         } else {
-            TimeInterval nextInterval = this.getNextTrainInterval();
-            return nextInterval == null ? Optional.empty() : nextInterval.getFromTrackConnector();
+            return nextInterval.getFromTrackConnector();
         }
     }
 
