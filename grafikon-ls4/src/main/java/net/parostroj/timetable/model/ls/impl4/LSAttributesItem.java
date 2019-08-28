@@ -18,6 +18,9 @@ import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 /**
  * One item for LSAttributes.
  *
@@ -44,6 +47,12 @@ public class LSAttributesItem {
     private List<LSAttributesValue> values;
     private String type;
     private String category;
+
+    private static final BiMap<Class<?>, String> ENUM_TYPE_MAP = HashBiMap.create();
+
+    static {
+        ENUM_TYPE_MAP.put(NodeType.class, "node.type");
+    }
 
     /**
      * Default constructor.
@@ -121,8 +130,16 @@ public class LSAttributesItem {
             cValue = new LSAttributesValue(
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());
+        } else if (value instanceof Enum<?>) {
+            Enum<?> e = (Enum<?>) value;
+            String type = ENUM_TYPE_MAP.get(e.getClass());
+            if (type != null) {
+                cValue = new LSAttributesValue(((Enum<?>) value).name(), "enum." + type);
+            } else {
+                log.warn("Unknown enum type: {}", e.getClass().getName());
+            }
         } else {
-            log.warn("Cannot convert value to string: {} {}", key, value);
+            log.warn("Cannot convert value to string: {} ({})", key, value);
         }
         return cValue;
     }
@@ -233,11 +250,26 @@ public class LSAttributesItem {
             return this.convertModelValue(mapping, value, valueType);
         } else if (valueType.startsWith("string.")) {
             return this.convertToStringWithLocale(value, valueType);
+        } else if (valueType.startsWith("enum.")) {
+            return this.convertEnumValue(value, valueType);
         } else {
             // it didn't recognize the type
             log.warn("Not recognized type: {}", valueType);
             return null;
         }
+    }
+
+    private Object convertEnumValue(String value, String valueType) {
+        Class<?> enumCls = ENUM_TYPE_MAP.inverse().get(valueType.substring("enum.".length()));
+        Object[] enumConstants = enumCls.getEnumConstants();
+        for (Object ec : enumConstants) {
+            Enum<?> ev = (Enum<?>) ec;
+            if (ev.name().equals(value)) {
+                return ev;
+            }
+        }
+        log.warn("Unknow enum value ({}): {}", valueType, value);
+        return null;
     }
 
     private Object convertToStringWithLocale(String value, String valueType) {
