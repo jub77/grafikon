@@ -130,6 +130,10 @@ public class LSAttributesItem {
             cValue = new LSAttributesValue(
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());
+        } else if (value instanceof Location) {
+            Location loc = (Location) value;
+            cValue = new LSAttributesValue(String.format("%d;%d", loc.getX(), loc.getY()),
+                    "location");
         } else if (value instanceof Enum<?>) {
             Enum<?> e = (Enum<?>) value;
             String type = ENUM_TYPE_MAP.get(e.getClass());
@@ -250,6 +254,8 @@ public class LSAttributesItem {
             return this.convertModelValue(mapping, value, valueType);
         } else if (valueType.startsWith("string.")) {
             return this.convertToStringWithLocale(value, valueType);
+        } else if (valueType.equals("location")) {
+            return this.convertLocation(value);
         } else if (valueType.startsWith("enum.")) {
             return this.convertEnumValue(value, valueType);
         } else {
@@ -257,6 +263,13 @@ public class LSAttributesItem {
             log.warn("Not recognized type: {}", valueType);
             return null;
         }
+    }
+
+    private Object convertLocation(String value) {
+        String[] locationParts = value.split(";");
+        int x = Integer.parseInt(locationParts[0]);
+        int y = Integer.parseInt(locationParts[1]);
+        return new Location(x, y);
     }
 
     private Object convertEnumValue(String value, String valueType) {
