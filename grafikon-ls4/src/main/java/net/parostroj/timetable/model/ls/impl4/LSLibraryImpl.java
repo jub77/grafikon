@@ -28,7 +28,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     private static final List<ModelVersion> VERSIONS;
 
     static {
-        VERSIONS = getVersions("1.0");
+        VERSIONS = getVersions("1.0", "1.1");
         CURRENT_VERSION = getLatestVersion(VERSIONS);
     }
 
