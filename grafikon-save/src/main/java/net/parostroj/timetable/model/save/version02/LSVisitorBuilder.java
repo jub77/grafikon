@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.Tuple;
 
 public class LSVisitorBuilder implements LSVisitor {
 
@@ -116,14 +118,32 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSLineTrack lsLineTrack) {
         LineTrack lineTrack = new LineTrack(lsLineTrack.getUuid(), lastLine, lsLineTrack.getNumber());
-        lineTrack.setFromStraightTrack((NodeTrack) ids.get(lsLineTrack.getSourceTrackId()));
-        lineTrack.setToStraightTrack((NodeTrack) ids.get(lsLineTrack.getTargetTrackId()));
         ids.put(lsLineTrack.getId(), lineTrack);
 
         if (lsLineTrack.getAttributes() != null) {
-            lineTrack.getAttributes().add(lsLineTrack.getAttributes().convertToAttributes());        // add to last line
+            lineTrack.getAttributes().add(lsLineTrack.getAttributes().convertToAttributes());
         }
         lastLine.getTracks().add(lineTrack);
+
+        Tuple<Node> nodes = diagram.getNet().getNodes(lastLine);
+        NodeTrack fromNt = (NodeTrack) ids.get(lsLineTrack.getSourceTrackId());
+        NodeTrack toNt = (NodeTrack) ids.get(lsLineTrack.getTargetTrackId());
+        TrackConnector fromConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(),
+                nodes.first,
+                "2",
+                Node.Side.RIGHT,
+                Optional.ofNullable(fromNt));
+        fromConn.setLineTrack(lineTrack);
+        nodes.first.getConnectors().add(fromConn);
+        TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(),
+                nodes.second,
+                "1",
+                Node.Side.LEFT,
+                Optional.ofNullable(toNt));
+        toConn.setLineTrack(lineTrack);
+        nodes.second.getConnectors().add(toConn);
     }
 
     @Override

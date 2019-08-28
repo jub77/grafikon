@@ -741,7 +741,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             } else {
                 Node node = interval.getOwnerAsNode();
                 NodeTrack preselected = (NodeTrack) interval.getTrack();
-                preselected = (preselected == null && last != null) ? last.getToStraightTrack() : preselected;
+                preselected = (preselected == null && last != null)
+                        ? node.getConnectorForLineTrack((LineTrack) last.getTrack())
+                                .flatMap(TrackConnector::getStraightNodeTrack).orElse(null)
+                        : preselected;
                 interval.setTrack(node.selectTrack(interval, preselected));
             }
             last = interval;

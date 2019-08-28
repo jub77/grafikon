@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -18,13 +19,14 @@ import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Node.Side;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.RouteSegment;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -206,7 +208,7 @@ public class TrainTimetablesExtractor {
                 row.setComment(nodeI.getComment());
             }
             // check line end
-            if ((nodeI.isLast() || nodeI.isInnerStop()) && nodeI.getTrack().getAttributes().getBool(Track.ATTR_LINE_END)) {
+            if ((nodeI.isLast() || nodeI.isInnerStop()) && this.isTrackEnd(lastLineI, nodeI)) {
                 row.setLineEnd(Boolean.TRUE);
             }
             // check occupied track
@@ -225,8 +227,8 @@ public class TrainTimetablesExtractor {
             if (onControlled)
                 row.setOnControlled(true);
 
-            if (lastLineI != null && lastLineI.getToStraightTrack() != null)
-                row.setStraight(lastLineI.getToStraightTrack() == nodeI.getTrack());
+            if (lastLineI != null && lastLineI.isToStraight())
+                row.setStraight(lastLineI.isToStraight());
             if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN)) {
                 Pair<Boolean, List<TranslatedString>> concurrentTrains = this.getConcurrentTrains(nodeI);
                 if (concurrentTrains != null) {
@@ -373,5 +375,18 @@ public class TrainTimetablesExtractor {
             return UnitUtil.convertRouteLenght(length, diagram, ratio);
         } else
             return null;
+    }
+
+    private boolean isTrackEnd(TimeInterval lastLineI, TimeInterval nodeI) {
+        Optional<TrackConnector> fromConnector = lastLineI.getToTrackConnector();
+        return fromConnector.map(conn -> {
+            Side side = conn.getOrientation();
+            return nodeI.getOwnerAsNode().getConnectors().stream()
+                    .filter(c -> c.getOrientation() != side)
+                    .flatMap(c -> c.getSwitches().stream())
+                    .filter(s -> s.getNodeTrack() == nodeI.getTrack())
+                    .findAny()
+                    .isPresent();
+        }).orElse(false);
     }
 }

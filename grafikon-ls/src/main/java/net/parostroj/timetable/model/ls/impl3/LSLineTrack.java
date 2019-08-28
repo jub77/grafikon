@@ -7,19 +7,19 @@ import net.parostroj.timetable.model.LineTrack;
 
 /**
  * Storage for line track.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"fromStraightTrack", "toStraightTrack"})
 public class LSLineTrack extends LSTrack {
 
+    // deprecate - loaded for backward compatibility
     private String fromStraightTrack;
+    // deprecate - loaded for backward compatibility
     private String toStraightTrack;
 
     public LSLineTrack(LineTrack track) {
         super(track);
-        this.fromStraightTrack = (track.getFromStraightTrack() != null) ? track.getFromStraightTrack().getId() : null;
-        this.toStraightTrack = (track.getToStraightTrack() != null) ? track.getToStraightTrack().getId() : null;
     }
 
     public LSLineTrack() {

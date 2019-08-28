@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import java.util.Optional;
+
 import net.parostroj.timetable.utils.IdGenerator;
 
 public class TrainDiagramPartFactory implements PartFactory {
@@ -52,6 +54,28 @@ public class TrainDiagramPartFactory implements PartFactory {
      */
     public TrackConnector createConnector(String id, Node node, String number) {
         return new TrackConnectorImpl(id, node, number);
+    }
+
+    /**
+     * Creates default connector connected to all tracks with optional straight
+     * track.
+     *
+     * @see #createConnector(String, Node, String)
+     */
+    public TrackConnector createDefaultConnector(String id, Node node, String number,
+            Node.Side orientation, Optional<NodeTrack> straightTrack) {
+        TrackConnector connector = this.createConnector(id, node, number);
+        connector.setOrientation(orientation);
+        NodeTrack st = straightTrack.orElse(null);
+        node.tracks.forEach(track -> {
+            TrackConnectorSwitch sw = connector.createSwitch(IdGenerator.getInstance().getId(),
+                    track);
+            if (track == st) {
+                sw.setStraight(true);
+            }
+            connector.getSwitches().add(sw);
+        });
+        return connector;
     }
 
     /**

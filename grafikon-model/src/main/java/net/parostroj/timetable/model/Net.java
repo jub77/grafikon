@@ -96,28 +96,7 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
     public void addLine(Line line, Node from, Node to) {
         netDelegate.addEdge(from, to, line);
         this.fireEvent(new Event(this, Event.Type.ADDED, line));
-        // adapt from and to straight
-        Iterator<NodeTrack> fromS = this.straight(from).iterator();
-        Iterator<NodeTrack> toS = this.straight(to).iterator();
-        for (LineTrack lt : line.getTracks()) {
-            if (fromS.hasNext()) {
-                lt.setFromStraightTrack(fromS.next());
-            }
-            if (toS.hasNext()) {
-                lt.setToStraightTrack(toS.next());
-            }
-        }
         line.addListener(listener);
-    }
-
-    private List<NodeTrack> straight(Node node) {
-        LinkedList<NodeTrack> result = new LinkedList<>();
-        for (NodeTrack track : node.getTracks()) {
-            if (track.getAttributes().getBool(NodeTrack.ATTR_NODE_TRACK_STRAIGHT)) {
-                result.add(track);
-            }
-        }
-        return result;
     }
 
     public void removeLine(Line line) {

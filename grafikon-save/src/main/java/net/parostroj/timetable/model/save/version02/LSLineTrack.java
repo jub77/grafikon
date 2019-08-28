@@ -6,13 +6,13 @@ import net.parostroj.timetable.model.LineTrack;
 public class LSLineTrack {
 
     private int id;
-    
+
     private String uuid;
 
     private String number;
-
+    // deprecated (backward compatibility)
     private int sourceTrackId;
-    
+    // deprecated (backward compatibility)
     private int targetTrackId;
 
     private LSAttributes attributes;
@@ -24,9 +24,6 @@ public class LSLineTrack {
         id = data.getId();
         data.addObjectWithId(lineTrack, id);
         number = lineTrack.getNumber();
-
-        sourceTrackId = data.getIdForObject(lineTrack.getFromStraightTrack());
-        targetTrackId = data.getIdForObject(lineTrack.getToStraightTrack());
 
         attributes = new LSAttributes(lineTrack.getAttributes(), data);
         uuid = lineTrack.getId();
@@ -78,7 +75,7 @@ public class LSLineTrack {
 
     /**
      * Method for visitor pattern.
-     * 
+     *
      * @param visitor visitor
      */
     public void visit(LSVisitor visitor) {

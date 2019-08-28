@@ -12,9 +12,9 @@ public class LSLine {
     private int sourceId;
 
     private int targetId;
-    
+    // deprecated (backward compatibility)
     private int sourceTrackId;
-    
+    // deprecated (backward compatibility)
     private int targetTrackId;
 
     private int length;
@@ -31,9 +31,6 @@ public class LSLine {
         Tuple<Node> ends = net.getNodes(line);
         sourceId = data.getIdForObject(ends.first);
         targetId = data.getIdForObject(ends.second);
-        
-        sourceTrackId = data.getIdForObject(line.getTracks().get(0).getFromStraightTrack());
-        targetTrackId = data.getIdForObject(line.getTracks().get(0).getToStraightTrack());
 
         length = line.getLength();
         topSpeed = line.getTopSpeed();

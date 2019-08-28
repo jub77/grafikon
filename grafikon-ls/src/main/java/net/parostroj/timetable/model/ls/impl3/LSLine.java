@@ -2,12 +2,15 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Class for storing lines.
@@ -114,11 +117,24 @@ public class LSLine {
             LineTrack lineTrack = lsLineTrack.createLineTrack(line);
             NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
             NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
-            lineTrack.setFromStraightTrack(fromStraight);
-            lineTrack.setToStraightTrack(toStraight);
             line.getTracks().add(lineTrack);
+            this.createConnectors(diagram, fromNode, toNode, fromStraight, toStraight, lineTrack);
         }
         diagram.getNet().addLine(line, fromNode, toNode);
         return line;
+    }
+
+    private void createConnectors(TrainDiagram diagram, Node fromNode, Node toNode,
+            NodeTrack fromNt, NodeTrack toNt, LineTrack lineTrack) {
+        TrackConnector fromConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(), fromNode, "2", Node.Side.RIGHT,
+                Optional.ofNullable(fromNt));
+        fromConn.setLineTrack(lineTrack);
+        fromNode.getConnectors().add(fromConn);
+        TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(), toNode, "1", Node.Side.LEFT,
+                Optional.ofNullable(toNt));
+        toConn.setLineTrack(lineTrack);
+        toNode.getConnectors().add(toConn);
     }
 }

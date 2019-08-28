@@ -122,7 +122,7 @@ public class LSAttributesItem {
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());
         } else {
-            log.warn("Cannot convert value to string: {}", key);
+            log.warn("Cannot convert value to string: {} {}", key, value);
         }
         return cValue;
     }

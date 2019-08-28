@@ -3,10 +3,10 @@ package net.parostroj.timetable.model.validators;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
-
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Event.Type;
 
 /**
@@ -29,15 +29,7 @@ public class LineValidator implements TrainDiagramValidator {
                 train.recalculate();
             }
             return true;
-        } else if (event.getSource() instanceof Line && event.getType() == Type.OBJECT_ATTRIBUTE
-                && event.getObject() instanceof Track
-                && event.getAttributeChange().checkName(Track.ATTR_FROM_STRAIGHT, Track.ATTR_TO_STRAIGHT)) {
-            for (TimeInterval i : ImmutableList.copyOf(((Track) event.getObject()).getTimeIntervalList())) {
-                i.getTrain().recalculate();
-            }
-            return true;
         }
         return false;
     }
-
 }

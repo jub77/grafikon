@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
@@ -407,57 +408,48 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     /**
-     * @return from node track straight for interval that belongs to line otherwise <code>null</code>
-     */
-    public NodeTrack getFromStraightTrack() {
-        return (owner instanceof Line && track != null) ? ((LineTrack) track).getFromStraightTrack(direction) : null;
-    }
-
-    /**
      * @return if the current interval is straight from previous one
      */
     public boolean isFromStraight() {
-        Track from = null;
-        Track to = null;
-        TimeInterval previousInterval = this.getPreviousTrainInterval();
-        if (previousInterval == null) {
-            return true;
-        }
         if (isLineOwner()) {
-            from = previousInterval.getTrack();
-            to = this.getFromStraightTrack();
+            return this.getFromTrackConnector().map(conn -> conn.getLineTrack() == getTrack())
+                    .orElse(false);
         } else {
-            from = previousInterval.getToStraightTrack();
-            to = this.getTrack();
+            TimeInterval previousInterval = this.getPreviousTrainInterval();
+            return previousInterval != null ? previousInterval.isToStraight() : false;
         }
-        return from == to;
-    }
-
-    /**
-     * @return to node straight track for interval that belongs to line otherwise <code>null</code>
-     */
-    public NodeTrack getToStraightTrack() {
-        return (owner instanceof Line && track != null) ? ((LineTrack) track).getToStraightTrack(direction) : null;
     }
 
     /**
      * @return if the current interval is straight to next one
      */
     public boolean isToStraight() {
-        Track from = null;
-        Track to = null;
-        TimeInterval nextInterval = this.getNextTrainInterval();
-        if (nextInterval == null) {
-            return true;
-        }
         if (isLineOwner()) {
-            from = this.getToStraightTrack();
-            to = nextInterval.getTrack();
+            return this.getToTrackConnector().map(conn -> conn.getLineTrack() == getTrack())
+                    .orElse(false);
         } else {
-            from = this.getTrack();
-            to = nextInterval.getFromStraightTrack();
+            TimeInterval nextInterval = this.getNextTrainInterval();
+            return nextInterval != null ? nextInterval.isFromStraight() : false;
         }
-        return from == to;
+    }
+
+    public Optional<TrackConnector> getFromTrackConnector() {
+        if (isLineOwner()) {
+            return ((LineTrack) getTrack()).getFromTrackConnector(getDirection());
+        } else {
+            TimeInterval previousInterval = this.getPreviousTrainInterval();
+            return previousInterval == null ? Optional.empty()
+                    : previousInterval.getToTrackConnector();
+        }
+    }
+
+    public Optional<TrackConnector> getToTrackConnector() {
+        if (isLineOwner()) {
+            return ((LineTrack) getTrack()).getToTrackConnector(getDirection());
+        } else {
+            TimeInterval nextInterval = this.getNextTrainInterval();
+            return nextInterval == null ? Optional.empty() : nextInterval.getFromTrackConnector();
+        }
     }
 
     /**

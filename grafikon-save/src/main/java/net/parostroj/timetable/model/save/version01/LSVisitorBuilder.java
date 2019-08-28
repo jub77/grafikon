@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
@@ -95,8 +96,6 @@ public class LSVisitorBuilder implements LSVisitor {
         line.setLength(lsLine.getLength());
         LineTrack lt = new LineTrack(this.createId(), line, "1");
         line.getTracks().add(lt);
-        lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
-        lt.setToStraightTrack((NodeTrack) ids.get(lsLine.getTargetTrackId()));
         ids.put(lsLine.getId(), line);
 
         line.setTopSpeed(lsLine.getTopSpeed() > 0 ? lsLine.getTopSpeed() : null);
@@ -104,6 +103,25 @@ public class LSVisitorBuilder implements LSVisitor {
         // add to net
         Net net = diagram.getNet();
         net.addLine(line, from, to);
+
+        NodeTrack fromNt = (NodeTrack) ids.get(lsLine.getSourceTrackId());
+        NodeTrack toNt = (NodeTrack) ids.get(lsLine.getTargetTrackId());
+        TrackConnector fromConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(),
+                from,
+                "2",
+                Node.Side.RIGHT,
+                Optional.ofNullable(fromNt));
+        fromConn.setLineTrack(lt);
+        from.getConnectors().add(fromConn);
+        TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
+                IdGenerator.getInstance().getId(),
+                to,
+                "1",
+                Node.Side.LEFT,
+                Optional.ofNullable(toNt));
+        toConn.setLineTrack(lt);
+        to.getConnectors().add(toConn);
     }
 
     @Override

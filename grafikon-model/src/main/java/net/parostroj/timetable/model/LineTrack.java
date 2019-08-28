@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import java.util.Optional;
+
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -35,28 +37,26 @@ public class LineTrack extends Track implements Visitable {
         super(id, owner, number);
     }
 
-    public NodeTrack getFromStraightTrack() {
-        return this.getAttributes().get(ATTR_FROM_STRAIGHT, NodeTrack.class);
+    public Optional<TrackConnector> getFromTrackConnector() {
+        Line line = getOwner();
+        Node fromNode = line.getDiagram().getNet().getFrom(line);
+        return fromNode.getConnectors().find(conn -> conn.getLineTrack() == this);
     }
 
-    public void setFromStraightTrack(NodeTrack fromStraightTrack) {
-        this.getAttributes().setRemove(ATTR_FROM_STRAIGHT, fromStraightTrack);
+    public Optional<TrackConnector> getToTrackConnector() {
+        Line line = getOwner();
+        Node fromNode = line.getDiagram().getNet().getTo(line);
+        return fromNode.getConnectors().find(conn -> conn.getLineTrack() == this);
     }
 
-    public NodeTrack getToStraightTrack() {
-        return this.getAttributes().get(ATTR_TO_STRAIGHT, NodeTrack.class);
+    public Optional<TrackConnector> getFromTrackConnector(TimeIntervalDirection direction) {
+        return (direction == TimeIntervalDirection.FORWARD) ? getFromTrackConnector()
+                : getToTrackConnector();
     }
 
-    public void setToStraightTrack(NodeTrack toStraightTrack) {
-        this.getAttributes().setRemove(ATTR_TO_STRAIGHT, toStraightTrack);
-    }
-
-    public NodeTrack getFromStraightTrack(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? getFromStraightTrack() : getToStraightTrack();
-    }
-
-    public NodeTrack getToStraightTrack(TimeIntervalDirection direction) {
-        return (direction == TimeIntervalDirection.FORWARD) ? getToStraightTrack() : getFromStraightTrack();
+    public Optional<TrackConnector> getToTrackConnector(TimeIntervalDirection direction) {
+        return (direction == TimeIntervalDirection.FORWARD) ? getToTrackConnector()
+                : getFromTrackConnector();
     }
 
     /**
