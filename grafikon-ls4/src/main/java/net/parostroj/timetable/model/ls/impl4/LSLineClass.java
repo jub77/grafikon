@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.LineClass;
@@ -15,13 +16,16 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSLineClass {
 
     private String id;
+    // deprecated
     private String name;
     private LSAttributes attributes;
 
+    private int version;
+
     public LSLineClass(LineClass lineClass) {
         this.id = lineClass.getId();
-        this.name = lineClass.getName();
         this.attributes = new LSAttributes(lineClass.getAttributes());
+        this.version = 1;
     }
 
     public LSLineClass() {
@@ -43,6 +47,15 @@ public class LSLineClass {
         this.name = name;
     }
 
+    @XmlAttribute
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     public LSAttributes getAttributes() {
         return attributes;
     }
@@ -53,7 +66,9 @@ public class LSLineClass {
 
     public LineClass createLineClass() throws LSException {
         LineClass lineClass = new LineClass(id);
-        lineClass.setName(name);
+        if (this.version == 0) {
+            lineClass.setName(name);
+        }
         if (this.attributes != null) {
             lineClass.getAttributes().add(this.attributes.createAttributes());
         }

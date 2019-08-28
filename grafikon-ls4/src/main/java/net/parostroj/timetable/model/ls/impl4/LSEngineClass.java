@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,21 +24,24 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSEngineClass {
 
     private String id;
+    // deprecated
     private String name;
     private LSAttributes attributes;
     private List<LSWeightTableRow> rows;
+
+    private int version;
 
     public LSEngineClass() {
     }
 
     public LSEngineClass(EngineClass engineClass) {
         this.id = engineClass.getId();
-        this.name = engineClass.getName();
         this.rows = new LinkedList<>();
         for (WeightTableRow row : engineClass.getWeightTable()) {
             this.rows.add(new LSWeightTableRow(row));
         }
         this.attributes = new LSAttributes(engineClass.getAttributes());
+        this.version = 1;
     }
 
     public String getId() {
@@ -54,6 +58,15 @@ public class LSEngineClass {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @XmlAttribute
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @XmlElementWrapper(name = "weight_table")
@@ -76,7 +89,9 @@ public class LSEngineClass {
 
     public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) throws LSException {
         EngineClass ec = new EngineClass(id);
-        ec.setName(name);
+        if (this.version == 0) {
+            ec.setName(name);
+        }
         if (this.rows != null) {
             for (LSWeightTableRow lsRow : this.rows) {
                 ec.addWeightTableRow(lsRow.createWeightTableRow(lineClassMapping, ec));
