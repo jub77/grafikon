@@ -7,4 +7,6 @@ public interface PartFactory {
     Node createNode(String id);
 
     TrainType createTrainType(String id);
+
+    TrackConnector createConnector(String id, Node node);
 }

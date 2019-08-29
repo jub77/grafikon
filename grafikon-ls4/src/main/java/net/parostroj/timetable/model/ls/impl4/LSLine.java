@@ -138,7 +138,8 @@ public class LSLine {
         // tracks
         if (this.tracks != null) {
             for (LSLineTrack lsLineTrack : this.tracks) {
-                LineTrack lineTrack = lsLineTrack.createLineTrack(line, diagram::getObjectById);
+                LineTrack lineTrack = lsLineTrack.createLineTrack(line, fromNode, toNode,
+                        diagram::getObjectById);
                 NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
                 NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
                 line.getTracks().add(lineTrack);

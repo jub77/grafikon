@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -19,7 +20,8 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "node")
-@XmlType(name = "node", propOrder = {"id", "name", "abbr", "type", "attributes", "x", "y", "tracks"})
+@XmlType(name = "node", propOrder = { "id", "name", "abbr", "type", "attributes", "x", "y",
+        "tracks", "connectors" })
 public class LSNode {
 
     private String id;
@@ -29,6 +31,7 @@ public class LSNode {
     private String abbr;
     private LSAttributes attributes;
     private List<LSNodeTrack> tracks;
+    private List<LSTrackConnector> connectors;
     // deprecated
     private String type;
     // deprecated
@@ -44,6 +47,10 @@ public class LSNode {
         this.tracks = new LinkedList<>();
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
+        }
+        this.connectors = new ArrayList<>();
+        for (TrackConnector conn : node.getConnectors()) {
+            this.connectors.add(new LSTrackConnector(conn));
         }
         this.version = 1;
     }
@@ -93,6 +100,16 @@ public class LSNode {
         this.tracks = tracks;
     }
 
+    @XmlElementWrapper
+    @XmlElement(name = "connector")
+    public List<LSTrackConnector> getConnectors() {
+        return connectors;
+    }
+
+    public void setConnectors(List<LSTrackConnector> connectors) {
+        this.connectors = connectors;
+    }
+
     public String getType() {
         return type;
     }
@@ -140,6 +157,12 @@ public class LSNode {
         if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
                 node.getTracks().add(track.createNodeTrack(node, mapping));
+            }
+        }
+        if (this.connectors != null) {
+            for (LSTrackConnector lsConn : this.connectors) {
+                TrackConnector conn = lsConn.createConnector(partFactory, node, mapping);
+                node.getConnectors().add(conn);
             }
         }
         return node;

@@ -237,6 +237,15 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
             return object;
         }
         object = getNodeById(id);
+        if (object != null) {
+            return object;
+        }
+        for (Node node : getNodes()) {
+            object = node.getConnectors().getById(id);
+            if (object != null) {
+                return object;
+            }
+        }
         return object;
     }
 

@@ -126,7 +126,8 @@ public class TrackConnectorPM extends AbstractPM {
             if (reference == null) {
                 // new (no reference)
                 TrackConnector newConn = node.getDiagram().getPartFactory()
-                        .createConnector(IdGenerator.getInstance().getId(), node, number.getText());
+                        .createConnector(IdGenerator.getInstance().getId(), node);
+                newConn.setNumber(number.getText());
                 this.setConnectorValues(newConn);
                 // no node tracks switches
                 node.getConnectors().add(newConn);
@@ -150,8 +151,8 @@ public class TrackConnectorPM extends AbstractPM {
                                 .find(s -> s.getNodeTrack() == sw.getTrack().getReference());
                         TrackConnectorSwitch tcs = cso.orElseGet(() -> {
                             TrackConnectorSwitch t = reference.createSwitch(
-                                    IdGenerator.getInstance().getId(),
-                                    sw.getTrack().getReference());
+                                    IdGenerator.getInstance().getId());
+                            t.setNodeTrack(sw.getTrack().getReference());
                             setSwitchValues(t, sw);
                             reference.getSwitches().add(t);
                             return t;

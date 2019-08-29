@@ -33,4 +33,9 @@ public class LibraryPartFactory implements PartFactory {
     public TrainTypeCategory createTrainTypeCategory(String id) {
         return new TrainTypeCategory(id);
     }
+
+    @Override
+    public TrackConnector createConnector(String id, Node node) {
+        return new TrackConnectorImpl(id, node);
+    }
 }

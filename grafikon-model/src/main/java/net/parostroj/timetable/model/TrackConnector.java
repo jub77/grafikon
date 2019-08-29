@@ -38,7 +38,7 @@ public interface TrackConnector extends ObjectWithId, ItemCollectionObject, Attr
 
     ItemSet<TrackConnectorSwitch> getSwitches();
 
-    TrackConnectorSwitch createSwitch(String id, NodeTrack track);
+    TrackConnectorSwitch createSwitch(String id);
 
     default Optional<NodeTrack> getStraightNodeTrack() {
         return getSwitches().find(TrackConnectorSwitch::isStraight)

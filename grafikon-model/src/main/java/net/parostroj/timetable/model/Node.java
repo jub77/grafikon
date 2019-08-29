@@ -28,7 +28,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     /** Attributes of the node. */
     private Attributes attributes;
     /** Track connectors. */
-    private final ItemSet<TrackConnector> connectors;
+    private final ItemWithIdSet<TrackConnector> connectors;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -76,7 +76,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
-        this.connectors = new ItemSetImpl<>(this::fireCollectionEvent);
+        this.connectors = new ItemWithIdSetImpl<>(this::fireCollectionEvent);
     }
 
     @Override
@@ -244,7 +244,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         visitor.visitAfter(this);
     }
 
-    public ItemSet<TrackConnector> getConnectors() {
+    public ItemWithIdSet<TrackConnector> getConnectors() {
         return connectors;
     }
 

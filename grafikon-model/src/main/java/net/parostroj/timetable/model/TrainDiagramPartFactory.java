@@ -49,11 +49,11 @@ public class TrainDiagramPartFactory implements PartFactory {
      *
      * @param id id
      * @param node node
-     * @param number number of the connector
      * @return a new connector
      */
-    public TrackConnector createConnector(String id, Node node, String number) {
-        return new TrackConnectorImpl(id, node, number);
+    @Override
+    public TrackConnector createConnector(String id, Node node) {
+        return new TrackConnectorImpl(id, node);
     }
 
     /**
@@ -64,12 +64,13 @@ public class TrainDiagramPartFactory implements PartFactory {
      */
     public TrackConnector createDefaultConnector(String id, Node node, String number,
             Node.Side orientation, Optional<NodeTrack> straightTrack) {
-        TrackConnector connector = this.createConnector(id, node, number);
+        TrackConnector connector = this.createConnector(id, node);
+        connector.setNumber(number);
         connector.setOrientation(orientation);
         NodeTrack st = straightTrack.orElse(null);
         node.tracks.forEach(track -> {
-            TrackConnectorSwitch sw = connector.createSwitch(IdGenerator.getInstance().getId(),
-                    track);
+            TrackConnectorSwitch sw = connector.createSwitch(IdGenerator.getInstance().getId());
+            sw.setNodeTrack(track);
             if (track == st) {
                 sw.setStraight(true);
             }

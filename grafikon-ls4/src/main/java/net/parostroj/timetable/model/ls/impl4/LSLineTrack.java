@@ -7,7 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -15,7 +17,7 @@ import net.parostroj.timetable.model.ls.LSException;
  *
  * @author jub
  */
-@XmlType(propOrder = {"fromStraightTrack", "toStraightTrack"})
+@XmlType(propOrder = { "fromStraightTrack", "toStraightTrack", "fromConnector", "toConnector" })
 public class LSLineTrack extends LSTrack {
 
     // deprecate - loaded for backward compatibility
@@ -23,8 +25,13 @@ public class LSLineTrack extends LSTrack {
     // deprecate - loaded for backward compatibility
     private String toStraightTrack;
 
+    private String fromConnector;
+    private String toConnector;
+
     public LSLineTrack(LineTrack track) {
         super(track);
+        this.fromConnector = track.getFromTrackConnector().map(TrackConnector::getId).orElse(null);
+        this.toConnector = track.getToTrackConnector().map(TrackConnector::getId).orElse(null);
     }
 
     public LSLineTrack() {
@@ -48,9 +55,34 @@ public class LSLineTrack extends LSTrack {
         this.toStraightTrack = toStraightTrack;
     }
 
-    public LineTrack createLineTrack(Line line, Function<String, ObjectWithId> mapping) throws LSException {
+    public String getFromConnector() {
+        return fromConnector;
+    }
+
+    public void setFromConnector(String fromConnector) {
+        this.fromConnector = fromConnector;
+    }
+
+    public String getToConnector() {
+        return toConnector;
+    }
+
+    public void setToConnector(String toConnector) {
+        this.toConnector = toConnector;
+    }
+
+    public LineTrack createLineTrack(Line line, Node fromNode, Node toNode,
+            Function<String, ObjectWithId> mapping) throws LSException {
         LineTrack lineTrack = new LineTrack(this.getId(), line);
         this.addValuesTrack(mapping, lineTrack);
+        if (fromConnector != null) {
+            TrackConnector fromC = fromNode.getConnectors().getById(fromConnector);
+            fromC.setLineTrack(lineTrack);
+        }
+        if (toConnector != null) {
+            TrackConnector toC = toNode.getConnectors().getById(toConnector);
+            toC.setLineTrack(lineTrack);
+        }
         return lineTrack;
     }
 }
