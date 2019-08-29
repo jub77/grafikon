@@ -1,8 +1,11 @@
 package net.parostroj.timetable.model.imports;
 
+import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.TrackConnector;
+import net.parostroj.timetable.model.TrackConnectorSwitch;
 import net.parostroj.timetable.model.TrainDiagram;
 
 import org.slf4j.Logger;
@@ -47,6 +50,26 @@ class NodeImport extends Import {
             track.setPlatform(importedTrack.isPlatform());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             node.getTracks().add(track);
+        }
+        // connectors
+        for (TrackConnector importedConnector : importedNode.getConnectors()) {
+            TrackConnector connector = this.getDiagram().getPartFactory()
+                    .createConnector(this.getId(importedConnector), node);
+            Attributes connAttr = new Attributes(importedConnector.getAttributes());
+            // line track is not copied
+            connAttr.remove(TrackConnector.ATTR_LINE_TRACK);
+            connector.getAttributes().add(this.importAttributes(connAttr));
+            node.getConnectors().add(connector);
+            // switches
+            for (TrackConnectorSwitch importedSw : importedConnector.getSwitches()) {
+                TrackConnectorSwitch sw = connector.createSwitch(this.getId(importedSw));
+                Attributes swAttr = new Attributes(importedSw.getAttributes());
+                // node track is done afterwards
+                swAttr.remove(TrackConnectorSwitch.ATTR_TRACK);
+                sw.getAttributes().add(this.importAttributes(swAttr));
+                sw.setNodeTrack((NodeTrack) this.getTrack(node, importedSw.getNodeTrack()));
+                connector.getSwitches().add(sw);
+            }
         }
 
         // add to diagram

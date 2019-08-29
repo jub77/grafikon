@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.imports;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +59,14 @@ public class LineImport extends Import {
             LineTrack track = new LineTrack(this.getId(importedTrack), line, importedTrack.getNumber());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             line.getTracks().add(track);
+
+            // add line track to connectors
+            importedTrack.getFromTrackConnector()
+                    .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeFrom, c)))
+                    .ifPresent(c -> c.setLineTrack(track));
+            importedTrack.getToTrackConnector()
+                    .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeTo, c)))
+                    .ifPresent(c -> c.setLineTrack(track));
         }
 
         // add to diagram

@@ -227,6 +227,23 @@ public abstract class Import {
         return null;
     }
 
+    protected TrackConnector getConnector(Node node, TrackConnector origConnector) {
+        ItemWithIdSet<TrackConnector> connectors = node.getConnectors();
+        for (TrackConnector connector : connectors) {
+            if (match == ImportMatch.ID) {
+                if (connector.getId().equals(origConnector.getId())) {
+                    return connector;
+                }
+            } else {
+                if (connector.getNumber().equals(origConnector.getNumber())
+                        && connector.getOrientation() == origConnector.getOrientation()) {
+                    return connector;
+                }
+            }
+        }
+        return null;
+    }
+
     protected LineClass getLineClass(LineClass origLineClass) {
         if (match == ImportMatch.ID)
             return diagram.getNet().getLineClasses().getById(origLineClass.getId());
