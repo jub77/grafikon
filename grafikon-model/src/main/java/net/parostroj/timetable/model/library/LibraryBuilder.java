@@ -16,6 +16,7 @@ import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.PartFactory;
+import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.model.WeightTableRow;
@@ -96,6 +97,9 @@ public class LibraryBuilder {
         addHandler.stripObjectIdAttributes(nodeCopy);
         for (NodeTrack track : nodeCopy.getTracks()) {
             addHandler.stripObjectIdAttributes(track);
+        }
+        for (TrackConnector connector : nodeCopy.getConnectors()) {
+            addHandler.stripObjectIdAttributes(connector);
         }
 
         // create item and add it to library

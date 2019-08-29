@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -47,9 +48,13 @@ public class CopyFactory {
 
         copy.getAttributes().add(node.getAttributes());
 
+        // map from original id to new node track
+        Map<String, NodeTrack> trackMap = new HashMap<>();
+
         // copy tracks
         for (NodeTrack track : node.getTracks()) {
             NodeTrack copyTrack = new NodeTrack(IdGenerator.getInstance().getId(), copy, track.getNumber());
+            trackMap.put(track.getId(), copyTrack);
             copyTrack.setPlatform(track.isPlatform());
             copyTrack.getAttributes().add(track.getAttributes());
             copy.getTracks().add(copyTrack);
@@ -57,6 +62,23 @@ public class CopyFactory {
 
         // copy location
         copy.setLocation(new Location(node.getLocation().getX(), node.getLocation().getY()));
+
+        // copy connectors
+        for (TrackConnector connector : node.getConnectors()) {
+            TrackConnector copyConnector = partFactory
+                    .createConnector(IdGenerator.getInstance().getId(), copy);
+            copyConnector.getAttributes().add(connector.getAttributes());
+            copy.getConnectors().add(copyConnector);
+            // copy switches
+            for (TrackConnectorSwitch sw : connector.getSwitches()) {
+                TrackConnectorSwitch copySw = copyConnector
+                        .createSwitch(IdGenerator.getInstance().getId());
+                copySw.getAttributes().add(sw.getAttributes());
+                // replace node track
+                copySw.setNodeTrack(trackMap.get(sw.getNodeTrack().getId()));
+                copyConnector.getSwitches().add(copySw);
+            }
+        }
 
         return copy;
     }
