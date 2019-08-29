@@ -34,7 +34,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(Line line) {
-        name = line.getFrom().getAbbr() + " - " + line.getTo().getAbbr();
+        Node from = line.getFrom();
+        Node to = line.getTo();
+        name = (from != null ? from.getAbbr() : "-") + " - " + (to != null ? to.getAbbr() : "-");
     }
 
     @Override

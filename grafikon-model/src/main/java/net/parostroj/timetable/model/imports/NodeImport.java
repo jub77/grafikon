@@ -8,6 +8,9 @@ import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
 import net.parostroj.timetable.model.TrainDiagram;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +48,10 @@ class NodeImport extends Import {
         node.getAttributes().add(this.importAttributes(importedNode.getAttributes()));
         node.setLocation(importedNode.getLocation());
         // tracks
+        Map<String, NodeTrack> trackMap = new HashMap<>();
         for (NodeTrack importedTrack : importedNode.getTracks()) {
             NodeTrack track = new NodeTrack(this.getId(importedTrack), node, importedTrack.getNumber());
+            trackMap.put(importedTrack.getId(), track);
             track.setPlatform(importedTrack.isPlatform());
             track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             node.getTracks().add(track);
@@ -63,11 +68,12 @@ class NodeImport extends Import {
             // switches
             for (TrackConnectorSwitch importedSw : importedConnector.getSwitches()) {
                 TrackConnectorSwitch sw = connector.createSwitch(this.getId(importedSw));
+                String switchTrackId = importedSw.getNodeTrack().getId();
                 Attributes swAttr = new Attributes(importedSw.getAttributes());
                 // node track is done afterwards
                 swAttr.remove(TrackConnectorSwitch.ATTR_TRACK);
                 sw.getAttributes().add(this.importAttributes(swAttr));
-                sw.setNodeTrack((NodeTrack) this.getTrack(node, importedSw.getNodeTrack()));
+                sw.setNodeTrack(trackMap.get(switchTrackId));
                 connector.getSwitches().add(sw);
             }
         }

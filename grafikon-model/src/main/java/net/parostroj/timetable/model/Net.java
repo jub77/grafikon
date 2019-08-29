@@ -86,11 +86,11 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
     }
 
     Node getFrom(Line line) {
-        return netDelegate.getEdgeSource(line);
+        return netDelegate.containsEdge(line) ? netDelegate.getEdgeSource(line) : null;
     }
 
     Node getTo(Line line) {
-        return netDelegate.getEdgeTarget(line);
+        return netDelegate.containsEdge(line) ? netDelegate.getEdgeTarget(line) : null;
     }
 
     public void addLine(Line line, Node from, Node to) {
