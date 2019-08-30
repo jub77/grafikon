@@ -50,4 +50,6 @@ public interface TrainDiagramVisitor {
     public void visit(Company company);
 
     public void visit(Output output);
+
+    public void visit(TrackConnector connector);
 }

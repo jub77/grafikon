@@ -2,6 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.Optional;
 
+import net.parostroj.timetable.visitors.Visitable;
+
 /**
  * Track connector between line and node. Line track is connected
  * a certain connection point. The connection point is connected
@@ -10,7 +12,8 @@ import java.util.Optional;
  *
  * @author jub
  */
-public interface TrackConnector extends ObjectWithId, ItemCollectionObject, AttributesHolder {
+public interface TrackConnector
+        extends ObjectWithId, ItemCollectionObject, AttributesHolder, Visitable {
 
     String ATTR_LINE_TRACK = "line.track";
     String ATTR_SWITCHES = "switches";

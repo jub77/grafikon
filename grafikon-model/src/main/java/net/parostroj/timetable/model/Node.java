@@ -241,6 +241,9 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         for (NodeTrack track : tracks) {
             track.accept(visitor);
         }
+        for (TrackConnector connector : connectors) {
+            connector.accept(visitor);
+        }
         visitor.visitAfter(this);
     }
 

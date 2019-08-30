@@ -124,4 +124,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(Output output) {
         name = output.getName() != null ? output.getName().getDefaultString() : "";
     }
+
+    @Override
+    public void visit(TrackConnector connector) {
+        name = connector.getNumber();
+    }
 }

@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 
 /**
  * Implementation of track connector.
@@ -118,6 +119,11 @@ public class TrackConnectorImpl implements TrackConnector {
     @Override
     public TrackConnectorSwitch createSwitch(String id) {
         return new TrackConnectorSwitchImpl(id, this);
+    }
+
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override
