@@ -1,8 +1,7 @@
-package net.parostroj.timetable.gui.dialogs;
+package net.parostroj.timetable.gui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -12,24 +11,19 @@ import org.beanfabrics.Path;
 import org.beanfabrics.swing.table.BnColumn;
 import org.beanfabrics.swing.table.BnTable;
 
-import net.parostroj.timetable.gui.components.EditNodeTrackConnectorsPanel;
-import net.parostroj.timetable.gui.components.EditNodeTracksPanel;
-import net.parostroj.timetable.gui.components.ListSelectionSupport;
 import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
- * Dialog for editing node tracks and connectors.
+ * Panel for editing node tracks and connectors.
  *
  * @author jub
  */
-public class EditNodeTracksAndConnectorsDialog extends BaseEditDialog<NodePM> {
+public class EditNodeTracksAndConnectorsPanel extends BaseEditPanel<NodePM> {
 
     private static final long serialVersionUID = 1L;
 
-    public EditNodeTracksAndConnectorsDialog(Window owner, boolean modal) {
-        super(owner, modal);
-
+    public EditNodeTracksAndConnectorsPanel() {
         EditNodeTracksPanel tracksPanel = new EditNodeTracksPanel();
         EditNodeTrackConnectorsPanel connectorsPanel = new EditNodeTrackConnectorsPanel();
 
@@ -39,7 +33,7 @@ public class EditNodeTracksAndConnectorsDialog extends BaseEditDialog<NodePM> {
         switchesTable.addColumn(new BnColumn(new Path("straight"), ResourceLoader.getString("ne.switches.straight")));
 
         Dimension size = switchesTable.getPreferredScrollableViewportSize();
-        size.height = 5 * switchesTable.getRowHeight();
+        size.height = 4 * switchesTable.getRowHeight();
         switchesTable.setPreferredScrollableViewportSize(size);
 
         Box box = Box.createVerticalBox();
@@ -69,7 +63,5 @@ public class EditNodeTracksAndConnectorsDialog extends BaseEditDialog<NodePM> {
                 () -> getPresentationModel().getConnectors(),
                 conn -> conn != null ? conn.getSwitches() : null);
         localProvider.addModelProviderListener(new Path("connectors"), support);
-
-        pack();
     }
 }

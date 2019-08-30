@@ -17,10 +17,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import net.parostroj.timetable.gui.components.EditNodeTracksAndConnectorsPanel;
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
 import net.parostroj.timetable.gui.pm.NodePM;
-import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.NodeTypeWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -228,7 +227,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         abbrTextField.setPath(new Path("abbr"));
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
-        editTracksButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
         javax.swing.JLabel lengthLabel = new javax.swing.JLabel();
@@ -236,9 +234,9 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         javax.swing.JLabel centerRegionsLabel = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
-        tracksAndConnectorsDialog = new EditNodeTracksAndConnectorsDialog(this, false);
-        tracksAndConnectorsDialog.setModelProvider(localProvider);
-        tracksAndConnectorsDialog.setPath(new Path("this"));
+        tracksAndConnectorsPanel = new EditNodeTracksAndConnectorsPanel();
+        tracksAndConnectorsPanel.setModelProvider(localProvider);
+        tracksAndConnectorsPanel.setPath(new Path("this"));
 
         regionsTextField = new javax.swing.JTextField();
         regionsTextField.setEditable(false);
@@ -264,11 +262,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         lengthLabel.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
         typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
-
-        editTracksButton.addActionListener(evt -> {
-            tracksAndConnectorsDialog.setLocationRelativeTo(this);
-            tracksAndConnectorsDialog.setVisible(true);
-        });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(evt -> {
@@ -332,10 +325,8 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(colorsButton)
-                            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(editTracksButton)
                             .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(okButton)
+                            .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
                         .addGroup(layout.createSequentialGroup()
@@ -377,7 +368,8 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(sSpeedLabel)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(sSpeedPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(sSpeedPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(tracksAndConnectorsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -427,14 +419,12 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                             .addGap(10)))
                     .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(tracksAndConnectorsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(editTracksButton))
-                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(cancelButton)
-                            .addComponent(okButton)
-                            .addComponent(colorsButton)))
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(colorsButton)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addContainerGap())
         );
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel});
@@ -506,7 +496,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     private javax.swing.JCheckBox controlCheckBox;
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
-    private javax.swing.JButton editTracksButton;
     private javax.swing.JCheckBox signalsCheckBox;
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox<Wrapper<NodeType>> typeComboBox;
@@ -519,7 +508,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     private javax.swing.JCheckBox nsSpeedCheckBox;
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
-    private EditNodeTracksAndConnectorsDialog tracksAndConnectorsDialog;
+    private EditNodeTracksAndConnectorsPanel tracksAndConnectorsPanel;
 
     private WrapperListModel<Company> companies;
     private Set<Region> regions;
