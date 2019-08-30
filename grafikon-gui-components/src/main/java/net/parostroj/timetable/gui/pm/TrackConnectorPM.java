@@ -1,10 +1,13 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.beanfabrics.event.ElementsAddedEvent;
+import org.beanfabrics.event.ListAdapter;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.IListPM;
 import org.beanfabrics.model.IntegerPM;
@@ -50,6 +53,27 @@ public class TrackConnectorPM extends AbstractPM {
                 .createValueMap(Arrays.asList(Node.Side.values()), TrackConnectorPM::getSideString));
         this.lineTrack = new EnumeratedValuesPM<>();
         this.switches = new ListPM<>();
+        this.switches.addListListener(new ListAdapter() {
+            private PropertyChangeListener l = e -> {
+                TrackConnectorSwitchPM switchPM = (TrackConnectorSwitchPM) e.getSource();
+                if (switchPM.getStraight().getBoolean()) {
+                    // switch all others off
+                    switches.forEach(s -> {
+                        if (s != switchPM && s.getStraight().getBoolean()) {
+                            s.getStraight().setBoolean(false);
+                        }
+                    });
+                }
+            };
+
+            @Override
+            public void elementsAdded(ElementsAddedEvent evt) {
+                for (int i = evt.getBeginIndex(); i < evt.getBeginIndex() + evt.getLength(); i++) {
+                    TrackConnectorSwitchPM switchPM = switches.getAt(i);
+                    switchPM.addPropertyChangeListener("straight", l);
+                }
+            }
+        });
         this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
         PMManager.setup(this);
         updateConnectorId();
