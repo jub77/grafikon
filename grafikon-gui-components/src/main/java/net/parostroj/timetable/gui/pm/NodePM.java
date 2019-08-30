@@ -63,7 +63,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             TrackConnectorPM tc = new TrackConnectorPM();
             tc.number.setText("1");
             tracks.forEach(track -> {
-                tc.getSwitches().add(new TrackConnectorSwitchPM(track, false, false));
+                tc.getSwitches().add(new TrackConnectorSwitchPM(track, true, false));
             });
             tc.initLineTrack(reference, lineTracks);
             return tc;
