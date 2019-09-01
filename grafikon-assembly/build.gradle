@@ -7,7 +7,7 @@ configurations {
 }
 
 dependencies {
-	assembly 'net.parostroj:grafikon-start'
+	assembly project(':grafikon-start')
 }
 
 task distribution(type: Zip) {
