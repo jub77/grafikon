@@ -7,7 +7,7 @@ configurations {
 }
 
 dependencies {
-	runtime 'net.parostroj:grafikon-start'
+	runtime project(':grafikon-start')
 }
 
 ext {
