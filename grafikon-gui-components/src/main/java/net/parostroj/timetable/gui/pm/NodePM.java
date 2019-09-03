@@ -41,7 +41,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     private static final List<SortKey> CONNECTOR_SORT_KEY = Arrays.asList(
             new SortKey(true, new Path("orientation")),
-            new SortKey(true, new Path("position")));
+            new SortKey(true, new Path("number")));
 
     ItemListPM<NodeTrackPM> tracks;
     ItemListPM<TrackConnectorPM> connectors;
@@ -68,7 +68,6 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             tc.initLineTrack(reference, lineTracks);
             return tc;
         });
-        this.connectors.setSorted(CONNECTOR_SORT_KEY);
         this.connectors.addListListener(new ConnectorsListener(this.connectors));
         this.tracks.addListListener(new TracksListener(this.connectors));
         this.name = new TextPM();
@@ -104,6 +103,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             TrackConnectorPM connectorPm = new TrackConnectorPM(connector, this.tracks, lineTracks);
             connectors.add(connectorPm);
         });
+        this.connectors.sortBy(CONNECTOR_SORT_KEY);
         this.name.setText(node.getName());
         this.abbr.setText(node.getAbbr());
     }
