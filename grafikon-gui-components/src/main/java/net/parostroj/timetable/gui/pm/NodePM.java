@@ -1,17 +1,20 @@
 package net.parostroj.timetable.gui.pm;
 
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.beanfabrics.Path;
 import org.beanfabrics.event.BnPropertyChangeEvent;
+import org.beanfabrics.event.ElementChangedEvent;
 import org.beanfabrics.event.ElementsAddedEvent;
 import org.beanfabrics.event.ElementsRemovedEvent;
 import org.beanfabrics.event.ListAdapter;
@@ -65,10 +68,26 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             tracks.forEach(track -> {
                 tc.getSwitches().add(new TrackConnectorSwitchPM(track, true, false));
             });
-            tc.initLineTrack(reference, lineTracks);
+            tc.initLineTrack(reference, lineTracks, Optional.empty());
             return tc;
         });
-        this.connectors.addListListener(new ConnectorsListener(this.connectors));
+        this.connectors.addPropertyChangeListener(evt -> {
+            Optional<EventObject> cause = unwrapCause(evt);
+            // ElementChangedEvent
+            cause.filter(ElementChangedEvent.class::isInstance)
+                    .flatMap(NodePM::unwrapCause)
+                    .map(BnPropertyChangeEvent.class::cast)
+                    .filter(NodePM::checkLineTrackProperty)
+                    .ifPresent(e -> {
+                        updateConnectors((TrackConnectorPM) e.getSource());
+                    });
+            // ElementsRemovedEvent
+            cause.filter(ElementsRemovedEvent.class::isInstance)
+                    .map(ElementsRemovedEvent.class::cast)
+                    .ifPresent(e -> {
+                        // TODO handling of removed connector
+                    });
+        });
         this.tracks.addListListener(new TracksListener(this.connectors));
         this.name = new TextPM();
         this.name.setMandatory(true);
@@ -161,6 +180,31 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         return true;
     }
 
+    private static Optional<EventObject> unwrapCause(EventObject event) {
+        if (event instanceof BnPropertyChangeEvent) {
+            return Optional.ofNullable(((BnPropertyChangeEvent) event).getCause());
+        } else if (event instanceof ElementChangedEvent) {
+            return Optional.ofNullable(((ElementChangedEvent) event).getCause());
+        }
+        return Optional.empty();
+    }
+
+    private static boolean checkLineTrackProperty(PropertyChangeEvent event) {
+        return event instanceof PropertyChangeEvent
+                && "lineTrack".equals(((PropertyChangeEvent) event).getPropertyName());
+    }
+
+    private void updateConnectors(TrackConnectorPM src) {
+        LineTrack lt = src.getLineTrack().getValue();
+        if (lt != null) {
+            connectors.forEach(c -> {
+                if (c != src && c.getLineTrack().getValue() == lt) {
+                    c.getLineTrack().setValue(null);
+                }
+            });
+        }
+    }
+
     private static class TracksListener extends ListAdapter {
 
         private IListPM<TrackConnectorPM> connectors;
@@ -196,44 +240,6 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                     }
                 }
             });
-        }
-    }
-
-    private static class ConnectorsListener extends ListAdapter {
-
-        private PropertyChangeListener listener;
-        private ListPM<TrackConnectorPM> connectors;
-
-        public ConnectorsListener(ListPM<TrackConnectorPM> connectors) {
-            listener = event -> {
-                BnPropertyChangeEvent e = (BnPropertyChangeEvent) event;
-                TrackConnectorPM src = (TrackConnectorPM) e.getSource();
-                LineTrack lt = src.getLineTrack().getValue();
-                if (lt != null) {
-                    connectors.forEach(c -> {
-                        if (c != src && c.getLineTrack().getValue() == lt) {
-                            c.getLineTrack().setValue(null);
-                        }
-                    });
-                }
-            };
-            this.connectors = connectors;
-        }
-
-        @Override
-        public void elementsAdded(ElementsAddedEvent evt) {
-            for (int i = evt.getBeginIndex(); i < evt.getBeginIndex() + evt.getLength(); i++) {
-                TrackConnectorPM item = connectors.getAt(i);
-                item.addPropertyChangeListener("lineTrack", listener);
-            }
-        }
-
-        @Override
-        public void elementsRemoved(ElementsRemovedEvent evt) {
-            Collection<? extends PresentationModel> removed = evt.getRemoved();
-            for (PresentationModel r : removed) {
-                r.removePropertyChangeListener("lineTrack", listener);
-            }
         }
     }
 }
