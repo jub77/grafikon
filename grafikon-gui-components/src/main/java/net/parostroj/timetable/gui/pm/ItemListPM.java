@@ -55,6 +55,8 @@ public class ItemListPM<T extends PresentationModel> extends ListPM<T> {
     public void create() {
         T element = this.createNew.get();
         this.add(element);
+        this.getSelection().clear();
+        this.getSelection().add(element);
     }
 
     @Validation(path = { "moveDown" })
