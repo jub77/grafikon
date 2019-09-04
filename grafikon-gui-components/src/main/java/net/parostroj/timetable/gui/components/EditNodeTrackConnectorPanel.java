@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import javax.swing.Box;
 
 import org.beanfabrics.Path;
-import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
 import net.parostroj.timetable.gui.pm.TrackConnectorPM;
