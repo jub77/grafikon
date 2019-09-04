@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import java.util.Optional;
+
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 
@@ -97,13 +99,13 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public LineTrack getLineTrack() {
-        return attributes.get(ATTR_LINE_TRACK, LineTrack.class);
+    public Optional<LineTrack> getLineTrack() {
+        return Optional.ofNullable(attributes.get(ATTR_LINE_TRACK, LineTrack.class));
     }
 
     @Override
-    public void setLineTrack(LineTrack lineTrack) {
-        attributes.setRemove(ATTR_LINE_TRACK, lineTrack);
+    public void setLineTrack(Optional<LineTrack> lineTrack) {
+        attributes.setRemove(ATTR_LINE_TRACK, lineTrack.orElse(null));
     }
 
     @Override

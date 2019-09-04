@@ -112,7 +112,7 @@ public class LSVisitorBuilder implements LSVisitor {
                 "2",
                 Node.Side.RIGHT,
                 Optional.ofNullable(fromNt));
-        fromConn.setLineTrack(lt);
+        fromConn.setLineTrack(Optional.ofNullable(lt));
         from.getConnectors().add(fromConn);
         TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
                 IdGenerator.getInstance().getId(),
@@ -120,7 +120,7 @@ public class LSVisitorBuilder implements LSVisitor {
                 "1",
                 Node.Side.LEFT,
                 Optional.ofNullable(toNt));
-        toConn.setLineTrack(lt);
+        toConn.setLineTrack(Optional.ofNullable(lt));
         to.getConnectors().add(toConn);
     }
 

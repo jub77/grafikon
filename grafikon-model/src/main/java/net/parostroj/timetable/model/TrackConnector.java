@@ -35,9 +35,9 @@ public interface TrackConnector
 
     void setNumber(String number);
 
-    LineTrack getLineTrack();
+    Optional<LineTrack> getLineTrack();
 
-    void setLineTrack(LineTrack lineTrack);
+    void setLineTrack(Optional<LineTrack> lineTrack);
 
     ItemSet<TrackConnectorSwitch> getSwitches();
 

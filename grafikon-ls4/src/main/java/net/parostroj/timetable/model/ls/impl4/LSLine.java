@@ -158,12 +158,12 @@ public class LSLine {
         TrackConnector fromConn = diagram.getPartFactory().createDefaultConnector(
                 IdGenerator.getInstance().getId(), fromNode, "2", Node.Side.RIGHT,
                 Optional.ofNullable(fromNt));
-        fromConn.setLineTrack(lineTrack);
+        fromConn.setLineTrack(Optional.ofNullable(lineTrack));
         fromNode.getConnectors().add(fromConn);
         TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
                 IdGenerator.getInstance().getId(), toNode, "1", Node.Side.LEFT,
                 Optional.ofNullable(toNt));
-        toConn.setLineTrack(lineTrack);
+        toConn.setLineTrack(Optional.ofNullable(lineTrack));
         toNode.getConnectors().add(toConn);
     }
 }

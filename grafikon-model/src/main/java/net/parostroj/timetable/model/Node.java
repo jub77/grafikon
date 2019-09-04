@@ -252,7 +252,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     }
 
     public Optional<TrackConnector> getConnectorForLineTrack(LineTrack lineTrack) {
-        return connectors.find(conn -> conn.getLineTrack() == lineTrack);
+        return connectors.find(conn -> conn.getLineTrack().orElse(null) == lineTrack);
     }
 
     void fireCollectionEvent(Event.Type type, Object item) {

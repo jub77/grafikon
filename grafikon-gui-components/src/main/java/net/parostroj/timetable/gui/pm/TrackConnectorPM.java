@@ -114,7 +114,7 @@ public class TrackConnectorPM extends AbstractPM {
         orientation.setValue(connector.getOrientation());
         position.setInteger(connector.getPosition());
         // line connection
-        this.initLineTrack(connector.getNode(), lineTracks, Optional.ofNullable(connector.getLineTrack()));
+        this.initLineTrack(connector.getNode(), lineTracks, connector.getLineTrack());
     }
 
     public void initLineTrack(Node node, Iterable<LineTrack> lineTracks, Optional<LineTrack> lt) {
@@ -193,7 +193,7 @@ public class TrackConnectorPM extends AbstractPM {
         conn.setNumber(number.getText().trim());
         conn.setPosition(position.getInteger());
         conn.setOrientation(orientation.getValue());
-        conn.setLineTrack(lineTrack.getValue());
+        conn.setLineTrack(Optional.ofNullable(lineTrack.getValue()));
     }
 
     public static String getSideString(Node.Side side) {

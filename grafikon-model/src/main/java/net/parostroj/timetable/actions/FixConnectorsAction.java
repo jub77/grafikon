@@ -31,7 +31,8 @@ public class FixConnectorsAction {
 
     private void fixConnectors(Node node) {
         Map<Line, List<TrackConnector>> map = node.getConnectors().stream()
-                .collect(Collectors.groupingBy(c -> c.getLineTrack().getOwner()));
+                .filter(c -> c.getLineTrack().isPresent())
+                .collect(Collectors.groupingBy(c -> c.getLineTrack().get().getOwner()));
         int compare = this.checkConnectors(map);
         if (compare != 0 && map.size() > 1) {
             log.debug("Fixing connectors on node: {} (size={}, compare={})", node, map.size(),
