@@ -60,7 +60,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     private Node reference;
     private Collection<LineTrack> lineTracks = Collections.emptyList();
     private Supplier<TrackConnectorPM> trackConnectorSupplier;
-    private boolean initialization;
+    private boolean updateConnsBlock;
 
     public NodePM() {
         this.tracks = new ItemListPM<>(() -> {
@@ -112,7 +112,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     @Override
     public void init(Node node) {
-        this.initialization = true;
+        this.updateConnsBlock = true;
         this.reference = node;
         this.tracks.clear();
         this.connectors.clear();
@@ -133,7 +133,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.connectors.sortBy(CONNECTOR_SORT_KEY);
         this.name.setText(node.getName());
         this.abbr.setText(node.getAbbr());
-        this.initialization = false;
+        this.updateConnsBlock = false;
         this.updateConnectorsCheckAllLineTracks();
     }
 
@@ -218,29 +218,34 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     }
 
     private void updateConnectorsCheckAllLineTracks() {
-        if (this.initialization) {
+        if (this.updateConnsBlock) {
             return;
         }
-        // select empty connectors
-        Set<LineTrack> selectedTracks = connectors.toCollection().stream()
-                .filter(c -> c.getLineTrack().getValue() != null)
-                .map(c -> c.getLineTrack().getValue()).collect(toSet());
-        Set<LineTrack> notSelectedTracks = lineTracks.stream()
-                .filter(lt -> !selectedTracks.contains(lt)).collect(toSet());
-        if (!notSelectedTracks.isEmpty()) {
-            List<TrackConnectorPM> emptyConnectors = connectors.toCollection().stream()
-                    .filter(c -> c.getLineTrack().getValue() == null).collect(toList());
-            // add connectors if there is not enough
-            Iterator<TrackConnectorPM> ecIterator = emptyConnectors.iterator();
-            notSelectedTracks.stream()
-                .forEach(lt -> {
-                    TrackConnectorPM tcPm = ecIterator.hasNext() ? ecIterator.next() : null;
-                    if (tcPm == null) {
-                        tcPm = trackConnectorSupplier.get();
-                        connectors.add(tcPm);
-                    }
-                    tcPm.getLineTrack().setValue(lt);
-                });
+        this.updateConnsBlock = true;
+        try {
+            // select empty connectors
+            Set<LineTrack> selectedTracks = connectors.toCollection().stream()
+                    .filter(c -> c.getLineTrack().getValue() != null)
+                    .map(c -> c.getLineTrack().getValue()).collect(toSet());
+            Set<LineTrack> notSelectedTracks = lineTracks.stream()
+                    .filter(lt -> !selectedTracks.contains(lt)).collect(toSet());
+            if (!notSelectedTracks.isEmpty()) {
+                List<TrackConnectorPM> emptyConnectors = connectors.toCollection().stream()
+                        .filter(c -> c.getLineTrack().getValue() == null).collect(toList());
+                // add connectors if there is not enough
+                Iterator<TrackConnectorPM> ecIterator = emptyConnectors.iterator();
+                notSelectedTracks.stream()
+                    .forEach(lt -> {
+                        TrackConnectorPM tcPm = ecIterator.hasNext() ? ecIterator.next() : null;
+                        if (tcPm == null) {
+                            tcPm = trackConnectorSupplier.get();
+                            connectors.add(tcPm);
+                        }
+                        tcPm.getLineTrack().setValue(lt);
+                    });
+            }
+        } finally {
+            this.updateConnsBlock = false;
         }
     }
 
