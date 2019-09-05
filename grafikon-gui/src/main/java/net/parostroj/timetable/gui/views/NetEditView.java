@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -761,9 +762,26 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     l.getTracks().add(track);
                     model.getDiagram().getNet().addLine(l, srcNode, dstNode);
 
+                    // add to connectors
+                    addToConnector(srcNode, factory, track, Node.Side.RIGHT, "2");
+                    addToConnector(dstNode, factory, track, Node.Side.LEFT, "1");
+
                     graph.removeCells(new Object[] { result });
                 }
                 return result;
+            }
+
+            private void addToConnector(Node srcNode, TrainDiagramPartFactory factory,
+                    LineTrack track, Node.Side side, String name) {
+                Optional<TrackConnector> connWithoutLineTrack = srcNode.getConnectors()
+                        .find(c -> !c.getLineTrack().isPresent());
+                connWithoutLineTrack.orElseGet(() -> {
+                    TrackConnector connector = factory.createDefaultConnector(
+                            IdGenerator.getInstance().getId(), srcNode, name, side,
+                            Optional.empty());
+                    srcNode.getConnectors().add(connector);
+                    return connector;
+                }).setLineTrack(Optional.of(track));
             }
         });
 
