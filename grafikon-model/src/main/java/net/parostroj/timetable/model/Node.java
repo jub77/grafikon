@@ -255,6 +255,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return connectors.find(conn -> conn.getLineTrack().orElse(null) == lineTrack);
     }
 
+    public Set<TrackConnector> getConnectorsWithoutLineTrack() {
+        return connectors.findAll(conn -> !conn.getLineTrack().isPresent());
+    }
+
     void fireCollectionEvent(Event.Type type, Object item) {
         this.fireEvent(new Event(this, type, item));
         if (item instanceof ItemCollectionObject) {
