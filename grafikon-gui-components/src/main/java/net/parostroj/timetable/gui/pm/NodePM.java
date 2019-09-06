@@ -32,6 +32,7 @@ import org.beanfabrics.model.SortKey;
 import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
+import org.beanfabrics.validation.ValidationState;
 
 import com.google.common.collect.FluentIterable;
 
@@ -67,6 +68,20 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             NodeTrackPM trackPm = new NodeTrackPM();
             trackPm.number.setText("1");
             return trackPm;
+        });
+        tracks.delete.getValidator().add(() -> {
+            if (tracks.getSelection().size() == tracks.size()) {
+                return ValidationState.create("At least one track");
+            } else {
+                Collection<NodeTrackPM> trackPMs = tracks.getSelection().toCollection();
+                for (NodeTrackPM trackPM : trackPMs) {
+                    if (trackPM.getReference() != null
+                            && !trackPM.getReference().getTimeIntervalList().isEmpty()) {
+                        return ValidationState.create("Not empty track");
+                    }
+                }
+            }
+            return null;
         });
         trackConnectorSupplier = () -> {
             TrackConnectorPM tc = new TrackConnectorPM();
