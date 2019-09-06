@@ -1,11 +1,16 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.Optional;
+
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
 
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TrackConnector;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -48,6 +53,11 @@ public class LineTrackPM extends AbstractPM implements IPM<LineTrack> {
                         number.getText().trim());
                 line.getTracks().add(index, newTrack);
                 reference = newTrack;
+                Node fromNode = line.getFrom();
+                Node toNode = line.getTo();
+                TrainDiagramPartFactory factory = line.getDiagram().getPartFactory();
+                this.addToConnector(fromNode, factory, newTrack, Node.Side.RIGHT, "2");
+                this.addToConnector(toNode, factory, newTrack, Node.Side.LEFT, "1");
             } else {
                 // modify existing
                 reference.setNumber(number.getText().trim());
@@ -57,6 +67,19 @@ public class LineTrackPM extends AbstractPM implements IPM<LineTrack> {
                 }
             }
         }
+    }
+
+    private void addToConnector(Node srcNode, TrainDiagramPartFactory factory,
+            LineTrack track, Node.Side side, String name) {
+        Optional<TrackConnector> connWithoutLineTrack = srcNode.getConnectors()
+                .find(c -> !c.getLineTrack().isPresent());
+        connWithoutLineTrack.orElseGet(() -> {
+            TrackConnector connector = factory.createDefaultConnector(
+                    IdGenerator.getInstance().getId(), srcNode, name, side,
+                    Optional.empty());
+            srcNode.getConnectors().add(connector);
+            return connector;
+        }).setLineTrack(Optional.of(track));
     }
 
     @Override
