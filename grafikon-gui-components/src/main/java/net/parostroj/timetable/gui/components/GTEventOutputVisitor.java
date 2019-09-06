@@ -169,14 +169,14 @@ public class GTEventOutputVisitor implements EventVisitor {
         	Line line = (Line) event.getSource();
             TimeConverter c = line.getDiagram().getTimeConverter();
             str.append("LineEvent[");
-            str.append(line.getFrom().getAbbr());
+            str.append(line.getFrom() != null ? line.getFrom().getAbbr() : "-");
             str.append('-');
-            str.append(line.getTo().getAbbr());
+            str.append(line.getTo() != null ? line.getTo().getAbbr() : "-");
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Line: ").append(line.getFrom().getName()).append('-');
-                str.append(line.getTo().getName()).append('\n');
+                str.append("  Line: ").append(line.getFrom() != null ? line.getFrom().getName() : "-").append('-');
+                str.append(line.getTo() != null ? line.getTo().getName() : "-").append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getObject() instanceof TimeInterval) {
                     TimeInterval interval = (TimeInterval) event.getObject();

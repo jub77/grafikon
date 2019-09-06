@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,13 +37,15 @@ public class LinePM extends AbstractPM implements IPM<Line> {
             return pm;
         });
         tracks.delete.getValidator().add(() -> {
-            if (tracks.size() == 1) {
+            if (tracks.getSelection().size() == tracks.size()) {
                 return ValidationState.create("At least one track");
             } else {
-                LineTrackPM trackPM = tracks.getSelection().getFirst();
-                if (trackPM.getReference() != null
-                        && !trackPM.getReference().getTimeIntervalList().isEmpty()) {
-                    return ValidationState.create("Not empty track");
+                Collection<LineTrackPM> trackPMs = tracks.getSelection().toCollection();
+                for (LineTrackPM trackPM : trackPMs) {
+                    if (trackPM.getReference() != null
+                            && !trackPM.getReference().getTimeIntervalList().isEmpty()) {
+                        return ValidationState.create("Not empty track");
+                    }
                 }
             }
             return null;
