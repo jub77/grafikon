@@ -100,6 +100,7 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
     }
 
     public void removeLine(Line line) {
+        line.getTracks().clear();
         netDelegate.removeEdge(line);
         this.fireEvent(new Event(this, Event.Type.REMOVED, line));
         line.removeListener(listener);
