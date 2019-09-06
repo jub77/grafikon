@@ -110,6 +110,15 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                         updateConnectorsCheckAllLineTracks();
                     });
         });
+        this.connectors.delete.getValidator().add(() -> {
+            Collection<TrackConnectorPM> cs = connectors.getSelection().toCollection();
+            for (TrackConnectorPM c : cs) {
+                if (c.getLineTrack().getValue() != null) {
+                    return ValidationState.create("Cannot delete connected connector");
+                }
+            }
+            return null;
+        });
         this.tracks.addListListener(new TracksListener(this.connectors));
         this.name = new TextPM();
         this.name.setMandatory(true);
