@@ -9,6 +9,7 @@ import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
+import org.beanfabrics.validation.ValidationState;
 
 import com.google.common.collect.FluentIterable;
 
@@ -33,6 +34,18 @@ public class LinePM extends AbstractPM implements IPM<Line> {
             LineTrackPM pm = new LineTrackPM();
             pm.getNumber().setText("1");
             return pm;
+        });
+        tracks.delete.getValidator().add(() -> {
+            if (tracks.size() == 1) {
+                return ValidationState.create("At least one track");
+            } else {
+                LineTrackPM trackPM = tracks.getSelection().getFirst();
+                if (trackPM.getReference() != null
+                        && !trackPM.getReference().getTimeIntervalList().isEmpty()) {
+                    return ValidationState.create("Not empty track");
+                }
+            }
+            return null;
         });
         PMManager.setup(this);
     }
