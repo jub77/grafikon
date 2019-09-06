@@ -63,28 +63,42 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
 
     @Override
     public void addValue(E value, String text) {
-        this.getOptionsImpl().put(value, text);
+        this.getOptionsImpl().put(value, this.getUniqueText(text));
+    }
+
+    private String getUniqueText(String text) {
+        String changedText = text;
+        Options<E> options = this.getOptionsImpl();
+        int cnt = 1;
+        while (options.containsValue(changedText)) {
+            changedText = String.format("%s (%d)", text, cnt);
+            cnt++;
+        }
+        return changedText;
     }
 
     @Override
     public void addValues(Map<E, String> valueMap) {
-        this.getOptionsImpl().putAll(valueMap);
+        for (Map.Entry<E, String> entry : valueMap.entrySet()) {
+            this.addValue(entry.getKey(), entry.getValue());
+        }
     }
 
     public void addValues(Map<E, String> valueMap, String nullValueText) {
-        this.getOptionsImpl().put(null, nullValueText);
-        this.getOptionsImpl().putAll(valueMap);
+        this.addValue(null, nullValueText);
+        this.addValues(valueMap);
     }
 
-    public void addValues(Iterable<E> values, WrapperConversion<E> conversion, String nullValueText) {
-    	this.getOptionsImpl().put(null, nullValueText);
-    	this.addValues(values, conversion);
+    public void addValues(Iterable<E> values, WrapperConversion<E> conversion,
+            String nullValueText) {
+        this.addValue(null, nullValueText);
+        this.addValues(values, conversion);
     }
 
     public void addValues(Iterable<E> values, WrapperConversion<E> conversion) {
-    	for (E item : values) {
-    		this.getOptionsImpl().put(item, conversion.toString(item));
-    	}
+        for (E item : values) {
+            this.addValue(item, conversion.toString(item));
+        }
     }
 
     @Override
