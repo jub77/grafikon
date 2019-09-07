@@ -46,8 +46,9 @@ subprojects { prj ->
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.0.1'
 			dependency 'org.mvel:mvel2:2.3.2.Final'
-			dependency 'org.codehaus.groovy:groovy-all:2.4.12'
-			dependency 'org.slf4j:slf4j-api:1.7.25'
+			dependency 'org.codehaus.groovy:groovy-templates:2.5.8'
+			dependency 'org.codehaus.groovy:groovy-jsr223:2.5.8'
+ 			dependency 'org.slf4j:slf4j-api:1.7.25'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.25'
 			dependency 'joda-time:joda-time:2.9.9'
 			dependency ('com.google.guava:guava:23.2-jre') {
@@ -73,6 +74,12 @@ subprojects { prj ->
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.1'
 			dependency 'org.apache.logging.log4j:log4j-core:2.9.1'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
+			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.2', {
+				exclude 'com.sun.xml.fastinfoset:FastInfoset'
+				exclude 'org.glassfish.jaxb:txw2'
+				exclude 'org.jvnet.staxex:stax-ex'
+			}
+			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
 
 			dependency 'junit:junit:4.12'
 		}
