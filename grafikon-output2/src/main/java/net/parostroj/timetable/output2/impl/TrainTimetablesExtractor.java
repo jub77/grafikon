@@ -19,7 +19,6 @@ import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Node.Side;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.RouteSegment;
@@ -208,7 +207,7 @@ public class TrainTimetablesExtractor {
                 row.setComment(nodeI.getComment());
             }
             // check line end
-            if ((nodeI.isLast() || nodeI.isInnerStop()) && this.isTrackEnd(lastLineI, nodeI)) {
+            if ((nodeI.isLast() || nodeI.isInnerStop()) && this.isTrackEnd(nodeI)) {
                 row.setLineEnd(Boolean.TRUE);
             }
             // check occupied track
@@ -377,16 +376,19 @@ public class TrainTimetablesExtractor {
             return null;
     }
 
-    private boolean isTrackEnd(TimeInterval lastLineI, TimeInterval nodeI) {
-        Optional<TrackConnector> fromConnector = lastLineI.getToTrackConnector();
-        return fromConnector.map(conn -> {
-            Side side = conn.getOrientation();
-            return nodeI.getOwnerAsNode().getConnectors().stream()
-                    .filter(c -> c.getOrientation() != side)
-                    .flatMap(c -> c.getSwitches().stream())
-                    .filter(s -> s.getNodeTrack() == nodeI.getTrack())
-                    .findAny()
-                    .isPresent();
-        }).orElse(false);
+    private boolean isTrackEnd(TimeInterval nodeI) {
+        Optional<Node.Side> toSide = nodeI.getFromTrackConnector()
+                .map(TrackConnector::getOrientation)
+                .map(Node.Side::opposite);
+        if (!toSide.isPresent()) {
+            return false;
+        }
+        // no switch with orientation of the opposite side of arrival
+        return !nodeI.getOwnerAsNode().getConnectors().stream()
+                .filter(c -> c.getOrientation() == toSide.get())
+                .flatMap(c -> c.getSwitches().stream())
+                .filter(s -> s.getNodeTrack() == nodeI.getTrack())
+                .findAny()
+                .isPresent();
     }
 }
