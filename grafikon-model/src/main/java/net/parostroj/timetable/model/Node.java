@@ -20,7 +20,21 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>,
         AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
 
-    public enum Side { LEFT, RIGHT }
+    public enum Side {
+        LEFT {
+            @Override
+            public Side opposite() {
+                return RIGHT;
+            }
+        },
+        RIGHT {
+            @Override
+            public Side opposite() {
+                return LEFT;
+            }
+        };
+        public abstract Side opposite();
+    }
 
     /** Train diagram. */
     private final TrainDiagram diagram;

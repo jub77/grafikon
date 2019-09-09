@@ -17,6 +17,11 @@ public interface TrackConnectors extends ItemWithIdSet<TrackConnector> {
     default public Set<TrackConnector> getWithoutLineTrack() {
         return this.findAll(conn -> !conn.getLineTrack().isPresent());
     }
+
+    default public Set<TrackConnector> getForSideAndNodeTrack(Node.Side side, NodeTrack nodeTrack) {
+        return this.findAll(conn -> conn.getOrientation() == side
+                && conn.getSwitches().find(s -> s.getNodeTrack() == nodeTrack).isPresent());
+    }
 }
 
 class TrackConnectorsImpl extends ItemWithIdSetImpl<TrackConnector> implements TrackConnectors {
