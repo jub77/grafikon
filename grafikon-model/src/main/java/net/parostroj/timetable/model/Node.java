@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
@@ -18,8 +17,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>, AttributesHolder,
-        ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
+public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<NodeTrack>,
+        AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
 
     public enum Side { LEFT, RIGHT }
 
@@ -28,7 +27,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     /** Attributes of the node. */
     private Attributes attributes;
     /** Track connectors. */
-    private final ItemWithIdSet<TrackConnector> connectors;
+    private final TrackConnectors connectors;
 
     // views on regions
     private final RegionHierarchy regionHierarchy;
@@ -76,7 +75,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         init();
         regionHierarchy = new NodeRegionHierarchy(false);
         centerRegionHierarchy = new NodeRegionHierarchy(true);
-        this.connectors = new ItemWithIdSetImpl<>(this::fireCollectionEvent);
+        this.connectors = new TrackConnectorsImpl(this::fireCollectionEvent);
     }
 
     @Override
@@ -247,16 +246,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         visitor.visitAfter(this);
     }
 
-    public ItemWithIdSet<TrackConnector> getConnectors() {
+    public TrackConnectors getConnectors() {
         return connectors;
-    }
-
-    public Optional<TrackConnector> getConnectorForLineTrack(LineTrack lineTrack) {
-        return connectors.find(conn -> conn.getLineTrack().orElse(null) == lineTrack);
-    }
-
-    public Set<TrackConnector> getConnectorsWithoutLineTrack() {
-        return connectors.findAll(conn -> !conn.getLineTrack().isPresent());
     }
 
     void fireCollectionEvent(Event.Type type, Object item) {

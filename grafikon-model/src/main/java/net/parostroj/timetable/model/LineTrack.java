@@ -40,13 +40,13 @@ public class LineTrack extends Track implements Visitable {
     public Optional<TrackConnector> getFromTrackConnector() {
         Line line = getOwner();
         Node fromNode = line.getDiagram().getNet().getFrom(line);
-        return fromNode.getConnectorForLineTrack(this);
+        return fromNode.getConnectors().getForLineTrack(this);
     }
 
     public Optional<TrackConnector> getToTrackConnector() {
         Line line = getOwner();
         Node toNode = line.getDiagram().getNet().getTo(line);
-        return toNode.getConnectorForLineTrack(this);
+        return toNode.getConnectors().getForLineTrack(this);
     }
 
     public Optional<TrackConnector> getFromTrackConnector(TimeIntervalDirection direction) {

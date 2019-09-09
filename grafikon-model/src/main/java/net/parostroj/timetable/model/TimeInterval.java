@@ -436,7 +436,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         if (isNodeOwner()) {
             Node node = getOwnerAsNode();
             return previousInterval == null ? Optional.empty() :
-                node.getConnectorForLineTrack((LineTrack) previousInterval.getTrack());
+                node.getConnectors().getForLineTrack((LineTrack) previousInterval.getTrack());
         } else {
             return previousInterval.getToTrackConnector();
         }
@@ -447,7 +447,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         if (isNodeOwner()) {
             Node node = getOwnerAsNode();
             return nextInterval == null ? Optional.empty() :
-                node.getConnectorForLineTrack((LineTrack) nextInterval.getTrack());
+                node.getConnectors().getForLineTrack((LineTrack) nextInterval.getTrack());
         } else {
             return nextInterval.getFromTrackConnector();
         }

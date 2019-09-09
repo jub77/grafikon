@@ -37,9 +37,9 @@ public class LineValidator implements TrainDiagramValidator {
             if (event.getSource() instanceof Line && event.getType() == Type.REMOVED
                     && event.getObject() instanceof LineTrack) {
                 LineTrack lineTrack = (LineTrack) event.getObject();
-                line.getFrom().getConnectorForLineTrack(lineTrack)
+                line.getFrom().getConnectors().getForLineTrack(lineTrack)
                         .ifPresent(c -> c.setLineTrack(Optional.empty()));
-                line.getTo().getConnectorForLineTrack(lineTrack)
+                line.getTo().getConnectors().getForLineTrack(lineTrack)
                         .ifPresent(c -> c.setLineTrack(Optional.empty()));
             }
         }
