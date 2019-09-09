@@ -15,7 +15,7 @@ public abstract class Script {
     private static final Logger log = LoggerFactory.getLogger(Script.class);
 
     public enum Language {
-        GROOVY, JAVASCRIPT;
+        GROOVY;
     }
 
     private final String sourceCode;
@@ -50,7 +50,7 @@ public abstract class Script {
 
     public static Script createScript(String sourceCode, Language language, boolean initizalize) throws GrafikonException {
         switch (language) {
-            case GROOVY: case JAVASCRIPT:
+            case GROOVY:
                 return new ScriptEngineScript(sourceCode, language, initizalize);
             default:
                 throw new IllegalArgumentException("No script for language available.");

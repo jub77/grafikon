@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.script.*;
@@ -16,6 +17,9 @@ public final class ScriptEngineScript extends Script {
 
     static final Logger log = LoggerFactory.getLogger(ScriptEngineScript.class);
 
+    private static final Map<Language, String> LANGUAGE_MAPPING = Collections
+            .singletonMap(Language.GROOVY, "groovy");
+
     private CompiledScript script;
 
     protected ScriptEngineScript(String sourceCode, Language language, boolean initialize) throws GrafikonException {
@@ -26,12 +30,16 @@ public final class ScriptEngineScript extends Script {
 
     private void initialize() throws GrafikonException {
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName(this.getLanguage() == Language.GROOVY ? "groovy" : "javascript");
+        String engineName = LANGUAGE_MAPPING.get(this.getLanguage());
+        if (engineName == null) {
+            throw new GrafikonException("Unknown script language", GrafikonException.Type.SCRIPT);
+        }
+        ScriptEngine engine = manager.getEngineByName(engineName);
         Compilable cEngine = (Compilable) engine;
         try {
             script = cEngine.compile(this.getSourceCode());
         } catch (ScriptException e) {
-            throw new GrafikonException("Couldn't create script.", e, GrafikonException.Type.SCRIPT);
+            throw new GrafikonException("Couldn't create script", e, GrafikonException.Type.SCRIPT);
         }
     }
 

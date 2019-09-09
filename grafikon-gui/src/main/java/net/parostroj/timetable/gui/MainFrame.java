@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import javax.script.ScriptEngineManager;
 import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
@@ -99,10 +98,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // initialize groovy
         info.setText(getInfoText("Initializing Groovy..."));
         new GroovyShell().parse("");
-
-        // initialize javascript
-        info.setText(getInfoText("Initializing JavaScript..."));
-        new ScriptEngineManager().getEngineByName("javascript");
 
         // preload file dialogs
         info.setText(getInfoText("Preloading dialogs..."));

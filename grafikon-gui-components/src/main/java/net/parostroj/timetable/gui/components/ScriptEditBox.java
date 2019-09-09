@@ -40,7 +40,6 @@ public class ScriptEditBox extends javax.swing.JPanel {
     static {
         Map<Language, String> h = new EnumMap<>(Language.class);
         h.put(Language.GROOVY, SyntaxConstants.SYNTAX_STYLE_GROOVY);
-        h.put(Language.JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
         HIGHLIGHT = Collections.unmodifiableMap(h);
     }
 
