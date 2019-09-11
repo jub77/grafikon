@@ -16,7 +16,7 @@ public class TrackConnectorImpl implements TrackConnector {
     private final String id;
     private final Attributes attributes;
 
-    private final ItemSet<TrackConnectorSwitch> switches;
+    private final TrackConnectorSwitches switches;
 
     private boolean events = false;
 
@@ -28,7 +28,7 @@ public class TrackConnectorImpl implements TrackConnector {
                 node.fireEvent(new Event(TrackConnectorImpl.this, change));
             }
         });
-        this.switches = new ItemSetImpl<>((type, item) -> {
+        this.switches = new TrackConnectorSwitchesImpl((type, item) -> {
             if (events) {
                 node.fireEvent(new Event(TrackConnectorImpl.this, type, item));
             }
@@ -109,7 +109,7 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public ItemSet<TrackConnectorSwitch> getSwitches() {
+    public TrackConnectorSwitches getSwitches() {
         return switches;
     }
 

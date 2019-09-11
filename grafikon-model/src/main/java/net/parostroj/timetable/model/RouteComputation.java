@@ -48,7 +48,8 @@ class DefaultRouteComputation implements RouteComputation {
             if (!connector.isPresent()) {
                 throw new IllegalStateException("No connector available");
             }
-            return connector.get().getSwitches().stream().map(s -> s.getNodeTrack())
+            return nodeInterval.getOwnerAsNode().getTracks().stream()
+                    .filter(t -> connector.get().getSwitches().containsNodeTrack(t))
                     .collect(toList());
         }
     }
@@ -61,9 +62,8 @@ class DefaultRouteComputation implements RouteComputation {
         NodeTrack nodeTrack = (NodeTrack) lineInterval.getPreviousTrainInterval().getTrack();
         TimeIntervalDirection direction = lineInterval.getDirection();
         return lineInterval.getOwnerAsLine().getTracks().stream()
-                .filter(l -> l.getFromTrackConnector(direction).filter(
-                        c -> c.getSwitches().find(sw -> sw.getNodeTrack() == nodeTrack).isPresent())
-                        .isPresent())
+                .filter(l -> l.getFromTrackConnector(direction)
+                        .filter(c -> c.getSwitches().containsNodeTrack(nodeTrack)).isPresent())
                 .collect(toList());
     }
 }

@@ -39,7 +39,7 @@ public interface TrackConnector
 
     void setLineTrack(Optional<LineTrack> lineTrack);
 
-    ItemSet<TrackConnectorSwitch> getSwitches();
+    TrackConnectorSwitches getSwitches();
 
     TrackConnectorSwitch createSwitch(String id);
 
