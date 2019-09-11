@@ -60,10 +60,10 @@ class DefaultRouteComputation implements RouteComputation {
             throw new IllegalArgumentException("Only line intervals supported");
         }
         NodeTrack nodeTrack = (NodeTrack) lineInterval.getPreviousTrainInterval().getTrack();
-        TimeIntervalDirection direction = lineInterval.getDirection();
+        Node node = nodeTrack.getOwner();
         return lineInterval.getOwnerAsLine().getTracks().stream()
-                .filter(l -> l.getFromTrackConnector(direction)
-                        .filter(c -> c.getSwitches().containsNodeTrack(nodeTrack)).isPresent())
+                .filter(l -> node.getConnectors().getForLineTrack(l)
+                        .map(c -> c.getSwitches().containsNodeTrack(nodeTrack)).orElse(false))
                 .collect(toList());
     }
 }
