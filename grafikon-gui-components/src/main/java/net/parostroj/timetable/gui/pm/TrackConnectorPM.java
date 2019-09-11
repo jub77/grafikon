@@ -1,7 +1,10 @@
 package net.parostroj.timetable.gui.pm;
 
+import static java.util.stream.Collectors.toList;
+
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -93,13 +96,13 @@ public class TrackConnectorPM extends AbstractPM {
     }
 
     public TrackConnectorPM(TrackConnector connector, IListPM<NodeTrackPM> tracksPm,
-            Iterable<LineTrack> lineTracks) {
+            Collection<LineTrack> lineTracks) {
         this();
         this.init(connector, tracksPm, lineTracks);
     }
 
     public void init(TrackConnector connector, IListPM<NodeTrackPM> tracksPm,
-            Iterable<LineTrack> lineTracks) {
+            Collection<LineTrack> lineTracks) {
         this.reference = connector;
         this.switches.clear();
         this.number.setText(connector.getNumber());
@@ -115,11 +118,15 @@ public class TrackConnectorPM extends AbstractPM {
         position.setInteger(connector.getPosition());
         // line connection
         this.initLineTrack(connector.getNode(), lineTracks, connector.getLineTrack());
+        // do not allow editing of line track in use
+        lineTrack.setEditable(connector.getLineTrack().map(lt -> lt.isEmpty()).orElse(true));
     }
 
-    public void initLineTrack(Node node, Iterable<LineTrack> lineTracks, Optional<LineTrack> lt) {
+    public void initLineTrack(Node node, Collection<LineTrack> lineTracks, Optional<LineTrack> lt) {
         lineTrack.removeAllValues();
-        lineTrack.addValues(lineTracks, t -> this.getTextForLineTrack(node, t), "-");
+        // limit to current line track and empty line tracks
+        lineTrack.addValues(lineTracks.stream().filter(t -> t == lt.orElse(null) || t.isEmpty())
+                .collect(toList()), t -> this.getTextForLineTrack(node, t), "-");
         lineTrack.setValue(lt.orElse(null));
     }
 
