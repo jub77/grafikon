@@ -112,7 +112,19 @@ public class TrackConnectorPM extends AbstractPM {
         tracksPm.forEach(ntPM -> {
             boolean contains = nt.containsKey(ntPM.getReference());
             boolean straight = contains && nt.get(ntPM.getReference()).isStraight();
-            this.switches.add(new TrackConnectorSwitchPM(ntPM, contains, straight));
+            TrackConnectorSwitchPM switchPM = new TrackConnectorSwitchPM(ntPM, contains, straight);
+            // check if it should be editable...
+            if (contains && connector.getLineTrack().isPresent()) {
+                NodeTrack nTrack = ntPM.getReference();
+                LineTrack cLineTrack = connector.getLineTrack().get();
+                boolean isThroughConnector = nTrack.getTimeIntervalList().stream()
+                        .anyMatch(i -> i.getPreviousTrainInterval() != null
+                                && i.getPreviousTrainInterval().getTrack() == cLineTrack
+                                || i.getNextTrainInterval() != null
+                                        && i.getNextTrainInterval().getTrack() == cLineTrack);
+                switchPM.connected.setEditable(!isThroughConnector);
+            }
+            this.switches.add(switchPM);
         });
         orientation.setValue(connector.getOrientation());
         position.setInteger(connector.getPosition());
