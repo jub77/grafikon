@@ -4,10 +4,13 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+
+import net.parostroj.timetable.model.RouteComputation;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Track;
 
@@ -20,8 +23,10 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
 
     private static final long serialVersionUID = 1L;
 
-	private final JComboBox<Track> editor;
+    private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
+
+    private RouteComputation comp = RouteComputation.getDefaultInstance();
 
     public TrackCellEditor() {
         editor = new JComboBox<Track>();
@@ -41,12 +46,13 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
+            int row, int column) {
         ignoreAction = true;
         editor.removeAllItems();
-        TimeInterval interval = ((TrainTableModel) table.getModel()).getTrain().getTimeIntervalList().get(row);
-        List<? extends Track> tracks = interval.getOwner().getTracks();
-
+        final TimeInterval interval = ((TrainTableModel) table.getModel()).getTrain()
+                .getTimeIntervalList().get(row);
+        List<? extends Track> tracks = comp.getAvailableTracks(interval);
         for (Track track : tracks) {
             editor.addItem(track);
         }
