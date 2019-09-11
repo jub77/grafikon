@@ -58,23 +58,43 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
         this.attributes.set(ATTR_LENGTH, length);
     }
 
+    @Override
     public LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack) {
-        LineTrack selectedTrack = preselectedTrack;
-        if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
+        LineTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
+        List<LineTrack> tracks = RouteComputation.getDefaultInstance()
+                .getAvailableLineTracks(interval);
+        if (selectedTrack == null) {
+            // check straight
+            NodeTrack pNodeTrack = (NodeTrack) interval.getPreviousTrainInterval().getTrack();
+            Node node = pNodeTrack.getOwner();
+            selectedTrack = node.getConnectors().getForLine(this).stream()
+                    .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
+                    .map(c -> this.checkSelection(c.getLineTrack().get(), interval))
+                    .findAny()
+                    .orElse(null);
+        }
+        if (selectedTrack == null) {
             // check which track is free for adding
-            for (LineTrack lineTrack : this.getIterableByDirection(interval.getDirection())) {
-                TimeIntervalResult result = lineTrack.testTimeInterval(interval);
-                if (result.getStatus() == TimeIntervalResult.Status.OK) {
-                    selectedTrack = lineTrack;
+            for (LineTrack lineTrack : getIterableByDirection(interval.getDirection(), tracks)) {
+                selectedTrack = this.checkSelection(lineTrack, interval);
+                if (selectedTrack != null) {
                     break;
                 }
             }
         }
         if (selectedTrack == null) {
             // set first one
-            selectedTrack = tracks.get(interval.getDirection() == TimeIntervalDirection.FORWARD ? 0 : tracks.size() - 1);
+            selectedTrack = tracks.get(interval.getDirection() == TimeIntervalDirection.FORWARD ? 0
+                    : tracks.size() - 1);
         }
         return selectedTrack;
+    }
+
+    private LineTrack checkSelection(LineTrack track, TimeInterval interval) {
+        return track != null
+                && track.testTimeInterval(interval).getStatus() == TimeIntervalResult.Status.OK
+                        ? track
+                        : null;
     }
 
     /**
@@ -153,7 +173,8 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
         visitor.visitAfter(this);
     }
 
-    private Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction) {
+    private static Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction,
+            List<LineTrack> tracks) {
         if (direction == TimeIntervalDirection.FORWARD) {
             return tracks;
         } else {
