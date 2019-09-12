@@ -34,4 +34,5 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_SAVE_VERSION = "save.version";
     public static final String ATTR_SAVE_TIMESTAMP = "save.timestamp";
     public static final String ATTR_SAVE_USER = "save.user";
+    public static final String ATTR_CHANGE_DIRECTION_STOP = "change.direction.stop";
 }
