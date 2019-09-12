@@ -40,6 +40,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import javax.swing.JTextField;
 
 /**
  * Dialog for settings modification of the train diagram.
@@ -187,6 +190,11 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
                 filterScriptEditBox.setScript(
                         diagram.getFreightNet().getAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, Script.class));
             }
+
+            Integer stopTime = diagram.getAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, Integer.class);
+            changeDirectionCheckBox.setSelected(stopTime != null);
+            changeDirectionTextField.setEnabled(changeDirectionCheckBox.isSelected());
+            changeDirectionTextField.setText(stopTime == null ? "5" : Integer.toString(stopTime / 60));
         }
     }
 
@@ -390,7 +398,6 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         gridBagConstraints_7.gridy = 8;
         gridBagConstraints_7.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_7.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints_7.insets = new Insets(0, 0, 5, 0);
         javax.swing.JPanel crossingPanel = new javax.swing.JPanel(new FlowLayout(java.awt.FlowLayout.LEFT));
         crossingPanel.add(jLabel6);
         dataPanel.add(crossingPanel, gridBagConstraints_7);
@@ -398,17 +405,40 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         stationTransferTextField.setColumns(5);
         crossingPanel.add(stationTransferTextField);
 
-        JLabel lblMin = new JLabel("min");
+        JLabel lblMin = new JLabel(ResourceLoader.getString("modelinfo.minutes")); // NOI18N
         crossingPanel.add(lblMin);
+
+        JPanel changeDirectionPanel = new javax.swing.JPanel(new FlowLayout(java.awt.FlowLayout.LEFT));
+        GridBagConstraints gbc_panel = new GridBagConstraints();
+        gbc_panel.gridwidth = 3;
+        gbc_panel.anchor = GridBagConstraints.WEST;
+        gbc_panel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panel.gridx = 0;
+        gbc_panel.gridy = 9;
+        dataPanel.add(changeDirectionPanel, gbc_panel);
+
+        changeDirectionCheckBox = new JCheckBox(ResourceLoader.getString("modelinfo.change.direction")); // NOI18N
+        changeDirectionCheckBox.setBorder(BorderFactory.createEmptyBorder());
+        changeDirectionCheckBox.addItemListener(evt -> {
+            changeDirectionTextField.setEnabled(changeDirectionCheckBox.isSelected());
+        });
+        changeDirectionPanel.add(changeDirectionCheckBox);
+
+        changeDirectionTextField = new JTextField();
+        changeDirectionPanel.add(changeDirectionTextField);
+        changeDirectionTextField.setColumns(5);
+
+        JLabel lblMin2 = new JLabel(ResourceLoader.getString("modelinfo.minutes")); // NOI18N
+        changeDirectionPanel.add(lblMin2);
 
         changesTrackingCheckBox.setText(ResourceLoader.getString("modelinfo.tracking.changes")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new Insets(0, 2, 5, 10);
+        gridBagConstraints.insets = new Insets(0, 1, 5, 10);
         dataPanel.add(changesTrackingCheckBox, gridBagConstraints);
 
         routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -430,7 +460,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         GridBagConstraints gridBagConstraints_3 = new java.awt.GridBagConstraints();
         gridBagConstraints_3.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_3.gridx = 0;
-        gridBagConstraints_3.gridy = 12;
+        gridBagConstraints_3.gridy = 13;
         gridBagConstraints_3.gridwidth = 3;
         gridBagConstraints_3.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_3.anchor = java.awt.GridBagConstraints.WEST;
@@ -456,7 +486,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         GridBagConstraints gridBagConstraints_1 = new java.awt.GridBagConstraints();
         gridBagConstraints_1.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_1.gridx = 0;
-        gridBagConstraints_1.gridy = 10;
+        gridBagConstraints_1.gridy = 11;
         gridBagConstraints_1.gridwidth = 3;
         gridBagConstraints_1.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_1.anchor = java.awt.GridBagConstraints.WEST;
@@ -478,7 +508,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         GridBagConstraints gridBagConstraints_4 = new java.awt.GridBagConstraints();
         gridBagConstraints_4.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_4.gridx = 0;
-        gridBagConstraints_4.gridy = 11;
+        gridBagConstraints_4.gridy = 12;
         gridBagConstraints_4.gridwidth = 3;
         gridBagConstraints_4.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_4.anchor = java.awt.GridBagConstraints.WEST;
@@ -513,7 +543,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         GridBagConstraints gridBagConstraints_5 = new java.awt.GridBagConstraints();
         gridBagConstraints_5.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_5.gridx = 0;
-        gridBagConstraints_5.gridy = 13;
+        gridBagConstraints_5.gridy = 14;
         gridBagConstraints_5.gridwidth = 3;
         gridBagConstraints_5.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
@@ -522,9 +552,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         javax.swing.JPanel unitsPanel = new javax.swing.JPanel();
         unitsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         gridBagConstraints_5 = new java.awt.GridBagConstraints();
-        gridBagConstraints_5.insets = new Insets(0, 0, 0, 0);
+        gridBagConstraints_5.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_5.gridx = 0;
-        gridBagConstraints_5.gridy = 14;
+        gridBagConstraints_5.gridy = 15;
         gridBagConstraints_5.gridwidth = 3;
         gridBagConstraints_5.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
@@ -539,7 +569,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -700,6 +730,19 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
         }
 
+        // change direction
+        if (changeDirectionCheckBox.isSelected()) {
+            int stopTime = 5 * 60;
+            try {
+                stopTime = Integer.parseInt(changeDirectionTextField.getText()) * 60;
+            } catch (NumberFormatException e) {
+                log.warn("Problem parsing change direction stop time: {}", changeDirectionTextField.getText());
+            }
+            diagram.setAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, stopTime);
+        } else {
+            diagram.removeAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP);
+        }
+
         // set running time script
         try {
             Script newScript = scriptEditBox.getScript();
@@ -818,6 +861,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private javax.swing.JTextField toTimeTextField;
     private javax.swing.JComboBox<Object> unitComboBox;
     private javax.swing.JComboBox<Object> speedUnitComboBox;
+    private javax.swing.JTextField changeDirectionTextField;
+    private javax.swing.JCheckBox changeDirectionCheckBox;
 
     private WrapperListModel<ConnectionStrategyType> strategyTypeModel;
     private net.parostroj.timetable.gui.components.ScriptEditBox filterScriptEditBox;
