@@ -431,6 +431,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
+    /**
+     * @return connector used for arrival to the route segment
+     */
     public Optional<TrackConnector> getFromTrackConnector() {
         TimeInterval previousInterval = this.getPreviousTrainInterval();
         if (isNodeOwner()) {
@@ -442,6 +445,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
+    /**
+     * @return connector used for departure from the route segment
+     */
     public Optional<TrackConnector> getToTrackConnector() {
         TimeInterval nextInterval = this.getNextTrainInterval();
         if (isNodeOwner()) {
@@ -451,6 +457,21 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         } else {
             return nextInterval.getFromTrackConnector();
         }
+    }
+
+    /**
+     * @return true in case it is inner node interval and both track connectors are
+     *         on the same side of station
+     */
+    public boolean isDirectionChange() {
+        if (this.isLineOwner()) {
+            // line interval cannot be direction change
+            return false;
+        }
+        return this.getFromTrackConnector()
+                .map(c -> this.getToTrackConnector()
+                        .map(c2 -> c.getOrientation() == c2.getOrientation()).orElse(false))
+                .orElse(false);
     }
 
     /**
