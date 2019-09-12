@@ -137,11 +137,11 @@ public class LSAttributesItem {
                     "location");
         } else if (value instanceof Enum<?>) {
             Enum<?> e = (Enum<?>) value;
-            String type = ENUM_TYPE_MAP.get(e.getClass());
+            String type = ENUM_TYPE_MAP.get(e.getDeclaringClass());
             if (type != null) {
                 cValue = new LSAttributesValue(((Enum<?>) value).name(), "enum." + type);
             } else {
-                log.warn("Unknown enum type: {}", e.getClass().getName());
+                log.warn("Unknown enum type: {}", e.getDeclaringClass().getName());
             }
         } else {
             log.warn("Cannot convert value to string: {} ({})", key, value);
