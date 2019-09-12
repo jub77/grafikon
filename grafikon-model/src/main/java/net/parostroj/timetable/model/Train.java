@@ -604,6 +604,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (length < 0) {
             throw new IllegalArgumentException("Stop time cannot be negative.");
         }
+        Integer cdst = diagram.getAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, Integer.class);
+        if (cdst != null && this.checkTimeIntervalChangeDirectionStop(nodeInterval, length)) {
+            length = cdst;
+        }
         int oldLength = nodeInterval.getLength();
         if (length == oldLength) {
             return;
@@ -722,6 +726,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * recalculates all line intervals.
      */
     public void recalculate() {
+        this.checkChangeDirectionStops();
         Integer changeStart = this.recalculateImpl(0);
         if (changeStart != null) {
             this.listenerSupport.fireEvent(new Event(this, new SpecialTrainTimeIntervalList(
@@ -765,6 +770,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         }
         this.updateTechnologicalTimes();
         return firstChanged;
+    }
+
+    private void checkChangeDirectionStops() {
+        Integer defaultStopTime = diagram.getAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, Integer.class);
+        if (defaultStopTime == null) {
+            return;
+        }
+        for (TimeInterval interval : timeIntervalList) {
+            if (checkTimeIntervalChangeDirectionStop(interval, interval.getLength())) {
+                interval.setLength(defaultStopTime);
+            }
+        }
+    }
+
+    private boolean checkTimeIntervalChangeDirectionStop(TimeInterval interval, int length) {
+        return interval.isNodeOwner() && length == 0 && interval.isDirectionChange();
     }
 
     /**

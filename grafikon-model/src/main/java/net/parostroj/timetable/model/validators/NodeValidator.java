@@ -41,7 +41,11 @@ public class NodeValidator implements TrainDiagramValidator {
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node) {
             Node node = (Node) event.getObject();
             return checkNodeControl(node);
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ATTRIBUTE
+                && event.getAttributeChange().checkName(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP)) {
+            diagram.getTrains().forEach(Train::recalculate);
         }
+
         return false;
     }
     private boolean inCheckNodeControl;
