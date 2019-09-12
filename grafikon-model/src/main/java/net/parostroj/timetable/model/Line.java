@@ -69,7 +69,8 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
             Node node = pNodeTrack.getOwner();
             selectedTrack = node.getConnectors().getForLine(this).stream()
                     .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
-                    .map(c -> this.checkSelection(c.getLineTrack().get(), interval))
+                    .map(c -> c.getLineTrack().get())
+                    .filter(t -> this.checkSelection(t, interval) != null)
                     .findAny()
                     .orElse(null);
         }

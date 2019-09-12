@@ -98,18 +98,25 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     }
 
     public NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack) {
-        NodeTrack selectedTrack = preselectedTrack;
-        if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
-            // check which platform is free for adding
+        NodeTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
+        if (selectedTrack == null && !interval.isFirst()) {
+            // prefer straight
+            LineTrack lineTrack = (LineTrack) interval.getPreviousTrainInterval().getTrack();
+            selectedTrack = this.getConnectors().getForLineTrack(lineTrack)
+                    .flatMap(c -> c.getStraightNodeTrack())
+                    .filter(t -> this.checkSelection(t, interval) != null)
+                    .orElse(null);
+        }
+        if (selectedTrack == null) {
             for (NodeTrack nodeTrack : tracks) {
-                // skip station tracks with no platform
                 TrainType trainType = interval.getTrain().getType();
-                if (interval.getLength() != 0 && trainType != null && trainType.isPlatform() && !nodeTrack.isPlatform()) {
+                if (interval.getLength() != 0 && trainType != null && trainType.isPlatform()
+                        && !nodeTrack.isPlatform()) {
+                    // skip station tracks with no platform (if needed)
                     continue;
                 }
-                TimeIntervalResult result = nodeTrack.testTimeInterval(interval);
-                if (result.getStatus() == TimeIntervalResult.Status.OK) {
-                    selectedTrack = nodeTrack;
+                selectedTrack = this.checkSelection(nodeTrack, interval);
+                if (selectedTrack != null) {
                     break;
                 }
             }
@@ -119,6 +126,13 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             selectedTrack = tracks.get(0);
         }
         return selectedTrack;
+    }
+
+    private NodeTrack checkSelection(NodeTrack track, TimeInterval interval) {
+        return track != null
+                && track.testTimeInterval(interval).getStatus() == TimeIntervalResult.Status.OK
+                        ? track
+                        : null;
     }
 
     public String getName() {

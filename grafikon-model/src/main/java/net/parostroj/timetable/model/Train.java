@@ -733,21 +733,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * assigns empty tracks (current ones are preselected).
      */
     public void assignEmptyTracks() {
-        TimeInterval last = null;
         for (TimeInterval interval : this.timeIntervalList) {
             if (interval.isLineOwner()) {
                 Line line = interval.getOwnerAsLine();
                 interval.setTrack(line.selectTrack(interval, (LineTrack) interval.getTrack()));
             } else {
                 Node node = interval.getOwnerAsNode();
-                NodeTrack preselected = (NodeTrack) interval.getTrack();
-                preselected = (preselected == null && last != null)
-                        ? node.getConnectors().getForLineTrack((LineTrack) last.getTrack())
-                                .flatMap(TrackConnector::getStraightNodeTrack).orElse(null)
-                        : preselected;
-                interval.setTrack(node.selectTrack(interval, preselected));
+                interval.setTrack(node.selectTrack(interval, (NodeTrack) interval.getTrack()));
             }
-            last = interval;
         }
         this.recalculate();
     }
