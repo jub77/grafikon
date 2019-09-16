@@ -38,6 +38,7 @@ public class Main {
         if (AppPreferences.getPreferences().getSection("debug").get("debug", Boolean.class, false)) {
             setDebug();
         }
+        printJavaInfo();
         setLookAndFeel();
         initProxy();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<>(
@@ -55,6 +56,12 @@ public class Main {
             }
         });
         starter.start();
+    }
+
+    private static void printJavaInfo() {
+        log.info("Java version: {}", System.getProperty("java.version"));
+        log.info("Java vendor: {}", System.getProperty("java.vendor"));
+        log.info("Java runtime version: {}", System.getProperty("java.runtime.version"));
     }
 
     private static void setDebug() throws IOException {
