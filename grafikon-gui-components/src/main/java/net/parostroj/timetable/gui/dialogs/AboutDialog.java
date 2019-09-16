@@ -108,10 +108,12 @@ public class AboutDialog extends javax.swing.JDialog {
         versionsTextArea.setMargin(new java.awt.Insets(5, 5, 5, 5));
 
         StringBuilder text = new StringBuilder();
+        text.append("--------- Program ----------\n");
         Map<String, VersionData> versions = versionInfo.getVersions();
         for (VersionData data : versions.values()) {
             text.append(data.getTitle()).append(": ").append(data.getVersion()).append("\n");
         }
+        text.append(getJavaVersionText());
         versionsTextArea.setText(text.toString());
 
         javax.swing.JPanel marginPanel2 = new javax.swing.JPanel();
@@ -126,4 +128,16 @@ public class AboutDialog extends javax.swing.JDialog {
 
     private javax.swing.JLabel imageLabel;
     private javax.swing.JTextArea textArea;
+
+    private String getJavaVersionText() {
+        StringBuilder b = new StringBuilder("----------- Java -----------\n");
+        b.append("Java version: ").append(System.getProperty("java.version")).append('\n');
+        b.append("Java vendor: ").append(System.getProperty("java.vendor")).append('\n');
+        b.append("Java specification: ").append(System.getProperty("java.specification.version")).append('\n');
+        b.append("Runtime name: ").append(System.getProperty("java.runtime.name")).append('\n');
+        b.append("Runtime version: ").append(System.getProperty("java.runtime.version")).append('\n');
+        b.append("VM name: ").append(System.getProperty("java.vm.name")).append('\n');
+        b.append("VM version: ").append(System.getProperty("java.vm.version")).append('\n');
+        return b.toString();
+    }
 }
