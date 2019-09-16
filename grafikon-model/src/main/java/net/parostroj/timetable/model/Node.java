@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
@@ -99,6 +100,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
 
     public NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack) {
         NodeTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
+        List<NodeTrack> tracks = RouteComputation.getDefaultInstance()
+                .getAvailableNodeTracks(interval);
         if (selectedTrack == null && !interval.isFirst()) {
             // prefer straight
             LineTrack lineTrack = (LineTrack) interval.getPreviousTrainInterval().getTrack();
