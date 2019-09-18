@@ -1,7 +1,7 @@
 package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
+import java.time.Instant;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -48,9 +48,9 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         this.validity.setText(diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
         this.info.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
         String versionText = "[" + diagram.getSaveVersion() + "]";
-        Date timestamp = diagram.getSaveTimestamp();
+        Instant timestamp = diagram.getSaveTimestamp();
         if (timestamp != null) {
-            versionText = format.print(timestamp.getTime()) + " " + versionText;
+            versionText = format.print(timestamp.toEpochMilli()) + " " + versionText;
         }
         String user = diagram.getSaveUser();
         if (user != null) {

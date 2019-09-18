@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -203,7 +203,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             // increase save version (increment by one)
             diagram.setSaveVersion(diagram.getSaveVersion() + 1);
             // update save timestamp
-            diagram.setSaveTimestamp(new Date());
+            diagram.setSaveTimestamp(Instant.now());
 
             // save train diagram
             this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));

@@ -6,7 +6,7 @@
 package net.parostroj.timetable.gui;
 
 import java.awt.BorderLayout;
-import java.util.Date;
+import java.time.Instant;
 
 import javax.swing.Timer;
 
@@ -171,9 +171,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         if (diagram == null) {
             updateLeft("");
         } else {
-            Date timestamp = diagram.getSaveTimestamp();
+            Instant timestamp = diagram.getSaveTimestamp();
             String text = timestamp != null
-                    ? String.format("%s [%d]", format.print(timestamp.getTime()), diagram.getSaveVersion())
+                    ? String.format("%s [%d]", format.print(timestamp.toEpochMilli()), diagram.getSaveVersion())
                     : String.format("[%d]", diagram.getSaveVersion());
             if (changed) {
                 text += " *";

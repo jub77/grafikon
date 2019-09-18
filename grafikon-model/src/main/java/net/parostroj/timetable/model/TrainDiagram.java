@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.time.Instant;
 import java.util.*;
 
 import com.google.common.collect.Iterables;
@@ -288,13 +289,14 @@ public class TrainDiagram
         setAttribute(ATTR_SAVE_VERSION, version);
     }
 
-    public Date getSaveTimestamp() {
+    public Instant getSaveTimestamp() {
         Long timestamp = getAttribute(ATTR_SAVE_TIMESTAMP, Long.class, null);
-        return timestamp == null ? null : new Date(timestamp);
+        return timestamp == null ? null : Instant.ofEpochMilli(timestamp);
     }
 
-    public void setSaveTimestamp(Date date) {
-        setRemoveAttribute(ATTR_SAVE_TIMESTAMP, date == null ? null : date.getTime());
+    public void setSaveTimestamp(Instant timestamp) {
+        setRemoveAttribute(ATTR_SAVE_TIMESTAMP,
+                timestamp == null ? null : timestamp.toEpochMilli());
     }
 
     public String getSaveUser() {
