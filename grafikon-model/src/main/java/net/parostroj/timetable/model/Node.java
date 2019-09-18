@@ -62,14 +62,16 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
                 if (oldR != null) {
                     for (Region r : oldR) {
                         if (newR == null || !newR.contains(r)) {
-                            r.removeNode(Node.this);
+                            // remove only if in the same diagram
+                            if (r.getDiagram() == diagram) r.removeNode(Node.this);
                         }
                     }
                 }
                 if (newR != null) {
                     for (Region r : newR) {
                         if (oldR == null || !oldR.contains(r)) {
-                            r.addNode(Node.this);
+                            // add only if in the same diagram
+                            if (r.getDiagram() == diagram) r.addNode(Node.this);
                         }
                     }
                 }
