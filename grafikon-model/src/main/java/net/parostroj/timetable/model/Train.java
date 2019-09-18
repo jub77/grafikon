@@ -738,13 +738,27 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * assigns empty tracks (current ones are preselected).
      */
     public void assignEmptyTracks() {
+        TrainRouteTracksComputation computation = new TrainRouteTracksComputation(
+                RouteTracksComputation.getDefaultInstance());
+        final Map<TimeInterval, Set<? extends Track>> availableTracks = computation
+                .getAvailableTracksForTrain(this);
+        if (availableTracks.isEmpty()) {
+            throw new GrafikonException("No route for train");
+        }
         for (TimeInterval interval : this.timeIntervalList) {
+            final Set<? extends Track> nextAvailableTracks = interval.isLast()
+                    ? Collections.emptySet()
+                    : availableTracks.get(interval.getNextTrainInterval());
+            final Track previousTrack = interval.isFirst() ? null
+                    : interval.getPreviousTrainInterval().getTrack();
             if (interval.isLineOwner()) {
                 Line line = interval.getOwnerAsLine();
-                interval.setTrack(line.selectTrack(interval, (LineTrack) interval.getTrack()));
+                interval.setTrack(line.selectTrack(interval, (LineTrack) interval.getTrack(),
+                        (NodeTrack) previousTrack, nextAvailableTracks));
             } else {
                 Node node = interval.getOwnerAsNode();
-                interval.setTrack(node.selectTrack(interval, (NodeTrack) interval.getTrack()));
+                interval.setTrack(node.selectTrack(interval, (NodeTrack) interval.getTrack(),
+                        (LineTrack) previousTrack, nextAvailableTracks));
             }
         }
         this.recalculate();

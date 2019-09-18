@@ -62,10 +62,15 @@ public class CreateTrainCommand extends Command {
     }
 
     @Override
-    public void execute(ApplicationModel model) {
+    public void execute(ApplicationModel model) throws CommandException {
         TrainBuilder trainBuilder = new TrainBuilder();
 
-        Train train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
+        Train train;
+        try {
+            train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
+        } catch (Exception e) {
+            throw new CommandException(e.getMessage(), e);
+        }
 
         train.setAttribute(Train.ATTR_DIESEL, diesel);
         train.setAttribute(Train.ATTR_ELECTRIC, electric);

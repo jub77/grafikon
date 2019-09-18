@@ -98,17 +98,24 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return diagram;
     }
 
-    public NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack) {
+    NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack, LineTrack fromTrack,
+            Collection<? extends Track> toTracks) {
         NodeTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
-        List<NodeTrack> tracks = RouteComputation.getDefaultInstance()
-                .getAvailableNodeTracks(interval);
+        RouteTracksComputation rtc = RouteTracksComputation.getDefaultInstance();
+        Set<NodeTrack> trackSet = rtc.getAvailableNodeTracks(
+                fromTrack != null ? Collections.singletonList(fromTrack) : Collections.emptySet(),
+                interval.getOwnerAsNode(), toTracks);
+        List<NodeTrack> tracks = rtc.toTrackList(interval, trackSet, NodeTrack.class);
+        if (!trackSet.contains(selectedTrack)) {
+            selectedTrack = null;
+        }
         if (selectedTrack == null && !interval.isFirst()) {
             // prefer straight
             LineTrack lineTrack = (LineTrack) interval.getPreviousTrainInterval().getTrack();
             selectedTrack = this.getConnectors().getForLineTrack(lineTrack)
                     .flatMap(c -> c.getStraightNodeTrack())
                     .filter(t -> this.checkSelection(t, interval) != null)
-                    .filter(tracks::contains)
+                    .filter(trackSet::contains)
                     .orElse(null);
         }
         if (selectedTrack == null) {

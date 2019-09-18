@@ -12,7 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import net.parostroj.timetable.model.RouteComputation;
+import net.parostroj.timetable.model.RouteTracksComputation;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Track;
 
@@ -28,7 +28,7 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
     private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
 
-    private RouteComputation comp = RouteComputation.getDefaultInstance();
+    private RouteTracksComputation comp = RouteTracksComputation.getDefaultInstance();
 
     public TrackCellEditor() {
         editor = new JComboBox<Track>();

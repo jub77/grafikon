@@ -58,11 +58,17 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
         this.attributes.set(ATTR_LENGTH, length);
     }
 
-    @Override
-    public LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack) {
+    LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack, NodeTrack fromTrack,
+            Collection<? extends Track> toTracks) {
         LineTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
-        List<LineTrack> tracks = RouteComputation.getDefaultInstance()
-                .getAvailableLineTracks(interval);
+        RouteTracksComputation rtc = RouteTracksComputation.getDefaultInstance();
+        Set<LineTrack> trackSet = rtc.getAvailableLineTracks(
+                Collections.singletonList(fromTrack), interval.getOwnerAsLine(),
+                interval.getDirection(), toTracks);
+        List<LineTrack> tracks = rtc.toTrackList(interval, trackSet, LineTrack.class);
+        if (!trackSet.contains(selectedTrack)) {
+            selectedTrack = null;
+        }
         if (selectedTrack == null) {
             // check straight
             NodeTrack pNodeTrack = (NodeTrack) interval.getPreviousTrainInterval().getTrack();
@@ -71,7 +77,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
                     .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
                     .map(c -> c.getLineTrack().get())
                     .filter(t -> this.checkSelection(t, interval) != null)
-                    .filter(tracks::contains)
+                    .filter(trackSet::contains)
                     .findAny()
                     .orElse(null);
         }

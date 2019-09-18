@@ -22,8 +22,6 @@ public interface RouteSegment<T extends Track> extends ObjectWithId, Iterable<Ti
 
     List<T> getTracks();
 
-    T selectTrack(TimeInterval interval, T preselected);
-
     boolean isEmpty();
 
     @Override

@@ -8,11 +8,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author jub
  */
-public interface RouteComputation {
+public interface RouteTracksComputation {
 
     /**
      * Returns available node tracks which connect from and to line tracks.
@@ -24,8 +25,8 @@ public interface RouteComputation {
      * @param toTracks destination tracks
      * @return available node tracks
      */
-    Set<NodeTrack> getAvailableNodeTracks(Collection<LineTrack> fromTracks, Node node,
-            Collection<LineTrack> toTracks);
+    Set<NodeTrack> getAvailableNodeTracks(Collection<? extends Track> fromTracks, Node node,
+            Collection<? extends Track> toTracks);
 
     /**
      * Returns available line tracks which connect from and to node tracks.
@@ -36,8 +37,8 @@ public interface RouteComputation {
      * @param toTracks destination tracks
      * @return available line tracks
      */
-    Set<LineTrack> getAvailableLineTracks(Collection<NodeTrack> fromTracks, Line line,
-            TimeIntervalDirection direction, Collection<NodeTrack> toTracks);
+    Set<LineTrack> getAvailableLineTracks(Collection<? extends Track> fromTracks, Line line,
+            TimeIntervalDirection direction, Collection<? extends Track> toTracks);
 
     /**
      * Returns list of available node tracks. The line before and after has to
@@ -64,16 +65,28 @@ public interface RouteComputation {
                 : this.getAvailableLineTracks(interval);
     }
 
-    static RouteComputation getDefaultInstance() {
-        return new DefaultRouteComputation();
+    default <T extends Track> List<T> toTrackList(TimeInterval interval,
+            Collection<? extends Track> tracks, Class<T> cls) {
+        Stream<T> stream = interval.getOwner().getTracks().stream().filter(tracks::contains)
+                .map(cls::cast);
+        return stream.collect(toList());
+    }
+
+    static RouteTracksComputation getDefaultInstance() {
+        return DefaultRouteTracksComputation.INSTANCE;
     }
 }
 
-class DefaultRouteComputation implements RouteComputation {
+class DefaultRouteTracksComputation implements RouteTracksComputation {
+
+    static final DefaultRouteTracksComputation INSTANCE = new DefaultRouteTracksComputation();
+
+    private DefaultRouteTracksComputation() {
+    }
 
     @Override
-    public Set<LineTrack> getAvailableLineTracks(Collection<NodeTrack> fromTracks, Line line,
-            TimeIntervalDirection direction, Collection<NodeTrack> toTracks) {
+    public Set<LineTrack> getAvailableLineTracks(Collection<? extends Track> fromTracks, Line line,
+            TimeIntervalDirection direction, Collection<? extends Track> toTracks) {
         Set<LineTrack> ltFrom = getConnectedLineTracks(fromTracks, line, direction);
         Set<LineTrack> ltTo = getConnectedLineTracks(toTracks, line, direction.reverse());
         ltTo.retainAll(ltFrom);
@@ -81,8 +94,8 @@ class DefaultRouteComputation implements RouteComputation {
     }
 
     @Override
-    public Set<NodeTrack> getAvailableNodeTracks(Collection<LineTrack> fromTracks, Node node,
-            Collection<LineTrack> toTracks) {
+    public Set<NodeTrack> getAvailableNodeTracks(Collection<? extends Track> fromTracks, Node node,
+            Collection<? extends Track> toTracks) {
         if (toTracks.isEmpty()) {
             return getConnectedNodeTracks(fromTracks, node);
         } else if (fromTracks.isEmpty()) {
@@ -95,7 +108,7 @@ class DefaultRouteComputation implements RouteComputation {
         }
     }
 
-    private Set<LineTrack> getConnectedLineTracks(Collection<NodeTrack> fromTracks, Line line,
+    private Set<LineTrack> getConnectedLineTracks(Collection<? extends Track> fromTracks, Line line,
             TimeIntervalDirection direction) {
         return line.getFrom(direction).getConnectors().stream()
                 .filter(c -> c.getLineTrack().map(LineTrack::getOwner).orElse(null) == line)
@@ -105,9 +118,10 @@ class DefaultRouteComputation implements RouteComputation {
                 .collect(toSet());
     }
 
-    private Set<NodeTrack> getConnectedNodeTracks(Collection<LineTrack> fromTracks, Node node) {
+    private Set<NodeTrack> getConnectedNodeTracks(Collection<? extends Track> fromTracks,
+            Node node) {
         return fromTracks.stream()
-                .map(lt -> node.getConnectors().getForLineTrack(lt))
+                .map(lt -> node.getConnectors().getForLineTrack((LineTrack) lt))
                 .filter(Optional::isPresent)
                 .flatMap(c -> c.get().getSwitches().stream())
                 .map(TrackConnectorSwitch::getNodeTrack)
