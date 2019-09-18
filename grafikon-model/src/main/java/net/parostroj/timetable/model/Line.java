@@ -71,6 +71,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
                     .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
                     .map(c -> c.getLineTrack().get())
                     .filter(t -> this.checkSelection(t, interval) != null)
+                    .filter(tracks::contains)
                     .findAny()
                     .orElse(null);
         }

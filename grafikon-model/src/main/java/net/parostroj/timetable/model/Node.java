@@ -108,6 +108,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             selectedTrack = this.getConnectors().getForLineTrack(lineTrack)
                     .flatMap(c -> c.getStraightNodeTrack())
                     .filter(t -> this.checkSelection(t, interval) != null)
+                    .filter(tracks::contains)
                     .orElse(null);
         }
         if (selectedTrack == null) {
