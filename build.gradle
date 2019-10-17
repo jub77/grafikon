@@ -65,7 +65,9 @@ subprojects { prj ->
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
 
-			dependency 'junit:junit:4.12'
+			dependency 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+			dependency 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+			dependency 'org.hamcrest:hamcrest:2.2'
 		}
 	}
 
@@ -96,6 +98,10 @@ subprojects { prj ->
 		sourceCompatibility = 1.8
 		targetCompatibility = 1.8
 		options.encoding = 'utf-8'
+	}
+
+	test {
+		useJUnitPlatform()
 	}
 
 	jar {
