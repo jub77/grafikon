@@ -1,9 +1,11 @@
 package net.parostroj.timetable.model.freight;
 
 import java.util.AbstractList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
@@ -35,6 +37,39 @@ public interface TrainPath extends List<TrainConnection> {
     default TrainConnection getLast() {
         if (isEmpty()) { throw new NoSuchElementException("Path is empty"); }
         return get(size() - 1);
+    }
+
+    /**
+     * @return true if at the destination the direction of the train is in reverse
+     */
+    default boolean isDirectionReversed() {
+        boolean reverse = false;
+        TimeInterval lastInterval = null;
+        for (TrainConnection tConn : this) {
+            // change from previous connection
+            if (lastInterval != null
+                    && lastInterval.getFromTrackConnector().get().getOrientation() == tConn
+                            .getFrom().getToTrackConnector().get().getOrientation()) {
+                reverse = !reverse;
+            }
+
+            Iterator<TimeInterval> i = tConn.getTrain().getTimeIntervalList().iterator();
+            // skip to relevant intervals
+            while (i.hasNext() && i.next() != tConn.getFrom()) {}
+
+            // check open interval (end points are handled differently)
+            TimeInterval currentInterval = null;
+            while (i.hasNext() && (currentInterval = i.next()) != tConn.getTo()) {
+                if (currentInterval.isLineOwner()) {
+                    continue;
+                }
+                if (currentInterval.isDirectionChange()) {
+                    reverse = !reverse;
+                }
+            }
+            lastInterval = tConn.getTo();
+        }
+        return reverse;
     }
 
     static TrainPath empty() {

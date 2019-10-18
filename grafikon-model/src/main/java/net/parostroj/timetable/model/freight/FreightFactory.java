@@ -111,5 +111,10 @@ public class FreightFactory {
     private static class TrainPathImpl extends ArrayList<TrainConnection> implements TrainPath {
 
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public String toString() {
+            return isDirectionReversed() ? "R" + super.toString() : super.toString();
+        }
     }
 }
