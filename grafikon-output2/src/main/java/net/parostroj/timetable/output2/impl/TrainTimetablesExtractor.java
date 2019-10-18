@@ -34,6 +34,7 @@ import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -50,6 +51,7 @@ public class TrainTimetablesExtractor {
     private final Map<Pair<Line, Node>, Double> cachedRoutePositions;
     private final Locale locale;
     private final FreightConnectionStrategy strategy;
+    private final OutputFreightUtil outputFreightUtil;
 
     public TrainTimetablesExtractor(TrainDiagram diagram, Collection<Train> trains, Collection<Route> routes, TrainsCycle cycle, Locale locale) {
         this.diagram = diagram;
@@ -59,6 +61,7 @@ public class TrainTimetablesExtractor {
         this.locale = locale;
         this.cachedRoutePositions = new HashMap<>();
         this.strategy = diagram.getFreightNet().getConnectionStrategy();
+        this.outputFreightUtil = new OutputFreightUtil();
     }
 
     public TrainTimetables getTrainTimetables() {
@@ -261,7 +264,7 @@ public class TrainTimetablesExtractor {
                 List<? extends FreightConnection> freightDests = strategy.getFreightToNodes(nodeI);
                 if (!freightDests.isEmpty()) {
                     ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
-                    for (FreightConnection dst : freightDests) {
+                    for (FreightConnection dst : outputFreightUtil.reorderFreightListByDirection(freightDests)) {
                         fl.add(FreightDestinationInfo.convert(locale, dst));
                     }
                     row.setFreightDest(fl);

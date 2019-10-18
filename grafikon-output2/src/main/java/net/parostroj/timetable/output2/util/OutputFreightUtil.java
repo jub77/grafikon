@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.collect.Lists;
 
 import net.parostroj.timetable.model.FreightColor;
 import net.parostroj.timetable.model.Node;
@@ -18,10 +21,12 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.freight.FreightAnalyser;
 import net.parostroj.timetable.model.freight.FreightConnection;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.freight.FreightDestination;
 import net.parostroj.timetable.model.freight.Transport;
 import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Utilities for output specific to dealing with freight.
@@ -108,10 +113,59 @@ public class OutputFreightUtil {
         return regionsToString(regions, locale);
     }
 
-    public List<String> freightListToString(Collection<? extends FreightConnection> list, Locale locale) {
-        return list.stream()
-                .map(FreightConnection::getTo)
-                .map(d -> freightToString(d, locale))
+    /**
+     * Reorders list of freight connections based on direction. The output
+     * is ordered in that way that always the last part of train is left in
+     * the station.
+     *
+     * @param list list of freight connections
+     * @return list reordered by direction
+     */
+    public List<FreightConnection> reorderFreightListByDirection(
+            Collection<? extends FreightConnection> list) {
+        ArrayList<Pair<Boolean, List<FreightConnection>>> rr = list.stream()
+                .map(d -> new Pair<>(d instanceof FreightConnectionPath
+                        ? ((FreightConnectionPath) d).getPath().isDirectionReversed()
+                        : false, d))
+                .collect(() -> new ArrayList<Pair<Boolean, List<FreightConnection>>>(), (l, i) -> {
+                    Pair<Boolean, List<FreightConnection>> lp;
+                    if (l.isEmpty() || !((lp = l.get(l.size() - 1)).first == i.first)) {
+                        lp = new Pair<>(i.first, new ArrayList<>());
+                        l.add(lp);
+                    }
+                    lp.second.add(i.second);
+                }, (l1, l2) -> {
+                    Pair<Boolean, List<FreightConnection>> lp;
+                    Pair<Boolean, List<FreightConnection>> fp;
+                    if (!l1.isEmpty() && !l2.isEmpty()
+                            && (lp = l1.get(l1.size() - 1)).first == (fp = l2.get(0)).first) {
+                        lp.second.addAll(fp.second);
+                        if (l2.size() > 1) {
+                            l1.addAll(l2.subList(1, l2.size() - 1));
+                        }
+                    } else {
+                        l1.addAll(l2);
+                    }
+                });
+        return rr.stream()
+                .flatMap(i -> i.first ? Lists.reverse(i.second).stream() : i.second.stream())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Method returns list of strings with destinations. It automatically
+     * reorders the list by direction (the method
+     * {@link #reorderFreightListByDirection(Collection)} shouldn't be called
+     * before calling this method.
+     *
+     * @param list list of freight connections
+     * @param locale locale of the output
+     * @return list of destination (uses abbreviation for stations)
+     */
+    public List<String> freightListToString(
+            Collection<? extends FreightConnection> list, Locale locale) {
+        return this.reorderFreightListByDirection(list).stream()
+                .map(d -> freightToString(d.getTo(), locale))
                 .collect(Collectors.toList());
     }
 

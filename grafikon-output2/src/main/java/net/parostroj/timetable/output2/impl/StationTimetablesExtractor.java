@@ -31,6 +31,7 @@ import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.TransformUtil;
 
@@ -48,6 +49,7 @@ public class StationTimetablesExtractor {
     private final boolean adjacentSessions;
     private final Locale locale;
     private final FreightConnectionStrategy strategy;
+    private final OutputFreightUtil outputFreightUtil;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime,
             boolean adjacentSessions, Locale locale) {
@@ -58,6 +60,7 @@ public class StationTimetablesExtractor {
         this.locale = locale;
         this.converter = diagram.getTimeConverter();
         this.strategy = diagram.getFreightNet().getConnectionStrategy();
+        this.outputFreightUtil = new OutputFreightUtil();
     }
 
     public List<StationTimetable> getStationTimetables() {
@@ -160,7 +163,7 @@ public class StationTimetablesExtractor {
             List<? extends FreightConnection> freightDests = strategy.getFreightToNodes(interval);
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDestinationInfo> fl = new ArrayList<>(freightDests.size());
-                for (FreightConnection dst : freightDests) {
+                for (FreightConnection dst : outputFreightUtil.reorderFreightListByDirection(freightDests)) {
                     fl.add(FreightDestinationInfo.convert(locale, dst));
                 }
                 row.setFreightTo(fl);
@@ -175,7 +178,7 @@ public class StationTimetablesExtractor {
                     ftt.setTrain(entry.getKey().getName());
                     List<? extends FreightConnection> mList = entry.getValue();
                     List<FreightDestinationInfo> fl = new ArrayList<>(mList.size());
-                    for (FreightConnection dst : mList) {
+                    for (FreightConnection dst : outputFreightUtil.reorderFreightListByDirection(mList)) {
                         fl.add(FreightDestinationInfo.convert(locale, dst));
                     }
                     ftt.setFreightTo(fl);
