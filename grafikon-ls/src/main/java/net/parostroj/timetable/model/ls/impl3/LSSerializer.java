@@ -60,9 +60,9 @@ public class LSSerializer {
             Reader reader = new NoCloseAllowedReader(new InputStreamReader(in, "utf-8"));
             return unmarshaller.unmarshal(new StreamSource(reader), clazz).getValue();
         } catch (UnsupportedEncodingException e) {
-            throw new LSException("Cannot save train diagram: Unsupported enconding.", e);
+            throw new LSException("Cannot load train diagram: Unsupported enconding.", e);
         } catch (JAXBException e) {
-            throw new LSException("Cannot save train diagram: JAXB exception.", e);
+            throw new LSException("Cannot load train diagram: JAXB exception.", e);
         }
     }
 
@@ -71,9 +71,9 @@ public class LSSerializer {
             Reader reader = new NoCloseAllowedReader(new InputStreamReader(in, "utf-8"));
             return unmarshaller.unmarshal(reader);
         } catch (UnsupportedEncodingException e) {
-            throw new LSException("Cannot save train diagram: Unsupported enconding.", e);
+            throw new LSException("Cannot load train diagram: Unsupported enconding.", e);
         } catch (JAXBException e) {
-            throw new LSException("Cannot save train diagram: JAXB exception.", e);
+            throw new LSException("Cannot load train diagram: JAXB exception.", e);
         }
     }
 
