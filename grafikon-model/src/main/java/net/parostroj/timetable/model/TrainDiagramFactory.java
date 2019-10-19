@@ -57,7 +57,7 @@ public class TrainDiagramFactory {
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, 4500);
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.AXLE);
             diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, 10);
-            diagram.setAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, 5 * 60);
+            diagram.setAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, 20 * 60);
 
             diagram.getCycleTypes().add(createDefaultTrainsCycleType(TrainsCycleType.DRIVER_CYCLE_KEY, diagram));
             diagram.getCycleTypes().add(createDefaultTrainsCycleType(TrainsCycleType.ENGINE_CYCLE_KEY, diagram));
