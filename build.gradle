@@ -1,7 +1,7 @@
 plugins {
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
 	id 'net.parostroj.versioning' apply false
-	id 'com.github.ben-manes.versions' version '0.25.0'
+	id 'com.github.ben-manes.versions' version '0.27.0'
 }
 
 def nonJavaProjectsFilter = [
@@ -53,7 +53,7 @@ subprojects { prj ->
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:3.0.4'
 			dependency 'org.ini4j:ini4j:0.5.4'
-			dependency 'com.github.jgraph:jgraphx:4.0.4'
+			dependency 'com.github.jgraph:jgraphx:4.0.5'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5'
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.12.1'
 			dependency 'org.apache.logging.log4j:log4j-core:2.12.1'
