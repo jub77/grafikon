@@ -17,13 +17,11 @@ dependencies {
 	compile 'org.glassfish.jaxb:jaxb-runtime'
 }
 
-compileJava.doFirst {
-	jar {
-		manifest {
-			attributes(
-				'Main-Class': 'net.parostroj.timetable.gui.Main',
-				'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
-			)
-		}
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'net.parostroj.timetable.gui.Main',
+			'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
+		)
 	}
 }
