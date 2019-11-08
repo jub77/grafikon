@@ -486,12 +486,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         buttonPanel.setLayout(layoutButtonPanel);
         final JToggleButton newNodeButton = GuiComponentUtils.createToggleButton(GuiIcon.ADD_DOC, 2);
         newNodeButton.setEnabled(false);
-        newNodeButton.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (insertHandler != null)
-                    insertHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            }
+        newNodeButton.addItemListener(e -> {
+            if (insertHandler != null)
+                insertHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -501,12 +498,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         buttonPanel.add(newNodeButton, gbc);
         final JToggleButton newLineButton = GuiComponentUtils.createToggleButton(GuiIcon.CONNECT, 2);
         newLineButton.setEnabled(false);
-        newLineButton.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (graphComponent != null)
-                    graphComponent.getConnectionHandler().setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            }
+        newLineButton.addItemListener(e -> {
+            if (graphComponent != null)
+                graphComponent.getConnectionHandler().setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -516,12 +510,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         buttonPanel.add(newLineButton, gbc);
         final JToggleButton selectionButton = GuiComponentUtils.createToggleButton(GuiIcon.SELECT, 2);
         selectionButton.setEnabled(false);
-        selectionButton.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (selectionHandler != null)
-                    selectionHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            }
+        selectionButton.addItemListener(e -> {
+            if (selectionHandler != null)
+                selectionHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -603,7 +594,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     private void updateNodeLocation(Node node) {
-        if (moveBlock) return;
+        if (moveBlock) {
+            return;
+        }
         moveBlock = true;
         try {
             mxCell cell = graph.getVertexToCellMap().get(node);
@@ -638,8 +631,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         }
         graphComponent = null;
         graph = null;
-        if (net == null)
+        if (net == null) {
             return;
+        }
 
         // TODO set states of handlers according to buttons ...
         graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
@@ -823,7 +817,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         int x = (int) (mxCell.getGeometry().getX());
                         int y = (int) (mxCell.getGeometry().getY());
 
-                        if (moveBlock) continue;
+                        if (moveBlock) {
+                            continue;
+                        }
                         moveBlock = true;
                         try {
                             node.setLocation(new Location(x, y));
