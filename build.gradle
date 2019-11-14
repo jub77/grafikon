@@ -20,6 +20,7 @@ subprojects { prj ->
 		mavenLocal()
 		mavenCentral()
 		maven { url 'https://jitpack.io' }
+		maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases' }
 	}
 
 	dependencyManagement {
@@ -28,9 +29,9 @@ subprojects { prj ->
 			dependency 'org.mvel:mvel2:2.4.4.Final'
 			dependency 'org.codehaus.groovy:groovy-templates:2.5.8'
 			dependency 'org.codehaus.groovy:groovy-jsr223:2.5.8'
-			dependency 'org.slf4j:slf4j-api:1.7.28'
-			dependency 'org.slf4j:jcl-over-slf4j:1.7.28'
-			dependency 'joda-time:joda-time:2.10.4'
+			dependency 'org.slf4j:slf4j-api:1.7.29'
+			dependency 'org.slf4j:jcl-over-slf4j:1.7.29'
+			dependency 'joda-time:joda-time:2.10.5'
 			dependency 'com.google.guava:guava:28.1-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
@@ -41,7 +42,7 @@ subprojects { prj ->
 				exclude 'com.google.guava:failureaccess'
 				exclude 'com.google.guava:listenablefuture'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.3', {
+			dependency 'org.apache.xmlgraphics:fop:2.4', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
@@ -53,7 +54,7 @@ subprojects { prj ->
 			dependency 'org.swinglabs:jxlayer:3.0.4'
 			dependency 'com.fifesoft:rsyntaxtextarea:3.0.4'
 			dependency 'org.ini4j:ini4j:0.5.4'
-			dependency 'com.github.jgraph:jgraphx:4.0.5'
+			dependency 'com.github.jgraph:jgraphx:4.0.6'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5'
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.12.1'
 			dependency 'org.apache.logging.log4j:log4j-core:2.12.1'
