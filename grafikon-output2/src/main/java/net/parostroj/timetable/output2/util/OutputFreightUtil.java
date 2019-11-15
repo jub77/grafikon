@@ -1,7 +1,6 @@
 package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -123,30 +122,11 @@ public class OutputFreightUtil {
      */
     public List<FreightConnection> reorderFreightListByDirection(
             Collection<? extends FreightConnection> list) {
-        ArrayList<Pair<Boolean, List<FreightConnection>>> rr = list.stream()
+        List<Pair<Boolean, List<FreightConnection>>> rr = list.stream()
                 .map(d -> new Pair<>(d instanceof FreightConnectionPath
                         ? ((FreightConnectionPath) d).getPath().isDirectionReversed()
                         : false, d))
-                .collect(() -> new ArrayList<Pair<Boolean, List<FreightConnection>>>(), (l, i) -> {
-                    Pair<Boolean, List<FreightConnection>> lp;
-                    if (l.isEmpty() || !((lp = l.get(l.size() - 1)).first == i.first)) {
-                        lp = new Pair<>(i.first, new ArrayList<>());
-                        l.add(lp);
-                    }
-                    lp.second.add(i.second);
-                }, (l1, l2) -> {
-                    Pair<Boolean, List<FreightConnection>> lp;
-                    Pair<Boolean, List<FreightConnection>> fp;
-                    if (!l1.isEmpty() && !l2.isEmpty()
-                            && (lp = l1.get(l1.size() - 1)).first == (fp = l2.get(0)).first) {
-                        lp.second.addAll(fp.second);
-                        if (l2.size() > 1) {
-                            l1.addAll(l2.subList(1, l2.size() - 1));
-                        }
-                    } else {
-                        l1.addAll(l2);
-                    }
-                });
+                .collect(FreightCollectors.freightDirectionCollector());
         return rr.stream()
                 .flatMap(i -> i.first ? Lists.reverse(i.second).stream() : i.second.stream())
                 .collect(Collectors.toList());
