@@ -1,7 +1,9 @@
 dependencies {
-	compile project(':grafikon-model')
+	api project(':grafikon-model')
 
-	compile 'org.slf4j:slf4j-api'
-	compile 'org.slf4j:jcl-over-slf4j'
-	compile 'org.apache.xmlgraphics:fop'
+	api 'org.apache.xmlgraphics:fop'
+
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+	implementation 'org.slf4j:slf4j-api'
+	implementation 'org.slf4j:jcl-over-slf4j'
 }

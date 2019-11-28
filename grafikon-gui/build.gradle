@@ -1,6 +1,7 @@
 dependencies {
-	compile project(':grafikon-gui-components')
+	api project(':grafikon-gui-components')
 
-	compile 'org.ini4j:ini4j'
-	compile 'com.github.jgraph:jgraphx'
+	implementation 'org.slf4j:slf4j-api'
+	implementation 'org.ini4j:ini4j'
+	implementation 'com.github.jgraph:jgraphx'
 }

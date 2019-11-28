@@ -1,10 +1,11 @@
 dependencies {
-	compile project(':grafikon-model')
-	compile project(':grafikon-output2')
-	compile project(':grafikon-templates')
+	api project(':grafikon-model')
+	api project(':grafikon-output2')
+	api project(':grafikon-templates')
 
-	compile 'com.github.akarnokd:rxjava2-swing'
-	compile 'org.beanfabrics:beanfabrics-swing'
-	compile 'org.swinglabs:jxlayer'
-	compile 'com.fifesoft:rsyntaxtextarea'
+	api 'com.github.akarnokd:rxjava2-swing'
+	api 'org.beanfabrics:beanfabrics-swing'
+
+	implementation 'org.swinglabs:jxlayer'
+	implementation 'com.fifesoft:rsyntaxtextarea'
 }

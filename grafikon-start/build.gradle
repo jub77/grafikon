@@ -4,17 +4,17 @@ task run(type: JavaExec) {
 }
 
 dependencies {
-	compile project(':grafikon-gui')
-	compile project(':grafikon-save')
-	compile project(':grafikon-templates')
+	implementation project(':grafikon-gui')
+	implementation project(':grafikon-save')
+	implementation project(':grafikon-templates')
 
-	runtime project(':grafikon-ls')
-	runtime project(':grafikon-ls4')
+	runtimeOnly project(':grafikon-ls')
+	runtimeOnly project(':grafikon-ls4')
 
-	compile 'org.apache.logging.log4j:log4j-slf4j-impl'
-	compile 'org.apache.logging.log4j:log4j-core'
-	compile 'com.github.markusbernhardt:proxy-vole'
-	compile 'org.glassfish.jaxb:jaxb-runtime'
+	implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
+	implementation 'org.apache.logging.log4j:log4j-core'
+	implementation 'com.github.markusbernhardt:proxy-vole'
+	implementation 'org.glassfish.jaxb:jaxb-runtime'
 }
 
 jar {
