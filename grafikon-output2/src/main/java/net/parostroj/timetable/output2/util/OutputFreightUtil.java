@@ -1,11 +1,7 @@
 package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +51,7 @@ public class OutputFreightUtil {
 
     private Stream<String> intervalsToStringImpl(TrainDiagram diagram, Collection<TimeInterval> intervals, Locale locale) {
         return intervals.stream()
-                .sorted((a, b) -> Integer.compare(a.getEnd(), b.getEnd()))
+                .sorted(Comparator.comparingInt(TimeInterval::getEnd))
                 .map(i -> intervalToString(diagram, i, locale));
     }
 
@@ -123,9 +119,8 @@ public class OutputFreightUtil {
     public List<FreightConnection> reorderFreightListByDirection(
             Collection<? extends FreightConnection> list) {
         List<Pair<Boolean, List<FreightConnection>>> rr = list.stream()
-                .map(d -> new Pair<>(d instanceof FreightConnectionPath
-                        ? ((FreightConnectionPath) d).getPath().isDirectionReversed()
-                        : false, d))
+                .map(d -> new Pair<>(d instanceof FreightConnectionPath && ((FreightConnectionPath) d).getPath()
+                        .isDirectionReversed(), d))
                 .collect(FreightCollectors.freightDirectionCollector());
         return rr.stream()
                 .flatMap(i -> i.first ? Lists.reverse(i.second).stream() : i.second.stream())
@@ -155,13 +150,13 @@ public class OutputFreightUtil {
             result.append(freightNodeToString(dest, locale, true));
         }
         if (dest.isFreightColors()) {
-            result.append('[').append(freightColorsToString(dest, locale).stream().collect(Collectors.joining(",")))
+            result.append('[').append(String.join(",", freightColorsToString(dest, locale)))
                     .append(']');
         }
         if (dest.isRegions()) {
             boolean empty = result.length() == 0;
             if (!empty) result.append('(');
-            result.append(freightRegionsToString(dest, locale).stream().collect(Collectors.joining(",")));
+            result.append(String.join(",", freightRegionsToString(dest, locale)));
             if (!empty) result.append(')');
         }
         return result.toString();
