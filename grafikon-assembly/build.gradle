@@ -11,9 +11,9 @@ dependencies {
 }
 
 task distribution(type: Zip) {
-	baseName = "grafikon"
-	version = scmVersion.distVersion
-	destinationDir = file("${buildDir}/dist")
+	archiveBaseName = "grafikon"
+	archiveVersion = scmVersion.distVersion
+	destinationDirectory = file("${buildDir}/dist")
 	from configurations.assembly
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
