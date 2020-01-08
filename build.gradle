@@ -83,6 +83,14 @@ subprojects { prj ->
 		publications {
 			maven(MavenPublication) {
 				from components.java
+				versionMapping {
+					usage('java-api') {
+						fromResolutionResult()
+					}
+					usage('java-runtime') {
+						fromResolutionResult()
+					}
+				}
 			}
 		}
 	}
