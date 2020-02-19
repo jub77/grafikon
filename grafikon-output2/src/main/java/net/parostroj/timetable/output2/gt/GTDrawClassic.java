@@ -22,6 +22,7 @@ public class GTDrawClassic extends GTDrawBase {
     private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 1.3f;
     private static final float STATION_STROKE_STOP_EXT_WIDTH = 1.3f;
     private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.3f;
+    private static final float[] STATION_STROKE_ROUTE_SPLIT_EXT_DASH = { 13f, 3f, 1.3f, 3f };
     private static final float[] STATION_STROKE_STOP_EXT_DASH = { 3f, 3f };
     private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 13f, 5f };
 
@@ -38,7 +39,8 @@ public class GTDrawClassic extends GTDrawBase {
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStrokeCache = new TrainStrokeCache(TRAIN_STROKE_WIDTH, zoom, 10f);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
-        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
+        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10f, DrawUtils.zoomDashes(STATION_STROKE_ROUTE_SPLIT_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10.0f, DrawUtils.zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,

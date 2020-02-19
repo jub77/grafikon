@@ -21,11 +21,12 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     private static final float TECH_TIME_STROKE_WIDTH = 1.1f;
 
     // extended display
-    private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 0.8f;
+    private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 1.0f;
     private static final float STATION_STROKE_STOP_EXT_WIDTH = 1.0f;
     private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.0f;
+    private static final float[] STATION_STROKE_ROUTE_SPLIT_EXT_DASH = { 13f, 2.5f, 1.1f, 2.5f };
     private static final float[] STATION_STROKE_STOP_EXT_DASH = { 3f, 3f };
-    private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 16f, 5f };
+    private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 13f, 5f };
 
     private static final int TRACK_GAP_WIDTH = 5;
 
@@ -49,7 +50,8 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
         trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         techTimeStroke = new BasicStroke(zoom * TECH_TIME_STROKE_WIDTH);
-        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
+        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10f, DrawUtils.zoomDashes(STATION_STROKE_ROUTE_SPLIT_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10.0f, DrawUtils.zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
