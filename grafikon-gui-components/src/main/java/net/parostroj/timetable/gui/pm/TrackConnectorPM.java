@@ -87,7 +87,7 @@ public class TrackConnectorPM extends AbstractPM {
         boolean valid = position.isValid();
         if (valid) {
             connectorId.setText(
-                    String.format("%s [%s, %d] - %s",
+                    String.format("%s [%s, %d] > %s",
                     number.getText(),
                     getSideString(orientation.getValue()),
                     position.getInteger(),
@@ -148,7 +148,7 @@ public class TrackConnectorPM extends AbstractPM {
         if (fromNode == node) {
             fromNode = line.getTo();
         }
-        return String.format("%s [%s]", fromNode.getAbbr(), track.getNumber());
+        return String.format("%s (%s)", track.getNumber(), fromNode.getAbbr());
     }
 
     public ListPM<TrackConnectorSwitchPM> getSwitches() {
