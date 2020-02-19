@@ -229,7 +229,7 @@ public class TrainTimetablesExtractor {
             if (onControlled)
                 row.setOnControlled(true);
 
-            if (lastLineI != null && lastLineI.isToStraight())
+            if (lastLineI != null)
                 row.setStraight(lastLineI.isToStraight());
             if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN)) {
                 Pair<Boolean, List<TranslatedString>> concurrentTrains = this.getConcurrentTrains(nodeI);
