@@ -114,15 +114,8 @@ public class TrackConnectorPM extends AbstractPM {
             boolean straight = contains && nt.get(ntPM.getReference()).isStraight();
             TrackConnectorSwitchPM switchPM = new TrackConnectorSwitchPM(ntPM, contains, straight);
             // check if it should be editable...
-            if (contains && connector.getLineTrack().isPresent()) {
-                NodeTrack nTrack = ntPM.getReference();
-                LineTrack cLineTrack = connector.getLineTrack().get();
-                boolean isThroughConnector = nTrack.getTimeIntervalList().stream()
-                        .anyMatch(i -> i.getPreviousTrainInterval() != null
-                                && i.getPreviousTrainInterval().getTrack() == cLineTrack
-                                || i.getNextTrainInterval() != null
-                                        && i.getNextTrainInterval().getTrack() == cLineTrack);
-                switchPM.connected.setEditable(!isThroughConnector);
+            if (contains) {
+                setConnectorEditable(ntPM, switchPM);
             }
             this.switches.add(switchPM);
         });
@@ -132,6 +125,18 @@ public class TrackConnectorPM extends AbstractPM {
         this.initLineTrack(connector.getNode(), lineTracks, connector.getLineTrack());
         // do not allow editing of line track in use
         lineTrack.setEditable(connector.getLineTrack().map(lt -> lt.isEmpty()).orElse(true));
+    }
+
+    public void setConnectorEditable(NodeTrackPM ntPM, TrackConnectorSwitchPM switchPM) {
+        NodeTrack nTrack = ntPM.getReference();
+        if (reference == null || !reference.getLineTrack().isPresent() || nTrack == null) return;
+        LineTrack cLineTrack = reference.getLineTrack().get();
+        boolean isThroughConnector = nTrack.getTimeIntervalList().stream()
+                .anyMatch(i -> i.getPreviousTrainInterval() != null
+                        && i.getPreviousTrainInterval().getTrack() == cLineTrack
+                        || i.getNextTrainInterval() != null
+                                && i.getNextTrainInterval().getTrack() == cLineTrack);
+        switchPM.connected.setEditable(!isThroughConnector);
     }
 
     public void initLineTrack(Node node, Collection<LineTrack> lineTracks, Optional<LineTrack> lt) {

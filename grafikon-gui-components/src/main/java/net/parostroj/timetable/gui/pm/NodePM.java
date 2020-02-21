@@ -291,7 +291,9 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                 NodeTrackPM trackPm = source.getAt(i);
                 final int pos = i;
                 connectors.forEach(connector -> {
-                    connector.getSwitches().add(pos, new TrackConnectorSwitchPM(trackPm, true, false));
+                    TrackConnectorSwitchPM switchPM = new TrackConnectorSwitchPM(trackPm, true, false);
+                    connector.setConnectorEditable(trackPm, switchPM);
+                    connector.getSwitches().add(pos, switchPM);
                 });
             }
         }
