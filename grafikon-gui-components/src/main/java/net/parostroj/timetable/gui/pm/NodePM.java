@@ -67,6 +67,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.tracks = new ItemListPM<>(() -> {
             NodeTrackPM trackPm = new NodeTrackPM();
             trackPm.number.setText("1");
+            trackPm.platform.setBoolean(true);
             return trackPm;
         });
         tracks.delete.getValidator().add(() -> {
@@ -290,7 +291,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                 NodeTrackPM trackPm = source.getAt(i);
                 final int pos = i;
                 connectors.forEach(connector -> {
-                    connector.getSwitches().add(pos, new TrackConnectorSwitchPM(trackPm, false, false));
+                    connector.getSwitches().add(pos, new TrackConnectorSwitchPM(trackPm, true, false));
                 });
             }
         }
