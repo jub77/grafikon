@@ -194,7 +194,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             Integer stopTime = diagram.getAttribute(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP, Integer.class);
             changeDirectionCheckBox.setSelected(stopTime != null);
             changeDirectionTextField.setEnabled(changeDirectionCheckBox.isSelected());
-            changeDirectionTextField.setText(stopTime == null ? "5" : Integer.toString(stopTime / 60));
+            changeDirectionTextField.setText(stopTime == null ? "20" : Integer.toString(stopTime / 60));
         }
     }
 
