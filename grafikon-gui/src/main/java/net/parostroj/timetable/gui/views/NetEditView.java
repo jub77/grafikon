@@ -121,6 +121,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 track.setPlatform(true);
                 n.getTracks().add(track);
                 n.setLocation(new Location(location.x, location.y));
+                // connectors and switches
+                TrackConnector lc = factory.createDefaultConnector(factory.createId(), n, "1", Node.Side.LEFT, Optional.of(track));
+                TrackConnector rc = factory.createDefaultConnector(factory.createId(), n, "2", Node.Side.RIGHT, Optional.of(track));
+                n.getConnectors().add(lc);
+                n.getConnectors().add(rc);
                 model.getDiagram().getNet().addNode(n);
             }
         }
