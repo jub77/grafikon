@@ -16,6 +16,8 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
 Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa and beta builds.
 
 ## Webstart
+### Prerelease
+http://jub.parostroj.net/grafikon/3.0/grafikon.jnlp
 ### Release
 http://jub.parostroj.net/grafikon/2.1/grafikon.jnlp
 ### Development
