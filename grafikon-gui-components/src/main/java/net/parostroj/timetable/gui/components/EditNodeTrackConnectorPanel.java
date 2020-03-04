@@ -25,12 +25,6 @@ public class EditNodeTrackConnectorPanel extends BaseEditPanel<TrackConnectorPM>
         orientationComboBox.setPrototypeDisplayValue("MMMMMMMMM");
         orientationComboBox.setPath(new Path("orientation"));
 
-        BnTextField positionTextField = new BnTextField();
-        positionTextField.setHorizontalAlignment(BnTextField.RIGHT);
-        positionTextField.setColumns(4);
-        positionTextField.setModelProvider(localProvider);
-        positionTextField.setPath(new Path("position"));
-
         BnTextField numberTextField = new BnTextField();
         numberTextField.setColumns(20);
         numberTextField.setModelProvider(localProvider);
@@ -38,15 +32,13 @@ public class EditNodeTrackConnectorPanel extends BaseEditPanel<TrackConnectorPM>
 
         BnComboBox lineTrackComboBox = new BnComboBox();
         lineTrackComboBox.setModelProvider(localProvider);
-        lineTrackComboBox.setPrototypeDisplayValue("MMMMMMMMMM");
+        lineTrackComboBox.setPrototypeDisplayValue("MMMMMMMMMMMMM");
         lineTrackComboBox.setPath(new Path("lineTrack"));
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.add(numberTextField);
         this.add(Box.createHorizontalStrut(5));
         this.add(orientationComboBox);
-        this.add(Box.createHorizontalStrut(5));
-        this.add(positionTextField);
         this.add(Box.createHorizontalStrut(5));
         this.add(lineTrackComboBox);
     }

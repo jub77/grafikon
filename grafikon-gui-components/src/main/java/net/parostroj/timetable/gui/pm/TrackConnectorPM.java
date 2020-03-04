@@ -87,10 +87,9 @@ public class TrackConnectorPM extends AbstractPM {
         boolean valid = position.isValid();
         if (valid) {
             connectorId.setText(
-                    String.format("%s [%s, %d] > %s",
+                    String.format("%s [%s] > %s",
                     number.getText(),
                     getSideString(orientation.getValue()),
-                    position.getInteger(),
                     lineTrack.getText()));
         }
     }
