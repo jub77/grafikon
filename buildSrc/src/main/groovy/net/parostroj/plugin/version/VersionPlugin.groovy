@@ -9,6 +9,7 @@ class VersionExtension {
 
 	def buildTimestamp
 	def buildId
+	def buildHash
 
 	def projectVersion
 	def distVersion
@@ -25,6 +26,7 @@ class VersionPlugin implements Plugin<Project> {
 
 		def commitTimestamp = Date.from(head.dateTime.toInstant()).format('yyyyMMddHHmm')
 		def commitId = head.id.substring(0, 12)
+		ver.buildHash = commitId
 		ver.buildTimestamp = new Date().format('yyyyMMddHHmm')
 		ver.buildId = "${ver.buildTimestamp}-${commitId}"
 
@@ -78,6 +80,7 @@ class VersionPlugin implements Plugin<Project> {
 				project.logger.lifecycle("Dirty: {}", project.scmVersion.dirty)
 				project.logger.lifecycle("Build timestamp: {}", project.scmVersion.buildTimestamp)
 				project.logger.lifecycle("Build id: {}", project.scmVersion.buildId)
+				project.logger.lifecycle("Build hash: {}", project.scmVersion.buildHash)
 			}
 		})
 	}
