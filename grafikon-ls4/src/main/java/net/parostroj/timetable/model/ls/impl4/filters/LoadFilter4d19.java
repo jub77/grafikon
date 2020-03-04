@@ -71,9 +71,9 @@ public class LoadFilter4d19 implements LoadFilter {
     private void removeDefaultTemplatesExceptDrawAndXml(TrainDiagram diagram) {
         Collection<String> noTemplateTypes = Arrays.asList("draw", "xml");
         for (OutputTemplate template : new ArrayList<>(diagram.getOutputTemplates())) {
-            Boolean defaultTemplate = template.getAttributeAsBool("default.template");
+            boolean defaultTemplate = template.getAttributeAsBool("default.template");
             if (defaultTemplate && !template.getOutput().equals("draw")) {
-                log.warn("Skipping output template {} because of default.template feature", template.getName());
+                log.debug("Skipping output template {} because of default.template feature", template.getName());
                 diagram.getOutputTemplates().remove(template);
             } else {
                 template.removeAttribute("default.template");
