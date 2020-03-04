@@ -25,8 +25,8 @@ class VersionPlugin implements Plugin<Project> {
 
 		def commitTimestamp = Date.from(head.dateTime.toInstant()).format('yyyyMMddHHmm')
 		def commitId = head.id.substring(0, 12)
-		ver.buildId = commitId
 		ver.buildTimestamp = new Date().format('yyyyMMddHHmm')
+		ver.buildId = "${ver.buildTimestamp}-${commitId}"
 
 		def describe = project.grgit.describe(longDescr: true)
 

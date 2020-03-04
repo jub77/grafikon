@@ -123,11 +123,22 @@ subprojects { prj ->
 				"Specification-Title": prj.name,
 				"Specification-Version": scmVersion.baseVersion,
 				"Implementation-Title": prj.name,
-				"Implementation-Version": scmVersion.distVersion,
-				"Build-Id": scmVersion.buildId,
-				"Build-Time": scmVersion.buildTimestamp,
 				"Permissions": "all-permissions"
 			)
+		}
+	}
+
+	project.tasks.withType(Jar) { task ->
+		project.configure(task) {
+			doFirst {
+				manifest {
+					attributes(
+						"Build-Id": scmVersion.buildId,
+						"Build-Time": scmVersion.buildTimestamp,
+						"Implementation-Version": scmVersion.distVersion,
+					)
+				}
+			}
 		}
 	}
 }
