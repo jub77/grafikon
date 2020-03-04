@@ -8,6 +8,8 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
+import java.util.Optional;
+
 /**
  * Adjust older versions.
  *
@@ -58,6 +60,19 @@ public class LoadFilter {
         for (TrainType type : diagram.getTrainTypes()) {
             type.setTrainNameTemplate(convertForAbbreviation(type.getTrainNameTemplate()));
             type.setTrainCompleteNameTemplate(convertForAbbreviation(type.getTrainCompleteNameTemplate()));
+        }
+        // add LEFT/RIGHT connector if missing
+        for (Node node : diagram.getNet().getNodes()) {
+            Optional<TrackConnector> left = node.getConnectors()
+                    .find(c -> c.getOrientation() == Node.Side.LEFT);
+            Optional<TrackConnector> right = node.getConnectors()
+                    .find(c -> c.getOrientation() == Node.Side.RIGHT);
+            if (!left.isPresent()) {
+                this.addConnector(diagram.getPartFactory(), node, "1", Node.Side.LEFT);
+            }
+            if (!right.isPresent()) {
+                this.addConnector(diagram.getPartFactory(), node, "2", Node.Side.RIGHT);
+            }
         }
     }
 
@@ -121,5 +136,11 @@ public class LoadFilter {
             }
         }
         return template;
+    }
+
+    private void addConnector(TrainDiagramPartFactory factory, Node node, String number, Node.Side orientation) {
+        TrackConnector otherConnector = factory
+                .createDefaultConnector(factory.createId(), node, number, orientation, Optional.empty());
+        node.getConnectors().add(otherConnector);
     }
 }
