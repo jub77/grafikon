@@ -26,7 +26,7 @@ subprojects { prj ->
 	dependencyManagement {
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.4.0'
-			dependency 'org.mvel:mvel2:2.4.5.Final'
+			dependency 'org.mvel:mvel2:2.4.7.Final'
 			dependency 'org.codehaus.groovy:groovy-templates:2.5.8'
 			dependency 'org.codehaus.groovy:groovy-jsr223:2.5.8'
 			dependency 'org.slf4j:slf4j-api:1.7.30'
@@ -62,8 +62,8 @@ subprojects { prj ->
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.jgraph:jgraphx:4.0.6'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5'
-			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.0'
-			dependency 'org.apache.logging.log4j:log4j-core:2.13.0'
+			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.1'
+			dependency 'org.apache.logging.log4j:log4j-core:2.13.1'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.2', {
 				exclude 'com.sun.xml.fastinfoset:FastInfoset'
