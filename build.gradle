@@ -123,6 +123,7 @@ subprojects { prj ->
 				"Specification-Title": prj.name,
 				"Specification-Version": scmVersion.baseVersion,
 				"Implementation-Title": prj.name,
+				"Implementation-Version-Short": scmVersion.shortVersion,
 				"Permissions": "all-permissions"
 			)
 		}
