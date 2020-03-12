@@ -12,7 +12,7 @@ dependencies {
 
 task distribution(type: Zip) {
 	archiveBaseName = "grafikon"
-	archiveVersion = scmVersion.distVersion
+	archiveVersion = scmVersion.shortVersion
 	destinationDirectory = file("${buildDir}/dist")
 	from configurations.assembly
 	from file("${projectDir}/src/main/scripts")
