@@ -14,6 +14,7 @@ class VersionExtension {
 	def projectVersion
 	def distVersion
 	def baseVersion
+	def shortVersion
 }
 
 class VersionPlugin implements Plugin<Project> {
@@ -65,9 +66,10 @@ class VersionPlugin implements Plugin<Project> {
 
 		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
 		def dirtySuffix = ver.dirty ? '.dirty' : ''
-		ver.distVersion = ver.snapshot
-			? "${baseVersion}-dev.${commitTimestamp}${dirtySuffix}+${ver.buildId}"
-			: "${baseVersion}${dirtySuffix}+${ver.buildId}"
+		ver.shortVersion = ver.snapshot
+				? "${baseVersion}-dev.${commitTimestamp}${dirtySuffix}"
+				: "${baseVersion}${dirtySuffix}"
+		ver.distVersion = "${ver.shortVersion}+${ver.buildId}"
 
 		project.tasks.create('version', {
 			doLast {
@@ -75,6 +77,7 @@ class VersionPlugin implements Plugin<Project> {
 				project.logger.lifecycle("Git describe: {}", describe)
 				project.logger.lifecycle("Tag version: {}", tagVersion)
 				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
+				project.logger.lifecycle("Short version: {}", project.scmVersion.shortVersion)
 				project.logger.lifecycle("Dist version: {}", project.scmVersion.distVersion)
 				project.logger.lifecycle("Snapshot: {}", project.scmVersion.snapshot)
 				project.logger.lifecycle("Dirty: {}", project.scmVersion.dirty)
