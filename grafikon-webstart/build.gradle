@@ -11,7 +11,7 @@ dependencies {
 }
 
 ext {
-	webstartDir = "${buildDir}/dist/grafikon-${scmVersion.distVersion}"
+	webstartDir = "${buildDir}/dist/grafikon-${scmVersion.shortVersion}"
 	jnlpVersion = project.findProperty('jnlp.version')
 			?: scmVersion.snapshot ? 'dev' : version.replaceAll("(\\d+)\\.(\\d+).*", "\$1.\$2")
 }
