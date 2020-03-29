@@ -1,4 +1,8 @@
-task run(type: JavaExec) {
+plugins {
+	id 'org.beryx.runtime'
+}
+
+task runMain(type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'net.parostroj.timetable.gui.Main'
 }
@@ -24,4 +28,12 @@ jar {
 			'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
 		)
 	}
+}
+
+mainClassName = "net.parostroj.timetable.gui.Main"
+
+runtime {
+	options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+	modules = ['java.xml', 'java.desktop', 'java.logging', 'java.scripting', 'java.management',
+			   'jdk.xml.dom', 'java.naming', 'jdk.zipfs']
 }
