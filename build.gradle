@@ -72,8 +72,8 @@ subprojects { prj ->
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
 
-			dependency 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-			dependency 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+			dependency 'org.junit.jupiter:junit-jupiter-api:5.6.1'
+			dependency 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
 			dependency 'org.hamcrest:hamcrest:2.2'
 		}
 	}
