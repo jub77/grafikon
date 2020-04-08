@@ -2,9 +2,13 @@ plugins {
 	id 'org.beryx.runtime'
 }
 
+ext {
+	gMainClass = 'net.parostroj.timetable.gui.Main'
+}
+
 task runMain(type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
-	main = 'net.parostroj.timetable.gui.Main'
+	main = gMainClass
 }
 
 dependencies {
@@ -24,13 +28,13 @@ dependencies {
 jar {
 	manifest {
 		attributes(
-			'Main-Class': 'net.parostroj.timetable.gui.Main',
+			'Main-Class': gMainClass,
 			'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
 		)
 	}
 }
 
-mainClassName = "net.parostroj.timetable.gui.Main"
+mainClassName = gMainClass
 
 runtime {
 	options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
