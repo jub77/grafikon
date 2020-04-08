@@ -58,7 +58,7 @@ subprojects { prj ->
 			dependency 'com.github.akarnokd:rxjava2-swing:0.3.7'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
-			dependency 'com.fifesoft:rsyntaxtextarea:3.1.0'
+			dependency 'com.fifesoft:rsyntaxtextarea:3.1.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.jgraph:jgraphx:4.0.6'
 			dependency 'com.github.markusbernhardt:proxy-vole:1.0.5'
