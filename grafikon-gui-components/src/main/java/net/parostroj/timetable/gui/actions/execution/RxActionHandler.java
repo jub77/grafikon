@@ -4,19 +4,18 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.akarnokd.rxjava2.swing.SwingObservable;
-import hu.akarnokd.rxjava2.swing.SwingSchedulers;
-import io.reactivex.Observable;
-import io.reactivex.functions.BiConsumer;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import net.parostroj.timetable.gui.dialogs.WaitDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+import reactor.swing.SwingScheduler;
 
 /**
  * Action handler - executes model actions using RxJava.
@@ -45,10 +44,10 @@ public class RxActionHandler {
 
     public void execute(Execution<?> execution) {
         ActionContext context = execution.context;
-        Observable<?> observable = execution.observable;
+        Flux<?> observable = execution.observable;
         context.addPropertyChangeListener(waitDialog);
         context.setStartTime(System.currentTimeMillis());
-        observable = observable.observeOn(SwingSchedulers.edt());
+        observable = observable.publishOn(SwingScheduler.create());
         observable.subscribe(next -> {
             // final value is ignored
         }, exception -> {
@@ -76,19 +75,19 @@ public class RxActionHandler {
     }
 
     public <T> Execution<T> newExecution(String id, Component component, T object) {
-        return new Execution<>(new ActionContext(id, component), Observable.just(object));
+        return new Execution<>(new ActionContext(id, component), Flux.just(object));
     }
 
     public <T> Execution<T> newExecution(ActionContext context, T object) {
-        return new Execution<>(context, Observable.just(object));
+        return new Execution<>(context, Flux.just(object));
     }
 
     public class Execution<T> {
 
         protected final ActionContext context;
-        protected final Observable<T> observable;
+        protected final Flux<T> observable;
 
-        protected Execution(ActionContext context, Observable<T> observable) {
+        protected Execution(ActionContext context, Flux<T> observable) {
             this.context = context;
             this.observable = observable;
         }
@@ -108,17 +107,17 @@ public class RxActionHandler {
                     observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> function.apply(context, t)));
         }
 
-        public <U> Execution<U> addSplitObservable(BiFunction<ActionContext, T, Observable<U>> function) {
+        public <U> Execution<U> addSplitObservable(BiFunction<ActionContext, T, Flux<U>> function) {
             return new Execution<>(context,
                     observable.filter(item -> !context.isCancelled()).flatMap(t -> function.apply(context, t)));
         }
 
         public Execution<T> onEdt() {
-            return new Execution<>(context, observable.compose(SwingObservable.observeOnEdt()));
+            return new Execution<>(context, observable.publishOn(SwingScheduler.create()));
         }
 
         public Execution<T> onBackground() {
-            return new Execution<>(context, observable.observeOn(Schedulers.computation()));
+            return new Execution<>(context, observable.publishOn(Schedulers.parallel()));
         }
 
         public void execute() {
@@ -146,14 +145,14 @@ public class RxActionHandler {
                         Collection<Y> allItems = mapping.apply(t);
                         context.setAttribute("total", allItems.size());
                         context.setAttribute("current", 0);
-                        return Observable.fromIterable(allItems).buffer(chunkSize);
+                        return Flux.fromIterable(allItems).buffer(chunkSize);
                     }));
         }
     }
 
     public class BatchExecution<T> extends Execution<List<T>> {
 
-        protected BatchExecution(ActionContext context, Observable<List<T>> observable) {
+        protected BatchExecution(ActionContext context, Flux<List<T>> observable) {
             super(context, observable);
         }
 
@@ -188,10 +187,14 @@ public class RxActionHandler {
             context.setProgress(currentSize * 100 / context.getAttribute("total", Integer.class));
         }
 
-        private void checkException() throws Exception {
+        private void checkException() throws RuntimeException {
             Exception exception = context.getAttribute("exception", Exception.class);
             if (exception != null) {
-                throw exception;
+                if (exception instanceof RuntimeException) {
+                    throw (RuntimeException) exception;
+                } else {
+                    throw new RuntimeException(exception);
+                }
             }
         }
 

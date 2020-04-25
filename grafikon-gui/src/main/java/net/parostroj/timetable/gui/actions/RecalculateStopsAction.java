@@ -60,7 +60,7 @@ public class RecalculateStopsAction extends AbstractAction {
         TrainAction trainAction = new TrainAction() {
 
             @Override
-            public void execute(Train train) throws Exception {
+            public void execute(Train train) throws RuntimeException {
                 // convert stops ...
                 for (TimeInterval interval : train.getTimeIntervalList()) {
                     if (interval.isInnerStop()) {

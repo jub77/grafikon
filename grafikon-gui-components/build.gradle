@@ -3,7 +3,7 @@ dependencies {
 	api project(':grafikon-output2')
 	api project(':grafikon-templates')
 
-	api 'com.github.akarnokd:rxjava2-swing'
+	api 'io.projectreactor.addons:reactor-extra'
 	api 'org.beanfabrics:beanfabrics-swing'
 
 	implementation 'org.swinglabs:jxlayer'

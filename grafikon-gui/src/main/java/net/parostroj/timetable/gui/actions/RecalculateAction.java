@@ -21,7 +21,7 @@ public class RecalculateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	public static interface TrainAction {
-        public void execute(Train train) throws Exception;
+        public void execute(Train train) throws RuntimeException;
     }
 
     private final ApplicationModel model;
