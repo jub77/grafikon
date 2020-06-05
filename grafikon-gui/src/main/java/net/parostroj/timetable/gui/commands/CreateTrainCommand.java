@@ -15,7 +15,7 @@ import net.parostroj.timetable.utils.IdGenerator;
  *
  * @author jub
  */
-public class CreateTrainCommand extends Command {
+public class CreateTrainCommand implements Command {
 
     private final String number;
     private final TrainType type;
@@ -62,14 +62,14 @@ public class CreateTrainCommand extends Command {
     }
 
     @Override
-    public void execute(ApplicationModel model) throws CommandException {
+    public void accept(ApplicationModel model) {
         TrainBuilder trainBuilder = new TrainBuilder();
 
         Train train;
         try {
             train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
         } catch (Exception e) {
-            throw new CommandException(e.getMessage(), e);
+            throw new GrafikonException(e.getMessage(), e);
         }
 
         train.setAttribute(Train.ATTR_DIESEL, diesel);
@@ -90,10 +90,5 @@ public class CreateTrainCommand extends Command {
 
         // add train to diagram
         model.getDiagram().getTrains().add(train);
-    }
-
-    @Override
-    public void undo(ApplicationModel model) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -59,7 +59,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private TreeType treeType = TreeType.TYPES;
     private boolean selecting = false;
 
-    public static enum TreeType {
+    public enum TreeType {
         FLAT, TYPES, GROUPS_AND_TYPES, GROUPS
     }
 
@@ -134,19 +134,19 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         listTypesMenuItem.setSelected(true);
 
         listTypesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
-        listTypesMenuItem.addActionListener(evt -> treeTypeActionPerformed(evt));
+        listTypesMenuItem.addActionListener(this::treeTypeActionPerformed);
         listMenu.add(listTypesMenuItem);
 
         listFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
-        listFlatMenuItem.addActionListener(evt -> treeTypeActionPerformed(evt));
+        listFlatMenuItem.addActionListener(this::treeTypeActionPerformed);
         listMenu.add(listFlatMenuItem);
 
         listGroupsMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups")); // NOI18N
-        listGroupsMenuItem.addActionListener(evt -> treeTypeActionPerformed(evt));
+        listGroupsMenuItem.addActionListener(this::treeTypeActionPerformed);
         listMenu.add(listGroupsMenuItem);
 
         listGroupsFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups.flat")); // NOI18N
-        listGroupsFlatMenuItem.addActionListener(evt -> treeTypeActionPerformed(evt));
+        listGroupsFlatMenuItem.addActionListener(this::treeTypeActionPerformed);
         listMenu.add(listGroupsFlatMenuItem);
 
         groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("trainlist.groups")); // NOI18N
@@ -203,7 +203,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         menuButton.addMouseListener(menuAdapter);
 
         deleteButton.addActionListener(evt -> deleteAction());
-        createButton.addActionListener(evt -> createButtonActionPerformed(evt));
+        createButton.addActionListener(this::createButtonActionPerformed);
         copyButton.addActionListener(e -> {
             CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame) TrainListView.this.getTopLevelAncestor(),
                     true, model.getSelectedTrain());
@@ -609,7 +609,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         DeleteTrainCommand deleteCommand = new DeleteTrainCommand(deletedTrain);
         try {
             model.applyCommand(deleteCommand);
-        } catch (CommandException e) {
+        } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -630,7 +630,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             if (command != null) {
                 model.applyCommand(command);
             }
-        } catch (CommandException e) {
+        } catch (GrafikonException e) {
             log.warn("Error executing create train command.", e);
             GuiComponentUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
         }

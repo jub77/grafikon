@@ -1,33 +1,17 @@
-/*
- * Command.java
- * 
- * Created on 4.9.2007, 9:10:20
- */
-
 package net.parostroj.timetable.gui.commands;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 
+import java.util.function.Consumer;
+
 /**
- * Abstract class for commands.
+ * Interface for commands.
  * 
  * @author jub
  */
-public abstract class Command {
-
-    /**
-     * executes command on model.
-     * 
-     * @param model application model
-     * @throws net.parostroj.timetable.gui.commands.CommandException 
-     */
-    abstract public void execute(ApplicationModel model) throws CommandException;
-    
-    /**
-     * undoes command.
-     * 
-     * @param model application model
-     * @throws net.parostroj.timetable.gui.commands.CommandException 
-     */
-    abstract public void undo(ApplicationModel model) throws CommandException;
+@FunctionalInterface
+public interface Command extends Consumer<ApplicationModel> {
+    default void execute(ApplicationModel model) {
+        this.accept(model);
+    }
 }

@@ -14,7 +14,6 @@ import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.UrlConstants;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
-import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
 import net.parostroj.timetable.gui.ini.IniConfig;
@@ -190,13 +189,11 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     /**
-     * executes command and adds successfully executed command to
-     * command queue (suppocrt for undo).
+     * executes command.
      *
      * @param command command to be executed
-     * @throws net.parostroj.timetable.gui.commands.CommandException
      */
-    public void applyCommand(Command command) throws CommandException {
+    public void applyCommand(Command command)  {
         // execute command
         command.execute(this);
     }
