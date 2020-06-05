@@ -28,7 +28,7 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -117,7 +117,7 @@ public class FreightCheckPanel extends JPanel {
         initializeStyles();
         textPane.setText("");
         if (diagram != null) {
-            RxActionHandler.getInstance()
+            RsActionHandler.getInstance()
                 .newExecution("freight_check", GuiComponentUtils.getTopLevelComponent(this), new TextBuffer())
                     .logTime()
                     .onBackground()

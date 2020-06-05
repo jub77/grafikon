@@ -98,7 +98,7 @@ public class RecalculateStopsAction extends AbstractAction {
         };
 
 
-        RxActionHandler.getInstance().newExecution("recalculate_stops",
+        RsActionHandler.getInstance().newExecution("recalculate_stops",
                 GuiComponentUtils.getTopLevelComponent(event.getSource()),
                 model.getDiagram())
             .onBackground()

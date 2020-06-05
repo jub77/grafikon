@@ -22,7 +22,7 @@ import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.actions.*;
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
@@ -556,7 +556,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // check if recalculate should be executed
         if (settingsDialog.isRecalculate()) {
 
-            RxActionHandler.getInstance()
+            RsActionHandler.getInstance()
                 .newExecution("settings_recalculate", GuiComponentUtils.getTopLevelComponent(this), model.get())
                     .onBackground()
                     .logTime()

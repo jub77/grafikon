@@ -18,27 +18,27 @@ import reactor.core.scheduler.Schedulers;
 import reactor.swing.SwingScheduler;
 
 /**
- * Action handler - executes model actions using RxJava.
+ * Action handler - executes model actions using Reactive Streams.
  *
  * @author jub
  */
-public class RxActionHandler {
+public class RsActionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RxActionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(RsActionHandler.class);
 
-    private static final RxActionHandler instance = new RxActionHandler();
+    private static final RsActionHandler instance = new RsActionHandler();
 
-    public static RxActionHandler getInstance() {
+    public static RsActionHandler getInstance() {
         return instance;
     }
 
-    public static RxActionHandler createInstance() {
-        return new RxActionHandler();
+    public static RsActionHandler createInstance() {
+        return new RsActionHandler();
     }
 
     private WaitDialog waitDialog;
 
-    private RxActionHandler() {
+    private RsActionHandler() {
         waitDialog = new WaitDialog((Frame) null, true);
     }
 
@@ -53,11 +53,11 @@ public class RxActionHandler {
         }, exception -> {
             context.setWaitDialogVisible(false);
             Throwable toLog = exception;
-            if (exception instanceof RxActionHandlerException)
+            if (exception instanceof RsActionHandlerException)
             {
                 toLog = exception.getCause() == null ? exception : exception.getCause();
                 GuiComponentUtils.showError(
-                        ((RxActionHandlerException) exception).getText(),
+                        ((RsActionHandlerException) exception).getText(),
                         context.getLocationComponent());
             }
             log.warn("Action {} finished in {}ms with an exception",
@@ -121,7 +121,7 @@ public class RxActionHandler {
         }
 
         public void execute() {
-            RxActionHandler.this.execute(this);
+            RsActionHandler.this.execute(this);
         }
 
 
@@ -213,18 +213,18 @@ public class RxActionHandler {
         }
     }
 
-    public static class RxActionHandlerException extends RuntimeException {
+    public static class RsActionHandlerException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;
 
         private final String text;
 
-        public RxActionHandlerException(String text, String message, Throwable cause) {
+        public RsActionHandlerException(String text, String message, Throwable cause) {
             super(message, cause);
             this.text = text;
         }
 
-        public RxActionHandlerException(String text, String message) {
+        public RsActionHandlerException(String text, String message) {
             super(message);
             this.text = text;
         }

@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DataModel;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
@@ -136,7 +136,7 @@ public class FreightConnectionPanel extends JPanel {
 
             DataModel model = new DataModel();
 
-            RxActionHandler.getInstance()
+            RsActionHandler.getInstance()
                 .newExecution("freight_conn", GuiComponentUtils.getTopLevelComponent(this), diagram)
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));

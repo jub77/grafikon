@@ -32,7 +32,7 @@ public class RecalculateAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        RxActionHandler.getInstance()
+        RsActionHandler.getInstance()
             .newExecution("recalculate", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
             .onBackground()
             .logTime()

@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.ColumnAdjuster;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DataModel;
 import net.parostroj.timetable.gui.components.FreightDestinationPanel.DestinationTableModel;
@@ -185,7 +185,7 @@ public class FreightTrainPathPanel extends JPanel {
         if (from != null && to != null && from != to) {
             DataModel model = new DataModel();
 
-            RxActionHandler.getInstance()
+            RsActionHandler.getInstance()
                 .newExecution("freight_path", GuiComponentUtils.getTopLevelComponent(this), diagram)
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));

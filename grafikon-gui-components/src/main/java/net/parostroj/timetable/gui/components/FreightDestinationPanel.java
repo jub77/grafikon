@@ -22,7 +22,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -113,7 +113,7 @@ public class FreightDestinationPanel extends JPanel {
 
             DataModel model = new DataModel();
 
-            RxActionHandler.createInstance()
+            RsActionHandler.createInstance()
                 .newExecution("freight_dest", GuiComponentUtils.getTopLevelComponent(this), diagram)
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));

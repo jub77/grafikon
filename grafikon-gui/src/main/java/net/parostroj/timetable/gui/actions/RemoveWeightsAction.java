@@ -7,7 +7,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.actions.execution.RxActionHandler;
+import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -37,7 +37,7 @@ public class RemoveWeightsAction extends AbstractAction {
                 JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             // remove weights
-            RxActionHandler.getInstance()
+            RsActionHandler.getInstance()
                 .newExecution("weight_removal", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
                     .onBackground()
                     .logTime()
