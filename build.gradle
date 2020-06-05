@@ -26,9 +26,9 @@ subprojects { prj ->
 	dependencyManagement {
 		dependencies {
 			dependency 'org.jgrapht:jgrapht-core:1.4.0'
-			dependency 'org.mvel:mvel2:2.4.7.Final'
-			dependency 'org.codehaus.groovy:groovy-templates:3.0.3'
-			dependency 'org.codehaus.groovy:groovy-jsr223:3.0.3'
+			dependency 'org.mvel:mvel2:2.4.8.Final'
+			dependency 'org.codehaus.groovy:groovy-templates:3.0.4'
+			dependency 'org.codehaus.groovy:groovy-jsr223:3.0.4'
 			dependency 'org.slf4j:slf4j-api:1.7.30'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.30'
 			dependency 'joda-time:joda-time:2.10.6'
