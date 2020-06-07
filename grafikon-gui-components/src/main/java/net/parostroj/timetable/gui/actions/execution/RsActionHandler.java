@@ -126,16 +126,18 @@ public class RsActionHandler {
 
 
         public Execution<T> setMessage(String message) {
-            context.setWaitMessage(message);
-            context.setProgress(0);
-            context.setShowProgress(true);
-            context.setWaitDialogVisible(true);
-            return this;
+            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
+                context.setWaitMessage(message);
+                context.setProgress(0);
+                context.setShowProgress(true);
+                context.setWaitDialogVisible(true);
+            }));
         }
 
         public Execution<T> logTime() {
-            context.setLogTime(true);
-            return this;
+            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
+                context.setLogTime(true);
+            }));
         }
 
         public <Y> BatchExecution<Y> split(Function<T, Collection<Y>> mapping, int chunkSize) {

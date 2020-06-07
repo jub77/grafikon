@@ -113,7 +113,7 @@ public class FreightDestinationPanel extends JPanel {
 
             DataModel model = new DataModel();
 
-            RsActionHandler.createInstance()
+            RsActionHandler.getInstance()
                 .newExecution("freight_dest", GuiComponentUtils.getTopLevelComponent(this), diagram)
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
