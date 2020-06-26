@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
+import java.time.Duration;
 
 import javax.swing.AbstractAction;
 
@@ -20,8 +21,8 @@ public class RecalculateAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-	public static interface TrainAction {
-        public void execute(Train train) throws RuntimeException;
+	public interface TrainAction {
+        void execute(Train train) throws RuntimeException;
     }
 
     private final ApplicationModel model;
@@ -34,11 +35,12 @@ public class RecalculateAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         RsActionHandler.getInstance()
             .newExecution("recalculate", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
-            .onBackground()
+            .onEdt()
             .logTime()
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))
             .split(TrainDiagram::getTrains, 10)
-            .addEdtBatchConsumer((context, train) -> {
+            .onEdtWithDelay(Duration.ofMillis(1))
+            .addBatchConsumer((context, train) -> {
                 train.recalculate();
             })
             .execute();

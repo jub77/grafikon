@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.time.Duration;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -39,11 +40,12 @@ public class RemoveWeightsAction extends AbstractAction {
             // remove weights
             RsActionHandler.getInstance()
                 .newExecution("weight_removal", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
-                    .onBackground()
+                    .onEdt()
                     .logTime()
                     .setMessage(ResourceLoader.getString("wait.message.recalculate"))
                     .split(TrainDiagram::getTrains, 10)
-                    .addEdtBatchConsumer((context, train) -> {
+                    .onEdtWithDelay(Duration.ofMillis(1))
+                    .addBatchConsumer((context, train) -> {
                         train.removeAttribute(Train.ATTR_WEIGHT);
                     })
                     .execute();

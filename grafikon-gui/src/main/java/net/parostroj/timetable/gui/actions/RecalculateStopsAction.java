@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.time.Duration;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -101,11 +102,12 @@ public class RecalculateStopsAction extends AbstractAction {
         RsActionHandler.getInstance().newExecution("recalculate_stops",
                 GuiComponentUtils.getTopLevelComponent(event.getSource()),
                 model.getDiagram())
-            .onBackground()
+            .onEdt()
             .logTime()
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))
             .split(d -> d.getTrains(), 10)
-            .addEdtBatchConsumer((context, train) -> {
+            .onEdtWithDelay(Duration.ofMillis(1))
+            .addBatchConsumer((context, train) -> {
                 trainAction.execute(train);
             }).execute();
     }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.*;
 
 import javax.swing.*;
@@ -558,11 +559,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
             RsActionHandler.getInstance()
                 .newExecution("settings_recalculate", GuiComponentUtils.getTopLevelComponent(this), model.get())
-                    .onBackground()
+                    .onEdt()
                     .logTime()
                     .setMessage(ResourceLoader.getString("wait.message.recalculate"))
                     .split(TrainDiagram::getTrains, 10)
-                    .addEdtBatchConsumer((context, train) -> {
+                    .onEdtWithDelay(Duration.ofMillis(1))
+                    .addBatchConsumer((context, train) -> {
                         train.recalculate();
                         // round correctly stops
                         TimeConverter converter = train.getDiagram().getTimeConverter();

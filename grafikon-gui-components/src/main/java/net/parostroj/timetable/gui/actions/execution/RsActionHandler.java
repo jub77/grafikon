@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.actions.execution;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -36,7 +37,7 @@ public class RsActionHandler {
         return new RsActionHandler();
     }
 
-    private WaitDialog waitDialog;
+    private final WaitDialog waitDialog;
 
     private RsActionHandler() {
         waitDialog = new WaitDialog((Frame) null, true);
@@ -150,6 +151,10 @@ public class RsActionHandler {
                         return Flux.fromIterable(allItems).buffer(chunkSize);
                     }));
         }
+
+        public Execution<T> onEdtWithDelay(Duration duration) {
+            return new Execution<>(context, observable.delayElements(duration, SwingScheduler.create()));
+        }
     }
 
     public class BatchExecution<T> extends Execution<List<T>> {
@@ -167,37 +172,10 @@ public class RsActionHandler {
             }));
         }
 
-        public BatchExecution<T> addEdtBatchConsumer(BiConsumer<ActionContext, T> consumer) {
-            return new BatchExecution<>(context, observable.filter(item -> !context.isCancelled()).doOnNext(values -> {
-                GuiComponentUtils.runNowInEDT(() -> {
-                    try {
-                        for (T value : values) {
-                            consumer.accept(context, value);
-                        }
-                    } catch (Exception e) {
-                        context.setAttribute("exception", e);
-                    }
-                });
-                checkException();
-                updateProgress(values);
-            }));
-        }
-
         private void updateProgress(List<T> values) {
             int currentSize = context.getAttribute("current", Integer.class) + values.size();
             context.setAttribute("current", currentSize);
             context.setProgress(currentSize * 100 / context.getAttribute("total", Integer.class));
-        }
-
-        private void checkException() throws RuntimeException {
-            Exception exception = context.getAttribute("exception", Exception.class);
-            if (exception != null) {
-                if (exception instanceof RuntimeException) {
-                    throw (RuntimeException) exception;
-                } else {
-                    throw new RuntimeException(exception);
-                }
-            }
         }
 
         @Override
@@ -208,6 +186,11 @@ public class RsActionHandler {
         @Override
         public BatchExecution<T> onEdt() {
             return wrap(super.onEdt());
+        }
+
+        @Override
+        public BatchExecution<T> onEdtWithDelay(Duration duration) {
+            return wrap(super.onEdtWithDelay(duration));
         }
 
         private BatchExecution<T> wrap(Execution<List<T>> exec) {
