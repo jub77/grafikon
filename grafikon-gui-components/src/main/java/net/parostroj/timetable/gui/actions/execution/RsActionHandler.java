@@ -49,7 +49,7 @@ public class RsActionHandler {
         Flux<?> observable = execution.observable;
         context.addPropertyChangeListener(waitDialog);
         context.setStartTime(System.currentTimeMillis());
-        observable = observable.publishOn(SwingScheduler.create());
+        observable = observable.subscribeOn(SwingScheduler.create());
         observable.subscribe(next -> {
             // final value is ignored
         }, exception -> {
