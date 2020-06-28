@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -154,6 +155,10 @@ public class RsActionHandler {
 
         public Execution<T> onEdtWithDelay(Duration duration) {
             return new Execution<>(context, observable.delayElements(duration, SwingScheduler.create()));
+        }
+
+        public Execution<T> onFinish(Consumer<ActionContext> action) {
+            return new Execution<>(context, observable.doFinally(t -> action.accept(context)));
         }
     }
 

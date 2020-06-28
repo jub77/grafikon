@@ -101,16 +101,12 @@ subprojects { prj ->
 		}
 	}
 
-	compileJava {
-		sourceCompatibility = 11
-		targetCompatibility = 11
-		options.encoding = 'utf-8'
-	}
-
-	compileTestJava {
-		sourceCompatibility = 11
-		targetCompatibility = 11
-		options.encoding = 'utf-8'
+	tasks.withType(JavaCompile) {
+        options.compilerArgs.addAll([
+                '--release',
+                project.hasProperty('javaVersion') ? project.property('javaVersion') : '11'
+            ])
+        options.encoding = 'utf-8'
 	}
 
 	test {
