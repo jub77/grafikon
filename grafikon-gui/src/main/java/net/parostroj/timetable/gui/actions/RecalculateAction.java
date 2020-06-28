@@ -34,7 +34,10 @@ public class RecalculateAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         RsActionHandler.getInstance()
-            .newExecution("recalculate", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
+            .fromValue(model.get())
+            .id("recalculate")
+            .component(GuiComponentUtils.getTopLevelComponent(e.getSource()))
+            .buildExecution()
             .onEdt()
             .logTime()
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))

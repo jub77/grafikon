@@ -77,12 +77,44 @@ public class RsActionHandler {
         });
     }
 
-    public <T> Execution<T> newExecution(String id, Component component, T object) {
-        return new Execution<>(new ActionContext(id, component), Flux.just(object));
+    private class BuilderImpl<T> implements ExecutionBuilder<T> {
+
+        private Component component;
+        private String id = "<action>";
+        private Flux<T> rs;
+
+        public BuilderImpl(Flux<T> rs) {
+            this.rs = rs;
+        }
+
+        @Override
+        public ExecutionBuilder<T> id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        @Override
+        public ExecutionBuilder<T> component(Component component) {
+            this.component = component;
+            return this;
+        }
+
+        @Override
+        public Execution<T> buildExecution() {
+            return new Execution<>(new ActionContext(id, component), rs);
+        }
     }
 
-    public <T> Execution<T> newExecution(ActionContext context, T object) {
-        return new Execution<>(context, Flux.just(object));
+    public <T> ExecutionBuilder<T> fromValue(T value) {
+        return new BuilderImpl<>(Flux.just(value));
+    }
+
+    public <T> ExecutionBuilder<T> fromValues(T... values) {
+        return new BuilderImpl<>(Flux.just(values));
+    }
+
+    public <T> ExecutionBuilder<T> fromIterable(Iterable<T> values) {
+        return new BuilderImpl<>(Flux.fromIterable(values));
     }
 
     public class Execution<T> {
@@ -245,5 +277,11 @@ public class RsActionHandler {
         public String getText() {
             return text;
         }
+    }
+
+    public interface ExecutionBuilder<T> {
+        ExecutionBuilder<T> id(String id);
+        ExecutionBuilder<T> component(Component component);
+        Execution<T> buildExecution();
     }
 }

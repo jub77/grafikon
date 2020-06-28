@@ -137,7 +137,10 @@ public class FreightConnectionPanel extends JPanel {
             DataModel model = new DataModel();
 
             RsActionHandler.getInstance()
-                .newExecution("freight_conn", GuiComponentUtils.getTopLevelComponent(this), diagram)
+                .fromValue(diagram)
+                .id("freight_conn")
+                .component(GuiComponentUtils.getTopLevelComponent(this))
+                .buildExecution()
                 .addConsumer((c, diagram) -> {
                     c.setWaitMessage(ResourceLoader.getString("wait.message.processing"));
                     c.setWaitDialogVisible(true);

@@ -99,9 +99,11 @@ public class RecalculateStopsAction extends AbstractAction {
         };
 
 
-        RsActionHandler.getInstance().newExecution("recalculate_stops",
-                GuiComponentUtils.getTopLevelComponent(event.getSource()),
-                model.getDiagram())
+        RsActionHandler.getInstance()
+            .fromValue(model.getDiagram())
+            .id("recalculate_stops")
+            .component(GuiComponentUtils.getTopLevelComponent(event.getSource()))
+            .buildExecution()
             .onEdt()
             .logTime()
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))

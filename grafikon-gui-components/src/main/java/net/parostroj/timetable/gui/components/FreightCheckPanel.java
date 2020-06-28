@@ -118,7 +118,10 @@ public class FreightCheckPanel extends JPanel {
         textPane.setText("");
         if (diagram != null) {
             RsActionHandler.getInstance()
-                .newExecution("freight_check", GuiComponentUtils.getTopLevelComponent(this), new TextBuffer())
+                    .fromValue(new TextBuffer())
+                    .id("freight_check")
+                    .component(GuiComponentUtils.getTopLevelComponent(this))
+                    .buildExecution()
                     .logTime()
                     .onBackground()
                     .addConsumer((c, b) -> {

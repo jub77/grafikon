@@ -39,7 +39,10 @@ public class RemoveWeightsAction extends AbstractAction {
         if (result == JOptionPane.YES_OPTION) {
             // remove weights
             RsActionHandler.getInstance()
-                .newExecution("weight_removal", GuiComponentUtils.getTopLevelComponent(e.getSource()), model.get())
+                .fromValue(model.get())
+                .id("weight_removal")
+                .component(GuiComponentUtils.getTopLevelComponent(e.getSource()))
+                .buildExecution()
                     .onEdt()
                     .logTime()
                     .setMessage(ResourceLoader.getString("wait.message.recalculate"))

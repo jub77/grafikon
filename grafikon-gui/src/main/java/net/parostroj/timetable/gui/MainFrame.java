@@ -558,7 +558,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         if (settingsDialog.isRecalculate()) {
 
             RsActionHandler.getInstance()
-                .newExecution("settings_recalculate", GuiComponentUtils.getTopLevelComponent(this), model.get())
+                    .fromValue(model.get())
+                    .id("settings_recalculate")
+                    .component(GuiComponentUtils.getTopLevelComponent(this))
+                    .buildExecution()
                     .onEdt()
                     .logTime()
                     .setMessage(ResourceLoader.getString("wait.message.recalculate"))
