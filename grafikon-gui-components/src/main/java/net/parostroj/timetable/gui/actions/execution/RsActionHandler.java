@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions.execution;
 import java.awt.Component;
 import java.awt.Frame;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -136,6 +137,12 @@ public class RsActionHandler {
             }));
         }
 
+        public Execution<T> setMessageDealy(int delay) {
+            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
+                context.setDelay(delay);
+            }));
+        }
+
         public Execution<T> logTime() {
             return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
                 context.setLogTime(true);
@@ -177,6 +184,17 @@ public class RsActionHandler {
             }));
         }
 
+        public <U> BatchExecution<U> addBatchAction(BiFunction<ActionContext, T, U> action) {
+            return new BatchExecution<>(context, observable.filter(item -> !context.isCancelled()).map(values -> {
+                List<U> result = new ArrayList<>(values.size());
+                for (T value : values) {
+                    result.add(action.apply(context, value));
+                }
+                updateProgress(values);
+                return result;
+            }));
+        }
+
         private void updateProgress(List<T> values) {
             int currentSize = context.getAttribute("current", Integer.class) + values.size();
             context.setAttribute("current", currentSize);
@@ -196,6 +214,11 @@ public class RsActionHandler {
         @Override
         public BatchExecution<T> onEdtWithDelay(Duration duration) {
             return wrap(super.onEdtWithDelay(duration));
+        }
+
+        @Override
+        public BatchExecution<T> addConsumer(BiConsumer<ActionContext, List<T>> consumer) {
+            return wrap(super.addConsumer(consumer));
         }
 
         private BatchExecution<T> wrap(Execution<List<T>> exec) {
