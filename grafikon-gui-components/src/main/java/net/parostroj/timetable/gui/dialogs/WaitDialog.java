@@ -7,8 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -122,18 +120,16 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
                 this.setVisible(false);
             } else if (evt.getNewValue() == ActionContext.WaitDialogState.SHOW) {
                 final ActionContext context = (ActionContext) evt.getSource();
-                Timer timer = new Timer(context.getDelay(), new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        progressBar.setValue(context.getProgress());
-                        progressBar.setVisible(context.isShowProgress());
-                        pack();
-                        if (context.getLocationComponent() != null) {
-                            setLocationRelativeTo(context.getLocationComponent());
-                        }
-                        setVisible(true);
+                Timer timer = new Timer(context.getDelay(), e -> {
+                    progressBar.setValue(context.getProgress());
+                    progressBar.setVisible(context.isShowProgress());
+                    pack();
+                    if (context.getLocationComponent() != null) {
+                        setLocationRelativeTo(context.getLocationComponent());
+                    } else {
+                        setLocationRelativeTo(null);
                     }
+                    setVisible(true);
                 });
                 timer.setRepeats(false);
                 timer.start();
