@@ -105,15 +105,16 @@ public class RsActionHandler {
         }
     }
 
-    public <T> ExecutionBuilder<T> fromValue(T value) {
+    public final <T> ExecutionBuilder<T> fromValue(T value) {
         return new BuilderImpl<>(Flux.just(value));
     }
 
-    public <T> ExecutionBuilder<T> fromValues(T... values) {
+    @SafeVarargs
+    public final <T> ExecutionBuilder<T> fromValues(T... values) {
         return new BuilderImpl<>(Flux.just(values));
     }
 
-    public <T> ExecutionBuilder<T> fromIterable(Iterable<T> values) {
+    public final <T> ExecutionBuilder<T> fromIterable(Iterable<T> values) {
         return new BuilderImpl<>(Flux.fromIterable(values));
     }
 
