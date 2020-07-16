@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.commands;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.parostroj.timetable.gui.ApplicationModel;

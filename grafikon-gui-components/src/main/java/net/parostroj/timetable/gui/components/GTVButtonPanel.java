@@ -10,8 +10,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import net.parostroj.timetable.gui.components.GTViewSettings;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -83,7 +81,7 @@ public class GTVButtonPanel extends JPanel {
         panel = new JPanel();
         panel.setVisible(false);
         panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<JPanel>() {
+        AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<>() {
             private static final long serialVersionUID = 1L;
 
 			@Override
@@ -100,7 +98,7 @@ public class GTVButtonPanel extends JPanel {
             }
         };
         backpanel.add(panel, BorderLayout.CENTER);
-        JXLayer<JPanel> layer = new JXLayer<JPanel>(backpanel);
+        JXLayer<JPanel> layer = new JXLayer<>(backpanel);
         layer.setUI(layerUI);
         layer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK);
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
@@ -141,8 +139,8 @@ public class GTVButtonPanel extends JPanel {
         });
         panel.add(zoomOut);
 
-        comboBoxModel = new WrapperListModel<Route>(true);
-        comboBox = new JComboBox<Wrapper<Route>>();
+        comboBoxModel = new WrapperListModel<>(true);
+        comboBox = new JComboBox<>();
         comboBox.setModel(comboBoxModel);
         comboBox.addActionListener(new ActionListener() {
             @Override
