@@ -81,7 +81,7 @@ public class GTVButtonPanel extends JPanel {
         panel = new JPanel();
         panel.setVisible(false);
         panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<>() {
+        AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<JPanel>() {
             private static final long serialVersionUID = 1L;
 
 			@Override
