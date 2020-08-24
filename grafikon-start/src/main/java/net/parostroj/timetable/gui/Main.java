@@ -25,10 +25,10 @@ import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    private static final String lOGGING_PACKAGE = "net.parostroj";
+    private static final String LOGGING_PACKAGE = "net.parostroj";
 
     public static void setLoggingLevel(org.slf4j.event.Level level) {
-        setLoggingLevelImpl(lOGGING_PACKAGE, Level.toLevel(level.toString(), Level.DEBUG));
+        setLoggingLevelImpl(LOGGING_PACKAGE, Level.toLevel(level.toString(), Level.DEBUG));
     }
 
     public static void setLoggingLevel(String pkg, org.slf4j.event.Level level) {
@@ -75,7 +75,7 @@ public class Main {
         }
         String levelName = AppPreferences.getPreferences().getSection("debug").get("debug.log4j.level", "DEBUG");
         Level level = Level.toLevel(levelName, Level.DEBUG);
-        setLoggingLevelImpl(lOGGING_PACKAGE, level);
+        setLoggingLevelImpl(LOGGING_PACKAGE, level);
     }
 
     private static void setLookAndFeel() throws IOException {
