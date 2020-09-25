@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.parostroj.timetable.utils.ObjectsUtil;
 import org.beanfabrics.Path;
 import org.beanfabrics.event.BnPropertyChangeEvent;
 import org.beanfabrics.event.ElementChangedEvent;
@@ -55,6 +56,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     ItemListPM<TrackConnectorPM> connectors;
     TextPM name;
     TextPM abbr;
+    TextPM telephone;
 
     OperationPM ok = new OperationPM();
 
@@ -127,6 +129,8 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.abbr = new TextPM();
         this.abbr.setMandatory(true);
         this.abbr.getValidator().add(new EmptySpacesValidationRule(this.abbr));
+        this.telephone = new TextPM();
+        this.telephone.getValidator().add(new EmptySpacesValidationRule(this.telephone));
         PMManager.setup(this);
     }
 
@@ -158,6 +162,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.connectors.sortBy(CONNECTOR_SORT_KEY);
         this.name.setText(node.getName());
         this.abbr.setText(node.getAbbr());
+        this.telephone.setText(node.getTelephone());
         this.updateConnsBlock = false;
         this.updateConnectorsCheckAllLineTracks();
     }
@@ -201,6 +206,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             }
             reference.setName(name.getText());
             reference.setAbbr(abbr.getText());
+            reference.setRemoveAttribute(Node.ATTR_TELEPHONE, ObjectsUtil.checkAndTrim(telephone.getText()));
         }
     }
 

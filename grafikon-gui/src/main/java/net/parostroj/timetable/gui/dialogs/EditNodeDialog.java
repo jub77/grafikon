@@ -225,6 +225,10 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         abbrTextField = new BnTextField();
         abbrTextField.setModelProvider(localProvider);
         abbrTextField.setPath(new Path("abbr"));
+        javax.swing.JLabel telephoneLabel = new javax.swing.JLabel();
+        telephoneTextField = new BnTextField();
+        telephoneTextField.setModelProvider(localProvider);
+        telephoneTextField.setPath(new Path("telephone"));
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
         BnButton okButton = new BnButton();
@@ -250,6 +254,8 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         nameLabel.setText(ResourceLoader.getString("ne.name")); // NOI18N
 
         abbrLabel.setText(ResourceLoader.getString("ne.abbr")); // NOI18N
+
+        telephoneLabel.setText(ResourceLoader.getString("ne.telephone") + ":"); // NOI18N
 
         typeLabel.setText(ResourceLoader.getString("ne.type")); // NOI18N
 
@@ -358,6 +364,10 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(lengthPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
+                            .addComponent(telephoneLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(telephoneTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
                             .addComponent(typeLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(typeComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -409,14 +419,15 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(typeLabel)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(7)
-                    .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lengthPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lengthLabel)
-                            .addGap(10)))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(telephoneLabel)
+                        .addComponent(telephoneTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.CENTER)
+                        .addComponent(lengthLabel)
+                        .addComponent(lengthPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
                     .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(tracksAndConnectorsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -427,7 +438,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel, telephoneLabel});
 
         sSpeedEditBox = new ValueWithUnitEditBox();
         sSpeedPanel.add(sSpeedEditBox, BorderLayout.CENTER);
@@ -493,6 +504,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
     private BnTextField nameTextField;
     private BnTextField abbrTextField;
+    private BnTextField telephoneTextField;
     private javax.swing.JCheckBox controlCheckBox;
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
