@@ -100,8 +100,8 @@ subprojects { prj ->
 	}
 
 	tasks.withType(JavaCompile) {
-        options.compilerArgs.addAll(['--release', project.findProperty('javaVersion') ?: '11'])
-        options.encoding = 'utf-8'
+		options.release = (project.findProperty('javaVersion') ?: 11) as int
+		options.encoding = 'utf-8'
 	}
 
 	test {
