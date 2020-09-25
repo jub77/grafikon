@@ -232,6 +232,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return this.getAttribute(ATTR_COMPANY, Company.class);
     }
 
+    public String getTelephone() {
+        return this.getAttribute(ATTR_TELEPHONE, String.class);
+    }
+
     public Set<Region> getCenterRegions() {
     	return this.getAttributeAsSet(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptySet());
     }

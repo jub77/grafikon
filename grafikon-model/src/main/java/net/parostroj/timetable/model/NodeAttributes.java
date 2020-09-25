@@ -23,4 +23,5 @@ public interface NodeAttributes {
     String ATTR_NOT_STRAIGHT_SPEED = "not.straight.speed";
     String ATTR_SPEED = "speed";
     String ATTR_COMPANY = "company";
+    String ATTR_TELEPHONE = "telephone";
 }
