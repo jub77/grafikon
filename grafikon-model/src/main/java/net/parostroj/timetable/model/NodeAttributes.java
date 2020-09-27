@@ -24,4 +24,6 @@ public interface NodeAttributes {
     String ATTR_SPEED = "speed";
     String ATTR_COMPANY = "company";
     String ATTR_TELEPHONE = "telephone";
+    String ATTR_FREIGHT_CAPACITY = "freight.capacity";
+    String ATTR_FREIGHT_NOTE = "freight.note";
 }

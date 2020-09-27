@@ -236,6 +236,14 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
         return this.getAttribute(ATTR_TELEPHONE, String.class);
     }
 
+    public Integer getFreightCapacity() {
+        return this.getAttribute(ATTR_FREIGHT_CAPACITY, Integer.class);
+    }
+
+    public LocalizedString getFreightNote() {
+        return this.getAttribute(ATTR_FREIGHT_NOTE, LocalizedString.class);
+    }
+
     public Set<Region> getCenterRegions() {
     	return this.getAttributeAsSet(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptySet());
     }
