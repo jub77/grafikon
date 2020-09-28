@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.beans.PropertyChangeEvent;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import org.beanfabrics.Path;
 import org.beanfabrics.event.BnPropertyChangeEvent;
@@ -57,6 +59,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     TextPM name;
     TextPM abbr;
     TextPM telephone;
+    ValueWithUnitPM<LengthUnit> freightCapacity;
 
     OperationPM ok = new OperationPM();
 
@@ -131,6 +134,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.abbr.getValidator().add(new EmptySpacesValidationRule(this.abbr));
         this.telephone = new TextPM();
         this.telephone.getValidator().add(new EmptySpacesValidationRule(this.telephone));
+        this.freightCapacity = new ValueWithUnitPM<>();
         PMManager.setup(this);
     }
 
@@ -163,6 +167,9 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.name.setText(node.getName());
         this.abbr.setText(node.getAbbr());
         this.telephone.setText(node.getTelephone());
+        this.freightCapacity.init(
+                Optional.ofNullable(node.getFreightCapacity()).map(BigDecimal::valueOf),
+                Arrays.asList(LengthUnit.AXLE));
         this.updateConnsBlock = false;
         this.updateConnectorsCheckAllLineTracks();
     }
@@ -207,6 +214,12 @@ public class NodePM extends AbstractPM implements IPM<Node> {
             reference.setName(name.getText());
             reference.setAbbr(abbr.getText());
             reference.setRemoveAttribute(Node.ATTR_TELEPHONE, ObjectsUtil.checkAndTrim(telephone.getText()));
+            // freight capacity
+            reference.setRemoveAttribute(Node.ATTR_FREIGHT_CAPACITY,
+                    freightCapacity.getValue()
+                            .map(BigDecimal::intValue)
+                            .filter(i -> i > 0)
+                            .orElse(null));
         }
     }
 

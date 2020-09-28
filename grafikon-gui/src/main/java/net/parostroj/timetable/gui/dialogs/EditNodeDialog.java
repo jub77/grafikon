@@ -19,6 +19,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.gui.components.EditNodeTracksAndConnectorsPanel;
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
+import net.parostroj.timetable.gui.components.ValueWithUnitEditPanel;
 import net.parostroj.timetable.gui.pm.NodePM;
 import net.parostroj.timetable.gui.wrappers.NodeTypeWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -229,6 +230,10 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         telephoneTextField = new BnTextField();
         telephoneTextField.setModelProvider(localProvider);
         telephoneTextField.setPath(new Path("telephone"));
+        javax.swing.JLabel freightCapacityLabel = new javax.swing.JLabel();
+        freightCapacityPanel = new ValueWithUnitEditPanel<>(5, "MMMMM");
+        freightCapacityPanel.setModelProvider(localProvider);
+        freightCapacityPanel.setPath(new Path("freightCapacity"));
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox<>();
         BnButton okButton = new BnButton();
@@ -256,6 +261,8 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         abbrLabel.setText(ResourceLoader.getString("ne.abbr")); // NOI18N
 
         telephoneLabel.setText(ResourceLoader.getString("ne.telephone") + ":"); // NOI18N
+
+        freightCapacityLabel.setText(ResourceLoader.getString("ne.freight.capacity") + ":"); // NOI18N
 
         typeLabel.setText(ResourceLoader.getString("ne.type")); // NOI18N
 
@@ -364,10 +371,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(lengthPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(telephoneLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(telephoneTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
                             .addComponent(typeLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(typeComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -375,6 +378,14 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                             .addComponent(nsSpeedLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(nsSpeedPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(telephoneLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(telephoneTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.UNRELATED)
+                            .addComponent(freightCapacityLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(freightCapacityPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(sSpeedLabel)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -420,13 +431,15 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addComponent(typeLabel)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(telephoneLabel)
-                        .addComponent(telephoneTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.CENTER)
                         .addComponent(lengthLabel)
                         .addComponent(lengthPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(telephoneLabel)
+                        .addComponent(telephoneTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(freightCapacityLabel)
+                        .addComponent(freightCapacityPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.UNRELATED)
                     .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -438,7 +451,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel, telephoneLabel});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel});
 
         sSpeedEditBox = new ValueWithUnitEditBox();
         sSpeedPanel.add(sSpeedEditBox, BorderLayout.CENTER);
@@ -521,6 +534,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
     private EditNodeTracksAndConnectorsPanel tracksAndConnectorsPanel;
+    private ValueWithUnitEditPanel<LengthUnit> freightCapacityPanel;
 
     private WrapperListModel<Company> companies;
     private Set<Region> regions;
