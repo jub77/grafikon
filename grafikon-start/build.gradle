@@ -21,7 +21,6 @@ dependencies {
 
 	implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
 	implementation 'org.apache.logging.log4j:log4j-core'
-	implementation 'com.github.markusbernhardt:proxy-vole'
 	implementation 'org.glassfish.jaxb:jaxb-runtime'
 }
 
