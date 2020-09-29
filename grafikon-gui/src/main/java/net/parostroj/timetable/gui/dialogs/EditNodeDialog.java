@@ -231,7 +231,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         telephoneTextField.setModelProvider(localProvider);
         telephoneTextField.setPath(new Path("telephone"));
         javax.swing.JLabel freightCapacityLabel = new javax.swing.JLabel();
-        freightCapacityPanel = new ValueWithUnitEditPanel<>(5, "MMMMM");
+        freightCapacityPanel = new ValueWithUnitEditPanel<>(5);
         freightCapacityPanel.setModelProvider(localProvider);
         freightCapacityPanel.setPath(new Path("freightCapacity"));
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();

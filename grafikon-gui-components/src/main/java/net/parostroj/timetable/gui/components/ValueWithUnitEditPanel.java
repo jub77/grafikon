@@ -19,13 +19,12 @@ public class ValueWithUnitEditPanel<T extends Unit> extends BaseEditPanel<ValueW
     private static final long serialVersionUID = 1L;
 
     private static final int DEFAULT_COLUMNS = 10;
-    private static final String DEFAULT_UNIT_PROTOTYPE = "MMMMMM";
 
     public ValueWithUnitEditPanel() {
-        this(DEFAULT_COLUMNS, DEFAULT_UNIT_PROTOTYPE);
+        this(DEFAULT_COLUMNS);
     }
 
-    public ValueWithUnitEditPanel(int columns, String unitPrototype) {
+    public ValueWithUnitEditPanel(int columns) {
         BnTextField valueTextField = new BnTextField();
         valueTextField.setColumns(columns);
         valueTextField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -33,7 +32,7 @@ public class ValueWithUnitEditPanel<T extends Unit> extends BaseEditPanel<ValueW
         valueTextField.setPath(new Path("value"));
 
         BnComboBox unitComboBox = new BnComboBox();
-        unitComboBox.setPrototypeDisplayValue(unitPrototype);
+        unitComboBox.automaticallyResizeOnDataChange();
         unitComboBox.setModelProvider(localProvider);
         unitComboBox.setPath(new Path("unit"));
 
