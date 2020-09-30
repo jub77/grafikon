@@ -8,6 +8,7 @@ import javax.swing.event.ListDataListener;
  *
  * @author jub
  */
+@SuppressWarnings("unchecked")
 public class BnComboBox extends org.beanfabrics.swing.BnComboBox {
 
     private static final long serialVersionUID = 1L;
