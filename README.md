@@ -15,17 +15,6 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
 
 Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa and beta builds.
 
-## Webstart
-### Release
-http://jub.parostroj.net/grafikon/3.0/grafikon.jnlp
-### Development
-http://jub.parostroj.net/grafikon/dev/grafikon.jnlp
-### Previous release
-http://jub.parostroj.net/grafikon/2.1/grafikon.jnlp
-
-Grafikon is signed with self-signed certificate, so there is a need to add site `http://jub.parostroj.net` to security
-*Exception Site List* (in *Java Control Panel*) and lower the security level to *High*.
-
 Output templates and outputs can be added from menu (downloaded from web): *File > Import > Import and replace templates (web)*.
 
 ![Grafikon](http://jub.parostroj.net/grafikon/grafikon.png)
