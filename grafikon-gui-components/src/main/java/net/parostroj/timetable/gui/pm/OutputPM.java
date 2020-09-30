@@ -152,7 +152,7 @@ public class OutputPM extends AbstractPM {
         TrainDiagram diagram = diagramRef != null ? diagramRef.get() : null;
         if (diagram != null) {
             newOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
-            newOutput.setName(LocalizedString.fromString(name.getCurrentEdit().get().translate()));
+            newOutput.setName(name.getCurrentEdit().get());
             newOutput.setTemplate(templates.getValue());
             newOutput.setLocale(locale.getValue());
             newOutput.setKey(key.getText());
