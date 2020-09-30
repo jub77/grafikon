@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.util;
 
 import java.text.Collator;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -141,6 +142,14 @@ public class OutputFreightUtil {
             Collection<? extends FreightConnection> list, Locale locale) {
         return this.reorderFreightListByDirection(list).stream()
                 .map(d -> freightToString(d.getTo(), locale))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> freightListToString(
+            Collection<? extends FreightConnection> list,
+            Locale locale, BiFunction<FreightConnection, String, String> conversion) {
+        return this.reorderFreightListByDirection(list).stream()
+                .map(d -> conversion.apply(d, freightToString(d.getTo(), locale)))
                 .collect(Collectors.toList());
     }
 
