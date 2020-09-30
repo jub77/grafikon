@@ -24,7 +24,7 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "abbr", "regions", "colors"})
+@XmlType(propOrder = {"name", "abbr", "regions", "colors", "hidden", "capacity"})
 public class FreightDestinationInfo {
 
     private String name;
@@ -32,6 +32,7 @@ public class FreightDestinationInfo {
     private List<String> regions;
     private List<FreightColor> colors;
     private Boolean hidden;
+    private Integer capacity;
 
     public String getName() {
         return name;
@@ -41,13 +42,13 @@ public class FreightDestinationInfo {
         this.name = name;
     }
 
-    public Boolean getHidden() {
-        return hidden;
-    }
-
     @XmlAttribute
     public void setHidden(Boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public Boolean getHidden() {
+        return hidden;
     }
 
     public String getAbbr() {
@@ -75,6 +76,15 @@ public class FreightDestinationInfo {
     @XmlElement(name = "color")
     public void setColors(List<FreightColor> colors) {
         this.colors = colors;
+    }
+
+    @XmlAttribute
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
     }
 
     @XmlTransient
@@ -119,6 +129,9 @@ public class FreightDestinationInfo {
             info.setColors(sortedColors == null || sortedColors.isEmpty() ? null : sortedColors);
             if (!dst.getTo().isVisible()) {
                 info.setHidden(true);
+            }
+            if (to.getFreightCapacity() != null) {
+                info.setCapacity(to.getFreightCapacity());
             }
         }
         if (dst.getTo().isRegions()) {
