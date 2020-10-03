@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import org.beanfabrics.Path;
@@ -39,12 +40,6 @@ import org.beanfabrics.validation.ValidationState;
 
 import com.google.common.collect.FluentIterable;
 
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.TrackConnector;
-
 /**
  * @author jub
  */
@@ -60,6 +55,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     TextPM abbr;
     TextPM telephone;
     ValueWithUnitPM<LengthUnit> freightCapacity;
+    LocalizedStringPM freightNote;
 
     OperationPM ok = new OperationPM();
 
@@ -135,6 +131,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.telephone = new TextPM();
         this.telephone.getValidator().add(new EmptySpacesValidationRule(this.telephone));
         this.freightCapacity = new ValueWithUnitPM<>();
+        this.freightNote = new LocalizedStringPM();
         PMManager.setup(this);
     }
 
@@ -170,6 +167,10 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.freightCapacity.init(
                 Optional.ofNullable(node.getFreightCapacity()).map(BigDecimal::valueOf),
                 Arrays.asList(LengthUnit.AXLE));
+        LocalizedString freightNote = node.getFreightNote();
+        this.freightNote.init(
+                freightNote != null ? freightNote : LocalizedString.fromString(""),
+                node.getDiagram().getLocales());
         this.updateConnsBlock = false;
         this.updateConnectorsCheckAllLineTracks();
     }
@@ -220,6 +221,11 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                             .map(BigDecimal::intValue)
                             .filter(i -> i > 0)
                             .orElse(null));
+            // freight note
+            LocalizedString freightNodeLS = freightNote.getCurrentEdit().get();
+            reference.setRemoveAttribute(
+                    Node.ATTR_FREIGHT_NOTE,
+                    freightNodeLS.isDefaultStringEmpty() ? null : freightNodeLS);
         }
     }
 
