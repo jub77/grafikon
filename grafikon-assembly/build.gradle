@@ -24,3 +24,9 @@ task distribution(type: Zip) {
 		}
 	}
 }
+
+task unzippedDistribution(type: Sync) {
+    dependsOn distribution
+    from zipTree(distribution.archiveFile)
+    into "${buildDir}/unzipped-dist"
+}
