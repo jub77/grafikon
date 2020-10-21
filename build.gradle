@@ -82,6 +82,12 @@ subprojects { prj ->
 	apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(11)
+		}
+	}
+
 	publishing {
 		publications {
 			maven(MavenPublication) {
