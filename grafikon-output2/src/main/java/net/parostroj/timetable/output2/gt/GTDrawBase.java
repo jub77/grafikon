@@ -30,6 +30,8 @@ public abstract class GTDrawBase implements GTDraw {
     // chars
     private static final String M_CHAR = "M";
     private static final String DIGIT_CHAR = "0";
+    private static final String SHORT_STOP_CHAR = "\u25B2";
+    private static final String SHORT_STOP_SIZE = "mi";
 
     // basic display
     private static final float HOURS_STROKE_WIDTH = 1.8f;
@@ -545,9 +547,17 @@ public abstract class GTDrawBase implements GTDraw {
         }
     }
 
+    private Rectangle shortStopSize;
     private Rectangle digitSize;
     private Rectangle mSize;
     private FontInfo fontInfo;
+
+    protected Rectangle getShortStopSize(Graphics2D g) {
+        if (shortStopSize == null) {
+            shortStopSize = this.getCharSize(SHORT_STOP_SIZE, g);
+        }
+        return shortStopSize;
+    }
 
     protected Rectangle getDigitSize(Graphics2D g) {
         if (digitSize == null) {
@@ -587,7 +597,8 @@ public abstract class GTDrawBase implements GTDraw {
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
         // check if I should draw end time
         boolean endTimeCheck = true;
-        if (!interval.getTrainInterval(1).isStop()) {
+        TimeInterval previousInterval = interval.getTrainInterval(1);
+        if (!previousInterval.isStop()) {
             Train train = interval.getTrain();
             int ind = train.getTimeIntervalList().indexOf(interval);
             if ((ind + 2) < train.getTimeIntervalList().size()) {
@@ -617,6 +628,17 @@ public abstract class GTDrawBase implements GTDraw {
             int time = interval.getEnd();
             drawDigit(g, dSize, c, xp, yp, time);
         }
+        if (interval.getTo().getType() != NodeType.SIGNAL && previousInterval.getAttributeAsBool(TimeInterval.ATTR_COMMENT_SHOWN)) {
+            Rectangle ssSize = this.getShortStopSize(g);
+            Tuple<Point2D> ssPoints = orientationDelegate.getDigitPoints(line, ssSize);
+            int xp = (int) ssPoints.second.getX();
+            int yp = (int) ssPoints.second.getY();
+            drawShortStop(g, xp, yp);
+        }
+    }
+
+    private void drawShortStop(Graphics2D g, int xp, int yp) {
+        g.drawString(SHORT_STOP_CHAR, xp, yp);
     }
 
     private void drawDigit(Graphics2D g, Rectangle2D dSize, TimeConverter c, int xp, int yp, int time) {
@@ -755,6 +777,11 @@ public abstract class GTDrawBase implements GTDraw {
                         setRefresh(Refresh.REPAINT);
                     } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL, Train.ATTR_TECHNOLOGICAL_AFTER,
                             Train.ATTR_TECHNOLOGICAL_BEFORE)) {
+                        setRefresh(Refresh.REPAINT);
+                    }
+                    break;
+                case OBJECT_ATTRIBUTE:
+                    if (event.getAttributeChange().checkName(TimeInterval.ATTR_COMMENT_SHOWN)) {
                         setRefresh(Refresh.REPAINT);
                     }
                     break;
