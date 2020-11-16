@@ -29,8 +29,8 @@ subprojects { prj ->
 			dependency 'org.codehaus.groovy:groovy-jsr223:3.0.6'
 			dependency 'org.slf4j:slf4j-api:1.7.30'
 			dependency 'org.slf4j:jcl-over-slf4j:1.7.30'
-			dependency 'joda-time:joda-time:2.10.6'
-			dependency 'com.google.guava:guava:29.0-jre', {
+			dependency 'joda-time:joda-time:2.10.8'
+			dependency 'com.google.guava:guava:30.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -58,8 +58,8 @@ subprojects { prj ->
 			dependency 'com.fifesoft:rsyntaxtextarea:3.1.1'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.vlsi.mxgraph:jgraphx:4.1.0'
-			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
-			dependency 'org.apache.logging.log4j:log4j-core:2.13.3'
+			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.0'
+			dependency 'org.apache.logging.log4j:log4j-core:2.14.0'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.3', {
 				exclude 'com.sun.xml.fastinfoset:FastInfoset'
@@ -71,7 +71,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter-api:5.7.0'
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 			dependency 'org.hamcrest:hamcrest:2.2'
-			dependency 'io.projectreactor.addons:reactor-extra:3.3.4.RELEASE'
+			dependency 'io.projectreactor.addons:reactor-extra:3.4.0'
 		}
 	}
 
