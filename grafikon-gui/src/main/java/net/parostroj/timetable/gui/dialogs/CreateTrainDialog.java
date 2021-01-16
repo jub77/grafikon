@@ -25,15 +25,12 @@ public class CreateTrainDialog extends javax.swing.JDialog {
      * Creates new form CreateTrainDialog.
      *
      * @param parent parent window
-     * @param model model
+     * @param diagram train diagram
      */
     public CreateTrainDialog(java.awt.Window parent, TrainDiagram diagram) {
         super(parent, ModalityType.APPLICATION_MODAL);
         initComponents();
         createTrainView.setDiagram(diagram);
-
-        // fix size
-        this.setResizable(false);
     }
 
     private void initComponents() {
@@ -62,5 +59,7 @@ public class CreateTrainDialog extends javax.swing.JDialog {
 
     public void updateView(Group selectedGroup) {
         createTrainView.updateView(selectedGroup);
+        pack();
+        setMinimumSize(getSize());
     }
 }
