@@ -1,4 +1,4 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.computation;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,13 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.Train;
 
 /**
  * @author jub
  */
 public class TrainRouteTracksComputation {
 
-    private RouteTracksComputation comp;
+    private final RouteTracksComputation comp;
 
     public TrainRouteTracksComputation(RouteTracksComputation routeComputation) {
         this.comp = routeComputation;
@@ -41,7 +44,7 @@ public class TrainRouteTracksComputation {
                 from = interval.getPreviousTrainInterval().getOwner().getTracks();
                 to = result.get(interval.getNextTrainInterval());
             }
-            tracks = getAvailableTracks(from, interval, to);
+            tracks = this.getAvailableTracks(from, interval, to);
             if (tracks.isEmpty()) {
                 return Collections.emptyMap();
             }

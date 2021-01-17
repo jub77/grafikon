@@ -1,20 +1,22 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.List;
+import java.util.Collection;
 
+import java.util.Map;
+import java.util.Set;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import net.parostroj.timetable.model.RouteTracksComputation;
+import net.parostroj.timetable.model.computation.RouteTracksComputation;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
 
 /**
  * Cell editor for editing tracks.
@@ -28,16 +30,14 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
     private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
 
-    private RouteTracksComputation comp = RouteTracksComputation.getDefaultInstance();
+    private final TrainRouteTracksComputation comp =
+            new TrainRouteTracksComputation(RouteTracksComputation.getDefaultInstance());
 
     public TrackCellEditor() {
-        editor = new JComboBox<Track>();
-        editor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!ignoreAction) {
-                    fireEditingStopped();
-                }
+        editor = new JComboBox<>();
+        editor.addActionListener(e -> {
+            if (!ignoreAction) {
+                fireEditingStopped();
             }
         });
         editor.addFocusListener(new FocusAdapter() {
@@ -60,9 +60,10 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
             int row, int column) {
         ignoreAction = true;
         editor.removeAllItems();
-        final TimeInterval interval = ((TrainTableModel) table.getModel()).getTrain()
-                .getTimeIntervalList().get(row);
-        List<? extends Track> tracks = comp.getAvailableTracks(interval);
+        Train train = ((TrainTableModel) table.getModel()).getTrain();
+        final TimeInterval interval = train.getTimeIntervalList().get(row);
+        Map<TimeInterval, Set<? extends Track>> available = comp.getAvailableTracksForTrain(train);
+        Collection<? extends Track> tracks = available.get(interval);
         for (Track track : tracks) {
             editor.addItem(track);
         }
