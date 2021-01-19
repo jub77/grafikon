@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.Node;
@@ -39,8 +40,7 @@ public class TrackSelectionComputation {
         LineTrack selectedTrack = this.checkLineSelection(preselectedTrack, interval);
         RouteTracksComputation rtc = RouteTracksComputation.getDefaultInstance();
         Set<LineTrack> trackSet = rtc.getAvailableLineTracks(
-                Collections.singletonList(fromTrack), interval.getOwnerAsLine(),
-                interval.getDirection(), toTracks);
+                Collections.singletonList(fromTrack), interval.getOwnerAsLine(), toTracks);
         List<LineTrack> tracks = rtc.toTrackList(interval, trackSet, LineTrack.class);
         if (!trackSet.contains(selectedTrack)) {
             selectedTrack = null;
@@ -51,7 +51,9 @@ public class TrackSelectionComputation {
             Node node = pNodeTrack.getOwner();
             selectedTrack = node.getConnectors().getForLine(interval.getOwnerAsLine()).stream()
                     .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
-                    .map(c -> c.getLineTrack().get())
+                    .map(TrackConnector::getLineTrack)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .filter(t -> this.checkLineSelection(t, interval) != null)
                     .filter(trackSet::contains)
                     .findAny()

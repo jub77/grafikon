@@ -11,7 +11,6 @@ import net.parostroj.timetable.model.LineTrack;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TimeIntervalDirection;
 import net.parostroj.timetable.model.Track;
 
 class DefaultRouteTracksComputation implements RouteTracksComputation {
@@ -26,9 +25,9 @@ class DefaultRouteTracksComputation implements RouteTracksComputation {
 
     @Override
     public Set<LineTrack> getAvailableLineTracks(Collection<? extends Track> fromTracks, Line line,
-                                                 TimeIntervalDirection direction, Collection<? extends Track> toTracks) {
-        Set<LineTrack> ltFrom = getConnectedLineTracks(fromTracks, line, direction);
-        Set<LineTrack> ltTo = getConnectedLineTracks(toTracks, line, direction.reverse());
+            Collection<? extends Track> toTracks) {
+        Set<LineTrack> ltFrom = getConnectedLineTracks(fromTracks, line);
+        Set<LineTrack> ltTo = getConnectedLineTracks(toTracks, line);
         ltTo.retainAll(ltFrom);
         return ltTo;
     }
@@ -48,9 +47,8 @@ class DefaultRouteTracksComputation implements RouteTracksComputation {
         }
     }
 
-    private Set<LineTrack> getConnectedLineTracks(Collection<? extends Track> fromTracks, Line line,
-            TimeIntervalDirection direction) {
-        return connectionComputation.getConnectedLineTracks(fromTracks, line, direction);
+    private Set<LineTrack> getConnectedLineTracks(Collection<? extends Track> fromTracks, Line line) {
+        return connectionComputation.getConnectedLineTracks(fromTracks, line);
     }
 
     private Set<NodeTrack> getConnectedNodeTracks(Collection<? extends Track> fromTracks,
@@ -65,15 +63,16 @@ class DefaultRouteTracksComputation implements RouteTracksComputation {
         }
 
         Set<NodeTrack> tracks = getAvailableNodeTracks(
-                nodeInterval.isFirst() ? Collections.emptyList()
-                        : Collections.singletonList(
-                                (LineTrack) nodeInterval.getPreviousTrainInterval().getTrack()),
+                nodeInterval.isFirst()
+                        ? Collections.emptyList()
+                        : Collections.singletonList((LineTrack) nodeInterval.getPreviousTrainInterval().getTrack()),
                 nodeInterval.getOwnerAsNode(),
-                nodeInterval.isLast() ? Collections.emptyList()
-                        : Collections.singletonList(
-                                (LineTrack) nodeInterval.getNextTrainInterval().getTrack()));
+                nodeInterval.isLast()
+                        ? Collections.emptyList()
+                        : Collections.singletonList((LineTrack) nodeInterval.getNextTrainInterval().getTrack()));
 
-        return nodeInterval.getOwnerAsNode().getTracks().stream().filter(tracks::contains)
+        return nodeInterval.getOwnerAsNode().getTracks().stream()
+                .filter(tracks::contains)
                 .collect(toList());
     }
 
@@ -84,12 +83,10 @@ class DefaultRouteTracksComputation implements RouteTracksComputation {
         }
 
         Set<LineTrack> tracks = getAvailableLineTracks(
-                Collections.singletonList(
-                        (NodeTrack) lineInterval.getPreviousTrainInterval().getTrack()),
-                lineInterval.getOwnerAsLine(), lineInterval.getDirection(), Collections
-                        .singletonList((NodeTrack) lineInterval.getNextTrainInterval().getTrack()));
+                Collections.singletonList((NodeTrack) lineInterval.getPreviousTrainInterval().getTrack()),
+                lineInterval.getOwnerAsLine(),
+                Collections.singletonList((NodeTrack) lineInterval.getNextTrainInterval().getTrack()));
 
-        return lineInterval.getOwnerAsLine().getTracks().stream().filter(tracks::contains)
-                .collect(toList());
+        return lineInterval.getOwnerAsLine().getTracks().stream().filter(tracks::contains).collect(toList());
     }
 }

@@ -90,7 +90,7 @@ public class TrainRouteTracksComputation {
                     toInterval.getOwnerAsNode());
         } else {
             tracks = connectionComp.getConnectedLineTracks(Collections.singleton(fromTrack),
-                    toInterval.getOwnerAsLine(), toInterval.getDirection());
+                    toInterval.getOwnerAsLine());
         }
         return tracks;
     }

@@ -30,19 +30,18 @@ public interface RouteTracksComputation {
      * @return available node tracks
      */
     Set<NodeTrack> getAvailableNodeTracks(Collection<? extends Track> fromTracks, Node node,
-                                          Collection<? extends Track> toTracks);
+            Collection<? extends Track> toTracks);
 
     /**
      * Returns available line tracks which connect from and to node tracks.
      *
      * @param fromTracks source tracks
      * @param line       line
-     * @param direction  direction of movement
      * @param toTracks   destination tracks
      * @return available line tracks
      */
     Set<LineTrack> getAvailableLineTracks(Collection<? extends Track> fromTracks, Line line,
-                                          TimeIntervalDirection direction, Collection<? extends Track> toTracks);
+            Collection<? extends Track> toTracks);
 
     /**
      * Returns list of available node tracks. The line before and after has to
