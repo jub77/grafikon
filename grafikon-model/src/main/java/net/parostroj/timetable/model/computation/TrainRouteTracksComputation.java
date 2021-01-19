@@ -50,7 +50,7 @@ public class TrainRouteTracksComputation {
         for (Track fromTrack : fromTracks) {
             boolean is = this.isPath(first, fromTrack, context);
             if (is) {
-                context.result.get(first).add(fromTrack);
+                context.addTrack(first, fromTrack);
             }
             isPath = isPath || is;
         }
@@ -74,7 +74,7 @@ public class TrainRouteTracksComputation {
             for (Track track : tracks) {
                 boolean is = this.isPath(toInterval, track, context);
                 if (is) {
-                    context.result.get(toInterval).add(track);
+                    context.addTrack(toInterval, track);
                 }
                 isPath = isPath || is;
             }
