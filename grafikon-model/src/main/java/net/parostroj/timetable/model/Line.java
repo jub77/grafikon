@@ -1,8 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.*;
-
-import net.parostroj.timetable.model.computation.RouteTracksComputation;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -57,53 +54,6 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
      */
     public void setLength(int length) {
         this.attributes.set(ATTR_LENGTH, length);
-    }
-
-    LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack, NodeTrack fromTrack,
-            Collection<? extends Track> toTracks) {
-        LineTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
-        RouteTracksComputation rtc = RouteTracksComputation.getDefaultInstance();
-        Set<LineTrack> trackSet = rtc.getAvailableLineTracks(
-                Collections.singletonList(fromTrack), interval.getOwnerAsLine(),
-                interval.getDirection(), toTracks);
-        List<LineTrack> tracks = rtc.toTrackList(interval, trackSet, LineTrack.class);
-        if (!trackSet.contains(selectedTrack)) {
-            selectedTrack = null;
-        }
-        if (selectedTrack == null) {
-            // check straight
-            NodeTrack pNodeTrack = (NodeTrack) interval.getPreviousTrainInterval().getTrack();
-            Node node = pNodeTrack.getOwner();
-            selectedTrack = node.getConnectors().getForLine(this).stream()
-                    .filter(c -> c.getStraightNodeTrack().orElse(null) == pNodeTrack)
-                    .map(c -> c.getLineTrack().get())
-                    .filter(t -> this.checkSelection(t, interval) != null)
-                    .filter(trackSet::contains)
-                    .findAny()
-                    .orElse(null);
-        }
-        if (selectedTrack == null) {
-            // check which track is free for adding
-            for (LineTrack lineTrack : getIterableByDirection(interval.getDirection(), tracks)) {
-                selectedTrack = this.checkSelection(lineTrack, interval);
-                if (selectedTrack != null) {
-                    break;
-                }
-            }
-        }
-        if (selectedTrack == null) {
-            // set first one
-            selectedTrack = tracks.get(interval.getDirection() == TimeIntervalDirection.FORWARD ? 0
-                    : tracks.size() - 1);
-        }
-        return selectedTrack;
-    }
-
-    private LineTrack checkSelection(LineTrack track, TimeInterval interval) {
-        return track != null
-                && track.testTimeInterval(interval).getStatus() == TimeIntervalResult.Status.OK
-                        ? track
-                        : null;
     }
 
     /**
@@ -180,31 +130,5 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<Li
             track.accept(visitor);
         }
         visitor.visitAfter(this);
-    }
-
-    private static Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction,
-            List<LineTrack> tracks) {
-        if (direction == TimeIntervalDirection.FORWARD) {
-            return tracks;
-        } else {
-            return () -> new Iterator<LineTrack>() {
-                private final ListIterator<LineTrack> i = tracks.listIterator(tracks.size());
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public LineTrack next() {
-                    return i.previous();
-                }
-
-                @Override
-                public boolean hasNext() {
-                    return i.hasPrevious();
-                }
-            };
-        }
     }
 }

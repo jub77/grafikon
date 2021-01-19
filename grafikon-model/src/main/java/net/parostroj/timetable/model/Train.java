@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.filters.ModelPredicates;
+import net.parostroj.timetable.model.computation.TrackSelectionComputation;
 import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Observable;
@@ -739,9 +740,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * assigns empty tracks (current ones are preselected).
      */
     public void assignEmptyTracks() {
-        TrainRouteTracksComputation computation = new TrainRouteTracksComputation();
-        final Map<TimeInterval, Set<Track>> availableTracks = computation
-                .getAvailableTracksForTrain(this);
+        final TrainRouteTracksComputation computation = new TrainRouteTracksComputation();
+        final Map<TimeInterval, Set<Track>> availableTracks = computation.getAvailableTracksForTrain(this);
+        final TrackSelectionComputation select = new TrackSelectionComputation();
         if (availableTracks.isEmpty()) {
             throw new GrafikonException("No route for train");
         }
@@ -752,12 +753,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             final Track previousTrack = interval.isFirst() ? null
                     : interval.getPreviousTrainInterval().getTrack();
             if (interval.isLineOwner()) {
-                Line line = interval.getOwnerAsLine();
-                interval.setTrack(line.selectTrack(interval, (LineTrack) interval.getTrack(),
+                interval.setTrack(select.selectLineTrack(interval, (LineTrack) interval.getTrack(),
                         (NodeTrack) previousTrack, nextAvailableTracks));
             } else {
-                Node node = interval.getOwnerAsNode();
-                interval.setTrack(node.selectTrack(interval, (NodeTrack) interval.getTrack(),
+                interval.setTrack(select.selectNodeTrack(interval, (NodeTrack) interval.getTrack(),
                         (LineTrack) previousTrack, nextAvailableTracks));
             }
         }

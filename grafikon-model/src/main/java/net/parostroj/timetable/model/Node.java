@@ -3,10 +3,8 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import net.parostroj.timetable.model.computation.RouteTracksComputation;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -99,54 +97,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
     @Override
     public TrainDiagram getDiagram() {
         return diagram;
-    }
-
-    NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack, LineTrack fromTrack,
-            Collection<? extends Track> toTracks) {
-        NodeTrack selectedTrack = this.checkSelection(preselectedTrack, interval);
-        RouteTracksComputation rtc = RouteTracksComputation.getDefaultInstance();
-        Set<NodeTrack> trackSet = rtc.getAvailableNodeTracks(
-                fromTrack != null ? Collections.singletonList(fromTrack) : Collections.emptySet(),
-                interval.getOwnerAsNode(), toTracks);
-        List<NodeTrack> tracks = rtc.toTrackList(interval, trackSet, NodeTrack.class);
-        if (!trackSet.contains(selectedTrack)) {
-            selectedTrack = null;
-        }
-        if (selectedTrack == null && !interval.isFirst()) {
-            // prefer straight
-            LineTrack lineTrack = (LineTrack) interval.getPreviousTrainInterval().getTrack();
-            selectedTrack = this.getConnectors().getForLineTrack(lineTrack)
-                    .flatMap(c -> c.getStraightNodeTrack())
-                    .filter(t -> this.checkSelection(t, interval) != null)
-                    .filter(trackSet::contains)
-                    .orElse(null);
-        }
-        if (selectedTrack == null) {
-            for (NodeTrack nodeTrack : tracks) {
-                TrainType trainType = interval.getTrain().getType();
-                if (interval.getLength() != 0 && trainType != null && trainType.isPlatform()
-                        && !nodeTrack.isPlatform()) {
-                    // skip station tracks with no platform (if needed)
-                    continue;
-                }
-                selectedTrack = this.checkSelection(nodeTrack, interval);
-                if (selectedTrack != null) {
-                    break;
-                }
-            }
-        }
-        if (selectedTrack == null) {
-            // set first one
-            selectedTrack = tracks.get(0);
-        }
-        return selectedTrack;
-    }
-
-    private NodeTrack checkSelection(NodeTrack track, TimeInterval interval) {
-        return track != null
-                && track.testTimeInterval(interval).getStatus() == TimeIntervalResult.Status.OK
-                        ? track
-                        : null;
     }
 
     public String getName() {

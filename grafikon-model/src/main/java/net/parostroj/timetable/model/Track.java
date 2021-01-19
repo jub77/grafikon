@@ -89,6 +89,17 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     }
 
     /**
+     * Checks if the interval is not overlapping with another interval on track.
+     *
+     * @param interval interval to be tested
+     * @return if the interval is not overlapping
+     */
+    public boolean isFreeInterval(TimeInterval interval) {
+        TimeIntervalResult result = intervalList.testIntervalForRouteSegment(interval);
+        return result.getStatus() == TimeIntervalResult.Status.OK;
+    }
+
+    /**
      * removes time interval for specified train.
      *
      * @param interval time interval
