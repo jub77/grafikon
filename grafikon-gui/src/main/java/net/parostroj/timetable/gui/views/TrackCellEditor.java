@@ -12,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import net.parostroj.timetable.model.computation.RouteTracksComputation;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Track;
 import net.parostroj.timetable.model.Train;
@@ -30,8 +29,7 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
     private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
 
-    private final TrainRouteTracksComputation comp =
-            new TrainRouteTracksComputation(RouteTracksComputation.getDefaultInstance());
+    private final TrainRouteTracksComputation comp = new TrainRouteTracksComputation();
 
     public TrackCellEditor() {
         editor = new JComboBox<>();
@@ -62,7 +60,7 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
         editor.removeAllItems();
         Train train = ((TrainTableModel) table.getModel()).getTrain();
         final TimeInterval interval = train.getTimeIntervalList().get(row);
-        Map<TimeInterval, Set<? extends Track>> available = comp.getAvailableTracksForTrain(train);
+        Map<TimeInterval, Set<Track>> available = comp.getAvailableTracksForTrain(train);
         Collection<? extends Track> tracks = available.get(interval);
         for (Track track : tracks) {
             editor.addItem(track);

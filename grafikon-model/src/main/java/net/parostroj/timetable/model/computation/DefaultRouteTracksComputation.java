@@ -1,12 +1,10 @@
 package net.parostroj.timetable.model.computation;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
@@ -15,13 +13,15 @@ import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TimeIntervalDirection;
 import net.parostroj.timetable.model.Track;
-import net.parostroj.timetable.model.TrackConnectorSwitch;
 
 class DefaultRouteTracksComputation implements RouteTracksComputation {
 
     static final DefaultRouteTracksComputation INSTANCE = new DefaultRouteTracksComputation();
 
+    private final TrackConnectionComputation connectionComputation;
+
     private DefaultRouteTracksComputation() {
+        connectionComputation = new TrackConnectionComputation();
     }
 
     @Override
@@ -50,22 +50,12 @@ class DefaultRouteTracksComputation implements RouteTracksComputation {
 
     private Set<LineTrack> getConnectedLineTracks(Collection<? extends Track> fromTracks, Line line,
             TimeIntervalDirection direction) {
-        return line.getFrom(direction).getConnectors().stream()
-                .filter(c -> c.getLineTrack().map(LineTrack::getOwner).orElse(null) == line)
-                .filter(c -> c.getSwitches().stream()
-                        .anyMatch(sw -> fromTracks.contains(sw.getNodeTrack())))
-                .map(c -> c.getLineTrack().get())
-                .collect(toSet());
+        return connectionComputation.getConnectedLineTracks(fromTracks, line, direction);
     }
 
     private Set<NodeTrack> getConnectedNodeTracks(Collection<? extends Track> fromTracks,
             Node node) {
-        return fromTracks.stream()
-                .map(lt -> node.getConnectors().getForLineTrack((LineTrack) lt))
-                .filter(Optional::isPresent)
-                .flatMap(c -> c.get().getSwitches().stream())
-                .map(TrackConnectorSwitch::getNodeTrack)
-                .collect(toSet());
+        return connectionComputation.getConnectedNodeTracks(fromTracks, node);
     }
 
     @Override

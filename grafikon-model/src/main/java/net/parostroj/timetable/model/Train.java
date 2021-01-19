@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.filters.ModelPredicates;
-import net.parostroj.timetable.model.computation.RouteTracksComputation;
 import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Observable;
@@ -405,7 +404,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (interval != null && interval.isOverlapping()) {
             for (TimeInterval i2 : interval.getOverlappingIntervals()) {
                 if (conflictsRef.get() == null) {
-                    conflictsRef.set(new HashSet<Train>());
+                    conflictsRef.set(new HashSet<>());
                 }
                 conflictsRef.get().add(i2.getTrain());
             }
@@ -740,9 +739,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * assigns empty tracks (current ones are preselected).
      */
     public void assignEmptyTracks() {
-        TrainRouteTracksComputation computation = new TrainRouteTracksComputation(
-                RouteTracksComputation.getDefaultInstance());
-        final Map<TimeInterval, Set<? extends Track>> availableTracks = computation
+        TrainRouteTracksComputation computation = new TrainRouteTracksComputation();
+        final Map<TimeInterval, Set<Track>> availableTracks = computation
                 .getAvailableTracksForTrain(this);
         if (availableTracks.isEmpty()) {
             throw new GrafikonException("No route for train");
