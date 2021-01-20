@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableSet;
 import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainsHelper;
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
@@ -121,13 +122,19 @@ public class TrainTimetablesExtractor {
         if (train.getType() != null && train.getType().getCategory() != null) {
             timetable.setCategoryKey(train.getType().getCategory().getKey());
         }
-        if (train.getAnalysis().oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
+        if (this.oneLineHasAttribute(train, Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
         WeightDataExtractor wex = new WeightDataExtractor(train, diagram.getTrainUnitCycleType());
         timetable.setWeightData(wex.getData());
         this.extractLengthData(train, timetable);
         this.extractRows(train, timetable);
         return timetable;
+    }
+
+    private boolean oneLineHasAttribute(Train train, String key, Object value) {
+        return train.getTimeIntervalList().stream()
+                .filter(ModelPredicates::lineInterval)
+                .anyMatch(i -> value.equals(i.getOwner().getAttribute(key, Object.class)));
     }
 
     private void extractDieselElectric(Train train, TrainTimetable timetable) {
