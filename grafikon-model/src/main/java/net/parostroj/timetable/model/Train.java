@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import java.util.stream.Collectors;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.computation.TrackSelectionComputation;
 import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
@@ -745,17 +746,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             throw new GrafikonException("No route for train");
         }
         for (TimeInterval interval : this.timeIntervalList) {
-            final Set<? extends Track> nextAvailableTracks = interval.isLast()
-                    ? Collections.emptySet()
-                    : availableTracks.get(interval.getNextTrainInterval());
-            final Track previousTrack = interval.isFirst() ? null
-                    : interval.getPreviousTrainInterval().getTrack();
+            final Set<? extends Track> intervalTracks = availableTracks.get(interval);
+            final Track previousTrack = interval.isFirst() ? null : interval.getPreviousTrainInterval().getTrack();
             if (interval.isLineOwner()) {
-                interval.setTrack(select.selectLineTrack(interval, (LineTrack) interval.getTrack(),
-                        (NodeTrack) previousTrack, nextAvailableTracks));
+                interval.setTrack(select.selectLineTrack(interval,
+                        (LineTrack) interval.getTrack(),
+                        (NodeTrack) previousTrack,
+                        interval.getOwnerAsLine().getTracks().stream()
+                                .filter(intervalTracks::contains)
+                                .collect(Collectors.toList())));
             } else {
-                interval.setTrack(select.selectNodeTrack(interval, (NodeTrack) interval.getTrack(),
-                        (LineTrack) previousTrack, nextAvailableTracks));
+                interval.setTrack(select.selectNodeTrack(interval,
+                        (NodeTrack) interval.getTrack(),
+                        (LineTrack) previousTrack,
+                        interval.getOwnerAsNode().getTracks().stream()
+                                .filter(intervalTracks::contains)
+                                .collect(Collectors.toList())));
             }
         }
         this.recalculate();
