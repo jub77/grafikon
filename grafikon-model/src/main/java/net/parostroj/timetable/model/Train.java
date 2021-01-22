@@ -679,15 +679,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             return;
         }
         nodeInterval.setTrack(nodeTrack);
-        if (isAttached()) {
-            nodeInterval.updateInOwner();
-        }
-        if (this.getTimeBefore() != 0 && nodeInterval.isFirst()) {
-            this.updateTechnologicalTimeBefore();
-        }
-        if (this.getTimeAfter() != 0 && nodeInterval.isLast()) {
-            this.updateTechnologicalTimeAfter();
-        }
+
         // update - from/to straight could change
         this.recalculateImpl(0);
 
@@ -710,10 +702,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             return;
         }
         lineInterval.setTrack(lineTrack);
-        if (isAttached()) {
-            lineInterval.updateInOwner();
-        }
-        // we do not need to update technological times
 
         // update - from/to straight could change
         this.recalculateImpl(0);
