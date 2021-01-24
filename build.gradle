@@ -40,7 +40,7 @@ subprojects { prj ->
 				exclude 'com.google.guava:failureaccess'
 				exclude 'com.google.guava:listenablefuture'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.5', {
+			dependency 'org.apache.xmlgraphics:fop:2.6', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
