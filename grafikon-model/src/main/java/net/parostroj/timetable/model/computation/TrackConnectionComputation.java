@@ -1,8 +1,10 @@
 package net.parostroj.timetable.model.computation;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.LineTrack;
@@ -33,6 +35,10 @@ public class TrackConnectionComputation {
                 .collect(toSet());
     }
 
+    public List<LineTrack> getConnectedLineTracksList(Collection<? extends Track> fromTracks, Line line) {
+        return sortTracks(line.getTracks(), getConnectedLineTracks(fromTracks, line));
+    }
+
     /**
      * Returns node tracks which are reachable from specified line tracks.
      *
@@ -40,13 +46,20 @@ public class TrackConnectionComputation {
      * @param node node to be reached
      * @return set of node tracks
      */
-    public Set<NodeTrack> getConnectedNodeTracks(Collection<? extends Track> fromTracks,
-            Node node) {
+    public Set<NodeTrack> getConnectedNodeTracks(Collection<? extends Track> fromTracks, Node node) {
         return fromTracks.stream()
                 .map(lt -> node.getConnectors().getForLineTrack((LineTrack) lt))
                 .filter(Optional::isPresent)
                 .flatMap(c -> c.get().getSwitches().stream())
                 .map(TrackConnectorSwitch::getNodeTrack)
                 .collect(toSet());
+    }
+
+    public List<NodeTrack> getConnectedNodeTracksList(Collection<? extends Track> fromTracks, Node node) {
+        return sortTracks(node.getTracks(), getConnectedNodeTracks(fromTracks, node));
+    }
+
+    private static <T extends Track> List<T> sortTracks(List<T> allTracks, Collection<? extends Track> selected) {
+        return allTracks.stream().filter(selected::contains).collect(Collectors.toList());
     }
 }

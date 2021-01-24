@@ -54,4 +54,10 @@
     	<language>GROOVY</language>
     	<location>fix_connectors.groovy</location>
     </script>
+    <script>
+        <id>fix_train_tracks</id>
+        <name>Fix invalid train tracks</name>
+        <language>GROOVY</language>
+        <location>fix_train_tracks.groovy</location>
+    </script>
 </scripts>

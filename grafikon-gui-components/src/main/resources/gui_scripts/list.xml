@@ -24,4 +24,10 @@
         <language>GROOVY</language>
         <location>copy_output_templates_to_outputs_select.groovy</location>
     </script>
+    <script>
+        <id>check_train_tracks</id>
+        <name>Check train tracks</name>
+        <language>GROOVY</language>
+        <location>check_train_tracks.groovy</location>
+    </script>
 </scripts>
