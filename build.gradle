@@ -37,7 +37,6 @@ subprojects { prj ->
 				exclude 'org.codehaus.mojo:animal-sniffer-annotations'
 				exclude 'org.checkerframework:checker-compat-qual'
 				exclude 'org.checkerframework:checker-qual'
-				exclude 'com.google.guava:failureaccess'
 				exclude 'com.google.guava:listenablefuture'
 			}
 			dependency 'org.apache.xmlgraphics:fop:2.6', {

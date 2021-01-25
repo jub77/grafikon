@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import groovy.lang.Writable;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
@@ -21,6 +23,8 @@ public final class TextTemplateGroovy extends TextTemplate {
 
     private static final Logger log = LoggerFactory.getLogger(TextTemplateGroovy.class);
 
+    private static final Cache<String, Template> templateCache = CacheBuilder.newBuilder().softValues().build();
+
     private Template templateGString;
 
     protected TextTemplateGroovy(String template, boolean initialize) throws GrafikonException {
@@ -31,11 +35,13 @@ public final class TextTemplateGroovy extends TextTemplate {
     }
 
     private void initialize() throws GrafikonException {
-        TemplateEngine engine = new SimpleTemplateEngine();
         try {
-            templateGString = engine.createTemplate(this.getTemplate());
+            templateGString = templateCache.get(this.getTemplate(), () -> {
+                TemplateEngine engine = new SimpleTemplateEngine();
+                return engine.createTemplate(this.getTemplate());
+            });
         } catch (Exception e) {
-            throw new GrafikonException("Cannot create template: " + e.getMessage(), e, GrafikonException.Type.TEXT_TEMPLATE);
+            throw new GrafikonException("Cannot create template: " + e.getMessage(), e.getCause(), GrafikonException.Type.TEXT_TEMPLATE);
         }
     }
 
