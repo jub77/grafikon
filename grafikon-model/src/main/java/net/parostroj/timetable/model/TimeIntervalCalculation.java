@@ -10,7 +10,7 @@ import net.parostroj.timetable.actions.TrainsHelper;
 /**
  * @author jub
  */
-class TimeIntervalCalculation {
+public class TimeIntervalCalculation {
 
     private static final Logger log = LoggerFactory.getLogger(TimeIntervalCalculation.class);
 
