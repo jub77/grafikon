@@ -12,6 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.parostroj.timetable.model.RuntimeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,6 +186,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             for (LoadFilter filter : loadFilters) {
                 filter.checkDiagram(trainDiagram, version);
             }
+            trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_LOADED_VERSION, version);
             log.debug("Loaded version: {}", version != null ? version : "<missing>");
             return trainDiagram;
         } catch (IOException e) {

@@ -25,9 +25,9 @@ public class TrainDiagram
     /** Id. */
     private final String id;
     /** Net. */
-    private Net net;
+    private final Net net;
     /** Freight net. */
-    private FreightNet freightNet;
+    private final FreightNet freightNet;
     /** Predefined routes. */
     private final ItemWithIdSet<Route> routes;
     /** Trains. */
@@ -64,6 +64,7 @@ public class TrainDiagram
     private final ChangesTrackerImpl changesTracker;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
+    private final RuntimeInfo runtimeInfo;
     private TimeConverter timeConverter;
 
     private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;
@@ -109,6 +110,7 @@ public class TrainDiagram
         this.trainsData = new TrainsData(this);
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
+        this.runtimeInfo = new RuntimeInfo(change -> fireEvent(new Event(TrainDiagram.this, change)));
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
@@ -147,6 +149,13 @@ public class TrainDiagram
      */
     public FreightNet getFreightNet() {
         return freightNet;
+    }
+
+    /**
+     * @return runtime info container
+     */
+    public RuntimeInfo getRuntimeInfo() {
+        return runtimeInfo;
     }
 
     public ChangesTracker getChangesTracker() {

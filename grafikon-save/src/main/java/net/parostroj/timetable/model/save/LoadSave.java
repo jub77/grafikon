@@ -6,6 +6,7 @@
 package net.parostroj.timetable.model.save;
 
 import java.util.zip.ZipException;
+import net.parostroj.timetable.model.RuntimeInfo;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
@@ -97,6 +98,7 @@ public class LoadSave implements LSFile {
                 throw new LSException("Model not found.");
             }
             diagram = this.loadTrainDiagram(modelVersion, metadata, new InputStreamReader(zip.getInputStream(entry), "utf-8"), trainTypeList);
+            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_LOADED_VERSION, modelVersion);
 
             // load images
             LoadSaveImages lsImages = new LoadSaveImages();
