@@ -5,11 +5,14 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
+import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JOptionPane;
@@ -160,7 +163,9 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             changesTrackingCheckBox.setSelected(diagram.getChangesTracker().isTrackingEnabled());
 
             // script
+            scriptCheckBox.setSelected(trainsData.getRunningTimeScript() != null);
             scriptEditBox.setScript(trainsData.getRunningTimeScript());
+            scriptEditBox.setEnabled(trainsData.getRunningTimeScript() != null);
 
             // route length
             Double routeLengthRatio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
@@ -283,7 +288,22 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         fromTimeTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel17 = new javax.swing.JLabel();
         toTimeTextField = new javax.swing.JTextField();
+        scriptCheckBox = new javax.swing.JCheckBox();
         scriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
+        scriptEditBox.addComponentToEditBox(scriptCheckBox);
+        scriptCheckBox.addActionListener(e -> {
+            boolean isScript = scriptCheckBox.isSelected();
+            scriptEditBox.setEnabled(isScript);
+            if (isScript) {
+                try {
+                    scriptEditBox.setScript(diagram.getPartFactory().createDefaultTimeScript());
+                } catch (GrafikonException e1) {
+                    log.error("Error creating script", e);
+                }
+            } else {
+                scriptEditBox.setScript(null);
+            }
+        });
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         FlowLayout flowLayout = (FlowLayout) buttonPanel.getLayout();
         flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -745,8 +765,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         // set running time script
         try {
-            Script newScript = scriptEditBox.getScript();
-            if (!diagram.getTrainsData().getRunningTimeScript().equals(newScript) && newScript != null) {
+            Script newScript = scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null;
+            if (!Objects.equals(diagram.getTrainsData().getRunningTimeScript(), newScript)) {
                 diagram.getTrainsData().setRunningTimeScript(newScript);
                 recalculateUpate = true;
             }
@@ -855,6 +875,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private NumberTextField rlRatioTextField;
     private javax.swing.JComboBox<Object> rlUnitComboBox;
     private javax.swing.JComboBox<Scale> scaleComboBox;
+    private javax.swing.JCheckBox scriptCheckBox;
     private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
     private javax.swing.JComboBox<String> sortComboBox;
     private javax.swing.JTextField stationTransferTextField;
