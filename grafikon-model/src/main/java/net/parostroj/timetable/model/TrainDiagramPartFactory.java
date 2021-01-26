@@ -60,7 +60,7 @@ public class TrainDiagramPartFactory implements PartFactory {
      * Creates default connector connected to all tracks with optional straight
      * track.
      *
-     * @see #createConnector(String, Node, String)
+     * @see #createConnector(String, Node) 
      */
     public TrackConnector createDefaultConnector(String id, Node node, String number,
             Node.Side orientation, Optional<NodeTrack> straightTrack) {
@@ -162,5 +162,14 @@ public class TrainDiagramPartFactory implements PartFactory {
      */
     public Output createOutput(String id) {
         return new Output(id);
+    }
+
+    /**
+     * Creates script for defautl time computation.
+     *
+     * @return script for default time computation
+     */
+    public Script createDefaultTimeScript() {
+        return Script.createScript(TrainDiagramFactory.getDefaultTimeScript(), Script.Language.GROOVY);
     }
 }

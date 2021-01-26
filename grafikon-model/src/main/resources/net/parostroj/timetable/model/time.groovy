@@ -1,3 +1,4 @@
+import groovy.transform.CompileStatic
 import net.parostroj.timetable.model.TimeInterval
 import net.parostroj.timetable.model.TrainDiagram
 
@@ -10,72 +11,57 @@ import net.parostroj.timetable.model.TrainDiagram
 return compute(diagram, interval)
 
 // ------------ computation -------------
-def compute(TrainDiagram diagram, TimeInterval interval) {
-    log.trace "## ${interval.train} > ${interval}"
-
+@CompileStatic
+static int compute(TrainDiagram diagram, TimeInterval interval) {
     // default not straight speed
-    def dnss = 40
+    int dnss = 40
 
-    def ini = interval.previousTrainInterval
-    def ino = interval.nextTrainInterval
-    def ili = ini.previousTrainInterval != null ? ini.previousTrainInterval : interval
-    def ilo = ino.nextTrainInterval != null ? ino.nextTrainInterval : interval
+    TimeInterval ini = interval.previousTrainInterval
+    TimeInterval ino = interval.nextTrainInterval
+    TimeInterval ili = ini.previousTrainInterval != null ? ini.previousTrainInterval : interval
+    TimeInterval ilo = ino.nextTrainInterval != null ? ino.nextTrainInterval : interval
 
-    def s0 = ini.calculation.computeNodeSpeed(ili, false, dnss)
-    def s4 = ino.calculation.computeNodeSpeed(ilo, false, dnss)
-    def s2 = interval.calculation.computeLineSpeed()
-    def s1 = ini.calculation.computeNodeSpeed(interval, false, dnss)
-    def s3 = ino.calculation.computeNodeSpeed(interval, true, dnss)
-    s4 = min(s3, s4)
-    s1 = min(s0, s1)
+    int s0 = ini.calculation.computeNodeSpeed(ili, false, dnss)
+    int s4 = ino.calculation.computeNodeSpeed(ilo, false, dnss)
+    int s2 = interval.calculation.computeLineSpeed()
+    int s1 = ini.calculation.computeNodeSpeed(interval, false, dnss)
+    int s3 = ino.calculation.computeNodeSpeed(interval, true, dnss)
+    s4 = s3 < s4 ? s3 : s4
+    s1 = s0 < s1 ? s0 : s1
     if (ini.stop) s0 = 0
     if (ino.stop) s4 = 0
 
-    def li = select(ini.ownerAsNode.length, 0)
-    def lo = select(ino.ownerAsNode.length, 0)
-    def l = interval.ownerAsLine.length - li / 2 + lo / 2 - li - lo
+    int li = ini.ownerAsNode.length ?: 0
+    int lo = ino.ownerAsNode.length ?: 0
+    int l = interval.ownerAsLine.length - li.intdiv(2) + lo.intdiv(2) - li - lo
 
-    def time = 0
-    time += compute(s1, s0, s2, li, diagram, interval, "F")
-    time += compute(s2, s1, s3, l, diagram, interval, "N")
-    time += compute(s3, s2, s4, lo, diagram, interval, "T")
-    time += interval.addedTime
+    int time = 0
+    time += compute(s1, s0, s2, li, diagram, interval)
+    time += compute(s2, s1, s3, l, diagram, interval)
+    time += compute(s3, s2, s4, lo, diagram, interval)
 
-    log.trace "Total        : ${time}"
     time = diagram.timeConverter.round(time)
-    log.trace "Total (round): ${time}"
     return time
 }
 
 // ------------ functions -------------
-def min(a, b) {
-    Math.min(a, b)
-}
-
-def select(value1, value2) {
-    return value1 == null ? value2 : value1
-}
-
-def compute(s, fs, ts, l, TrainDiagram diagram, TimeInterval interval, prefix) {
-    int time = (int) Math.floor((((double) l) * diagram.scale.ratio * diagram.timeScale * 3.6) / (s * 1000))
+@CompileStatic
+static int compute(int s, int fs, int ts, int l, TrainDiagram diagram, TimeInterval interval) {
+    int time = (int) ((3.6d * l * diagram.scale.ratio * diagram.timeScale) / (s * 1000)).trunc()
     int penalty = 0
     if (ts < s) {
-      int penalty1 = interval.train.getDecPenalty(s)
-      int penalty2 = interval.train.getDecPenalty(ts)
-      penalty = penalty1 - penalty2
+        int penalty1 = interval.train.getDecPenalty(s)
+        int penalty2 = interval.train.getDecPenalty(ts)
+        penalty = penalty1 - penalty2
     }
     if (fs < s) {
-      int penalty1 = interval.train.getAccPenalty(fs)
-      int penalty2 = interval.train.getAccPenalty(s)
-      penalty = penalty + penalty2 - penalty1
+        int penalty1 = interval.train.getAccPenalty(fs)
+        int penalty2 = interval.train.getAccPenalty(s)
+        penalty = penalty + penalty2 - penalty1
     }
-    def adjPenalty = (int)Math.round(penalty * 0.18d * diagram.timeScale)
+    int adjPenalty = (int) (penalty * 0.18d * diagram.timeScale).round()
     time += adjPenalty
+    time += interval.addedTime
 
-    log.trace "-- ${prefix} --------------"
-    log.trace "length: ${l}"
-    log.trace "speed : ${fs} -> ${s} -> ${ts}"
-    log.trace "pen.  : ${penalty} -> ${adjPenalty}"
-    log.trace "Time  : ${time}"
     return time
 }

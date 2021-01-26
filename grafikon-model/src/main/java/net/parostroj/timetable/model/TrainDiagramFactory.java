@@ -36,12 +36,7 @@ public class TrainDiagramFactory {
             sPattern.getGroups().add(new SortPatternGroup(1, SortPatternGroup.Type.NUMBER));
             sPattern.getGroups().add(new SortPatternGroup(2, SortPatternGroup.Type.STRING));
 
-            String scriptCode = "";
-            try {
-                scriptCode = Conversions.loadFile(getClass().getResourceAsStream(TIME_SCRIPT));
-            } catch (IOException e) {
-                log.warn("Error loading time script.");
-            }
+            String scriptCode = getDefaultTimeScript();
             Script timeScript = Script.createScript(scriptCode, Language.GROOVY);
 
             TrainDiagram diagram = new TrainDiagram(IdGenerator.getInstance().getId());
@@ -78,5 +73,15 @@ public class TrainDiagramFactory {
         cycleType.setKey(key);
         cycleType.setName(TrainsCycleType.getNameForDefaultType(key));
         return cycleType;
+    }
+
+    static String getDefaultTimeScript() {
+        try {
+            return Conversions.loadFile(TrainDiagramFactory.class.getResourceAsStream(TIME_SCRIPT));
+        } catch (IOException e) {
+            log.warn("Error loading time script.");
+            // fallback
+            return "return 60";
+        }
     }
 }
