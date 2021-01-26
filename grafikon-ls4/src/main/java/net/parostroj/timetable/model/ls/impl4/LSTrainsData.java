@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.ls.impl4;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TrainsData;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -28,7 +29,8 @@ public class LSTrainsData {
         trainNameTemplate = new LSTextTemplate(data.getTrainNameTemplate());
         trainCompleteNameTemplate = new LSTextTemplate(data.getTrainCompleteNameTemplate());
         trainSortPattern = new LSSortPattern(data.getTrainSortPattern());
-        runningTimeScript = new LSScript(data.getRunningTimeScript());
+        Script runningTimeScript = data.getRunningTimeScript();
+        this.runningTimeScript = runningTimeScript != null ? new LSScript(runningTimeScript) : null;
     }
 
     @XmlElement(name = "name_template")
@@ -71,6 +73,8 @@ public class LSTrainsData {
         trainsData.setTrainNameTemplate(trainNameTemplate.createTextTemplate());
         trainsData.setTrainCompleteNameTemplate(trainCompleteNameTemplate.createTextTemplate());
         trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
-        trainsData.setRunningTimeScript(runningTimeScript.createScript());
+        if (runningTimeScript != null) {
+            trainsData.setRunningTimeScript(runningTimeScript.createScript());
+        }
     }
 }
