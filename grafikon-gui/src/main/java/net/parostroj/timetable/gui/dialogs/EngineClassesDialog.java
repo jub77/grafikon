@@ -38,8 +38,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 		private EngineClass getCurrentEngineClass() {
             int selected = engineClassesList.getSelectedIndex();
             boolean one = engineClassesList.getSelectedIndices().length == 1;
-            EngineClass clazz = selected != -1 && one ? listModel.getIndex(selected).getElement() : null;
-            return clazz;
+            return selected != -1 && one ? listModel.getIndex(selected).getElement() : null;
         }
 
         private LineClass getLineClass(int index) {
@@ -155,7 +154,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     public void updateValues() {
         // update list of available classes ...
         listModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, true);
-        listModel.setObjectListener(new ObjectListener<EngineClass>() {
+        listModel.setObjectListener(new ObjectListener<>() {
             @Override
             public void added(EngineClass object, int index) {
                 diagram.getEngineClasses().add(object);
@@ -224,15 +223,15 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        engineClassesList.addListSelectionListener(evt -> engineClassesListValueChanged(evt));
+        engineClassesList.addListSelectionListener(this::engineClassesListValueChanged);
         scrollPane1.setViewportView(engineClassesList);
 
-        newButton.addActionListener(evt -> newButtonActionPerformed(evt));
+        newButton.addActionListener(this::newButtonActionPerformed);
 
-        editButton.addActionListener(evt -> editButtonActionPerformed(evt));
-        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
+        editButton.addActionListener(this::editButtonActionPerformed);
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
-        copyButton.addActionListener(evt -> copyButtonActionPerformed(evt));
+        copyButton.addActionListener(this::copyButtonActionPerformed);
 
         scrollPane2.setPreferredSize(new java.awt.Dimension(0, 200));
 
@@ -240,9 +239,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         weightTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane2.setViewportView(weightTable);
 
-        newRowButton.addActionListener(evt -> newRowButtonActionPerformed(evt));
+        newRowButton.addActionListener(this::newRowButtonActionPerformed);
 
-        deleteRowButton.addActionListener(evt -> deleteRowButtonActionPerformed(evt));
+        deleteRowButton.addActionListener(this::deleteRowButtonActionPerformed);
 
         speedTextField.setColumns(5);
         speedTextField.addCaretListener(e -> newRowButton.setEnabled(!ObjectsUtil.isEmpty(speedTextField.getText())));
@@ -343,13 +342,15 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         if (!engineClassesList.isSelectionEmpty()) {
             int[] selected = engineClassesList.getSelectedIndices();
             int first = selected[0];
-            for (int item : selected) {
-                listModel.removeIndex(item);
+            for (int i = selected.length - 1; i >= 0; i--) {
+                listModel.removeIndex(selected[i]);
             }
             if (first >= listModel.getSize()) {
                 first--;
             }
-            engineClassesList.setSelectedIndex(first);
+            if (first >= 0) {
+                engineClassesList.setSelectedIndex(first);
+            }
         }
     }
 
