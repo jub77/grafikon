@@ -154,7 +154,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     public void updateValues() {
         // update list of available classes ...
         listModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, true);
-        listModel.setObjectListener(new ObjectListener<>() {
+        listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
                 diagram.getEngineClasses().add(object);
