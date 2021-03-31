@@ -2,9 +2,9 @@ grafikon-*/bin/*
 grafikon-*/build/*
 grafikon-*/out/*
 grafikon-webstart/src/main/keystore/grafikon.ks
-buildSrc/bin/*
-buildSrc/build/*
-buildSrc/out/*
+version-plugin/bin/*
+version-plugin/build/*
+version-plugin/out/*
 /*.cmd
 /*.sh
 /*.groovy

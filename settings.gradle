@@ -23,3 +23,5 @@ include 'grafikon-gui-components'
 include 'grafikon-gui'
 include 'grafikon-start'
 include 'grafikon-assembly'
+
+includeBuild 'version-plugin'
