@@ -72,7 +72,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter-api:5.7.1'
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
 			dependency 'org.hamcrest:hamcrest:2.2'
-			dependency 'io.projectreactor.addons:reactor-extra:3.4.2'
+			dependency 'io.projectreactor.addons:reactor-extra:3.4.3'
 		}
 	}
 
