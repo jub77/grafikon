@@ -11,6 +11,7 @@ dependencies {
 }
 
 task distribution(type: Zip) {
+	group = "distribution"
 	archiveBaseName = "grafikon"
 	archiveVersion = scmVersion.shortVersion
 	destinationDirectory = file("${buildDir}/dist")
@@ -26,7 +27,8 @@ task distribution(type: Zip) {
 }
 
 task unzippedDistribution(type: Sync) {
-    dependsOn distribution
-    from zipTree(distribution.archiveFile)
-    into "${buildDir}/unzipped-dist"
+	group = "distribution"
+	dependsOn distribution
+	from zipTree(distribution.archiveFile)
+	into "${buildDir}/unzipped-dist"
 }
