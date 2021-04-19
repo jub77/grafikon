@@ -86,16 +86,6 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
         return null;
     }
 
-    @Override
-    public T getTrackByNumber(String number) {
-        for (T track : tracks) {
-            if (track.getNumber().equals(number)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
     private T getTrackForInterval(TimeInterval interval) {
         for (T track : tracks) {
             if (track.getTimeIntervalList().contains(interval))

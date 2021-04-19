@@ -28,6 +28,4 @@ public interface RouteSegment<T extends Track> extends ObjectWithId, Iterable<Ti
     String getId();
 
     T getTrackById(String id);
-
-    T getTrackByNumber(String name);
 }
