@@ -2,7 +2,6 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import java.util.stream.Collectors;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.computation.TrackSelectionComputation;
 import net.parostroj.timetable.model.computation.TrainRouteSelection;
