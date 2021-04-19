@@ -7,7 +7,7 @@ pipelines:
           - gradle
           - gradlewrapper
         script:
-          - ./gradlew build
+          - ./gradlew --no-watch-fs --no-daemon build
 definitions:
   caches:
     gradlewrapper: ~/.gradle/wrapper
