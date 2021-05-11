@@ -58,25 +58,31 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
             if (change.checkName(ATTR_REGIONS)) {
                 Collection<Region> oldR = (Collection<Region>) change.getOldValue();
                 Collection<Region> newR = (Collection<Region>) change.getNewValue();
-                if (oldR != null) {
-                    for (Region r : oldR) {
-                        if (newR == null || !newR.contains(r)) {
-                            // remove only if in the same diagram
-                            if (r.getDiagram() == diagram) r.removeNode(Node.this);
-                        }
-                    }
-                }
-                if (newR != null) {
-                    for (Region r : newR) {
-                        if (oldR == null || !oldR.contains(r)) {
-                            // add only if in the same diagram
-                            if (r.getDiagram() == diagram) r.addNode(Node.this);
-                        }
-                    }
-                }
+                removeFromOldRegions(oldR, newR);
+                addToNewRegions(oldR, newR);
             }
         });
         this.setLocation(new Location(0, 0));
+    }
+
+    private void addToNewRegions(Collection<Region> oldR, Collection<Region> newR) {
+        if (newR != null) {
+            for (Region r : newR) {
+                if ((oldR == null || !oldR.contains(r)) && r.getDiagram() == diagram) {
+                    r.addNode(Node.this);
+                }
+            }
+        }
+    }
+
+    private void removeFromOldRegions(Collection<Region> oldR, Collection<Region> newR) {
+        if (oldR != null) {
+            for (Region r : oldR) {
+                if ((newR == null || !newR.contains(r)) && r.getDiagram() == diagram) {
+                    r.removeNode(Node.this);
+                }
+            }
+        }
     }
 
     /**
@@ -263,14 +269,11 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment<No
                     break;
                 case REMOVED:
                     ((ItemCollectionObject) item).removed();
+                    break;
                 default: // nothing
                     break;
             }
         }
-    }
-
-    void fireCollectionEventListObject(Event.Type type, Object item, Integer from, Integer to) {
-        fireCollectionEvent(type, item);
     }
 
     protected void fireEvent(Event event) {
