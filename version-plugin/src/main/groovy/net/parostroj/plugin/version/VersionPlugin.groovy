@@ -1,37 +1,49 @@
 package net.parostroj.plugin.version
 
 import com.github.zafarkhaja.semver.*
+import groovy.transform.CompileStatic
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.gradle.GrgitPlugin
 import org.gradle.api.*
 
+@CompileStatic
 class VersionExtension {
-	def dirty
-	def snapshot
+	boolean dirty
+	boolean snapshot
 
-	def buildTimestamp
-	def buildId
-	def buildHash
+	String buildTimestamp
+	String buildId
+	String buildHash
 
-	def projectVersion
-	def distVersion
-	def baseVersion
-	def shortVersion
+	String projectVersion
+	String distVersion
+	String baseVersion
+	String shortVersion
 }
 
+@CompileStatic
 class VersionPlugin implements Plugin<Project> {
+
 	void apply(Project project) {
-		project.pluginManager.apply(org.ajoberstar.grgit.gradle.GrgitPlugin)
+		project.pluginManager.apply(GrgitPlugin)
 
-		def ver = project.extensions.create("scmVersion", VersionExtension.class)
-		def head = project.grgit.head()
-		ver.dirty = !project.grgit.status().clean
+		VersionExtension ver = project.extensions.create("scmVersion", VersionExtension)
+		Grgit grgit = project.extensions.getByType(Grgit)
+		def head = grgit.head()
+		ver.dirty = !grgit.status().clean
 
-		def commitTimestamp = Date.from(head.dateTime.toInstant()).format('yyyyMMddHHmm')
+
+		def formatter = DateTimeFormatter.ofPattern('yyyyMMddHHmm')
+		def commitTimestamp = formatter.format(head.dateTime.toInstant().atZone(ZoneOffset.UTC))
 		def commitId = head.id.substring(0, 12)
 		ver.buildHash = commitId
-		ver.buildTimestamp = new Date().format('yyyyMMddHHmm')
+		ver.buildTimestamp = formatter.format(Instant.now().atOffset(ZoneOffset.UTC))
 		ver.buildId = "${ver.buildTimestamp}-${commitId}"
 
-		def describe = project.grgit.describe(longDescr: true)
+		def describe = grgit.describe(Collections.singletonMap("longDescr", (Object) Boolean.TRUE))
 
 		def tagVersion
 		def prerelease
@@ -42,8 +54,8 @@ class VersionPlugin implements Plugin<Project> {
 			ver.snapshot = true
 			prerelease = false
 		} else {
-			tagVersion = Version.valueOf(match[0][1])
-			ver.snapshot = match[0][2] != "0"
+			tagVersion = Version.valueOf(match.group(1))
+			ver.snapshot = match.group(2) != "0"
 			if ("alfa" == tagVersion.preReleaseVersion) {
 				ver.snapshot = true
 			}
@@ -71,19 +83,20 @@ class VersionPlugin implements Plugin<Project> {
 				: "${baseVersion}${dirtySuffix}"
 		ver.distVersion = "${ver.shortVersion}+${ver.buildId}"
 
-		project.tasks.create('version', {
-			doLast {
-				project.logger.lifecycle("Base version: {}", project.scmVersion.baseVersion)
+		project.tasks.create('version', { Task t ->
+			t.doLast {
+				VersionExtension scmVersion = project.extensions.getByType(VersionExtension)
+				project.logger.lifecycle("Base version: {}", scmVersion.baseVersion)
 				project.logger.lifecycle("Git describe: {}", describe)
 				project.logger.lifecycle("Tag version: {}", tagVersion)
-				project.logger.lifecycle("Project version: {}", project.scmVersion.projectVersion)
-				project.logger.lifecycle("Short version: {}", project.scmVersion.shortVersion)
-				project.logger.lifecycle("Dist version: {}", project.scmVersion.distVersion)
-				project.logger.lifecycle("Snapshot: {}", project.scmVersion.snapshot)
-				project.logger.lifecycle("Dirty: {}", project.scmVersion.dirty)
-				project.logger.lifecycle("Build timestamp: {}", project.scmVersion.buildTimestamp)
-				project.logger.lifecycle("Build id: {}", project.scmVersion.buildId)
-				project.logger.lifecycle("Build hash: {}", project.scmVersion.buildHash)
+				project.logger.lifecycle("Project version: {}", scmVersion.projectVersion)
+				project.logger.lifecycle("Short version: {}", scmVersion.shortVersion)
+				project.logger.lifecycle("Dist version: {}", scmVersion.distVersion)
+				project.logger.lifecycle("Snapshot: {}", scmVersion.snapshot)
+				project.logger.lifecycle("Dirty: {}", scmVersion.dirty)
+				project.logger.lifecycle("Build timestamp: {}", scmVersion.buildTimestamp)
+				project.logger.lifecycle("Build id: {}", scmVersion.buildId)
+				project.logger.lifecycle("Build hash: {}", scmVersion.buildHash)
 			}
 		})
 	}
