@@ -21,7 +21,7 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
 
     protected final ListenerSupport listenerSupport;
 
-    public RouteSegmentImpl(String id) {
+    protected RouteSegmentImpl(String id) {
         this.id = id;
         this.tracks = new ItemListImpl<>(this::fireTrackEvent);
         this.listenerSupport = new ListenerSupport();

@@ -15,7 +15,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /** ID. */
     private final String id;
     /** Owner of the track. */
-    private RouteSegment<? extends Track> owner;
+    private final ObjectWithId owner;
     /** Interval list. */
     private final TimeIntervalList intervalList;
     /** Attributes. */
@@ -33,7 +33,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
      * @param id id
      * @param owner owner of the track
      */
-    public Track(String id, RouteSegment<? extends Track> owner) {
+    protected Track(String id, ObjectWithId owner) {
         this.id = id;
         this.owner = owner;
         this.intervalList = new TimeIntervalList();
@@ -49,7 +49,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
      * @param number track number
      *
      */
-    public Track(String id, RouteSegment<? extends Track> owner, String number) {
+    protected Track(String id, ObjectWithId owner, String number) {
         this(id, owner);
         this.setNumber(number);
     }
@@ -65,7 +65,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /**
      * @return owner of the track
      */
-    public RouteSegment<? extends Track> getOwner() { return owner; }
+    public ObjectWithId getOwner() { return owner; }
 
     /**
      * @return track number

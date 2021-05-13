@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.Map;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public abstract class Script {
     private static final Logger log = LoggerFactory.getLogger(Script.class);
 
     public enum Language {
-        GROOVY;
+        GROOVY
     }
 
     private final String sourceCode;
@@ -49,12 +50,10 @@ public abstract class Script {
     }
 
     public static Script createScript(String sourceCode, Language language, boolean initizalize) throws GrafikonException {
-        switch (language) {
-            case GROOVY:
-                return new ScriptEngineScript(sourceCode, language, initizalize);
-            default:
-                throw new IllegalArgumentException("No script for language available.");
+        if (language == Language.GROOVY) {
+            return new ScriptEngineScript(sourceCode, language, initizalize);
         }
+        throw new IllegalArgumentException("No script for language available.");
     }
 
     public void freeResources() {
@@ -70,7 +69,7 @@ public abstract class Script {
             return false;
         }
         final Script other = (Script) obj;
-        if ((this.sourceCode == null) ? (other.sourceCode != null) : !this.sourceCode.equals(other.sourceCode)) {
+        if (!Objects.equals(this.sourceCode, other.sourceCode)) {
             return false;
         }
         return this.language == other.language;

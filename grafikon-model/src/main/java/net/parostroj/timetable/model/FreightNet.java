@@ -42,7 +42,7 @@ public class FreightNet
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
-    private FreightConnectionStrategy _strategy;
+    private FreightConnectionStrategy cachedStrategy;
 
     FreightNet(TrainDiagram diagram) {
         this.diagram = diagram;
@@ -54,7 +54,7 @@ public class FreightNet
             } else {
                 // clean cached strategy object in case strategy changes
                 if (change.checkName(ATTR_CONNECTION_STRATEGY_TYPE, ATTR_CUSTOM_CONNECTION_FILTER)) {
-                    _strategy = null;
+                    cachedStrategy = null;
                 }
                 event = new Event(FreightNet.this, change);
             }
@@ -217,9 +217,9 @@ public class FreightNet
     }
 
     private FreightConnectionStrategy getStrategyImpl() {
-        if (_strategy == null) {
-            _strategy = FreightConnectionStrategy.create(getConnectionStrategyType(), diagram);
+        if (cachedStrategy == null) {
+            cachedStrategy = FreightConnectionStrategy.create(getConnectionStrategyType(), diagram);
         }
-        return _strategy;
+        return cachedStrategy;
     }
 }

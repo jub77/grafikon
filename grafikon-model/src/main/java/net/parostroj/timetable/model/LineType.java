@@ -8,10 +8,10 @@ package net.parostroj.timetable.model;
 public enum LineType {
     SOLID(0, "solid"), DASH(1, "dash"), DASH_AND_DOT(2, "dash.and.dot"), DOT(3, "dot");
 
-    private int value;
-    private String key;
+    private final int value;
+    private final String key;
 
-    private LineType(int value, String key) {
+    LineType(int value, String key) {
         this.value = value;
         this.key = key;
     }

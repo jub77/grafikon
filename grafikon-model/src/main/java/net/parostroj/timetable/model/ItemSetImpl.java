@@ -79,6 +79,19 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemSetImpl<?> itemSet = (ItemSetImpl<?>) o;
+        return Objects.equals(items, itemSet.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(items);
+    }
+
+    @Override
     public String toString() {
         return items.toString();
     }

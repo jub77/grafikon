@@ -26,9 +26,9 @@ public enum NodeType {
     STOP("stop"),
     STOP_WITH_FREIGHT("stop.with.freight"),
     SIGNAL("signal");
-    private String key;
+    private final String key;
 
-    private NodeType(String key) {
+    NodeType(String key) {
         this.key = key;
     }
 

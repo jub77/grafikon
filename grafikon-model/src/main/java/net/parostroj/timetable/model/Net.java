@@ -247,7 +247,7 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
                 return object;
             }
         }
-        return object;
+        return null;
     }
 
     private void fireEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
