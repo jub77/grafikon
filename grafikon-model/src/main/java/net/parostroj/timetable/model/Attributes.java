@@ -15,6 +15,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 public class Attributes implements Map<String, Object> {
 
     private static final AttributesChecker EMPTY = (attrs, change) -> true;
+    private static final String WRONG_TYPE_TEXT = "Wrong type: ";
 
     private final List<AttributesListener> listeners = new LinkedList<>();
     private final Map<String, Object> values;
@@ -150,11 +151,14 @@ public class Attributes implements Map<String, Object> {
     public <T> Collection<T> getAsCollection(String name, Class<T> clazz, Collection<T> defaultValue) {
         Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof Collection)) {
-            throw new ClassCastException("Wrong type: " + object.getClass());
+            throw new ClassCastException(WRONG_TYPE_TEXT + object.getClass());
         }
-        return object instanceof List
-                ? ObjectsUtil.checkedList((List<?>) object, clazz)
-                : (object instanceof Set ? ObjectsUtil.checkedSet((Set<?>) object, clazz) : ObjectsUtil.checkedCollection((Collection<?>) object, clazz));
+        if (object instanceof List) {
+            return ObjectsUtil.checkedList((List<?>) object, clazz);
+        } else {
+            if (object instanceof Set) return ObjectsUtil.checkedSet((Set<?>) object, clazz);
+            return ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
+        }
     }
 
     public <T> Set<T> getAsSet(String name, Class<T> clazz) {
@@ -164,7 +168,7 @@ public class Attributes implements Map<String, Object> {
     public <T> Set<T> getAsSet(String name, Class<T> clazz, Set<T> defaultValue) {
         Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof Set)) {
-            throw new ClassCastException("Wrong type: " + object.getClass());
+            throw new ClassCastException(WRONG_TYPE_TEXT + object.getClass());
         }
         return ObjectsUtil.checkedSet((Set<?>) object, clazz);
     }
@@ -176,7 +180,7 @@ public class Attributes implements Map<String, Object> {
     public <T> List<T> getAsList(String name, Class<T> clazz, List<T> defaultValue) {
         Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof List)) {
-            throw new ClassCastException("Wrong type: " + object.getClass());
+            throw new ClassCastException(WRONG_TYPE_TEXT + object.getClass());
         }
         return ObjectsUtil.checkedList((List<?>) object, clazz);
     }
@@ -188,7 +192,7 @@ public class Attributes implements Map<String, Object> {
     public <K, V> Map<K, V> getAsMap(String name, Class<K> keyClazz, Class<V> valueClazz, Map<K, V> defaultValue) {
         Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof Map)) {
-            throw new ClassCastException("Wrong type: " + object.getClass());
+            throw new ClassCastException(WRONG_TYPE_TEXT + object.getClass());
         }
         return ObjectsUtil.checkedMap((Map<?, ?>) object, keyClazz, valueClazz);
     }
@@ -288,10 +292,7 @@ public class Attributes implements Map<String, Object> {
         if (valuesWithCategory == null) {
             valuesWithCategory = new HashMap<>();
         }
-        if (!valuesWithCategory.containsKey(category)) {
-            valuesWithCategory.put(category, new LinkedHashMap<String, Object>());
-        }
-        return valuesWithCategory.get(category);
+        return valuesWithCategory.computeIfAbsent(category, c -> new LinkedHashMap<>());
     }
 
     private boolean mapExistsForCategory(String category) {
@@ -323,10 +324,11 @@ public class Attributes implements Map<String, Object> {
         Map<String, Object> fromMap = from.getAttributesMap(category);
         Map<String, Object> toMap = this.getAttributesMap(category);
         // update modified ...
-        for (String name : fromMap.keySet()) {
-            if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
-                    || (fromMap.get(name) == null && toMap.get(name) != null)) {
-                this.set(category, name, fromMap.get(name));
+        for (Entry<String, Object> entry : fromMap.entrySet()) {
+            Object toMapValue = toMap.get(entry.getKey());
+            if (entry.getValue() != null && !entry.getValue().equals(toMapValue)
+                    || entry.getValue() == null && toMapValue != null) {
+                this.set(category, entry.getKey(), entry.getValue());
             }
         }
         // remove deleted
@@ -346,8 +348,8 @@ public class Attributes implements Map<String, Object> {
 
     public void add(Attributes from, String category) {
         Map<String, Object> fromMap = from.getAttributesMap(category);
-        for (String name : fromMap.keySet()) {
-            this.set(category, name, fromMap.get(name));
+        for (Entry<String, Object> entry : fromMap.entrySet()) {
+            this.set(category, entry.getKey(), entry.getValue());
         }
     }
 
