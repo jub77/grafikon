@@ -17,20 +17,7 @@ import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.filters.ModelPredicates;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.NetSegment;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TrackConnector;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TranslatedString;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.freight.FreightConnection;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -152,7 +139,7 @@ public class TrainTimetablesExtractor {
             return;
         }
         String result = routeTemplate.evaluate(TextTemplate.getBinding(train));
-        timetable.setRouteInfo(new LinkedList<RouteInfoPart>());
+        timetable.setRouteInfo(new LinkedList<>());
         // split
         String[] splitted = result.split("-");
         for (String sPart : splitted) {
@@ -178,7 +165,7 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractRows(Train train, TrainTimetable timetable) {
-        timetable.setRows(new LinkedList<TrainTimetableRow>());
+        timetable.setRows(new LinkedList<>());
         Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
         TimeInterval lastLineI = null;
         while (i.hasNext()) {
@@ -343,7 +330,7 @@ public class TrainTimetablesExtractor {
 
     private Double getRoutePosition(Line line, Node node) {
         Pair<Line, Node> pair = new Pair<>(line, node);
-        Double position = null;
+        Double position;
         if (!cachedRoutePositions.containsKey(pair)) {
             position = computeRoutePosition(pair);
             cachedRoutePositions.put(pair, position);
@@ -353,8 +340,8 @@ public class TrainTimetablesExtractor {
         return position;
     }
 
-    private boolean checkRoute(Line line, List<NetSegment<?>> segments) {
-        for (NetSegment<?> seg : segments) {
+    private boolean checkRoute(Line line, List<RouteSegment> segments) {
+        for (RouteSegment seg : segments) {
             // sequence line - node
             if (seg instanceof Line && seg == line)
                 return true;
@@ -373,7 +360,7 @@ public class TrainTimetablesExtractor {
         if (foundRoute != null) {
             // compute distance
             long length = 0;
-            for (NetSegment<?> seg : foundRoute.getSegments()) {
+            for (RouteSegment seg : foundRoute.getSegments()) {
                 if (seg == pair.second) {
                     break;
                 } else if (seg instanceof Line) {
@@ -394,11 +381,9 @@ public class TrainTimetablesExtractor {
             return false;
         }
         // no switch with orientation of the opposite side of arrival
-        return !nodeI.getOwnerAsNode().getConnectors().stream()
+        return nodeI.getOwnerAsNode().getConnectors().stream()
                 .filter(c -> c.getOrientation() == toSide.get())
                 .flatMap(c -> c.getSwitches().stream())
-                .filter(s -> s.getNodeTrack() == nodeI.getTrack())
-                .findAny()
-                .isPresent();
+                .noneMatch(s -> s.getNodeTrack() == nodeI.getTrack());
     }
 }

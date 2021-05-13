@@ -20,8 +20,9 @@ public final class RouteHelper {
         Pair<Route, Integer> selected = null;
         for (Route route : routes) {
             int cnt = 0;
-            for (NetSegment<?> segment : route) {
+            for (RouteSegment rSegment : route) {
                 boolean containTrain = false;
+                NetSegment<?> segment = (NetSegment<?>) rSegment;
                 for (TimeInterval interval : segment) {
                     if (interval.getTrain() == train) {
                         containTrain = true;

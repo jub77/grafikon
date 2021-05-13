@@ -9,6 +9,7 @@ package net.parostroj.timetable.model.save.version02;
 import java.util.UUID;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.NetSegment;
+import net.parostroj.timetable.model.RouteSegment;
 
 /**
  * L/S class for Route.
@@ -28,7 +29,7 @@ public class LSRoute {
     public LSRoute(Route route, LSTransformationData data) {
         ids = new int[route.getSegments().size()];
         int i = 0;
-        for (NetSegment<?> segment : route.getSegments()) {
+        for (RouteSegment segment : route.getSegments()) {
             int id = data.getIdForObject(segment);
             ids[i++] = id;
         }

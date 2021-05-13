@@ -183,7 +183,7 @@ public abstract class GTDrawBase implements GTDraw {
         boolean snWidthFixed = config.isOption(GTDrawSettings.Key.STATION_NAME_WIDTH_FIXED);
         if (!snWidthFixed) {
             int max = 0;
-            for (NetSegment<?> seg : getRoute().getSegments()) {
+            for (RouteSegment seg : getRoute().getSegments()) {
                 if (seg instanceof Node) {
                     Node n = (Node) seg;
                     String name = TransformUtil.transformStation(n).trim();

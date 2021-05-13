@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author jub
  */
-public interface NetSegment<T extends Track> extends ObjectWithId, Iterable<TimeInterval>, AttributesHolder {
+public interface NetSegment<T extends Track> extends RouteSegment, Iterable<TimeInterval>, AttributesHolder {
 
     void addTimeInterval(TimeInterval interval);
 
@@ -23,9 +23,6 @@ public interface NetSegment<T extends Track> extends ObjectWithId, Iterable<Time
     List<T> getTracks();
 
     boolean isEmpty();
-
-    @Override
-    String getId();
 
     T getTrackById(String id);
 }

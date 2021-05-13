@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
@@ -280,10 +281,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             graphComponent.getViewport().getView().paint(g2d);
 
                             // write to ouput - do not use css style
-                            boolean useCSS = false;
                             try {
-                                Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
-                                g2d.stream(out, useCSS);
+                                Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), StandardCharsets.UTF_8);
+                                g2d.stream(out, false);
                             } catch (Exception e) {
                                 log.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
@@ -398,7 +398,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     case REMOVED:
                         if (event.getObject() instanceof Route) {
                             Route route = (Route) event.getObject();
-                            for (NetSegment<?> seg : route.getSegments()) {
+                            for (RouteSegment seg : route.getSegments()) {
                                 if (seg instanceof Line) {
                                     updateLine((Line) seg);
                                 }

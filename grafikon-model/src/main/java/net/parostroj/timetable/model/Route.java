@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterable<NetSegment<? extends Track>>, TrainDiagramPart {
+public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterable<RouteSegment>, TrainDiagramPart {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_NET_PART = "net.part";
@@ -22,7 +22,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
     private final String id;
     private final Attributes attributes;
     /** Route parts. */
-    private List<NetSegment<? extends Track>> segments;
+    private List<RouteSegment> segments;
 
     /**
      * Constructor.
@@ -44,18 +44,18 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
     }
 
     @SafeVarargs
-    public Route(String id, TrainDiagram diagram, NetSegment<? extends Track>... segments) {
+    public Route(String id, TrainDiagram diagram, RouteSegment... segments) {
         this(id, diagram);
         this.segments = new LinkedList<>(Arrays.asList(segments));
     }
 
     @SafeVarargs
-    public Route(String id, TrainDiagram diagram, String name, NetSegment<? extends Track>... segments) {
+    public Route(String id, TrainDiagram diagram, String name, RouteSegment... segments) {
         this(id, diagram, segments);
         this.setName(name);
     }
 
-    public List<NetSegment<? extends Track>> getSegments() {
+    public List<RouteSegment> getSegments() {
         return segments;
     }
 
@@ -94,7 +94,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
      * @param segment checked segment
      * @return if the route contains given segment
      */
-    public boolean contains(NetSegment<? extends Track> segment) {
+    public boolean contains(RouteSegment segment) {
         return segments.contains(segment);
     }
 
@@ -104,11 +104,11 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
      * @param route route to be added
      */
     public void add(Route route) {
-        List<NetSegment<?>> addSegments = route.getSegments();
+        List<RouteSegment> addSegments = route.getSegments();
         if (!segments.isEmpty() && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
         }
-        ListIterator<NetSegment<?>> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
+        ListIterator<RouteSegment> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
         while (i.hasNext()) {
             segments.add(i.next());
         }
@@ -121,7 +121,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
      */
     public boolean checkDuplicateNodes() {
         Set<Node> dNodes = new HashSet<>();
-        for (NetSegment<?> segment : segments) {
+        for (RouteSegment segment : segments) {
             if (segment instanceof Node) {
                 Node node = (Node) segment;
                 if (dNodes.contains(node)) {
@@ -170,7 +170,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
     }
 
     @Override
-    public Iterator<NetSegment<? extends Track>> iterator() {
+    public Iterator<RouteSegment> iterator() {
         return segments.iterator();
     }
 

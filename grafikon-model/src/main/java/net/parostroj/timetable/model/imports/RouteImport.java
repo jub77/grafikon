@@ -58,9 +58,9 @@ public class RouteImport extends Import {
         return route;
     }
 
-    public NetSegment<?>[] getSegments(Route oRoute) {
+    private NetSegment<?>[] getSegments(Route oRoute) {
         List<NetSegment<?>> result = new LinkedList<>();
-        for (NetSegment<?> oSeg : oRoute.getSegments()) {
+        for (RouteSegment oSeg : oRoute.getSegments()) {
             if (oSeg instanceof Line) {
                 result.add(this.getLine((Line) oSeg));
             } else if (oSeg instanceof Node) {
