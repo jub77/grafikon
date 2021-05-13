@@ -12,10 +12,10 @@ import net.parostroj.timetable.model.events.*;
  */
 class EventToChangeConvert {
 
-    private static Map<Class<?>, DiagramChange.Type> TYPES;
-    private static Map<Event.Type, DiagramChange.Action> ACTIONS;
-    private static Map<Event.Type, String> DESCS;
-    private static Map<SpecialTrainTimeIntervalList.Type, String> TIL_DESCS;
+    private static final Map<Class<?>, DiagramChange.Type> TYPES;
+    private static final Map<Event.Type, DiagramChange.Action> ACTIONS;
+    private static final Map<Event.Type, String> DESCS;
+    private static final Map<SpecialTrainTimeIntervalList.Type, String> TIL_DESCS;
 
     static {
         TYPES = Collections.unmodifiableMap(getTypes());

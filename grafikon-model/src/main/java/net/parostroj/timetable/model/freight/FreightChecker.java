@@ -68,7 +68,7 @@ public class FreightChecker {
 
         List<FreightConnectionPath> connections = getConnectionsFrom(center).collect(toList());
 
-        nodes = nodes.filter(n -> !connections.stream().anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == n));
+        nodes = nodes.filter(n -> connections.stream().noneMatch(c -> c.getTo().isNode() && c.getTo().getNode() == n));
 
         return nodes.collect(toSet());
     }
@@ -80,8 +80,8 @@ public class FreightChecker {
 
         Stream<Node> nodes = getNodesOfTheCenter(center, skipTypes);
 
-        nodes = nodes.filter(n -> !getConnectionsFrom(n)
-                .anyMatch(c -> c.getTo().isNode() && c.getTo().getNode() == center));
+        nodes = nodes.filter(n -> getConnectionsFrom(n)
+                .noneMatch(c -> c.getTo().isNode() && c.getTo().getNode() == center));
 
         return nodes.collect(toSet());
     }

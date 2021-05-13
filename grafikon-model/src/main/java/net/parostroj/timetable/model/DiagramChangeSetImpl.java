@@ -21,7 +21,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
     private String version;
     private String author;
     private Calendar date;
-    private List<DiagramChange> changes;
+    private final List<DiagramChange> changes;
 
     public DiagramChangeSetImpl(String version, String author, Calendar date) {
         this.version = version;
@@ -74,9 +74,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
             case ADDED:
                 return true;
             case MODIFIED:
-                return existingAction != DiagramChange.Action.ADDED;
             case REMOVED:
-                return existingAction != DiagramChange.Action.ADDED;
             case MOVED:
                 return existingAction != DiagramChange.Action.ADDED;
         }
@@ -87,7 +85,6 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         Action addedAction = added.getAction();
         switch (existing.getAction()) {
             case ADDED:
-                return addedAction == DiagramChange.Action.REMOVED;
             case MODIFIED:
                 return addedAction == DiagramChange.Action.REMOVED;
             default:

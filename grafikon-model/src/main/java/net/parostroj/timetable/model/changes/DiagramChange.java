@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DiagramChange {
 
-    public static enum Type {
+    public enum Type {
         DIAGRAM("diagram"), NET("net"), TRAIN("train"), TRAIN_TYPE("train_type"),
         NODE("node"), LINE("line"), TEXT_ITEM("text_item"), IMAGE("image"),
         TRAINS_CYCLE("trains_cycle"), ENGINE_CLASS("engine_class"),
@@ -22,9 +22,9 @@ public class DiagramChange {
         CYCLE_TYPE("cycle_type"), GROUP("group"), FREIGHT_NET("freight_net"), REGION("region"),
         COMPANY("company"), TRAIN_TYPE_CATEGORY("train_type_category");
 
-        private String key;
+        private final String key;
 
-        private Type(String key) {
+        Type(String key) {
             this.key = key;
         }
 
@@ -38,12 +38,12 @@ public class DiagramChange {
         }
     }
 
-    public static enum Action {
+    public enum Action {
         ADDED("added"), REMOVED("removed"), MODIFIED("modified"), MOVED("moved");
 
-        private String key;
+        private final String key;
 
-        private Action(String key) {
+        Action(String key) {
             this.key = key;
         }
 
@@ -151,7 +151,7 @@ public class DiagramChange {
     }
 
     static String getStringWithoutException(String key) {
-        String result = null;
+        String result;
         try {
             result = getStringWithException(key);
         } catch (MissingResourceException e) {

@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.changes;
 
 import java.util.Arrays;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class DiagramChangeDescription {
 
     private String description;
     private Parameter[] params;
-    private String _cachedOutput;
+    private String cachedOutput;
 
     public DiagramChangeDescription(String description) {
         this.description = description;
@@ -52,19 +53,19 @@ public class DiagramChangeDescription {
     }
 
     public String getFormattedDescription() {
-        if (_cachedOutput == null) {
+        if (cachedOutput == null) {
             try {
                 String desc = DiagramChange.getStringWithException(description);
-                _cachedOutput = String.format(desc, (Object[])this.convertParams());
+                cachedOutput = String.format(desc, (Object[]) this.convertParams());
             } catch (MissingResourceException e) {
                 log.warn("Key not found: {}", e.getKey());
-                _cachedOutput = DiagramChange.getString("not_found");
+                cachedOutput = DiagramChange.getString("not_found");
             } catch (Exception e) {
                 log.warn("Not enough parameters for key: {}", description);
-                _cachedOutput = DiagramChange.getString("not_found");
+                cachedOutput = DiagramChange.getString("not_found");
             }
         }
-        return _cachedOutput;
+        return cachedOutput;
     }
 
     @Override
@@ -76,13 +77,10 @@ public class DiagramChangeDescription {
             return false;
         }
         final DiagramChangeDescription other = (DiagramChangeDescription) obj;
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+        if (!Objects.equals(this.description, other.description)) {
             return false;
         }
-        if (!Arrays.deepEquals(this.params, other.params)) {
-            return false;
-        }
-        return true;
+        return Arrays.deepEquals(this.params, other.params);
     }
 
     @Override
@@ -94,12 +92,12 @@ public class DiagramChangeDescription {
     }
 
     private void clearCached() {
-        _cachedOutput = null;
+        cachedOutput = null;
     }
 
     private String[] convertParams() {
         if (params == null)
-            return null;
+            return new String[0];
         String[] result = new String[params.length];
         for (int i = 0; i < params.length; i++)
             result[i] = params[i].getTranslatedValue();

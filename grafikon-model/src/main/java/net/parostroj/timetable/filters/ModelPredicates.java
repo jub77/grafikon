@@ -60,12 +60,12 @@ public final class ModelPredicates {
             case FREIGHT:
                 return train -> {
                     TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
-                    return category != null ? category.getKey().equals(PredefinedTrainTypes.FREIGHT.getKey()) : false;
+                    return category != null && category.getKey().equals(PredefinedTrainTypes.FREIGHT.getKey());
                 };
             case PASSENGER:
                 return train -> {
                     TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
-                    return category != null ? category.getKey().equals(PredefinedTrainTypes.PASSENGER.getKey()) : false;
+                    return category != null && category.getKey().equals(PredefinedTrainTypes.PASSENGER.getKey());
                 };
             default:
                 throw new IllegalArgumentException("Unexpected train types: " + types);

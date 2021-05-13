@@ -25,8 +25,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 class BaseConnectionStrategy implements FreightConnectionStrategy {
 
-    private FreightNet freightNet;
-    private RegionGraphDelegate regionGraphDelegate;
+    private final FreightNet freightNet;
+    private final RegionGraphDelegate regionGraphDelegate;
 
     public BaseConnectionStrategy(TrainDiagram diagram) {
         this.freightNet = diagram.getFreightNet();
@@ -72,7 +72,7 @@ class BaseConnectionStrategy implements FreightConnectionStrategy {
     private List<FreightConnectionPath> getFreightToNodesImpl(TimeInterval fromInterval, FreightConnectionFilter filter) {
         List<FreightConnectionPath> result = new LinkedList<>();
         this.getFreightToNodesImpl(fromInterval.getOwnerAsNode(), fromInterval,
-                Collections.<TrainConnection>emptyList(), result, new HashSet<FNConnection>(), filter,
+                Collections.emptyList(), result, new HashSet<>(), filter,
                 new FilterContext(fromInterval));
         return result;
     }

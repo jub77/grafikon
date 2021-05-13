@@ -3,8 +3,8 @@ package net.parostroj.timetable.utils;
 import java.awt.Color;
 import java.io.*;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Converting utility.
@@ -29,6 +29,6 @@ public final class Conversions {
             public InputStream openStream() throws IOException {
                 return is;
             }
-        }.asCharSource(Charsets.UTF_8).read();
+        }.asCharSource(StandardCharsets.UTF_8).read();
     }
 }
