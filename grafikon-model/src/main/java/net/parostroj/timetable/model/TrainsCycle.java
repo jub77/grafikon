@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.Collections2;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -23,7 +23,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainDiagramPart, Observable {
+public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainDiagramPart, ObservableObject {
 
     public static final String ATTR_ENGINE_CLASS = "engine.class";
     public static final String ATTR_NAME = "name";
@@ -204,7 +204,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof TrainsCycle))
+        if (!(obj instanceof TrainsCycle))
             return false;
         return this == obj;
     }

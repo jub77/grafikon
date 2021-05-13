@@ -8,7 +8,7 @@ import com.google.common.collect.Iterables;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -19,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, Observable, CompounedObservable {
+public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, ObservableObject, CompounedObservable {
 
     public static final String ATTR_SCALE = "scale";
     public static final String ATTR_TIME_SCALE = "time.scale";
@@ -510,7 +510,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    protected void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
+    protected void fireCollectionEventObservable(Event.Type type, ObservableObject item, Integer newIndex, Integer oldIndex) {
         fireCollectionEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:

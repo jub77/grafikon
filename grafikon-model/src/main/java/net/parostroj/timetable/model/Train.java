@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.computation.TrackSelectionComputation;
 import net.parostroj.timetable.model.computation.TrainRouteSelection;
 import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -20,7 +20,7 @@ import com.google.common.collect.*;
  * @author jub
  */
 public class Train implements AttributesHolder, ObjectWithId, Visitable,
-        TrainDiagramPart, Iterable<TimeInterval>, Observable {
+        TrainDiagramPart, Iterable<TimeInterval>, ObservableObject {
 
     public static final String ATTR_GROUP = "group";
     public static final String ATTR_DIESEL = "diesel";

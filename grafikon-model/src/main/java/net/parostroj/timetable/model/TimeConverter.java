@@ -26,7 +26,7 @@ public class TimeConverter {
         private final String key;
         private final int min;
 
-        private Rounding(String key, int min) {
+        Rounding(String key, int min) {
             this.key = key;
             this.min = min;
         }

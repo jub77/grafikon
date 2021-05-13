@@ -10,20 +10,20 @@ import java.util.Set;
  */
 public interface TrackConnectors extends ItemWithIdSet<TrackConnector> {
 
-    default public Optional<TrackConnector> getForLineTrack(LineTrack lineTrack) {
+    default Optional<TrackConnector> getForLineTrack(LineTrack lineTrack) {
         return this.find(conn -> conn.getLineTrack().orElse(null) == lineTrack);
     }
 
-    default public Set<TrackConnector> getWithoutLineTrack() {
+    default Set<TrackConnector> getWithoutLineTrack() {
         return this.findAll(conn -> !conn.getLineTrack().isPresent());
     }
 
-    default public Set<TrackConnector> getForSideAndNodeTrack(Node.Side side, NodeTrack nodeTrack) {
+    default Set<TrackConnector> getForSideAndNodeTrack(Node.Side side, NodeTrack nodeTrack) {
         return this.findAll(conn -> conn.getOrientation() == side
                 && conn.getSwitches().find(s -> s.getNodeTrack() == nodeTrack).isPresent());
     }
 
-    default public Set<TrackConnector> getForLine(Line line) {
+    default Set<TrackConnector> getForLine(Line line) {
         return this.findAll(c -> c.getLineTrack().map(LineTrack::getOwner).orElse(null) == line);
     }
 }

@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, ItemCollectionObject {
+public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, ObservableObject, ItemCollectionObject {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_GROUP_KEY = "group.key";

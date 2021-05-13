@@ -5,14 +5,14 @@ import java.util.*;
 import com.google.common.collect.Iterators;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 
 /**
  * Common implementation of route segment.
  *
  * @author jub
  */
-abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Observable {
+abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, ObservableObject {
 
     /** Id of an object. */
     private final String id;

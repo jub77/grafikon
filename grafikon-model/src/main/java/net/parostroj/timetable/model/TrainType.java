@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Observable, TrainDiagramPart {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, ObservableObject, TrainDiagramPart {
 
     public static final String ATTR_SHOW_WEIGHT_INFO = "weight.info";
     public static final String ATTR_ABBR = "abbr";

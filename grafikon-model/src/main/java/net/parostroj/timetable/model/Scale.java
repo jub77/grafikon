@@ -43,7 +43,7 @@ public final class Scale {
     }
 
     public static String convertRatioToString(int ratio) {
-        return "1:" + Integer.toString(ratio);
+        return "1:" + ratio;
     }
 
     public static int convertStringToRatio(String ratioString) {

@@ -16,7 +16,7 @@ import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.model.freight.ConnectionStrategyType;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -27,7 +27,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FreightNet implements Visitable, AttributesHolder, Observable, TrainDiagramPart {
+public class FreightNet implements Visitable, AttributesHolder, ObservableObject, TrainDiagramPart {
 
     public static final String ATTR_CONNECTION_STRATEGY_TYPE = "connection.strategy.type";
     public static final String ATTR_CUSTOM_CONNECTION_FILTER = "custom.connection.filter";

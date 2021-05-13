@@ -11,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Observable {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable, ObservableObject {
 
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_NAME = "name";

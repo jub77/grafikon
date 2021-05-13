@@ -14,10 +14,10 @@ public enum TimeIntervalDirection {
 
     FORWARD(true, 1), BACKWARD(false, -1);
 
-    private boolean forward;
-    private int numerical;
+    private final boolean forward;
+    private final int numerical;
 
-    private TimeIntervalDirection(boolean forward, int numerical) {
+    TimeIntervalDirection(boolean forward, int numerical) {
         this.forward = forward;
         this.numerical = numerical;
     }

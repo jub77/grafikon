@@ -5,7 +5,7 @@ package net.parostroj.timetable.model.events;
  *
  * @author jub
  */
-public interface Observable {
+public interface ObservableObject {
 
     void addListener(Listener listener);
 

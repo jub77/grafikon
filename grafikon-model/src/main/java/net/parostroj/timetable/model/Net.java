@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -21,7 +21,7 @@ import org.jgrapht.graph.SimpleGraph;
  *
  * @author jub
  */
-public class Net implements Visitable, TrainDiagramPart, Observable, CompounedObservable {
+public class Net implements Visitable, TrainDiagramPart, ObservableObject, CompounedObservable {
 
     private final TrainDiagram diagram;
     private final ItemWithIdList<LineClass> lineClasses;
@@ -269,7 +269,7 @@ public class Net implements Visitable, TrainDiagramPart, Observable, CompounedOb
         }
     }
 
-    protected void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
+    protected void fireCollectionEventObservable(Event.Type type, ObservableObject item, Integer newIndex, Integer oldIndex) {
         fireEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:

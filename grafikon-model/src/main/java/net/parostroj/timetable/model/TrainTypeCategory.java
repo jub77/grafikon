@@ -9,14 +9,14 @@ import java.util.ListIterator;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 
 /**
  * Category of train types - freight, passenger ...
  *
  * @author jub
  */
-public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHolder {
+public class TrainTypeCategory implements ObjectWithId, ObservableObject, AttributesHolder {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_KEY = "key";

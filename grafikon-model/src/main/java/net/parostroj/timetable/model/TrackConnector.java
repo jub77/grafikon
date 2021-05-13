@@ -16,7 +16,6 @@ public interface TrackConnector
         extends ObjectWithId, ItemCollectionObject, AttributesHolder, Visitable {
 
     String ATTR_LINE_TRACK = "line.track";
-    String ATTR_SWITCHES = "switches";
     String ATTR_NUMBER = "number";
     String ATTR_ORIENTATION = "orientation";
     String ATTR_POSITION = "position";

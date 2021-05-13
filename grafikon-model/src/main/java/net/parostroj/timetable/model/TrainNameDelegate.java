@@ -19,28 +19,28 @@ class TrainNameDelegate {
 
     private final Train train;
 
-    private final CachedValue<String> _cachedName;
-    private final CachedValue<String> _cachedCompleteName;
-    private Map<String, Object> _cachedBinding;
+    private final CachedValue<String> cachedName;
+    private final CachedValue<String> cachedCompleteName;
+    private Map<String, Object> cachedBinding;
 
     public TrainNameDelegate(Train train) {
         this.train = train;
-        _cachedName = new CachedValue<>();
-        _cachedCompleteName = new CachedValue<>();
+        cachedName = new CachedValue<>();
+        cachedCompleteName = new CachedValue<>();
     }
 
     public String getName() {
-        if (!_cachedName.isCached()) {
+        if (!cachedName.isCached()) {
             this.refreshName();
         }
-        return _cachedName.getValue();
+        return cachedName.getValue();
     }
 
     public String getCompleteName() {
-        if (!_cachedCompleteName.isCached()) {
+        if (!cachedCompleteName.isCached()) {
             this.refreshCompleteName();
         }
-        return _cachedCompleteName.getValue();
+        return cachedCompleteName.getValue();
     }
 
     public TranslatedString getName(Train.NameType nameType) {
@@ -53,17 +53,17 @@ class TrainNameDelegate {
     }
 
     private void refreshName() {
-        String oldName = _cachedName.getValue();
+        String oldName = cachedName.getValue();
         String newName = this.getNameImpl(NameType.NORMAL);
-        if (_cachedName.set(newName)) {
+        if (cachedName.set(newName)) {
             train.fireEvent(new Event(train, new AttributeChange(Train.ATTR_NAME, oldName, newName)));
         }
     }
 
     private void refreshCompleteName() {
-        String oldName = _cachedCompleteName.getValue();
+        String oldName = cachedCompleteName.getValue();
         String newName = this.getNameImpl(NameType.COMPLETE);
-        if (_cachedCompleteName.set(newName)) {
+        if (cachedCompleteName.set(newName)) {
             train.fireEvent(new Event(train, new AttributeChange(Train.ATTR_COMPLETE_NAME, oldName, newName)));
         }
     }
@@ -95,16 +95,16 @@ class TrainNameDelegate {
      * @return binding for template
      */
     Map<String,Object> createTemplateBinding(Locale locale) {
-        if (_cachedBinding == null) {
-            _cachedBinding = new HashMap<>();
-            _cachedBinding.put("train", train);
-            _cachedBinding.put("stations", new Stations());
+        if (cachedBinding == null) {
+            cachedBinding = new HashMap<>();
+            cachedBinding.put("train", train);
+            cachedBinding.put("stations", new Stations());
         }
-        _cachedBinding.put("type", train.getType());
+        cachedBinding.put("type", train.getType());
         Locale onlyLanguageLocale = locale != null ? LocalizedString.getOnlyLanguageLocale(locale) : null;
-        _cachedBinding.put("locale", onlyLanguageLocale);
-        _cachedBinding.put("localeTag", locale != null ? onlyLanguageLocale.toLanguageTag() : null);
-        return _cachedBinding;
+        cachedBinding.put("locale", onlyLanguageLocale);
+        cachedBinding.put("localeTag", locale != null ? onlyLanguageLocale.toLanguageTag() : null);
+        return cachedBinding;
     }
 
     /**

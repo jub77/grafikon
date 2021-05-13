@@ -6,6 +6,7 @@
 package net.parostroj.timetable.model;
 
 import java.io.File;
+import java.util.Objects;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -73,7 +74,7 @@ public class TimetableImage implements ObjectWithId, Visitable {
             return false;
         }
         final TimetableImage other = (TimetableImage) obj;
-        return !(this.filename != other.filename && (this.filename == null || !this.filename.equals(other.filename)));
+        return Objects.equals(this.filename, other.filename);
     }
 
     @Override

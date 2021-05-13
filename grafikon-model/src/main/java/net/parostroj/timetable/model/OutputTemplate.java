@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, TrainDiagramPart, Observable {
+public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, TrainDiagramPart, ObservableObject {
 
     public static final String ATTR_OUTPUT = "output";
     public static final String ATTR_OUTPUT_TYPE = "output.type";

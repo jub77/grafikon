@@ -2,7 +2,7 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
-import net.parostroj.timetable.model.events.Observable;
+import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -11,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, Observable {
+public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, ObservableObject {
 
     public static final String ATTR_NAME = "name";
 

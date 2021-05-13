@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class SortPattern {
 
-    private String pattern;
-    private List<SortPatternGroup> groups;
+    private final String pattern;
+    private final List<SortPatternGroup> groups;
 
     public SortPattern(String pattern) {
         this.pattern = pattern;
