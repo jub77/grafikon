@@ -13,7 +13,10 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, EngineClassAttributes, ItemCollectionObject {
+public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, Observable, ItemCollectionObject {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_GROUP_KEY = "group.key";
 
     private final String id;
     private final List<WeightTableRow> weightTable;

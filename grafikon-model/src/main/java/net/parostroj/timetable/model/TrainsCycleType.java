@@ -21,7 +21,10 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, TrainsCycleTypeAttributes, Observable {
+public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, Observable {
+
+    public static final String ATTR_KEY = "key";
+    public static final String ATTR_NAME = "name";
 
     public static final String ENGINE_CYCLE_KEY = "ENGINE_CYCLE";
     public static final String DRIVER_CYCLE_KEY = "DRIVER_CYCLE";

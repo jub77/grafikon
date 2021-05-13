@@ -10,8 +10,6 @@ import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.utils.CachedValue;
 
-import static net.parostroj.timetable.model.TrainAttributes.*;
-
 /**
  * Delegate for handling creation and other functionality dealing with names of trains.
  *
@@ -58,7 +56,7 @@ class TrainNameDelegate {
         String oldName = _cachedName.getValue();
         String newName = this.getNameImpl(NameType.NORMAL);
         if (_cachedName.set(newName)) {
-            train.fireEvent(new Event(train, new AttributeChange(ATTR_NAME, oldName, newName)));
+            train.fireEvent(new Event(train, new AttributeChange(Train.ATTR_NAME, oldName, newName)));
         }
     }
 
@@ -66,7 +64,7 @@ class TrainNameDelegate {
         String oldName = _cachedCompleteName.getValue();
         String newName = this.getNameImpl(NameType.COMPLETE);
         if (_cachedCompleteName.set(newName)) {
-            train.fireEvent(new Event(train, new AttributeChange(ATTR_COMPLETE_NAME, oldName, newName)));
+            train.fireEvent(new Event(train, new AttributeChange(Train.ATTR_COMPLETE_NAME, oldName, newName)));
         }
     }
 

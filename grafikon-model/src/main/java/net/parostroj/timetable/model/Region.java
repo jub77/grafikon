@@ -16,12 +16,21 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
+
 /**
  * Region - for station attributes -&gt; freight net support.
  *
  * @author jub
  */
-public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart, ItemCollectionObject {
+public class Region implements Visitable, ObjectWithId, AttributesHolder, TrainDiagramPart, ItemCollectionObject {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_LOCALE = "locale";
+    public static final String ATTR_SUPER_REGION = "super.region";
+    public static final String ATTR_SUB_REGIONS = "sub.regions";
+    public static final String ATTR_FREIGHT_COLOR_MAP = "freight.color.map";
+    public static final String ATTR_NODES = "nodes";
+    public static final String ATTR_FREIGHT_COLOR_REGION = "freight.color.region";
 
     private final TrainDiagram diagram;
     private final String id;

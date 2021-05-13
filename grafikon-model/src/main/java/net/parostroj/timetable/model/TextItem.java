@@ -5,19 +5,25 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
+
 /**
  * Text item.
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes, Observable {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Observable {
+
+    public static final String ATTR_TYPE = "type";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_TEMPLATE = "template";
+    public static final String ATTR_TRAIN_TIMETABLE_INFO = "train.timetable.info";
 
     public enum Type {
         PLAIN_TEXT("plain");
 
-        private String key;
+        private final String key;
 
-        private Type(String key) {
+        Type(String key) {
             this.key = key;
         }
 

@@ -240,7 +240,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         TextItemModel newItemModel = dialog.getResultModel();
         if (newItemModel != null) {
             selectedItem.setTemplate(newItemModel.template);
-            selectedItem.getAttributes().setBool(TextItemAttributes.ATTR_TRAIN_TIMETABLE_INFO, newItemModel.trainTimetableInfo);
+            selectedItem.getAttributes().setBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO, newItemModel.trainTimetableInfo);
         }
     }
 

@@ -9,7 +9,13 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FNConnection extends Attributes implements ObjectWithId, Visitable, FNConnectionAttributes {
+public class FNConnection extends Attributes implements ObjectWithId, Visitable {
+
+    public static final String ATTR_LAST_NODES = "last.nodes";
+    public static final String ATTR_LAST_NODES_EXCLUDE = "last.nodes.exclude";
+    public static final String ATTR_FROM_NODES = "from.nodes";
+    public static final String ATTR_TO_NODES = "to.nodes";
+    public static final String ATTR_TRANSITION_LIMIT = "transition.limit";
 
     private final TimeInterval from;
     private final TimeInterval to;

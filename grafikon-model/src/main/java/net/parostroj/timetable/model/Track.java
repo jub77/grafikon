@@ -11,7 +11,11 @@ import net.parostroj.timetable.model.events.AttributeChange;
  *
  * @author jub
  */
-public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes, Iterable<TimeInterval> {
+public abstract class Track implements AttributesHolder, ObjectWithId, Iterable<TimeInterval> {
+
+    public static final String ATTR_NUMBER = "number";
+    public static final String ATTR_PLATFORM = "platform";
+
     /** ID. */
     private final String id;
     /** Owner of the track. */

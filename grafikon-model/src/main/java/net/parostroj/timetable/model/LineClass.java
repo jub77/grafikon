@@ -11,7 +11,9 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, Observable, LineClassAttributes {
+public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, Observable {
+
+    public static final String ATTR_NAME = "name";
 
     private final String id;
     private final Attributes attributes;

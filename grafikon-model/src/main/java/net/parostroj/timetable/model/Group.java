@@ -4,7 +4,9 @@ import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
-public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAttributes, TrainDiagramPart, ItemCollectionObject {
+public class Group implements ObjectWithId, Visitable, AttributesHolder, TrainDiagramPart, ItemCollectionObject {
+
+    public static final String ATTR_NAME = "name";
 
     private final TrainDiagram diagram;
     /** ID. */

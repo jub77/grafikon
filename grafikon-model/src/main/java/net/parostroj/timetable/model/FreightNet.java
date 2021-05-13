@@ -27,8 +27,10 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FreightNet
-        implements Visitable, AttributesHolder, Observable, FreightNetAttributes, TrainDiagramPart {
+public class FreightNet implements Visitable, AttributesHolder, Observable, TrainDiagramPart {
+
+    public static final String ATTR_CONNECTION_STRATEGY_TYPE = "connection.strategy.type";
+    public static final String ATTR_CUSTOM_CONNECTION_FILTER = "custom.connection.filter";
 
     private static final ConnectionStrategyType DEFAULT_STRATEGY = ConnectionStrategyType.REGION;
 
@@ -48,7 +50,7 @@ public class FreightNet
         this.diagram = diagram;
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attrs, change) -> {
-            Event event = null;
+            Event event;
             if (attrs instanceof FNConnection) {
                 event = new Event(FreightNet.this, attrs, change);
             } else {

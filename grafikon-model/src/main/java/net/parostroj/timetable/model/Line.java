@@ -10,8 +10,14 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<LineTrack>, AttributesHolder, ObjectWithId, Visitable,
-        LineAttributes, TrainDiagramPart {
+public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<LineTrack>, AttributesHolder,
+        ObjectWithId, Visitable, TrainDiagramPart {
+
+    public static final String ATTR_CLASS = "line.class";
+    public static final String ATTR_CLASS_BACK = "line.class.back";
+    public static final String ATTR_CONTROLLED = "line.controlled";
+    public static final String ATTR_LENGTH = "length";
+    public static final String ATTR_SPEED = "topSpeed";
 
     /** Train diagram. */
     private final TrainDiagram diagram;

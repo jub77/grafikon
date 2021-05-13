@@ -34,7 +34,7 @@ public final class ModelPredicates {
 
     public static <T extends AttributesHolder> Predicate<T> inGroup(final Group group) {
         return holder -> {
-            Group foundGroup = holder.getAttributes().get(TrainAttributes.ATTR_GROUP, Group.class);
+            Group foundGroup = holder.getAttributes().get(Train.ATTR_GROUP, Group.class);
             if (group == null) {
                 return foundGroup == null;
             } else {

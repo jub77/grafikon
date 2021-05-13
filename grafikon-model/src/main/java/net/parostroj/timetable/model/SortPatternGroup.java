@@ -10,9 +10,9 @@ public class SortPatternGroup {
     public enum Type {
 
         STRING("string"), NUMBER("number");
-        private String id;
+        private final String id;
 
-        private Type(String id) {
+        Type(String id) {
             this.id = id;
         }
 

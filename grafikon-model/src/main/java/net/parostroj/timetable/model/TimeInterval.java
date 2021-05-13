@@ -11,7 +11,16 @@ import net.parostroj.timetable.model.events.Event;
  *
  * @author jub
  */
-public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, ObjectWithId {
+public class TimeInterval implements AttributesHolder, ObjectWithId {
+
+    public static final String ATTR_SET_SPEED = "set.speed";
+    public static final String ATTR_IGNORE_LENGTH = "ignore.length";
+    public static final String ATTR_COMMENT = "comment";
+    public static final String ATTR_COMMENT_SHOWN = "comment.shown";
+    public static final String ATTR_SHUNT = "shunt";
+    public static final String ATTR_OCCUPIED = "occupied";
+    public static final String ATTR_NOT_MANAGED_FREIGHT = "not.managed.freight";
+    public static final String ATTR_NO_REGION_CENTER_TRANSFER = "no.region.center.transfer";
 
     public static final int DAY = 24 * 3600;
     public static final int HOUR = 3600;

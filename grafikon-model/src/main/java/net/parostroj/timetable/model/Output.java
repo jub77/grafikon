@@ -16,7 +16,15 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Output implements ObjectWithId, AttributesHolder, OutputAttributes, Observable, Visitable {
+public class Output implements ObjectWithId, AttributesHolder, Observable, Visitable {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_TEMPLATE = "template";
+    public static final String ATTR_SELECTION = "selection";
+    public static final String ATTR_LOCALE = "locale";
+    public static final String ATTR_KEY = "key";
+
+    public static final String CATEGORY_SETTINGS = "settings";
 
     private final String id;
 

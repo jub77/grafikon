@@ -16,7 +16,10 @@ import net.parostroj.timetable.model.events.Observable;
  *
  * @author jub
  */
-public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHolder, TrainTypeCategoryAttributes {
+public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHolder {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_KEY = "key";
 
     private final String id;
 

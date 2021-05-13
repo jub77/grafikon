@@ -19,7 +19,10 @@ import net.parostroj.timetable.utils.TimeUtil;
  *
  * @author jub
  */
-public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHolder {
+public class TrainsCycleItem implements AttributesHolder {
+
+    public static final String ATTR_COMMENT = "comment";
+    public static final String ATTR_SETUP_TIME = "setup.time";
 
     private final Train train;
     private final TrainsCycle cycle;

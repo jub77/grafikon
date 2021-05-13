@@ -11,7 +11,12 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart, ItemCollectionObject {
+public class Company implements ObjectWithId, AttributesHolder, Visitable, TrainDiagramPart, ItemCollectionObject {
+
+    public static final String ATTR_ABBR = "abbr";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_LOCALE = "locale";
+    public static final String ATTR_PART_NAME = "part";
 
     private final String id;
     private final TrainDiagram diagram;
