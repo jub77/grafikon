@@ -174,7 +174,7 @@ public class LSVisitorBuilder implements LSVisitor {
         Track track = (Track) ids.get(lsInterval.getTrackId());
 
         // add to the last train
-        RouteSegment<?> part = (RouteSegment<?>) ids.get(lsInterval.getOwnerId());
+        NetSegment<?> part = (NetSegment<?>) ids.get(lsInterval.getOwnerId());
         TimeInterval interval = new TimeInterval(IdGenerator.getInstance().getId(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track, 0);
         if (lsInterval.getComment() != null && !lsInterval.getComment().equals(""))
             interval.setAttribute(TimeInterval.ATTR_COMMENT, lsInterval.getComment());
@@ -200,7 +200,7 @@ public class LSVisitorBuilder implements LSVisitor {
         Route route = new Route(lsRoute.getUuid(), diagram, lsRoute.getName());
         route.setNetPart(lsRoute.isNetPart());
         for (int id : lsRoute.getIds()) {
-            RouteSegment<?> segment = (RouteSegment<?>) ids.get(id);
+            NetSegment<?> segment = (NetSegment<?>) ids.get(id);
             route.getSegments().add(segment);
         }
         // add route to diagram

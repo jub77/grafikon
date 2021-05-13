@@ -398,7 +398,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     case REMOVED:
                         if (event.getObject() instanceof Route) {
                             Route route = (Route) event.getObject();
-                            for (RouteSegment<?> seg : route.getSegments()) {
+                            for (NetSegment<?> seg : route.getSegments()) {
                                 if (seg instanceof Line) {
                                     updateLine((Line) seg);
                                 }

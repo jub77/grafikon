@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.NetSegment;
 import net.parostroj.timetable.model.TrainDiagram;
 
 public class CreateRouteDialog extends JDialog {
@@ -133,7 +133,7 @@ public class CreateRouteDialog extends JDialog {
         return tnDialog;
     }
 
-    private void setValues(TrainDiagram diagram, List<? extends RouteSegment<?>> route) {
+    private void setValues(TrainDiagram diagram, List<? extends NetSegment<?>> route) {
         ElementSort<Node> sort = new ElementSort<Node>(new NodeComparator());
         availableNodes = sort.sort(diagram.getNet().getNodes());
         fromComboBox.removeAllItems();
@@ -147,7 +147,7 @@ public class CreateRouteDialog extends JDialog {
             fromComboBox.setSelectedItem(Wrapper.getWrapper(route.get(0)));
             toComboBox.setSelectedItem(Wrapper.getWrapper(route.get(route.size() - 1)));
             for (int i = 1; i < route.size() - 1; i++) {
-                RouteSegment<?> segment = route.get(i);
+                NetSegment<?> segment = route.get(i);
                 if (segment instanceof Node) {
                     throughNodes.add((Node) segment);
                 }
@@ -164,7 +164,7 @@ public class CreateRouteDialog extends JDialog {
         return result;
     }
 
-    public List<Node> showDialog(TrainDiagram diagram, List<? extends RouteSegment<?>> route) {
+    public List<Node> showDialog(TrainDiagram diagram, List<? extends NetSegment<?>> route) {
         this.setValues(diagram, route);
         this.pack();
         this.setVisible(true);

@@ -474,7 +474,7 @@ public final class TrainsHelper {
      * @param segment route segment
      * @return iterable with trains
      */
-    public static Iterable<Train> filterAndSortByNode(Iterable<Train> trains, final RouteSegment<?> segment) {
+    public static Iterable<Train> filterAndSortByNode(Iterable<Train> trains, final NetSegment<?> segment) {
         Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.<TimeInterval>find(train.getTimeIntervalList(),
                 interval -> segment.equals(interval.getOwner()), null)), Predicates.notNull());
         Ordering<TimeInterval> sort = Ordering.from((TimeInterval i1, TimeInterval i2) -> i1.getStart() - i2.getStart());

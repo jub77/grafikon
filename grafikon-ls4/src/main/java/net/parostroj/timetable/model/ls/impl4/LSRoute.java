@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.NetSegment;
 import net.parostroj.timetable.model.ls.LSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class LSRoute {
         this.name = route.getName();
         this.netPart = route.isNetPart();
         this.segments = new LinkedList<>();
-        for (RouteSegment<?> segment : route.getSegments()) {
+        for (NetSegment<?> segment : route.getSegments()) {
             this.segments.add(segment.getId());
         }
     }
@@ -95,7 +95,7 @@ public class LSRoute {
         boolean node = true;
         if (this.segments != null) {
             for (String segment : this.segments) {
-                RouteSegment<?> routeSegment = null;
+                NetSegment<?> routeSegment = null;
                 if (node) {
                     routeSegment = net.getNodeById(segment);
                 } else {

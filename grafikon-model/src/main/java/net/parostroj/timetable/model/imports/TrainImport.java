@@ -57,14 +57,14 @@ public class TrainImport extends Import {
 
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(train, importedTrain.getStartTime());
         // create route (new)
-        List<Triplet<RouteSegment<?>, Track, TimeInterval>> route = createNewRoute(importedTrain);
+        List<Triplet<NetSegment<?>, Track, TimeInterval>> route = createNewRoute(importedTrain);
         if (route == null) {
             String message = "error creating route for train";
             this.addError(importedTrain, message);
             log.debug("{}: {}", message, importedTrain);
             return null;
         }
-        for (Triplet<RouteSegment<?>, Track, TimeInterval> seg : route) {
+        for (Triplet<NetSegment<?>, Track, TimeInterval> seg : route) {
             if (seg.first instanceof Node) {
                 // node
                 Node node = (Node)seg.first;
@@ -85,11 +85,11 @@ public class TrainImport extends Import {
         return train;
     }
 
-    private List<Triplet<RouteSegment<?>, Track, TimeInterval>> createNewRoute(Train train) {
+    private List<Triplet<NetSegment<?>, Track, TimeInterval>> createNewRoute(Train train) {
         Node previousNode = null;
         Track previousLineTrack = null;
         TimeInterval previousLineInterval = null;
-        List<Triplet<RouteSegment<?>, Track, TimeInterval>> segments = new LinkedList<>();
+        List<Triplet<NetSegment<?>, Track, TimeInterval>> segments = new LinkedList<>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             if (interval.isNodeOwner()) {
                 Node node = this.getNode(interval.getOwnerAsNode());

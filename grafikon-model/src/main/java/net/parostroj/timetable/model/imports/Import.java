@@ -213,7 +213,7 @@ public abstract class Import {
         }
     }
 
-    protected Track getTrack(RouteSegment<? extends Track> seg, Track origTrack) {
+    protected Track getTrack(NetSegment<? extends Track> seg, Track origTrack) {
         List<? extends Track> tracks = seg.getTracks();
         for (Track track : tracks) {
             if (match == ImportMatch.ID) {

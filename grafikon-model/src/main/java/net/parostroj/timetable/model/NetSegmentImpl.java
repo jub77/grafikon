@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.events.ObservableObject;
  *
  * @author jub
  */
-abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, ObservableObject {
+abstract class NetSegmentImpl<T extends Track> implements NetSegment<T>, ObservableObject {
 
     /** Id of an object. */
     private final String id;
@@ -21,7 +21,7 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Obs
 
     protected final ListenerSupport listenerSupport;
 
-    protected RouteSegmentImpl(String id) {
+    protected NetSegmentImpl(String id) {
         this.id = id;
         this.tracks = new ItemListImpl<>(this::fireTrackEvent);
         this.listenerSupport = new ListenerSupport();

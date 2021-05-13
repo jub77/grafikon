@@ -23,7 +23,7 @@ public class RoutesExtractor {
         routeMap = new HashMap<>();
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {
-                for (RouteSegment<?> seg : route.getSegments()) {
+                for (NetSegment<?> seg : route.getSegments()) {
                     if (seg instanceof Line && !routeMap.containsKey(seg)) {
                         routeMap.put((Line) seg, route);
                     }
@@ -128,7 +128,7 @@ public class RoutesExtractor {
                 NetPartRouteInfo info = new NetPartRouteInfo();
                 info.setName(route.getName());
                 long length = 0;
-                for (RouteSegment<?> seg : route.getSegments()) {
+                for (NetSegment<?> seg : route.getSegments()) {
                     if (seg instanceof Node) {
                         Node node = (Node) seg;
                         RouteSegmentInfo rsInfo = new RouteSegmentInfo();

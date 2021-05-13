@@ -22,7 +22,7 @@ import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.NetSegment;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
@@ -353,8 +353,8 @@ public class TrainTimetablesExtractor {
         return position;
     }
 
-    private boolean checkRoute(Line line, List<RouteSegment<?>> segments) {
-        for (RouteSegment<?> seg : segments) {
+    private boolean checkRoute(Line line, List<NetSegment<?>> segments) {
+        for (NetSegment<?> seg : segments) {
             // sequence line - node
             if (seg instanceof Line && seg == line)
                 return true;
@@ -373,7 +373,7 @@ public class TrainTimetablesExtractor {
         if (foundRoute != null) {
             // compute distance
             long length = 0;
-            for (RouteSegment<?> seg : foundRoute.getSegments()) {
+            for (NetSegment<?> seg : foundRoute.getSegments()) {
                 if (seg == pair.second) {
                     break;
                 } else if (seg instanceof Line) {
