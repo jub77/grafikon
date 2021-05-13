@@ -1,5 +1,7 @@
 package net.parostroj.timetable.utils;
 
+import java.util.Objects;
+
 public class Pair<T, V> {
 
     public T first;
@@ -27,10 +29,10 @@ public class Pair<T, V> {
             return false;
         }
         final Pair<?, ?> other = (Pair<?, ?>) obj;
-        if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
+        if (!Objects.equals(this.first, other.first)) {
             return false;
         }
-        return !(this.second != other.second && (this.second == null || !this.second.equals(other.second)));
+        return Objects.equals(this.second, other.second);
     }
 
     @Override

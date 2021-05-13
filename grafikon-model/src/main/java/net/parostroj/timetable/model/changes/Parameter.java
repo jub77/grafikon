@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.changes;
 
+import java.util.Objects;
+
 /**
  * Parameter for diagram change description.
  *
@@ -48,13 +50,10 @@ public class Parameter {
             return false;
         }
         final Parameter other = (Parameter) obj;
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+        if (!Objects.equals(this.value, other.value)) {
             return false;
         }
-        if (this.translated != other.translated) {
-            return false;
-        }
-        return true;
+        return this.translated == other.translated;
     }
 
     @Override

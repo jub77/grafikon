@@ -22,7 +22,7 @@ class LibraryAddHandler {
     public boolean checkIfValueContainsObjectWithId(Object value) {
         boolean remove = value instanceof ObjectWithId;
         if (!remove && value instanceof Collection) {
-            remove = ((Collection<?>) value).stream().anyMatch(item -> item instanceof ObjectWithId);
+            remove = ((Collection<?>) value).stream().anyMatch(ObjectWithId.class::isInstance);
         }
         return remove;
     }

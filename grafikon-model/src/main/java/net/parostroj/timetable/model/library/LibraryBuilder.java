@@ -131,7 +131,6 @@ public class LibraryBuilder {
 
     public LibraryItem importTrainType(TrainType trainType) {
         TrainType trainTypeCopy = copyFactory.copy(trainType, trainType.getId());
-        // TODO fix train name template reference
         if (trainType.getCategory() != null) {
             ObjectWithId category = this.getObjectById(trainType.getCategory().getId());
             if (category == null) {

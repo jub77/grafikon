@@ -339,7 +339,7 @@ public final class TrainsHelper {
             new ArrayList<>(intervals.size());
         for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner()) {
-                result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, null, null));
+                result.add(new Triplet<>(interval, null, null));
             } else {
                 Integer weight = getWeight(interval);
                 Collection<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);

@@ -26,6 +26,6 @@ public interface FreightDestination {
     boolean isFreightColors();
 
     default boolean isVisible() {
-        return isNode() ? !getNode().getType().isHidden() : true;
+        return !isNode() || !getNode().getType().isHidden();
     }
 }

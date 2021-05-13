@@ -23,7 +23,7 @@ class ScriptActionImpl implements ScriptAction {
     private final String location;
     private final ScriptDescription desc;
 
-    private Script _cachedScript;
+    private Script cachedScript;
 
     public ScriptActionImpl(String location, ScriptDescription desc) {
         this.location = location;
@@ -53,16 +53,16 @@ class ScriptActionImpl implements ScriptAction {
 
     @Override
     public Script getScript() {
-        if (_cachedScript == null) {
+        if (cachedScript == null) {
             String sLoc = location + "/" + desc.getLocation();
             String src = ScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
-                _cachedScript = Script.createScript(src, desc.getLanguage());
+                cachedScript = Script.createScript(src, desc.getLanguage());
             } catch (GrafikonException e) {
                 log.error("Couldn't create script.", e);
             }
         }
-        return _cachedScript;
+        return cachedScript;
     }
 
     @Override

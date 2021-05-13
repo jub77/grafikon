@@ -66,7 +66,8 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param track track
      * @param addedTime added time
      */
-    public TimeInterval(String id, Train train, NetSegment<? extends Track> owner, int start, int end, Integer speed, TimeIntervalDirection direction, Track track, int addedTime) {
+    public TimeInterval(String id, Train train, NetSegment<? extends Track> owner, int start, int end, Integer speed,
+            TimeIntervalDirection direction, Track track, int addedTime) {
         this.setTrain(train);
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
@@ -99,7 +100,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param interval copied interval
      */
     public TimeInterval(String id, TimeInterval interval, Train train) {
-        this(id, train, interval.getOwner(), interval.getStart(),
+        this(id, train, interval.owner, interval.getStart(),
                 interval.getEnd(), interval.getSpeedLimit(), interval.getDirection(),
                 interval.getTrack(), interval.getAddedTime());
         this.getAttributes().add(interval.getAttributes());

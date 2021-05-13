@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author jub
  */
-public class TestInterval {
+class TestInterval {
     @Test
-    public void createNormalizedInterval() {
+    void createNormalizedInterval() {
         Interval interval = IntervalFactory.createInterval(3600, 7200);
 
         assertThat("normalized", interval.isNormalized(), is(true));
@@ -20,7 +20,7 @@ public class TestInterval {
     }
 
     @Test
-    public void createNonNormalizedInterval() {
+    void createNonNormalizedInterval() {
         Interval interval = IntervalFactory.createInterval(-1800, 1800);
 
         assertThat("non-normalized", interval.isNormalized(), is(false));
@@ -28,7 +28,7 @@ public class TestInterval {
     }
 
     @Test
-    public void getNormalizedFromNonNormalizedInterval() {
+    void getNormalizedFromNonNormalizedInterval() {
         Interval nonNormalizedinterval = IntervalFactory.createInterval(-1800, 1800);
         Interval normalizedInterval = nonNormalizedinterval.normalize();
 

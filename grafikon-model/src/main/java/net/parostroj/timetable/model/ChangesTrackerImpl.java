@@ -29,7 +29,7 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
     private final TrackedCheckVisitor trackedVisitor;
     private final TransformVisitor transformVisitor;
     private final Set<ChangesTrackerListener> listeners;
-    private DiagramChangeSetImpl _currentChangeSet;
+    private DiagramChangeSetImpl currentChangeSet;
     private boolean enabled;
 
     ChangesTrackerImpl() {
@@ -57,14 +57,14 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public void addChange(DiagramChange change) {
-        if (_currentChangeSet == null) {
+        if (currentChangeSet == null) {
             String message = "Current change set is empty.";
             log.warn(message);
             throw new IllegalStateException(message);
         }
-        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> arChanges = _currentChangeSet.addChange(change);
+        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> arChanges = currentChangeSet.addChange(change);
         for (Pair<DiagramChange, ChangesTrackerEvent.Type> pair : arChanges) {
-            this.fireEvent(new ChangesTrackerEvent(pair.second, _currentChangeSet, pair.first));
+            this.fireEvent(new ChangesTrackerEvent(pair.second, currentChangeSet, pair.first));
         }
     }
 
@@ -120,15 +120,15 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
     @Override
     public DiagramChangeSet addVersion(String version, String author, Calendar date) {
         String aVersion = version != null ? version : createVersion();
-        _currentChangeSet = new DiagramChangeSetImpl(aVersion, author, date);
-        this.sets.add(_currentChangeSet);
-        this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, _currentChangeSet));
-        return _currentChangeSet;
+        currentChangeSet = new DiagramChangeSetImpl(aVersion, author, date);
+        this.sets.add(currentChangeSet);
+        this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, currentChangeSet));
+        return currentChangeSet;
     }
 
     @Override
     public String getCurrentVersion() {
-        return _currentChangeSet != null ? _currentChangeSet.getVersion() : null;
+        return currentChangeSet != null ? currentChangeSet.getVersion() : null;
     }
 
     @Override
@@ -146,18 +146,18 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public DiagramChangeSet getCurrentChangeSet() {
-        return _currentChangeSet;
+        return currentChangeSet;
     }
 
     @Override
     public DiagramChangeSet removeCurrentChangeSet(boolean delete) {
-        DiagramChangeSet returned = _currentChangeSet;
-        if (_currentChangeSet != null && delete) {
-            sets.remove(_currentChangeSet);
-            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_REMOVED, _currentChangeSet));
+        DiagramChangeSet returned = currentChangeSet;
+        if (currentChangeSet != null && delete) {
+            sets.remove(currentChangeSet);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_REMOVED, currentChangeSet));
         }
-        if (_currentChangeSet != null) {
-            _currentChangeSet = null;
+        if (currentChangeSet != null) {
+            currentChangeSet = null;
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         }
         return returned;
@@ -187,13 +187,13 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
     @Override
     public DiagramChangeSet setLastAsCurrent() {
         if (sets.isEmpty()) {
-            _currentChangeSet = null;
+            currentChangeSet = null;
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         } else {
-            _currentChangeSet = sets.get(sets.size() - 1);
-            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED, _currentChangeSet));
+            currentChangeSet = sets.get(sets.size() - 1);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED, currentChangeSet));
         }
-        return _currentChangeSet;
+        return currentChangeSet;
     }
 
     @Override
@@ -203,12 +203,12 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public DiagramChangeSet updateCurrentChangeSet(String version, String author, Calendar date) {
-        if (_currentChangeSet != null) {
-            _currentChangeSet.setAuthor(author);
-            _currentChangeSet.setDate(date);
-            _currentChangeSet.setVersion(version);
-            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_MODIFIED, _currentChangeSet));
+        if (currentChangeSet != null) {
+            currentChangeSet.setAuthor(author);
+            currentChangeSet.setDate(date);
+            currentChangeSet.setVersion(version);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_MODIFIED, currentChangeSet));
         }
-        return _currentChangeSet;
+        return currentChangeSet;
     }
 }

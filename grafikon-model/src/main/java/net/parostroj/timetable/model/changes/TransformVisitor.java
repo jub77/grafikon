@@ -11,6 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class TransformVisitor implements EventVisitor {
+    private static final String ACTION_MISSING_TEXT = "Action missing: ";
 
     private DiagramChange change;
     private final EventToChangeConvert converter = new EventToChangeConvert();
@@ -22,7 +23,7 @@ public class TransformVisitor implements EventVisitor {
         DiagramChange.Action action = converter.getAction(event.getType());
         if (type != null) {
             if (action == null) {
-                throw new IllegalArgumentException("Action missing: " + event.getType());
+                throw new IllegalArgumentException(ACTION_MISSING_TEXT + event.getType());
             }
             change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
             // get name
@@ -36,7 +37,7 @@ public class TransformVisitor implements EventVisitor {
                 change.setObject(this.getObjectStr(event.getObject()));
             }
             if (action == null) {
-                throw new IllegalArgumentException("Action missing: " + event.getType());
+                throw new IllegalArgumentException(ACTION_MISSING_TEXT + event.getType());
             }
             this.addDescription(event);
         }
@@ -48,7 +49,7 @@ public class TransformVisitor implements EventVisitor {
         DiagramChange.Action action = converter.getAction(event.getType());
         if (type != null) {
             if (action == null)
-                throw new IllegalArgumentException("Action missing: " + event.getType());
+                throw new IllegalArgumentException(ACTION_MISSING_TEXT + event.getType());
             change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
@@ -62,7 +63,7 @@ public class TransformVisitor implements EventVisitor {
         ObjectWithId o = (ObjectWithId) event.getObject();
         if (type != null) {
             if (action == null) {
-                throw new IllegalArgumentException("Action missing: " + event.getType());
+                throw new IllegalArgumentException(ACTION_MISSING_TEXT + event.getType());
             }
             change = new DiagramChange(type, action, o.getId());
         } else {
@@ -70,7 +71,7 @@ public class TransformVisitor implements EventVisitor {
         	if (object instanceof ObjectWithId) {
         		change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, ((ObjectWithId) event.getObject()).getId());
         		if (action == null) {
-        			throw new IllegalArgumentException("Action missing: " + event.getType());
+        			throw new IllegalArgumentException(ACTION_MISSING_TEXT + event.getType());
         		}
         		this.addDescription(event);
         	} else {
@@ -185,6 +186,7 @@ public class TransformVisitor implements EventVisitor {
                 if (event.getData() == Special.SEQUENCE) {
                     change.addDescription(new DiagramChangeDescription(desc, new Parameter("sequence", true)));
                 }
+                break;
             default:
                 break;
         }
@@ -279,7 +281,7 @@ public class TransformVisitor implements EventVisitor {
 
     private String addDescription(Event event) {
         String desc = converter.getDesc(event.getType());
-        AttributeChange aC = null;
+        AttributeChange aC;
         switch (event.getType()) {
             case ATTRIBUTE:
             case OBJECT_ATTRIBUTE:
@@ -294,8 +296,7 @@ public class TransformVisitor implements EventVisitor {
     }
 
     private DiagramChange.Type getChangeType(Event event) {
-        DiagramChange.Type type = event.getType().isList() ? converter.getType(event.getObject()) : null;
-        return type;
+        return event.getType().isList() ? converter.getType(event.getObject()) : null;
     }
 
     private String getSegmentDescription(TimeInterval interval) {

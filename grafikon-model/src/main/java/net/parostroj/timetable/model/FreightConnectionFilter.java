@@ -10,12 +10,12 @@ import net.parostroj.timetable.model.freight.FreightConnection;
 @FunctionalInterface
 public interface FreightConnectionFilter {
 
-    public enum FilterResult {
+    enum FilterResult {
         OK("ok"), STOP_INCLUDE("stop_include"), STOP_EXCLUDE("stop_exclude"), IGNORE("ignore");
 
-        private String key;
+        private final String key;
 
-        private FilterResult(String key) {
+        FilterResult(String key) {
             this.key = key;
         }
 
@@ -73,7 +73,7 @@ public interface FreightConnectionFilter {
         }
     }
 
-    public static class FilterContext {
+    class FilterContext {
 
         private final TimeInterval startInterval;
 

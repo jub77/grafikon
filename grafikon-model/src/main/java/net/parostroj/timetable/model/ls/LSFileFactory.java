@@ -10,7 +10,7 @@ public class LSFileFactory extends AbstractLSFactory<LSFile> {
     private static LSFileFactory instance;
 
     public LSFileFactory() {
-        super(LSFile.class, LSFile.METADATA_KEY_MODEL_VERSION, LSFile.METADATA, file -> new LSFileWrapper(file));
+        super(LSFile.class, LSFile.METADATA_KEY_MODEL_VERSION, LSFile.METADATA, LSFileWrapper::new);
     }
 
     public static synchronized LSFileFactory getInstance() {

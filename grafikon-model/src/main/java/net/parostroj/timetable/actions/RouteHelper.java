@@ -13,8 +13,8 @@ public final class RouteHelper {
     /**
      * Returns route which covers the most intervals for given train.
      *
-     * @param train
-     * @return
+     * @param train train
+     * @return route covering the most intervals
      */
     public static Route getBestRouteMatch(Iterable<Route> routes, Train train) {
         Pair<Route, Integer> selected = null;

@@ -47,7 +47,7 @@ public abstract class Import {
     private List<ImportError> errors;
     private Set<ObjectWithId> importedObjects;
 
-    public Import(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+    Import(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
         this.match = match;
         this.overwrite = overwrite;
         this.diagram = diagram;
@@ -284,14 +284,14 @@ public abstract class Import {
                 }
             } else if (entry.getValue() instanceof Collection
                     && containsObjectWithId((Collection<?>) entry.getValue())) {
-                Collection<?> collection = getObjectsWithId(
+                Collection<Object> collection = getObjectsWithId(
                         entry.getValue() instanceof Set ? new HashSet<>() : new ArrayList<>(),
                         (Collection<?>) entry.getValue());
                 if (!collection.isEmpty()) {
                     dest.set(entry.getKey(), collection);
                 }
             } else if (entry.getValue() instanceof Map && containsObjectWithId((Map<?, ?>) entry.getValue())) {
-                Map<?,?> map = getObjectsWithId(new HashMap<>(), (Map<?, ?>) entry.getValue());
+                Map<Object, Object> map = getObjectsWithId(new HashMap<>(), (Map<?, ?>) entry.getValue());
                 if (!map.isEmpty()) {
                     dest.set(entry.getKey(), map);
                 }
@@ -302,7 +302,7 @@ public abstract class Import {
         return dest;
     }
 
-    protected Map<?, ?> getObjectsWithId(Map<Object, Object> dest, Map<?, ?> orig) {
+    protected Map<Object, Object> getObjectsWithId(Map<Object, Object> dest, Map<?, ?> orig) {
         for (Map.Entry<?, ?> entry : orig.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -315,7 +315,7 @@ public abstract class Import {
         return dest;
     }
 
-    protected Collection<?> getObjectsWithId(Collection<Object> dest, Collection<?> orig) {
+    protected Collection<Object> getObjectsWithId(Collection<Object> dest, Collection<?> orig) {
         for (Object object : orig) {
             if (object instanceof ObjectWithId) {
                 ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) object);

@@ -2,6 +2,7 @@ package net.parostroj.timetable.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Tuple<V> {
 
@@ -41,10 +42,10 @@ public class Tuple<V> {
             return false;
         }
         final Tuple<?> other = (Tuple<?>) obj;
-        if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
+        if (!Objects.equals(this.first, other.first)) {
             return false;
         }
-        return !(this.second != other.second && (this.second == null || !this.second.equals(other.second)));
+        return Objects.equals(this.second, other.second);
     }
 
     @Override

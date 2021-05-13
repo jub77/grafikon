@@ -26,9 +26,8 @@ public class VersionInfo {
 
     public Version getVersionWithoutBuild() {
         Version completeVersion = getVersion();
-        Version version = new Version.Builder().setNormalVersion(completeVersion.getNormalVersion().toString())
-                .setPreReleaseVersion(completeVersion.getPreReleaseVersion().toString()).build();
-        return version;
+        return new Version.Builder().setNormalVersion(completeVersion.getNormalVersion())
+                .setPreReleaseVersion(completeVersion.getPreReleaseVersion()).build();
     }
 
     public Version getVersion() {

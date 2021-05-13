@@ -30,13 +30,11 @@ public class TrackConnectorValidator implements TrainDiagramValidator {
             } else if (event.getType() == Type.ATTRIBUTE
                     && event.getAttributeChange().checkName(TrackConnector.ATTR_ORIENTATION)) {
                 TrackConnector connector = (TrackConnector) event.getSource();
-                connector.getLineTrack().ifPresent(lt -> {
-                    lt.getTimeIntervalList().stream()
-                            .map(TimeInterval::getTrain)
-                            .distinct()
-                            .collect(toList())
-                            .forEach(Train::recalculate);
-                });
+                connector.getLineTrack().ifPresent(lt -> lt.getTimeIntervalList().stream()
+                        .map(TimeInterval::getTrain)
+                        .distinct()
+                        .collect(toList())
+                        .forEach(Train::recalculate));
             }
         }
         return false;

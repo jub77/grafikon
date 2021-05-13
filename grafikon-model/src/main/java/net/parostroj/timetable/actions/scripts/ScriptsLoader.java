@@ -28,8 +28,8 @@ public class ScriptsLoader {
     private final String location;
     private Map<String, ScriptAction> scriptActions;
 
-    private Collection<ScriptAction> _actionsView;
-    private Collection<String> _keyView;
+    private Collection<ScriptAction> actionsView;
+    private Collection<String> keyView;
 
     private ScriptsLoader(String location) {
         this.location = location;
@@ -55,8 +55,8 @@ public class ScriptsLoader {
                 for (ScriptDescription d : sList) {
                     scriptActions.put(d.getId(), new ScriptActionImpl(location, d));
                 }
-                _keyView = Collections.unmodifiableCollection(scriptActions.keySet());
-                _actionsView = Collections.unmodifiableCollection(scriptActions.values());
+                keyView = Collections.unmodifiableCollection(scriptActions.keySet());
+                actionsView = Collections.unmodifiableCollection(scriptActions.values());
             } catch (JAXBException e) {
                 log.error("Error loading list of scripts.", e);
             }
@@ -68,12 +68,12 @@ public class ScriptsLoader {
 
     public Collection<ScriptAction> getScriptActions() {
         getScriptActionsMap();
-        return _actionsView;
+        return actionsView;
     }
 
     public Collection<String> getScriptIds() {
         getScriptActionsMap();
-        return _keyView;
+        return keyView;
     }
 
     public Script getScript(String id) {
