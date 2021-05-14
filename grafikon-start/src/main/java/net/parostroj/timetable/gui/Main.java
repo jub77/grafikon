@@ -24,6 +24,9 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static final String LOGGING_PACKAGE = "net.parostroj";
 
+    private static final String DEBUG_SECTION = "debug";
+    private static final String DEBUG_KEY = "debug";
+
     public static void setLoggingLevel(org.slf4j.event.Level level) {
         setLoggingLevelImpl(LOGGING_PACKAGE, Level.toLevel(level.toString(), Level.DEBUG));
     }
@@ -37,7 +40,7 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
-        if (AppPreferences.getPreferences().getSection("debug").get("debug", Boolean.class, false)) {
+        if (Boolean.TRUE.equals(AppPreferences.getPreferences().getSection(DEBUG_SECTION).get(DEBUG_KEY, Boolean.class, false))) {
             setDebug();
         }
         printJavaInfo();
@@ -66,10 +69,10 @@ public class Main {
     }
 
     private static void setDebug() throws IOException {
-        if (AppPreferences.getPreferences().getSection("debug").get("debug.edt", Boolean.class, false)) {
+        if (Boolean.TRUE.equals(AppPreferences.getPreferences().getSection(DEBUG_SECTION).get("debug.edt", Boolean.class, false))) {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         }
-        String levelName = AppPreferences.getPreferences().getSection("debug").get("debug.log4j.level", "DEBUG");
+        String levelName = AppPreferences.getPreferences().getSection(DEBUG_SECTION).get("debug.log4j.level", "DEBUG");
         Level level = Level.toLevel(levelName, Level.DEBUG);
         setLoggingLevelImpl(LOGGING_PACKAGE, level);
     }
