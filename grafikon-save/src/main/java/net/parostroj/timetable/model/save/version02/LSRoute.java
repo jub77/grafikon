@@ -8,7 +8,6 @@ package net.parostroj.timetable.model.save.version02;
 
 import java.util.UUID;
 import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.NetSegment;
 import net.parostroj.timetable.model.RouteSegment;
 
 /**
