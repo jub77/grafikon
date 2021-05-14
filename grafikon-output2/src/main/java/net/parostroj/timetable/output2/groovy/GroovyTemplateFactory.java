@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.template.TemplateWriter;
 
 public class GroovyTemplateFactory {
@@ -27,7 +26,7 @@ public class GroovyTemplateFactory {
         BINDINGS = Collections.unmodifiableMap(bindingCreators);
     }
 
-    public TemplateWriter getTemplate(String type, Charset outputEncoding) throws OutputException {
+    public TemplateWriter getTemplate(String type, Charset outputEncoding) {
         return new GroovyTemplate(BINDINGS.get(type)).get(outputEncoding);
     }
 }

@@ -27,7 +27,7 @@ public class NetPartRouteInfo {
     @XmlElement(name="segment")
     public List<RouteSegmentInfo> getSegments() {
         if (segments == null)
-            segments = new LinkedList<RouteSegmentInfo>();
+            segments = new LinkedList<>();
         return segments;
     }
 

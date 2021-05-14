@@ -9,9 +9,6 @@ public class LengthInfo extends LengthData {
 
     private String stationAbbr;
 
-    public LengthInfo() {
-    }
-
     public String getStationAbbr() {
         return stationAbbr;
     }

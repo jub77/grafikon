@@ -89,7 +89,7 @@ public abstract class GTDrawBase implements GTDraw {
     private final Map<String, Rectangle> stringBounds = new HashMap<>();
     private final Map<Node, String> nodeStrings = new HashMap<>();
 
-    public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
+    GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
             Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
         this.locale = config.get(Key.LOCALE, Locale.class);
         this.route = route;
@@ -145,7 +145,7 @@ public abstract class GTDrawBase implements GTDraw {
     }
 
     protected boolean init(Graphics2D g) {
-        boolean init = this.shouldInit(g);
+        boolean init = this.shouldInit();
         if (init) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -163,7 +163,7 @@ public abstract class GTDrawBase implements GTDraw {
         return init;
     }
 
-    private boolean shouldInit(Graphics2D g) {
+    private boolean shouldInit() {
         Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         return configSize.height > 0 && configSize.width > 0;
     }

@@ -12,7 +12,7 @@ public abstract class OutputWithCharset extends OutputWithLocale {
 
     private final Charset charset;
 
-    public OutputWithCharset(Locale locale, Charset charset) {
+    protected OutputWithCharset(Locale locale, Charset charset) {
         super(locale);
         this.charset = charset;
     }

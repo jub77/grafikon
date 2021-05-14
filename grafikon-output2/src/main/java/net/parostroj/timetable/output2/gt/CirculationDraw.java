@@ -17,12 +17,12 @@ public class CirculationDraw {
 
     private static class Layout {
 
-        private static final double BORDER = 0.8d;
-        private static final double TITLE = 1.2d;
-        private static final double ROW = 2.2d;
-        private static final int DESCRIPTION = 12;
-        private static final float SMALL_FONT = 0.8f;
-        private static final float TITLE_FONT = 2.0f;
+        private static final double BORDER_VALUE = 0.8d;
+        private static final double TITLE_VALUE = 1.2d;
+        private static final double ROW_VALUE = 2.2d;
+        private static final int DESCRIPTION_VALUE = 12;
+        private static final float SMALL_FONT_VALUE = 0.8f;
+        private static final float TITLE_FONT_VALUE = 2.0f;
         private static final double STEP_RATIO = 1.0d;
         private static final float FONT_SIZE = 11f;
 
@@ -59,8 +59,8 @@ public class CirculationDraw {
 
         public void updateValues(Graphics2D g) {
             if (!this.init) {
-                smallFont = g.getFont().deriveFont(g.getFont().getSize() * SMALL_FONT);
-                titleFont = g.getFont().deriveFont(Font.BOLD, g.getFont().getSize() * TITLE_FONT);
+                smallFont = g.getFont().deriveFont(g.getFont().getSize() * SMALL_FONT_VALUE);
+                titleFont = g.getFont().deriveFont(Font.BOLD, g.getFont().getSize() * TITLE_FONT_VALUE);
 
                 FontInfo infoN = DrawUtils.createFontInfo(g);
                 FontInfo infoS = DrawUtils.createFontInfo(smallFont, g);
@@ -72,11 +72,11 @@ public class CirculationDraw {
                 this.letterSmall = new Dimension(DrawUtils.getStringWidth(g, smallFont, "M"), infoS.height);
                 this.init = true;
             }
-            this.border = (int) (this.letter.height * BORDER);
-            this.row = (int) (this.letter.height * ROW);
-            this.description = this.letter.width * (DESCRIPTION + 1);
+            this.border = (int) (this.letter.height * BORDER_VALUE);
+            this.row = (int) (this.letter.height * ROW_VALUE);
+            this.description = this.letter.width * (DESCRIPTION_VALUE + 1);
             this.step = this.letter.width * stepWidth * STEP_RATIO / SECONDS_IN_HOUR;
-            this.title = (int) (this.letter.height * TITLE);
+            this.title = (int) (this.letter.height * TITLE_VALUE);
             this.titleGap = (this.title - this.letter.height) / 2;
             this.rowGap = (this.row - this.letter.height) / 2;
             this.rowGapSmall = (this.row - this.letterSmall.height * 2) / 2;

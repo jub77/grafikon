@@ -12,6 +12,8 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class FreightCollectors {
 
+    private FreightCollectors() {}
+
     public static Collector<Pair<Boolean, ? extends FreightConnection>, ?, List<Pair<Boolean, List<FreightConnection>>>> freightDirectionCollector() {
         return Collector.of(FreightCollectors::supplier, FreightCollectors::accumulator,
                 FreightCollectors::combine);

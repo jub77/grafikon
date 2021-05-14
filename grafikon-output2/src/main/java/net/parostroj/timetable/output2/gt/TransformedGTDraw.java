@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class TransformedGTDraw extends GTDrawDecorator {
         super(draw);
     }
 
-    private static int drawCnt = 0;
+    private static final AtomicInteger drawCnt = new AtomicInteger();
 
     @Override
     public void draw(Graphics2D g) {
@@ -29,7 +30,7 @@ public class TransformedGTDraw extends GTDrawDecorator {
         this.applyTranslation(g);
         this.applyClipping(g);
         super.draw(g);
-        log.trace("DRAW TIME({}): {} ms", drawCnt++, System.currentTimeMillis() - time);
+        log.trace("DRAW TIME({}): {} ms", drawCnt.getAndIncrement(), System.currentTimeMillis() - time);
     }
 
     private void applyClipping(Graphics2D g) {

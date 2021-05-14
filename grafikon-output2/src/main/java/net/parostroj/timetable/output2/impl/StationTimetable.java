@@ -65,7 +65,7 @@ public class StationTimetable {
     @XmlElement(name = "row")
     public List<StationTimetableRow> getRows() {
         if (rows == null) {
-            rows = new LinkedList<StationTimetableRow>();
+            rows = new LinkedList<>();
         }
         return rows;
     }

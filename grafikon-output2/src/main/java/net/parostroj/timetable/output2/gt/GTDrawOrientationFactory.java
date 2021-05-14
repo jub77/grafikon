@@ -70,10 +70,9 @@ public class GTDrawOrientationFactory {
                     @Override
                     public void drawStationName(Graphics2D g, String name, Rectangle backRectangle, int stationLocation,
                             FontInfo fi, int borderX, int borderY, Color background, int titleHeight) {
-                        int sx = borderX;
                         int sy = stationLocation - fi.strikeThrough;
-                        backRectangle.translate(sx, sy);
-                        paintRectangleWithStationName(g, name, backRectangle, sx, sy, background);
+                        backRectangle.translate(borderX, sy);
+                        paintRectangleWithStationName(g, name, backRectangle, borderX, sy, background);
                     }
                 };
             case TOP_DOWN:

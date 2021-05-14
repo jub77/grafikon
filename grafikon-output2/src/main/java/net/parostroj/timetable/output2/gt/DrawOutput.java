@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,13 +55,13 @@ import net.parostroj.timetable.output2.pdf.PdfTransformer;
  */
 public abstract class DrawOutput extends OutputWithLocale implements DrawParams {
 
-    protected static interface Image {
-        public void draw(Graphics2D g);
+    protected interface Image {
+        void draw(Graphics2D g);
 
-        public Dimension getSize(Graphics2D g);
+        Dimension getSize(Graphics2D g);
     }
 
-    public DrawOutput(Locale locale) {
+    DrawOutput(Locale locale) {
         super(locale);
     }
 
@@ -109,10 +110,9 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         this.drawImages(sizes, images, g2d, layout);
 
         // write to ouput - do not use css style
-        boolean useCSS = false;
         try {
-            Writer out = new OutputStreamWriter(stream, "UTF-8");
-            g2d.stream(out, useCSS);
+            Writer out = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+            g2d.stream(out, false);
         } catch (IOException e) {
             throw new OutputException(e.getMessage(), e);
         }
@@ -195,29 +195,29 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
 
     private Dimension getTotalSize(List<Dimension> sizes, DrawLayout layout) {
         switch (layout.getOrientation()) {
-        case TOP_DOWN:
-            int width = 0;
-            int height = 0;
-            for (Dimension s : sizes) {
-                width = Math.max(width, s.width);
-                height += s.height;
-            }
-            return new Dimension(width, height);
-        default:
-            throw new IllegalArgumentException();
+            case TOP_DOWN:
+                int width = 0;
+                int height = 0;
+                for (Dimension s : sizes) {
+                    width = Math.max(width, s.width);
+                    height += s.height;
+                }
+                return new Dimension(width, height);
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     private Point getLocation(List<Dimension> sizes, int position, DrawLayout layout) {
         switch (layout.getOrientation()) {
-        case TOP_DOWN:
-            int y = 0;
-            for (int i = 0; i < position; i++) {
-                y += sizes.get(i).height;
-            }
-            return new Point(0, y);
-        default:
-            throw new IllegalArgumentException();
+            case TOP_DOWN:
+                int y = 0;
+                for (int i = 0; i < position; i++) {
+                    y += sizes.get(i).height;
+                }
+                return new Point(0, y);
+            default:
+                throw new IllegalArgumentException();
         }
     }
 }

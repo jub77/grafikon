@@ -49,8 +49,8 @@ public class GTDrawClassic extends GTDrawBase {
 
     @Override
     protected void computePositions() {
-        positions = new HashMap<Node, Integer>();
-        stations = new LinkedList<Node>();
+        positions = new HashMap<>();
+        stations = new LinkedList<>();
 
         int completeLength = 0;
         for (RouteSegment segment : route.getSegments()) {
@@ -64,9 +64,9 @@ public class GTDrawClassic extends GTDrawBase {
             if (segment instanceof Line) {
                 incrementalLength = incrementalLength + ((Line) segment).getLength();
             }
-            if (segment instanceof Node) {
+            if (segment instanceof Node && completeLength > 0) {
                 stations.add((Node) segment);
-                positions.put((Node) segment, (int)(((double)incrementalLength) / completeLength *
+                positions.put((Node) segment, (int)(((double) incrementalLength) / completeLength *
                         orientationDelegate.getStationsSize(size)));
             }
         }

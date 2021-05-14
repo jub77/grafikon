@@ -9,9 +9,9 @@ import java.util.Locale;
  */
 public abstract class OutputWithLocale extends OutputWithDiagramStream {
 
-    private Locale locale;
+    private final Locale locale;
 
-    public OutputWithLocale(Locale locale) {
+    protected OutputWithLocale(Locale locale) {
         this.locale = locale;
     }
 

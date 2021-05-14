@@ -18,9 +18,6 @@ public class FreightToTrain {
     private TranslatedString train;
     private List<FreightDestinationInfo> freightTo;
 
-    public FreightToTrain() {
-    }
-
     public List<FreightDestinationInfo> getFreightTo() {
         return freightTo;
     }

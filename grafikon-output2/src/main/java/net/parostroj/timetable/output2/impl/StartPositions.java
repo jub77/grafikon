@@ -19,9 +19,6 @@ public class StartPositions {
     private List<Position> trainUnitsPositions;
     private List<Cycles> customCycles;
 
-    public StartPositions() {
-    }
-
     @XmlElementWrapper(name = "engines")
     @XmlElement(name = "position")
     public List<Position> getEnginesPositions() {

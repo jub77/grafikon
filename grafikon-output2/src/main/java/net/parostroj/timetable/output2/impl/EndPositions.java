@@ -16,9 +16,6 @@ public class EndPositions {
     private List<Position> enginesPositions;
     private List<Position> trainUnitsPositions;
 
-    public EndPositions() {
-    }
-
     @XmlElementWrapper
     @XmlElement(name = "position")
     public List<Position> getEnginesPositions() {

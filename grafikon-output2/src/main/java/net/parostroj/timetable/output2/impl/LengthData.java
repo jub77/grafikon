@@ -17,9 +17,6 @@ public class LengthData {
     private boolean lengthInAxles;
     private LengthUnit lengthUnit;
 
-    public LengthData() {
-    }
-
     public int getLength() {
         return length;
     }

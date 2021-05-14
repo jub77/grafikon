@@ -14,7 +14,7 @@ public class TStringListAdapter extends XmlAdapter<List<LString>, List<Translate
         if (v == null) {
             return null;
         } else {
-            return v.stream().map(item -> item.createLocalizedString()).collect(Collectors.toList());
+            return v.stream().map(LString::createLocalizedString).collect(Collectors.toList());
         }
     }
 
@@ -23,7 +23,7 @@ public class TStringListAdapter extends XmlAdapter<List<LString>, List<Translate
         if (v == null) {
             return null;
         } else {
-            return v.stream().map(item -> new LString(item)).collect(Collectors.toList());
+            return v.stream().map(LString::new).collect(Collectors.toList());
         }
     }
 }

@@ -84,7 +84,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
 
     private int convertLocationToShift(int location) {
         boolean even = (location & 1) == 0;
-        int shift = 0;
+        int shift;
         if (even) {
             shift = -location * inStationGap / 2;
         } else {
@@ -97,7 +97,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
         int level = 0;
         boolean found = false;
         while (!found) {
-            TimeIntervalList list = null;
+            TimeIntervalList list;
             if (level >= im.size()) {
                 list = new TimeIntervalList();
                 im.add(list);

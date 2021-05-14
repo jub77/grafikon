@@ -10,7 +10,7 @@ public abstract class GTDrawDecorator implements GTDraw {
 
     protected GTDraw decoratedDraw;
 
-    public GTDrawDecorator(GTDraw draw) {
+    GTDrawDecorator(GTDraw draw) {
         this.decoratedDraw = draw;
     }
 

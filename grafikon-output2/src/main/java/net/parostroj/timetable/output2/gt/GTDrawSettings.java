@@ -42,7 +42,7 @@ public class GTDrawSettings {
 
         private final Class<?> valueClass;
 
-        private Key(Class<?> valueClass) {
+        Key(Class<?> valueClass) {
             this.valueClass = valueClass;
         }
 
@@ -101,7 +101,7 @@ public class GTDrawSettings {
 
     public boolean isOption(Key pref) {
         Boolean value = this.getOption(pref);
-        return value != null ? value.booleanValue() : false;
+        return value != null && value;
     }
 
     public void setOption(Key pref, Boolean value) {

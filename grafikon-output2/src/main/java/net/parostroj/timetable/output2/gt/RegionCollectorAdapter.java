@@ -14,7 +14,7 @@ public abstract class RegionCollectorAdapter<T> extends RegionCollector<T> {
 
     protected Multimap<T, Shape> regions = LinkedListMultimap.create();
 
-    public RegionCollectorAdapter() {
+    protected RegionCollectorAdapter() {
     }
 
     @Override
