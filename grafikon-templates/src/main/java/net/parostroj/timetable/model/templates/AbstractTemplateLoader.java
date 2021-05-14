@@ -18,9 +18,9 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractTemplateLoader.class);
 
     private TemplateList templateList;
-    private LoadDelegate<T> loadDelegate;
+    private final LoadDelegate<T> loadDelegate;
 
-    public AbstractTemplateLoader(LoadDelegate<T> loadDelegate) {
+    AbstractTemplateLoader(LoadDelegate<T> loadDelegate) {
         this.loadDelegate = loadDelegate;
     }
 
@@ -51,7 +51,7 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
             return null;
         }
         // create file with template location
-        T instance = null;
+        T instance;
         try (InputStream iStream = getTemplateStream(template); ZipInputStream is = new ZipInputStream(iStream)) {
             instance = loadDelegate.load(is);
         } catch (IOException e) {
