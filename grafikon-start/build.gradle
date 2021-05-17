@@ -33,7 +33,12 @@ jar {
 	}
 }
 
-mainClassName = gMainClass
+application {
+    mainClass = gMainClass
+}
+
+tasks.distZip.enabled = false
+tasks.distTar.enabled = false
 
 runtime {
 	options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
