@@ -18,7 +18,6 @@ subprojects { prj ->
 	version = scmVersion.projectVersion
 
 	repositories {
-		mavenLocal()
 		mavenCentral()
 	}
 

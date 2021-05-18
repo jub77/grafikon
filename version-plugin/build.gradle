@@ -7,7 +7,6 @@ group 'net.parostroj.versioning'
 version '1.0.0'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     gradlePluginPortal()
 }
@@ -15,7 +14,7 @@ repositories {
 dependencies {
     implementation 'com.github.zafarkhaja:java-semver:0.9.0'
     implementation 'org.ajoberstar.grgit:grgit-gradle:4.0.2'
-    implementation 'org.ajoberstar.grgit:grgit-core:4.0.2'
+    implementation 'org.ajoberstar.grgit:grgit-core:4.1.0'
     implementation localGroovy()
 }
 
