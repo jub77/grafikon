@@ -97,16 +97,16 @@ subprojects { prj ->
 		}
 	}
 
-	tasks.withType(JavaCompile) {
+	tasks.withType(JavaCompile).configureEach {
 		options.release = outputJavaVersion
 		options.encoding = 'utf-8'
 	}
 
-	test {
+	tasks.named('test').configure {
 		useJUnitPlatform()
 	}
 
-	jar {
+	tasks.named('jar').configure {
 		manifest {
 			attributes(
 				"Specification-Title": prj.name,
@@ -118,16 +118,14 @@ subprojects { prj ->
 		}
 	}
 
-	project.tasks.withType(Jar) { task ->
-		project.configure(task) {
-			doFirst {
-				manifest {
-					attributes(
-						"Build-Id": scmVersion.buildId,
-						"Build-Time": scmVersion.buildTimestamp,
-						"Implementation-Version": scmVersion.distVersion,
-					)
-				}
+	project.tasks.withType(Jar).configureEach { task ->
+		task.doFirst {
+			manifest {
+				attributes(
+					"Build-Id": scmVersion.buildId,
+					"Build-Time": scmVersion.buildTimestamp,
+					"Implementation-Version": scmVersion.distVersion,
+				)
 			}
 		}
 	}

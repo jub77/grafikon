@@ -10,7 +10,7 @@ dependencies {
 	assembly project(':grafikon-start')
 }
 
-task distribution(type: Zip) {
+def dist = tasks.register('distribution', Zip) {
 	group = "distribution"
 	archiveBaseName = "grafikon"
 	archiveVersion = scmVersion.shortVersion
@@ -26,9 +26,9 @@ task distribution(type: Zip) {
 	}
 }
 
-task unzippedDistribution(type: Sync) {
+tasks.register('unzippedDistribution', Sync) {
 	group = "distribution"
-	dependsOn distribution
-	from zipTree(distribution.archiveFile)
+	dependsOn dist
+	from zipTree(dist.get().archiveFile)
 	into "${buildDir}/unzipped-dist"
 }
