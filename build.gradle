@@ -60,13 +60,13 @@ subprojects { prj ->
 			dependency 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
 			dependency 'org.apache.logging.log4j:log4j-core:2.14.1'
 			dependency 'com.github.zafarkhaja:java-semver:0.9.0'
-			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.3', {
+			dependency 'org.glassfish.jaxb:jaxb-runtime:2.3.4', {
 				exclude 'com.sun.xml.fastinfoset:FastInfoset'
 				exclude 'org.glassfish.jaxb:txw2'
 				exclude 'org.jvnet.staxex:stax-ex'
+				exclude 'com.sun.activation:jakarta.activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
-
 			dependency 'org.junit.jupiter:junit-jupiter-api:5.7.2'
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 			dependency 'org.hamcrest:hamcrest:2.2'
