@@ -1,5 +1,6 @@
 plugins {
 	id 'org.beryx.runtime'
+	id 'com.google.osdetector'
 }
 
 ext {
@@ -52,6 +53,8 @@ runtime {
 		appVersion = scmVersion.baseVersion
 		imageName = 'grafikon'
 		installerName = 'grafikon'
-		installerOptions = ['--win-dir-chooser', '--win-menu']
+		if (osdetector.os == "windows") {
+			installerOptions = ['--win-dir-chooser', '--win-menu']
+		}
 	}
 }
