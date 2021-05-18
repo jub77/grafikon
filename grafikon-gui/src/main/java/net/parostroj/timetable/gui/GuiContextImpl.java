@@ -34,14 +34,14 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection(INI_SECTION);
-        dataMap.entrySet().forEach(entry -> section.put(entry.getKey(), this.dataToString(entry.getValue())));
-        preferencesMap.entrySet().forEach(entry -> {
-            IniConfigSection windowSection = prefs.getSection(entry.getKey());
-            if (entry.getValue() == null) {
+        dataMap.forEach((key, value) -> section.put(key, this.dataToString(value)));
+        preferencesMap.forEach((key, value) -> {
+            IniConfigSection windowSection = prefs.getSection(key);
+            if (value == null) {
                 windowSection.removeSection();
             } else {
                 windowSection.clear();
-                windowSection.putAll(entry.getValue());
+                windowSection.putAll(value);
             }
         });
         return section;
@@ -50,7 +50,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     @Override
     public IniConfigSection loadFromPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection(INI_SECTION);
-        section.entrySet().stream().forEach(
+        section.entrySet().forEach(
                 entry -> dataMap.put(entry.getKey(), this.dataFromString(entry.getValue())));
 
         this.preferences = prefs;
@@ -76,7 +76,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
             dataMap.get(key).applyTo(window);
         }
         if (listener != null) {
-            Map<String, String> map = null;
+            Map<String, String> map;
             if (preferencesMap.containsKey(key)) {
                 map = preferencesMap.get(key);
             } else {

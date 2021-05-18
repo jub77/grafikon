@@ -12,5 +12,5 @@ package net.parostroj.timetable.gui;
  * @author jub
  */
 public interface ApplicationModelListener {
-    public void modelChanged(ApplicationModelEvent event);
+    void modelChanged(ApplicationModelEvent event);
 }

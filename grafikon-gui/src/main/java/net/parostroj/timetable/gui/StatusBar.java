@@ -38,7 +38,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     private final Timer timer;
 
     private boolean changed;
-    private DateTimeFormatter format = DateTimeFormat.mediumDateTime();
+    private final transient DateTimeFormatter format = DateTimeFormat.mediumDateTime();
 
     /** Creates new form StatusBar */
     public StatusBar() {
@@ -216,7 +216,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         center.setEditable(false);
 
         right.setEditable(false);
-        right.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        right.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         setLayout(new BorderLayout(0, 0));
         add(left, BorderLayout.WEST);
         add(center, BorderLayout.CENTER);

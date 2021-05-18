@@ -71,9 +71,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private final ModelProvider provider = new ModelProvider();
 
-    private final FrameTitle frameTitle;
+    private final transient FrameTitle frameTitle;
 
-    private ApplicationModel model;
+    private final transient ApplicationModel model;
     private FloatingWindowsList floatingDialogsList;
     private ExecuteScriptAction executeScriptAction;
 
@@ -126,7 +126,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lastOpened = new HashMap<>();
 
         // set local before anything else
-        String loadedLocale = null;
+        String loadedLocale;
         try {
             IniConfigSection section = AppPreferences.getPreferences().getSection("main");
             loadedLocale = section.get("locale.program");
@@ -255,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void addLastOpenedFile(final File file) {
         GuiComponentUtils.runLaterInEDT(() -> {
-            JMenuItem openItem = null;
+            JMenuItem openItem;
             if (!lastOpened.containsKey(file)) {
                 openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, null));
                 openItem.setText("x " + file.getName());
@@ -514,7 +514,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         return item;
     }
 
-    private JMenuItem addMenuItemWithListener(JMenu menu, String textKey, ActionListener action, boolean enableHandled) {
+    private void addMenuItemWithListener(JMenu menu, String textKey, ActionListener action, boolean enableHandled) {
         JMenuItem item = new JMenuItem();
         item.setText(ResourceLoader.getString(textKey));
         item.addActionListener(action);
@@ -522,18 +522,17 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         if (enableHandled) {
             enabledComponents.add(item);
         }
-        return item;
     }
 
-    private JMenuItem addMenuItem(JMenu menu, String textKey, Action action, String actionCommand, boolean enableHandled) {
-        return this.addMenuItem(menu, textKey, action, actionCommand, enableHandled, null);
+    private void addMenuItem(JMenu menu, String textKey, Action action, String actionCommand, boolean enableHandled) {
+        this.addMenuItem(menu, textKey, action, actionCommand, enableHandled, null);
     }
 
-    private JMenuItem addMenuItem(JMenu menu, String textKey, Action action, String actionCommand) {
-        return this.addMenuItem(menu, textKey, action, actionCommand, true, null);
+    private void addMenuItem(JMenu menu, String textKey, Action action, String actionCommand) {
+        this.addMenuItem(menu, textKey, action, actionCommand, true, null);
     }
 
-    private JMenuItem addMenuItem(JMenu menu, String textKey, Action action, String actionCommand, boolean enableHandled, KeyStroke keyStroke) {
+    private void addMenuItem(JMenu menu, String textKey, Action action, String actionCommand, boolean enableHandled, KeyStroke keyStroke) {
         JMenuItem item = new JMenuItem();
         item.setAction(action);
         item.setText(ResourceLoader.getString(textKey)); // NOI18N
@@ -545,7 +544,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         if (enableHandled) {
             enabledComponents.add(item);
         }
-        return item;
     }
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -743,7 +741,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
-        boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
+        boolean maximized = (this.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) != 0;
 
         IniConfigSection section = prefs.getSection("main");
 
@@ -783,9 +781,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     @Override
     public IniConfigSection loadFromPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection("main");
-        if (section.get("maximized", Boolean.class, false)) {
+        if (section.get("maximized", Boolean.class, false) == Boolean.TRUE) {
             // setting maximized state
-            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         } else {
             if (section.containsKey("position")) {
                 // set position

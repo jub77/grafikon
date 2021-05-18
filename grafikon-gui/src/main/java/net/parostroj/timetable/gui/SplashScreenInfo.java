@@ -7,7 +7,7 @@ package net.parostroj.timetable.gui;
  */
 public interface SplashScreenInfo {
 
-    public void setText(String text);
+    void setText(String text);
 
-    public void setProgress(int progress);
+    void setProgress(int progress);
 }

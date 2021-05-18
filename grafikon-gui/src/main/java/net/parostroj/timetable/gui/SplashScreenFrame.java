@@ -24,7 +24,7 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
     private SplashScreenFrame() {
         this.setUndecorated(true);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setResizable(false);
     }
 
@@ -71,7 +71,7 @@ class ImagePanel extends JPanel {
 
 	private static final Logger log = LoggerFactory.getLogger(ImagePanel.class);
 
-    private final Image image;
+    private final transient Image image;
     private final int splashX;
     private final int splashY;
     private String[] text;

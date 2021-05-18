@@ -11,13 +11,12 @@ public class ApplicationEventTypeConverter implements EventsViewerTypeConverter 
 
     @Override
     public String getListString(Object event) {
-        ApplicationModelEvent ame = (ApplicationModelEvent)event;
-        return String.format("ApplicationEvent: %s", ame.getType().toString());
+        return getViewString(event);
     }
 
     @Override
     public String getViewString(Object event) {
-        ApplicationModelEvent ame = (ApplicationModelEvent)event;
+        ApplicationModelEvent ame = (ApplicationModelEvent) event;
         return String.format("ApplicationEvent: %s", ame.getType().toString());
     }
 

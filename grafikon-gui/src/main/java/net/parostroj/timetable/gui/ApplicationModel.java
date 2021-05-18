@@ -12,7 +12,6 @@ import com.github.zafarkhaja.semver.Version;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.UrlConstants;
-import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
@@ -42,6 +41,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     private static final int LAST_OPENED_COUNT = 5;
 
+    private static final String DEBUG_SECTION = "debug";
+    private static final String DEBUG_KEY = "debug";
+    private static final String LAST_OPENED_KEY = "last.opened";
+
     private final Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
     private TrainDiagram diagram;
@@ -49,11 +52,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private File openedFile;
     private final Mediator mediator;
     private final TrainDiagramCollegue collegue;
-    private OutputCategory outputCategory;
-    private final Map<String, File> outputTemplates;
-    private ProgramSettings programSettings;
+    private final ProgramSettings programSettings;
     private final OutputSettings outputSettings;
-    private LinkedList<File> lastOpenedFiles;
+    private final LinkedList<File> lastOpenedFiles;
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
     private final LanguageLoader languageLoader;
@@ -78,7 +79,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         collegue = new TrainDiagramCollegue();
         mediator.addColleague(collegue);
         mediator.addColleague(new ApplicationModelColleague(this));
-        outputTemplates = new HashMap<>();
         programSettings = new ProgramSettings();
         outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<>();
@@ -125,14 +125,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         }
     }
 
-    public OutputCategory getOutputCategory() {
-        return outputCategory;
-    }
-
-    public void setOutputCategory(OutputCategory outputCategory) {
-        this.outputCategory = outputCategory;
-    }
-
     /**
      * @return train diagram
      */
@@ -166,15 +158,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      */
     public void addListener(ApplicationModelListener listener) {
         listeners.add(listener);
-    }
-
-    /**
-     * removes application model listener.
-     *
-     * @param listener listener
-     */
-    public void removeListener(ApplicationModelListener listener) {
-        listeners.remove(listener);
     }
 
     /**
@@ -218,8 +201,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private void checkModelChanged(ApplicationModelEvent event) {
         switch(event.getType()) {
             case SET_DIAGRAM_CHANGED:
-                this.setModelChanged(false);
-                break;
             case MODEL_SAVED:
                 this.setModelChanged(false);
                 break;
@@ -239,21 +220,16 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
             this.addLastOpenedFile(openedFile);
     }
 
-    public Map<String, File> getOutputTemplates() {
-        return outputTemplates;
-    }
-
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection("model");
-        section.put("output.templates", getSerializedOutputTemplates());
         section.put("user.name", programSettings.getUserName());
-        prefs.getSection("debug").put("debug", programSettings.isDebugLogging());
+        prefs.getSection(DEBUG_SECTION).put(DEBUG_KEY, programSettings.isDebugLogging());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
-        section.remove("last.opened");
+        section.remove(LAST_OPENED_KEY);
         for (File file : this.lastOpenedFiles) {
-            section.add("last.opened", file.getAbsolutePath());
+            section.add(LAST_OPENED_KEY, file.getAbsolutePath());
         }
         guiContext.saveToPreferences(prefs);
         return section;
@@ -263,14 +239,13 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     public IniConfigSection loadFromPreferences(IniConfig prefs) {
         guiContext.loadFromPreferences(prefs);
         IniConfigSection section = prefs.getSection("model");
-        deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
-        programSettings.setDebugLogging(prefs.getSection("debug").get("debug", Boolean.class, false));
+        programSettings.setDebugLogging(prefs.getSection(DEBUG_SECTION).get(DEBUG_KEY, Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
         programSettings.setSpeedUnit(speedUnit != null ? speedUnit : SpeedUnit.KMPH);
-        List<String> filenames = section.getAll("last.opened");
+        List<String> filenames = section.getAll(LAST_OPENED_KEY);
         if (filenames != null) {
             Collections.reverse(filenames);
             for (String filename : filenames) {
@@ -282,28 +257,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         return section;
     }
 
-    private String getSerializedOutputTemplates() {
-        StringBuilder b = new StringBuilder();
-        for (Map.Entry<String, File> entry : outputTemplates.entrySet()) {
-            if (b.length() != 0)
-                b.append('|');
-            b.append(entry.getKey());
-            b.append(',');
-            b.append(entry.getValue().getPath());
-        }
-        return b.toString();
-    }
-
-    private void deserializeOutputTemplates(String string) {
-        String[] entries = string.split("\\|");
-        for (String entry : entries) {
-            if (entry.equals(""))
-                continue;
-            String[] parts = entry.split(",");
-            outputTemplates.put(parts[0], new File(parts[1]));
-        }
-    }
-
     public ProgramSettings getProgramSettings() {
         return programSettings;
     }
@@ -312,24 +265,12 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         return outputSettings;
     }
 
-    public void setProgramSettings(ProgramSettings programSettings) {
-        this.programSettings = programSettings;
-    }
-
     public void setLocale(Locale locale) {
         this.locale.setValue(locale);
     }
 
     public Locale getLocale() {
         return this.locale.getValue();
-    }
-
-    public List<File> getLastOpenedFiles() {
-        return lastOpenedFiles;
-    }
-
-    public void setLastOpenedFiles(List<File> lastOpenedFiles) {
-        this.lastOpenedFiles = new LinkedList<>(lastOpenedFiles);
     }
 
     public void addLastOpenedFile(File file) {

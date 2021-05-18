@@ -13,9 +13,9 @@ package net.parostroj.timetable.gui;
  */
 public class ApplicationModelEvent {
 
-    private ApplicationModelEventType type;
+    private final ApplicationModelEventType type;
 
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     private Object object;
 

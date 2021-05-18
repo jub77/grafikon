@@ -14,8 +14,8 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
  */
 public class MainFrameWindowListener extends WindowAdapter {
 
-    private MainFrame parent;
-    private ApplicationModel model;
+    private final MainFrame parent;
+    private final ApplicationModel model;
 
     public MainFrameWindowListener(ApplicationModel model, MainFrame parent) {
         this.parent = parent;

@@ -33,8 +33,14 @@ public class LanguageMenuBuilder {
     }
 
     private List<Pair<JRadioButtonMenuItem, Locale>> sort(List<Pair<JRadioButtonMenuItem, Locale>> items) {
-        Collections.sort(items, (o1, o2) -> o1.second == null ? (o2.second == null ? 0 : -1)
-                : (o2.second == null ? 1 : o1.second.toString().compareTo(o2.second.toString())));
+        items.sort((o1, o2) -> {
+            if (o1.second == null) {
+                return (o2.second == null ? 0 : -1);
+            } else {
+                if (o2.second == null) return 1;
+                return o1.second.toString().compareTo(o2.second.toString());
+            }
+        });
         return items;
     }
 }
