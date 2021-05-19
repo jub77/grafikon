@@ -17,7 +17,7 @@ def dist = tasks.register('distribution', Zip) {
 	archiveVersion = scmVersion.shortVersion
 	destinationDirectory = file("${buildDir}/dist")
 	from configurations.assembly
-	from file("${projectDir}/src/main/scripts")
+	from file("${projectDir}/src/main/deployment/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
 }
 
@@ -90,10 +90,12 @@ runtime {
 		if (osdetector.os == 'windows') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.baseVersion
 			installerOptions = ['--win-dir-chooser', '--win-menu']
+			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.ico']
 			installerType = project.findProperty('installerType') ?: 'msi'
 		} else if (osdetector.os == 'linux') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.shortVersion
 			installerOptions = ['--linux-shortcut']
+			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.png']
 			installerType = project.findProperty('installerType') ?: 'deb'
 		}
 	}
