@@ -95,7 +95,7 @@ runtime {
 			installerType = project.findProperty('installerType') ?: 'msi'
 		} else if (osdetector.os == 'linux') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.shortVersion
-			installerOptions = ['--linux-shortcut']
+			installerOptions = ['--linux-shortcut', '--resource-dir', 'src/main/deployment/linux-resources']
 			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.png']
 			installerType = project.findProperty('installerType') ?: 'deb'
 		}
