@@ -85,11 +85,16 @@ runtime {
 		noConsole = true
 	}
 	jpackage {
-		appVersion = scmVersion.baseVersion
 		imageName = 'grafikon'
 		installerName = 'grafikon'
-		if (osdetector.os == "windows") {
+		if (osdetector.os == 'windows') {
+			appVersion = project.findProperty('appVersion') ?: scmVersion.baseVersion
 			installerOptions = ['--win-dir-chooser', '--win-menu']
+			installerType = project.findProperty('installerType') ?: 'msi'
+		} else if (osdetector.os == 'linux') {
+			appVersion = project.findProperty('appVersion') ?: scmVersion.shortVersion
+			installerOptions = ['--linux-shortcut']
+			installerType = project.findProperty('installerType') ?: 'deb'
 		}
 	}
 }
