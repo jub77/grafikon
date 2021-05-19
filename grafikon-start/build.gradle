@@ -64,7 +64,8 @@ tasks.named('jar').configure {
 	manifest {
 		attributes(
 			'Main-Class': gMainClass,
-			'Class-Path' : configurations.runtimeClasspath.files.collect { file -> file.name }.join(' ')
+			'Class-Path': configurations.runtimeClasspath.files.collect { file -> file.name }.join(' '),
+			'SplashScreen-Image': 'images/splashscreen.png'
 		)
 	}
 }
