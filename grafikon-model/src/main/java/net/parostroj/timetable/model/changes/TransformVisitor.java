@@ -119,7 +119,8 @@ public class TransformVisitor implements EventVisitor {
         switch (event.getType()) {
             case ATTRIBUTE:
                 if (event.getAttributeChange().checkName(Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
-                    change.addDescription(new DiagramChangeDescription(desc));
+                    change.addDescription(new DiagramChangeDescription(desc,
+                            new Parameter(event.getAttributeChange().getName(), true)));
                 }
                 break;
             case OBJECT_ATTRIBUTE:
