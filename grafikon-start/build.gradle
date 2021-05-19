@@ -19,12 +19,6 @@ def dist = tasks.register('distribution', Zip) {
 	from configurations.assembly
 	from file("${projectDir}/src/main/scripts")
 	rename "grafikon-start.*", "grafikon.jar"
-	doFirst {
-		def force = project.hasProperty("forceDistribution")
-		if (scmVersion.dirty && !force) {
-			throw new GradleException("Creating of distribution from not clean working directory forbidden!")
-		}
-	}
 }
 
 tasks.register('unzippedDistribution', Sync) {
@@ -32,6 +26,16 @@ tasks.register('unzippedDistribution', Sync) {
 	dependsOn dist
 	from zipTree(dist.get().archiveFile)
 	into "${buildDir}/unzipped-dist"
+}
+
+tasks.register('jpackageImageZip', Zip) {
+	group = "distribution"
+	archiveBaseName = "grafikon"
+	archiveVersion = scmVersion.shortVersion
+	archiveClassifier = osdetector.classifier
+	destinationDirectory = file("${buildDir}/jpackage-zip")
+	dependsOn tasks.named('jpackageImage')
+	from file("${buildDir}/jpackage/grafikon")
 }
 
 ext {
