@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.actions.execution;
 
-import java.awt.Component;
-import java.awt.Frame;
+import java.awt.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,19 +29,14 @@ public class RsActionHandler {
     private static final Logger log = LoggerFactory.getLogger(RsActionHandler.class);
 
     private static final RsActionHandler instance = new RsActionHandler();
-
     public static RsActionHandler getInstance() {
         return instance;
-    }
-
-    public static RsActionHandler createInstance() {
-        return new RsActionHandler();
     }
 
     private final WaitDialog waitDialog;
 
     private RsActionHandler() {
-        waitDialog = new WaitDialog((Frame) null, true);
+        waitDialog = new WaitDialog(true);
     }
 
     public void execute(Execution<?> execution) {
@@ -77,11 +71,15 @@ public class RsActionHandler {
         });
     }
 
+    public void setWaitIconImage(Image waitIconImage) {
+        this.waitDialog.setIconImage(waitIconImage);
+    }
+
     private class BuilderImpl<T> implements ExecutionBuilder<T> {
 
         private Component component;
         private String id = "<action>";
-        private Flux<T> rs;
+        private final Flux<T> rs;
 
         public BuilderImpl(Flux<T> rs) {
             this.rs = rs;

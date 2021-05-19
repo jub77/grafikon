@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.actions.execution;
 
-import java.awt.Frame;
+import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,16 +19,16 @@ public class ActionHandler {
         return instance;
     }
 
-    public static ActionHandler createInstance() {
-        return new ActionHandler();
-    }
-
-    private ExecutorService executor;
-    private WaitDialog waitDialog;
+    private final ExecutorService executor;
+    private final WaitDialog waitDialog;
 
     private ActionHandler() {
         executor = Executors.newSingleThreadExecutor();
-        waitDialog = new WaitDialog((Frame) null, true);
+        waitDialog = new WaitDialog(true);
+    }
+
+    public void setWaitIconImage(Image waitIconImage) {
+        this.waitDialog.setIconImage(waitIconImage);
     }
 
     public void execute(ModelAction action) {

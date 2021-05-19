@@ -5,8 +5,7 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.Dialog;
-import java.awt.Dimension;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -32,19 +31,13 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     private int level = 0;
 
     /** Creates new form WaitDiag */
-    public WaitDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public WaitDialog(boolean modal) {
+        super((Frame) null, modal);
         initComponents();
         Dimension size = progressBar.getPreferredSize();
         size.width = WAIT_DIALOG_WIDTH;
         progressBar.setPreferredSize(size);
         pack();
-    }
-
-    /** Creates new form WaitDiag */
-    public WaitDialog(Dialog owner, boolean modal) {
-        super(owner, modal);
-        initComponents();
     }
 
     public void setMessage(String message) {
@@ -104,11 +97,11 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
         if (b) {
             level++;
             if (level == 1)
-                super.setVisible(b);
+                super.setVisible(true);
         } else {
             level--;
             if (level == 0)
-                super.setVisible(b);
+                super.setVisible(false);
         }
     }
 

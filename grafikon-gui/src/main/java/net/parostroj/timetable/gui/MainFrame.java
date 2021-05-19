@@ -7,9 +7,7 @@ package net.parostroj.timetable.gui;
 
 import groovy.lang.GroovyShell;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,10 +17,12 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 
+import java.util.List;
 import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.actions.*;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.RsActionHandler;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
@@ -80,7 +80,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private Map<File, JMenuItem> lastOpened;
     private final List<Component> enabledComponents = new ArrayList<>();
 
-    public MainFrame(SplashScreenInfo info) {
+    public MainFrame(SplashScreenInfo info, Image iconImage) {
+        this.setIconImage(iconImage);
+        ActionHandler.getInstance().setWaitIconImage(iconImage);
+        RsActionHandler.getInstance().setWaitIconImage(iconImage);
         model = new ApplicationModel();
         frameTitle = new FrameTitle(model);
         log.info("Version: {}", model.getVersionInfo().getVersion());

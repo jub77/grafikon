@@ -1,10 +1,13 @@
 package net.parostroj.timetable.gui;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.RepaintManager;
-import javax.swing.UIManager;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -46,19 +49,20 @@ public class Main {
         printJavaInfo();
         setLookAndFeel();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<>(
-                MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"));
-        starter.setAction(frame -> {
-            if (args.length > 0) {
-                // trying to load file
-                File file = new File(args[0]);
-                if (file.exists()) {
-                    log.info("Loading: {}", file.getName());
-                    frame.forceLoad(file);
-                } else {
-                    log.warn("File {} doesn't exist", file.getPath());
-                }
-            }
-        });
+                MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"),
+                Main.class.getResource("/images/grafikon.png"),
+                frame -> {
+                    if (args.length > 0) {
+                        // trying to load file
+                        File file = new File(args[0]);
+                        if (file.exists()) {
+                            log.info("Loading: {}", file.getName());
+                            frame.forceLoad(file);
+                        } else {
+                            log.warn("File {} doesn't exist", file.getPath());
+                        }
+                    }
+                });
         starter.start();
     }
 
@@ -88,5 +92,11 @@ public class Main {
         } catch (Exception e) {
             log.warn("Error setting up look and feel.", e);
         }
+    }
+
+    private static void addIcon(JFrame frame) {
+        URL url = Main.class.getResource("/images/grafikon.png");
+        Image image = Toolkit.getDefaultToolkit().getImage(url);
+        frame.setIconImage(image);
     }
 }
