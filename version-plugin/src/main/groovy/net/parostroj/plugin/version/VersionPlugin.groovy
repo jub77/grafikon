@@ -31,6 +31,7 @@ class ParsedVersion {
 	String tag
 	int since
 	String hash
+	boolean forced
 
 	static ParsedVersion parse(String commit, Grgit grgit) {
 		def describe = grgit.describe([longDescr: true, commit: commit] as Map<String, Object>)
@@ -45,6 +46,15 @@ class ParsedVersion {
 
 @CompileStatic
 class VersionPlugin implements Plugin<Project> {
+
+	private ParsedVersion getForcedVersion(Project project) {
+		String forcedVersion = project.findProperty("forceVersion")
+		if (forcedVersion) {
+			return new ParsedVersion(tag: forcedVersion, since: 0, forced: true)
+		} else {
+			return null
+		}
+	}
 
 	void apply(Project project) {
 		project.pluginManager.apply(GrgitPlugin)
@@ -62,12 +72,10 @@ class VersionPlugin implements Plugin<Project> {
 		ver.buildTimestamp = formatter.format(Instant.now().atOffset(ZoneOffset.UTC))
 		ver.buildId = "${ver.buildTimestamp}-${commitId}"
 
-		def describe = grgit.describe([longDescr: true] as Map<String, Object>)
-
 		def tagVersion
 		def prerelease
 
-		def parsedVersion = ParsedVersion.parse('HEAD', grgit)
+		def parsedVersion = getForcedVersion(project) ?: ParsedVersion.parse('HEAD', grgit)
 
 		if (parsedVersion == null) {
 			tagVersion = Version.valueOf("0.0.0")
@@ -80,7 +88,7 @@ class VersionPlugin implements Plugin<Project> {
 			if ("alfa" == tagVersion.preReleaseVersion) {
 				ver.snapshot = true
 			}
-			if (ver.since == 0) {
+			if (ver.since == 0 && !parsedVersion.forced) {
 				def previousParsedVersion = ParsedVersion.parse('HEAD~1', grgit)
 				if (previousParsedVersion != null) {
 					ver.sincePrevious = previousParsedVersion.since
@@ -114,7 +122,6 @@ class VersionPlugin implements Plugin<Project> {
 			t.doLast {
 				VersionExtension scmVersion = project.extensions.getByType(VersionExtension)
 				project.logger.lifecycle("Base version: {}", scmVersion.baseVersion)
-				project.logger.lifecycle("Git describe: {}", describe)
 				project.logger.lifecycle("Tag version: {}", tagVersion)
 				project.logger.lifecycle("Project version: {}", scmVersion.projectVersion)
 				project.logger.lifecycle("Short version: {}", scmVersion.shortVersion)
