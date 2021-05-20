@@ -66,8 +66,17 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
     }
 
     protected FileOutputType getFileOutputType(OutputParams params) {
-        FileOutputType type = params.getParamValue(OUTPUT_TYPE, FileOutputType.class);
-        return type != null ? type : FileOutputType.SVG;
+        Object typeObject = params.getParamValue(OUTPUT_TYPE, Object.class);
+        FileOutputType type = FileOutputType.SVG;
+        if (typeObject instanceof FileOutputType) {
+            type = (FileOutputType) typeObject;
+        } else if (typeObject instanceof String) {
+            FileOutputType parsedType = FileOutputType.fromString((String) typeObject);
+            if (parsedType != null) {
+                type = parsedType;
+            }
+        }
+        return type;
     }
 
     protected void draw(Collection<Image> images, FileOutputType outputType, OutputStream stream, DrawLayout layout)

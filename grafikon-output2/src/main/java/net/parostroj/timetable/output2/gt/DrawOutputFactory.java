@@ -21,6 +21,7 @@ public class DrawOutputFactory extends OutputFactory {
         OUTPUT_TYPES = new LinkedHashMap<>();
         OUTPUT_TYPES.put("diagram", GTDrawOutput.class);
         OUTPUT_TYPES.put("circulations", CirculationDrawOutput.class);
+        OUTPUT_TYPES.put("net", NetDrawOutput.class);
     }
 
     private Locale getLocale() {
