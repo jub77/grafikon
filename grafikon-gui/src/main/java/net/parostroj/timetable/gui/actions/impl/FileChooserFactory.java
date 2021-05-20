@@ -26,21 +26,23 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class FileChooserFactory implements StorableGuiData {
 
+    public static final String LAST_DIRECTORY_MODEL_KEY = "last.directory.model";
+
     public enum Type {
-        GTM("last.directory.model"),
+        GTM(LAST_DIRECTORY_MODEL_KEY),
         OUTPUT_DIRECTORY("last.directory.output", true),
         ALL_FILES("last.directory.all.files"),
-        GTML("last.directory.model"),
-        GTM_GTML("last.directory.model");
+        GTML(LAST_DIRECTORY_MODEL_KEY),
+        GTM_GTML(LAST_DIRECTORY_MODEL_KEY);
 
-        private boolean directoryOnly;
-        private String key;
+        private final boolean directoryOnly;
+        private final String key;
 
-        private Type(String key) {
+        Type(String key) {
             this(key, false);
         }
 
-        private Type(String key, boolean directoryOnly) {
+        Type(String key, boolean directoryOnly) {
             this.key = key;
             this.directoryOnly = directoryOnly;
         }
@@ -151,9 +153,7 @@ public class FileChooserFactory implements StorableGuiData {
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection("main");
-        for (String key : locations.keySet()) {
-            section.put(key, locations.get(key).getAbsolutePath());
-        }
+        locations.forEach((key, value) -> section.put(key, value.getAbsolutePath()));
         return section;
     }
 
@@ -175,9 +175,9 @@ public class FileChooserFactory implements StorableGuiData {
 
     private static class ChooserPool {
 
-        private final int CAPACITY = 3;
+        private static final int CAPACITY = 3;
 
-        private Deque<SoftReference<ApprovedFileChooser>> choosers;
+        private final Deque<SoftReference<ApprovedFileChooser>> choosers;
 
         public ChooserPool() {
             choosers = new LinkedList<>();

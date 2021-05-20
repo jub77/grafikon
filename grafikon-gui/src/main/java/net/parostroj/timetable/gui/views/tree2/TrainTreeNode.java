@@ -13,8 +13,8 @@ public class TrainTreeNode extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1L;
 
-	private final NodeDelegate nodeDelegate;
-    private final ChildrenDelegate childrenDelegate;
+	private final transient NodeDelegate nodeDelegate;
+    private final transient ChildrenDelegate childrenDelegate;
 
     public TrainTreeNode(Train train, NodeDelegate nodeDelegate, ChildrenDelegate childrenDelegate) {
         super(nodeDelegate.getUserObject(train));

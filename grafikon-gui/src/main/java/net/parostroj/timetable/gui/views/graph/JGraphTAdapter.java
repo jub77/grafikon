@@ -22,7 +22,7 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
     private final BiMap<V, mxCell> vertexToCellMap = HashBiMap.create();
     private final BiMap<E, mxCell> edgeToCellMap = HashBiMap.create();
 
-    public JGraphTAdapter(final ListenableGraph<V, E> graphT) {
+    protected JGraphTAdapter(final ListenableGraph<V, E> graphT) {
         super();
         this.setGridEnabled(false);
         this.graphT = graphT;

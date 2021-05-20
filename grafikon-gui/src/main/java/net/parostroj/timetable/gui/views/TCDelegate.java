@@ -36,11 +36,11 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public abstract class TCDelegate implements ApplicationModelListener {
 
     public enum Action {
-        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE, REFRESH_TRAIN_NAME;
+        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE, REFRESH_TRAIN_NAME
     }
 
     public interface Listener {
-        public void tcEvent(Action action, TrainsCycle cycle, Train train);
+        void tcEvent(Action action, TrainsCycle cycle, Train train);
     }
 
     private TrainsCycle selected;
@@ -48,11 +48,11 @@ public abstract class TCDelegate implements ApplicationModelListener {
     protected ApplicationModel model;
     protected TrainsCycleChecker checker;
 
-    public TCDelegate(ApplicationModel model) {
+    protected TCDelegate(ApplicationModel model) {
         this(model, new TrainsCycleChecker(ConflictType.NODE, ConflictType.TIME));
     }
 
-    public TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
+    protected TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
         this.checker = checker;
         this.model = model;
         this.model.addListener(this);
@@ -91,7 +91,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
                 }
             }
         }, Event.class);
-        this.listeners = new HashSet<Listener>();
+        this.listeners = new HashSet<>();
     }
 
     public void setSelectedCycle(TrainsCycle cycle) {
@@ -107,10 +107,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
         listeners.add(listener);
     }
 
-    public void removeListener(Listener listener) {
-        listeners.remove(listener);
-    }
-
     public abstract TrainsCycleType getType();
 
     public void fireEvent(Action action, TrainsCycle cycle) {
@@ -124,10 +120,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
         for (Listener listener : listeners) {
             listener.tcEvent(action, cycle, train);
         }
-    }
-
-    public List<TrainsCycleItem> getTrainCycles(Train train) {
-        return train.getCycles(getType());
     }
 
     public String getTrainCycleErrors(TrainsCycle cycle) {

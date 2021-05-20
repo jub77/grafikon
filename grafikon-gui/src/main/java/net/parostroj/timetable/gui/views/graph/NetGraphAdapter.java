@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     static {
         try {
             InputStream is = NetGraphAdapter.class.getResourceAsStream("/graph/shapes.xml");
-            Document doc = mxXmlUtils.parseXml(mxUtils.readInputStream(is));
+            Document doc = mxXmlUtils.parseXml(mxUtils.readInputStream(Objects.requireNonNull(is)));
             Element shapes = doc.getDocumentElement();
             NodeList list = shapes.getElementsByTagName("shape");
 
@@ -95,11 +96,11 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
                     .map(region -> centerRegions.contains(region) ?
                             String.format("<b>%s</b>", region.getName()) : region.getName())
                     .collect(Collectors.joining(","));
-            value = value.append("\n(").append(regionsStr).append(')');
+            value.append("\n(").append(regionsStr).append(')');
         }
         Collection<FreightColor> colors = OutputFreightUtil.sortFreightColors(node.getFreightColors());
         if (!colors.isEmpty()) {
-            String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(","));
+            String colorsStr = colors.stream().map(FreightColor::getName).collect(Collectors.joining(","));
             value.append("\n<font color=gray>[").append(colorsStr).append("]</font>");
         }
         return value.toString();
@@ -123,7 +124,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
     @Override
     public mxRectangle getPreferredSizeForCell(Object cell) {
-        mxRectangle result = null;
+        mxRectangle result;
         if (cell instanceof NodeCell) {
             return ((NodeCell) cell).getPreferredSize();
         } else {

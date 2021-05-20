@@ -50,13 +50,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 	private static final Logger log = LoggerFactory.getLogger(TCTrainListView.class);
     private static final int BUTTON_MARGIN = 1;
 
-    private static enum TrainFilter {
+    private enum TrainFilter {
 
         PASSENGER("P"), FREIGHT("F"), CUSTOM("C"), ALL("A");
 
-        private String key;
+        private final String key;
 
-        private TrainFilter(String key) {
+        TrainFilter(String key) {
             this.key = key;
         }
 
@@ -69,8 +69,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         }
     }
 
-    private TCDelegate delegate;
-    private Predicate<Train> filter;
+    private transient TCDelegate delegate;
+    private transient Predicate<Train> filter;
     private boolean overlappingEnabled;
 
     private TCItemChangeDialog tciChangeDialog;
@@ -135,10 +135,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // get all trains (sort)
             List<Train> trainsList = new ArrayList<>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
-                if (overlappingEnabled || !train.isCovered(delegate.getType())) {
-                    if (filter == null || filter.apply(train))
-                        trainsList.add(train);
-                }
+                if ((overlappingEnabled || !train.isCovered(delegate.getType())) && (filter == null || filter.apply(train)))
+                    trainsList.add(train);
             }
             for (Train train : trainsList) {
                 allTrains.addWrapper(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram())));
@@ -177,7 +175,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         }
     }
 
-    private TimeInterval lastSelected;
+    private transient TimeInterval lastSelected;
 
     @Override
     public boolean regionsSelected(List<TimeInterval> intervals) {
@@ -206,7 +204,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     @Override
     public List<TimeInterval> getSelected() {
-        return lastSelected != null ? Collections.singletonList(lastSelected) : Collections.<TimeInterval>emptyList();
+        return lastSelected != null ? Collections.singletonList(lastSelected) : Collections.emptyList();
     }
 
     @Override
@@ -242,30 +240,30 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allRadioButtonMenuItem.setSelected(true);
         allRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.all")); // NOI18N
         allRadioButtonMenuItem.setActionCommand(TrainFilter.ALL.getKey());
-        allRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
+        allRadioButtonMenuItem.addActionListener(this::filterChangedActionPerformed);
         filterMenu.add(allRadioButtonMenuItem);
 
         filterbuttonGroup.add(passengerRadioButtonMenuItem);
         passengerRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.passenger")); // NOI18N
         passengerRadioButtonMenuItem.setActionCommand(TrainFilter.PASSENGER.getKey());
-        passengerRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
+        passengerRadioButtonMenuItem.addActionListener(this::filterChangedActionPerformed);
         filterMenu.add(passengerRadioButtonMenuItem);
 
         filterbuttonGroup.add(freightRadioButtonMenuItem);
         freightRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.freight")); // NOI18N
         freightRadioButtonMenuItem.setActionCommand(TrainFilter.FREIGHT.getKey());
-        freightRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
+        freightRadioButtonMenuItem.addActionListener(this::filterChangedActionPerformed);
         filterMenu.add(freightRadioButtonMenuItem);
 
         filterbuttonGroup.add(customRadioButtonMenuItem);
         customRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.custom")); // NOI18N
         customRadioButtonMenuItem.setActionCommand(TrainFilter.CUSTOM.getKey());
-        customRadioButtonMenuItem.addActionListener(evt -> filterChangedActionPerformed(evt));
+        customRadioButtonMenuItem.addActionListener(this::filterChangedActionPerformed);
         filterMenu.add(customRadioButtonMenuItem);
         filterMenu.add(separator);
 
         overlappingCheckBoxMenuItem.setText(ResourceLoader.getString("filter.trains.overlapping")); // NOI18N
-        overlappingCheckBoxMenuItem.addActionListener(evt -> overlappingCheckBoxMenuItemActionPerformed(evt));
+        overlappingCheckBoxMenuItem.addActionListener(this::overlappingCheckBoxMenuItemActionPerformed);
         filterMenu.add(overlappingCheckBoxMenuItem);
 
         scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -273,21 +271,21 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allTrainsList.setComponentPopupMenu(filterMenu);
         allTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         allTrainsList.setVisibleRowCount(5);
-        allTrainsList.addListSelectionListener(evt -> allTrainsListValueChanged(evt));
+        allTrainsList.addListSelectionListener(this::allTrainsListValueChanged);
         scrollPane1.setViewportView(allTrainsList);
 
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         cTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         cTrainsList.setVisibleRowCount(5);
-        cTrainsList.addListSelectionListener(evt -> ecTrainsListValueChanged(evt));
+        cTrainsList.addListSelectionListener(this::ecTrainsListValueChanged);
         scrollPane2.setViewportView(cTrainsList);
 
         addButton.setEnabled(false);
-        addButton.addActionListener(evt -> addButtonActionPerformed(evt));
+        addButton.addActionListener(this::addButtonActionPerformed);
 
         removeButton.setEnabled(false);
-        removeButton.addActionListener(evt -> removeButtonActionPerformed(evt));
+        removeButton.addActionListener(this::removeButtonActionPerformed);
 
         infoTextArea.setColumns(20);
         infoTextArea.setEditable(false);
@@ -320,7 +318,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         coverageTextPane.setEditable(false);
         coverageScrollPane.setViewportView(coverageTextPane);
 
-        selectionButton.addActionListener(evt -> selectionButtonActionPerformed(evt));
+        selectionButton.addActionListener(this::selectionButtonActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         layout.setHorizontalGroup(
@@ -383,7 +381,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 Train t = selected.getElement();
                 TrainsCycle cycle = delegate.getSelectedCycle();
                 if (cycle != null) {
-                    TrainsCycleItem item = null;
+                    TrainsCycleItem item;
                     if (overlappingEnabled) {
                         item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval());
                     } else {
@@ -487,13 +485,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void appendSegment(ColorTextPane pane, Pair<TimeInterval, Boolean> segment) {
         if (segment.first.isNodeOwner()) {
-            if (!segment.second) {
+            if (segment.second == Boolean.FALSE) {
                 pane.append(Color.BLACK, segment.first.getOwnerAsNode().getName());
             } else {
                 pane.append(Color.RED, segment.first.getOwnerAsNode().getName());
             }
         } else {
-            if (!segment.second)
+            if (segment.second == Boolean.FALSE)
                 pane.append(Color.BLACK, " x ");
             else
                 pane.append(Color.RED, " - ");
@@ -544,7 +542,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         this.updateListAllTrains();
     }
 
-    private Set<TrainType> selectedTypes = new HashSet<>();
+    private transient Set<TrainType> selectedTypes = new HashSet<>();
 
     private javax.swing.JButton addButton;
     private javax.swing.JList<Wrapper<Train>> allTrainsList;

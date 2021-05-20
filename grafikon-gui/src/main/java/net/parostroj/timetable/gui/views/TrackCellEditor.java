@@ -29,7 +29,7 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
     private final JComboBox<Track> editor;
     private boolean ignoreAction = true;
 
-    private final TrainRouteTracksComputation comp = new TrainRouteTracksComputation();
+    private final transient TrainRouteTracksComputation comp = new TrainRouteTracksComputation();
 
     public TrackCellEditor() {
         editor = new JComboBox<>();

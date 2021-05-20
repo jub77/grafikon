@@ -25,7 +25,7 @@ public class ExitAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	private static final Logger log = LoggerFactory.getLogger(ExitAction.class);
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
     private final MainFrame parent;
 
     public ExitAction(ApplicationModel model, MainFrame parent) {
@@ -41,7 +41,7 @@ public class ExitAction extends AbstractAction {
     }
 
     public static ModelAction getExitAction(final MainFrame parent, final ApplicationModel model, final boolean exit) {
-        ModelAction action = new CombinedModelAction(new ActionContext()) {
+        return new CombinedModelAction(new ActionContext()) {
 
             private int result = JOptionPane.NO_OPTION;
             private String errorMessage;
@@ -65,9 +65,9 @@ public class ExitAction extends AbstractAction {
                 try {
                     if (result == JOptionPane.YES_OPTION) {
                         setWaitMessage(ResourceLoader.getString("wait.message.savemodel"));
-                        long time = System.currentTimeMillis();
+                        long saveTime = System.currentTimeMillis();
                         ModelUtils.saveModelData(model, model.getOpenedFile());
-                        log.debug("Save before exit finished in {}ms", System.currentTimeMillis() - time);
+                        log.debug("Save before exit finished in {}ms", System.currentTimeMillis() - saveTime);
                     }
                     setWaitMessage(ResourceLoader.getString("wait.message.programclose"));
                     parent.cleanUpBeforeApplicationEnd();
@@ -99,6 +99,5 @@ public class ExitAction extends AbstractAction {
                 }
             }
         };
-        return action;
     }
 }

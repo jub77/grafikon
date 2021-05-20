@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.model.imports.ImportMatch;
 import net.parostroj.timetable.model.library.Library;
+import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
 
 public class OutputTemplateSelectionModelAction extends CheckedModelAction {
@@ -26,7 +27,7 @@ public class OutputTemplateSelectionModelAction extends CheckedModelAction {
             Library library = (Library) context.getAttribute("library");
             selection.addItems(ImportComponent.OUTPUT_TEMPLATES,
                     library.getItems().get(LibraryItemType.OUTPUT_TEMPLATE).stream()
-                            .map(item -> item.getObject()).collect(Collectors.toList()));
+                            .map(LibraryItem::getObject).collect(Collectors.toList()));
         } else {
             TrainDiagram diagram = (TrainDiagram) context.getAttribute("diagram");
             selection.addItems(ImportComponent.OUTPUT_TEMPLATES, diagram.getOutputTemplates());

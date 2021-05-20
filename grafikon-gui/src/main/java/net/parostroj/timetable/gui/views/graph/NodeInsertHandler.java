@@ -41,13 +41,9 @@ public class NodeInsertHandler extends mxMouseAdapter {
         this.started = e.getPoint();
     }
 
-    private boolean isStartEvent(MouseEvent e) {
-        return true;
-    }
-
     @Override
     public void mousePressed(MouseEvent e) {
-        if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && isStartEvent(e)) {
+        if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed()) {
             start(e);
             e.consume();
         }

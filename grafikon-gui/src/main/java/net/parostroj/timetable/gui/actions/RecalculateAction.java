@@ -22,10 +22,10 @@ public class RecalculateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	public interface TrainAction {
-        void execute(Train train) throws RuntimeException;
+        void execute(Train train);
     }
 
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public RecalculateAction(ApplicationModel model) {
         this.model = model;
@@ -43,9 +43,7 @@ public class RecalculateAction extends AbstractAction {
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))
             .split(TrainDiagram::getTrains, 10)
             .onEdtWithDelay(Duration.ofMillis(1))
-            .addBatchConsumer((context, train) -> {
-                train.recalculate();
-            })
+            .addBatchConsumer((context, train) -> train.recalculate())
             .execute();
     }
 }

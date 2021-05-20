@@ -35,8 +35,7 @@ public class TrainTreeHandler {
     public TrainTreeNode addTrain(Train train) {
         if (filter != null && !filter.apply(train))
             return null;
-        TrainTreeNode root = (TrainTreeNode) treeModel.getRoot();
-        TrainTreeNode node = root;
+        TrainTreeNode node = (TrainTreeNode) treeModel.getRoot();
         Iterator<Pair<NodeDelegate, ChildrenDelegate>> i = structure.iterator();
         i.next();
         while (i.hasNext()) {
@@ -96,7 +95,7 @@ public class TrainTreeHandler {
     }
 
     public Collection<Train> getTrains(TrainTreeNode node) {
-        Set<Train> trains = new HashSet<Train>();
+        Set<Train> trains = new HashSet<>();
         this.getTrains(trains, node);
         return trains;
     }
@@ -119,27 +118,21 @@ public class TrainTreeHandler {
     }
 
     static <T> Iterable<T> getIterable(final Enumeration<?> e, final Class<T> clazz) {
-        return new Iterable<T>() {
+        return () -> new Iterator<T>() {
 
             @Override
-            public Iterator<T> iterator() {
-                return new Iterator<T>() {
+            public boolean hasNext() {
+                return e.hasMoreElements();
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return e.hasMoreElements();
-                    }
+            @Override
+            public T next() {
+                return clazz.cast(e.nextElement());
+            }
 
-                    @Override
-                    public T next() {
-                        return clazz.cast(e.nextElement());
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
         };
     }

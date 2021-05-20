@@ -5,8 +5,10 @@ package net.parostroj.timetable.gui.actions;
  *
  * @author jub
  */
-public interface UrlConstants {
+public final class UrlConstants {
 
-    String LIBRARY_URL = "http://jub.parostroj.net/grafikon/library/%s";
-    String TEMPLATES_URL = "http://jub.parostroj.net/grafikon/templates/%s";
+    private UrlConstants() {}
+
+    public static final String LIBRARY_URL = "http://jub.parostroj.net/grafikon/library/%s";
+    public static final  String TEMPLATES_URL = "http://jub.parostroj.net/grafikon/templates/%s";
 }

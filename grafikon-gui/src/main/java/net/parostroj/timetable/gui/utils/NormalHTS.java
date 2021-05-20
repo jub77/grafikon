@@ -28,20 +28,16 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
 
     public NormalHTS(final ApplicationModel model, Color selectionColor,
             final GraphicalTimetableView view) {
-        model.addListener(new ApplicationModelListener() {
-
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                appEvent = true;
-                try {
-                    if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
-                        final Train selectedTrain = model.getSelectedTrain();
-                        view.selectItems(selectedTrain == null ? Collections.<TimeInterval> emptyList()
-                                : selectedTrain.getTimeIntervalList(), TimeInterval.class);
-                    }
-                } finally {
-                    appEvent = false;
+        model.addListener(event -> {
+            appEvent = true;
+            try {
+                if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
+                    final Train selectedTrain = model.getSelectedTrain();
+                    view.selectItems(selectedTrain == null ? Collections.emptyList()
+                            : selectedTrain.getTimeIntervalList(), TimeInterval.class);
                 }
+            } finally {
+                appEvent = false;
             }
         });
         this.selectionColor = selectionColor;
@@ -67,7 +63,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
             TimeInterval interval = SelectorUtils.select(intervals, selectedTimeInterval, SelectorUtils.createUniqueTrainIntervalFilter());
             // set selected train
             Train selected = interval != null ? interval.getTrain() : null;
-            set = selected == null ? Collections.<Train>emptySet() : Collections.singleton(selected);
+            set = selected == null ? Collections.emptySet() : Collections.singleton(selected);
             model.setSelectedTrain(selected);
             selectedTimeInterval = interval;
             if (!appEvent) {
@@ -82,14 +78,14 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     @Override
     public List<TimeInterval> getSelected() {
         Train train = model.getSelectedTrain();
-        return train == null ? Collections.<TimeInterval>emptyList() : train.getTimeIntervalList();
+        return train == null ? Collections.emptyList() : train.getTimeIntervalList();
     }
 
     @Override
     public boolean editSelected() {
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.EDIT_SELECTED_TRAIN, model));
         return true;
-    };
+    }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {

@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 
+import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 
@@ -25,7 +26,6 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
-import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
@@ -38,9 +38,9 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private static final long serialVersionUID = 1L;
 
-	private TrainsCycleType type;
-    private TrainDiagram diagram;
-    private TCDelegate delegate;
+	private transient TrainsCycleType type;
+    private transient TrainDiagram diagram;
+    private transient TCDelegate delegate;
 
     /** Creates new form CirculationView */
     public CirculationPane() {
@@ -63,12 +63,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         typesComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmm"));
-        typesComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                typesComboBoxItemStateChanged(evt);
-            }
-        });
+        typesComboBox.addItemListener(this::typesComboBoxItemStateChanged);
         controlPanel.add(typesComboBox);
 
         newNameTextField.setColumns(15);
@@ -80,28 +75,13 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         });
         controlPanel.add(newNameTextField);
 
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createButtonActionPerformed(evt);
-            }
-        });
+        createButton.addActionListener(this::createButtonActionPerformed);
         controlPanel.add(createButton);
 
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        editButton.addActionListener(this::editButtonActionPerformed);
         controlPanel.add(editButton);
 
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
         controlPanel.add(deleteButton);
 
         add(controlPanel, java.awt.BorderLayout.PAGE_START);
@@ -111,10 +91,10 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String name = newNameTextField.getText();
         if (!TrainsCycleType.isDefaultType(name)) {
-            TrainsCycleType type = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-            type.setName(LocalizedString.fromString(name));
-            type.setKey(name);
-            diagram.getCycleTypes().add(type);
+            TrainsCycleType tcType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
+            tcType.setName(LocalizedString.fromString(name));
+            tcType.setKey(name);
+            diagram.getCycleTypes().add(tcType);
         }
         newNameTextField.setText("");
     }
@@ -141,7 +121,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void typesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // select circulation type
-            TrainsCycleType selectedItem = (TrainsCycleType) ((Wrapper<?>) typesComboBox.getSelectedItem()).getElement();
+            TrainsCycleType selectedItem = (TrainsCycleType) ((Wrapper<?>) Objects.requireNonNull(typesComboBox.getSelectedItem())).getElement();
             TrainsCycleType oldType = type;
             type = selectedItem;
             if (oldType == null || !oldType.equals(type)) {
@@ -149,11 +129,9 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
                 this.delegate.fireEvent(TCDelegate.Action.REFRESH, null);
             }
         } else {
-            if (typesComboBox.getSelectedItem() == null) {
-                if (type != null) {
-                    type = null;
-                    this.delegate.fireEvent(TCDelegate.Action.REFRESH, null);
-                }
+            if (typesComboBox.getSelectedItem() == null && type != null) {
+                type = null;
+                this.delegate.fireEvent(TCDelegate.Action.REFRESH, null);
             }
         }
         deleteButton.setEnabled(type != null);
@@ -189,15 +167,11 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
                 }
             }
         };
-        trainsCyclesPane.setModel(this.delegate, new TrainColorChooser() {
-
-            @Override
-            public Color getIntervalColor(TimeInterval interval) {
-                if (!interval.getTrain().isCovered(type, interval)) {
-                    return Color.black;
-                } else {
-                    return Color.gray;
-                }
+        trainsCyclesPane.setModel(this.delegate, interval -> {
+            if (!interval.getTrain().isCovered(type, interval)) {
+                return Color.black;
+            } else {
+                return Color.gray;
             }
         });
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
@@ -247,7 +221,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         return trainsCyclesPane.loadFromPreferences(prefs);
     }
 
-    private class CPModel extends DefaultComboBoxModel<Wrapper<TrainsCycleType>> {
+    private static class CPModel extends DefaultComboBoxModel<Wrapper<TrainsCycleType>> {
 
         private static final long serialVersionUID = 1L;
 

@@ -4,7 +4,7 @@ import org.ini4j.Ini;
 
 class IniConfigIni4j implements IniConfig {
 
-    private Ini ini;
+    private final Ini ini;
 
     public IniConfigIni4j(Ini ini) {
         this.ini = ini;

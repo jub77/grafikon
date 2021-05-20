@@ -15,7 +15,12 @@ public class NodeDelegateTypeImpl implements NodeDelegate {
     public String getNodeText(TrainTreeNode trainTreeNode) {
         TrainType type = (TrainType) trainTreeNode.getUserObject();
         LocalizedString desc = type != null ? type.getDesc() : null;
-        return type != null ? (desc != null ? desc.translate() : type.getDefaultAbbr()) : "-";
+        if (type != null) {
+            if (desc != null) return desc.translate();
+            return type.getDefaultAbbr();
+        } else {
+            return "-";
+        }
     }
 
     @Override

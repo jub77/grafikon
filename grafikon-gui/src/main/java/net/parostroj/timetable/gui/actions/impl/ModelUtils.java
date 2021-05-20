@@ -4,10 +4,8 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipOutputStream;
 
@@ -30,8 +28,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * Helper methods for handling model.
  *
@@ -40,6 +36,8 @@ import com.google.common.collect.ImmutableList;
 public class ModelUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ModelUtils.class);
+
+    private ModelUtils() {}
 
     public static void saveModelData(final ApplicationModel model, File file) throws LSException {
         // update author and date before save
@@ -54,12 +52,13 @@ public class ModelUtils {
         if (set != null && tracker.isTrackingEnabled()) {
             try {
                 // do the update in event dispatch thread (because of events)
-                SwingUtilities.invokeAndWait(() -> {
-                    tracker.updateCurrentChangeSet(set.getVersion(),
-                            user,
-                            Calendar.getInstance());
-                });
-            } catch (Exception e) {
+                SwingUtilities.invokeAndWait(() -> tracker.updateCurrentChangeSet(set.getVersion(),
+                        user,
+                        Calendar.getInstance()));
+            } catch (InterruptedException e) {
+                log.warn("Error updating values for current diagram change set.", e);
+                Thread.currentThread().interrupt();
+            } catch (InvocationTargetException e) {
                 log.warn("Error updating values for current diagram change set.", e);
             }
         }
@@ -99,40 +98,6 @@ public class ModelUtils {
             }
             return result;
         }
-    }
-
-    public static List<? extends Object> selectAllElements(TrainDiagram diagram, ElementType type) {
-        switch (type) {
-            case NODE:
-                return new ArrayList<>(diagram.getNet().getNodes());
-            case LINE:
-                return new ArrayList<>(diagram.getNet().getLines());
-            case TRAIN_UNIT_CYCLE:
-                return ImmutableList.copyOf(diagram.getTrainUnitCycleType().getCycles());
-            case ENGINE_CYCLE:
-                return ImmutableList.copyOf(diagram.getEngineCycleType().getCycles());
-            case DRIVER_CYCLE:
-                return ImmutableList.copyOf(diagram.getDriverCycleType().getCycles());
-            case TRAIN:
-                return new ArrayList<>(diagram.getTrains());
-            case ROUTE:
-                List<Route> routes = new LinkedList<>();
-                for (Route r : diagram.getRoutes()) {
-                    if (r.isNetPart()) {
-                        routes.add(r);
-                    }
-                }
-                return routes;
-            case CUSTOM_CYCLE:
-                List<TrainsCycle> cycles = new LinkedList<>();
-                for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
-                    if (!cycleType.isDefaultType()) {
-                        cycles.addAll(cycleType.getCycles());
-                    }
-                }
-                return cycles;
-        }
-        return null;
     }
 
     public static Locale parseLocale(String localeString) {

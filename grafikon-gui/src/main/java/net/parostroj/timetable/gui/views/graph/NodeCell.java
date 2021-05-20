@@ -33,7 +33,7 @@ public class NodeCell extends mxCell {
     public mxRectangle getPreferredSize() {
         NodeShape shape = getShapeForNode((Node) value);
         return shape != null
-                ? new mxRectangle(0, 0, shape.getWidth() / 2, shape.getHeight() / 2)
+                ? new mxRectangle(0, 0, shape.getWidth() / 2.0, shape.getHeight() / 2.0)
                 : new mxRectangle(0, 0, 100, 100);
     }
 

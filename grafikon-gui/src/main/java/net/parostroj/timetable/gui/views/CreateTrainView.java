@@ -43,10 +43,10 @@ public class CreateTrainView extends javax.swing.JPanel {
         public String toString() {return "-";}
     };
 
-    private TrainDiagram diagram;
-    private CreateTrainCommand createTrainCommand;
+    private transient TrainDiagram diagram;
+    private transient CreateTrainCommand createTrainCommand;
     private final ThroughNodesDialog tnDialog;
-    private List<Node> throughNodes;
+    private transient List<Node> throughNodes;
 
     /**
      * Creates new form CreateTrainView
@@ -293,7 +293,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         }
 
         RouteBuilder routeBuilder = new RouteBuilder();
-        Route route = null;
+        Route route;
         if (throughNodes == null)
             route = routeBuilder.createRoute(null, diagram.getNet(), (Node) fromComboBox.getSelectedItem(), (Node) toComboBox.getSelectedItem());
         else {
@@ -319,17 +319,16 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         // create command ...
         TrainType tType = (TrainType) typeComboBox.getSelectedItem();
-        CreateTrainCommand createCommand = new CreateTrainCommand(
+        this.createTrainCommand = new CreateTrainCommand(
                 ObjectsUtil.checkAndTrim(nameTextField.getText()),
                 tType != NO_TYPE ? tType : null,
                         speed,
                         route,
                         start,
-                        (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
+                        (stopTextField.getText().equals("") ? 0 : Integer.parseInt(stopTextField.getText()) * 60),
                         ObjectsUtil.checkAndTrim(commentTextField.getText()),
                         dieselCheckBox.isSelected(),
                         electricCheckBox.isSelected(), true, group, managedFreightCheckBox.isSelected());
-        this.createTrainCommand = createCommand;
         // hide dialog
         this.closeDialog();
     }

@@ -34,7 +34,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
 	private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
 
-    private TCDelegate delegate;
+    private transient TCDelegate delegate;
     private String key;
 
     private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColorChooser, TCDelegate.Listener {
@@ -152,9 +152,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         splitPane.setDividerLocation(section.get("divider", Integer.class, -1));
         try {
             GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
-            if (gtvs != null) {
-                graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
-            }
+            graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         } catch (Exception e) {
             log.warn("Wrong GTView settings - using default values.");
         }

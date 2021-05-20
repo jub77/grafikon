@@ -24,7 +24,7 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
     private static final String TEMPLATE = "output_templates.gtml";
 
-    private ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public ImportReplaceOutputTemplatesUrlAction(ApplicationModel model) {
         this.model = model;

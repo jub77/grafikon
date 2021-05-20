@@ -60,9 +60,8 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         }
     }
 
-    private ApplicationModel model;
-    private Train train;
-    private TrainViewColumns columns;
+    private transient ApplicationModel model;
+    private final transient TrainViewColumns columns;
 
     /**
      * Creates new form TrainView.
@@ -110,8 +109,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             TableColumn tc = allColumns.nextElement();
             list.add(tc);
         }
-        Collections.sort(list, (o1, o2) ->
-                Integer.valueOf(Integer.valueOf(o1.getModelIndex()).compareTo(Integer.valueOf(o2.getModelIndex()))));
+        list.sort(Comparator.comparing(TableColumn::getModelIndex));
         for (TableColumn tc : list) {
             tcm.removeColumn(tc);
         }
@@ -124,7 +122,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.model = model;
         this.updateView(model.getSelectedTrain());
         this.model.addListener(this);
-        ((TrainTableModel) trainTable.getModel()).setModel(model);
         model.getMediator().addColleague(message -> {
             IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
             if (ism.getInterval() != null) {
@@ -134,9 +131,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     interval = trainForInterval.getFirstInterval();
                 } else if (trainForInterval.getTimeIntervalAfter() == interval) {
                     interval = trainForInterval.getLastInterval();
-                }
-                if (trainForInterval != TrainView.this.train) {
-                    updateView(trainForInterval);
                 }
                 int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
                 int column = TrainTableColumn.getIndex(trainTable.getColumnModel(),
@@ -260,7 +254,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTextField.setEditable(false);
 
         trainTable.setAutoCreateColumnsFromModel(false);
-        trainTable.setModel(new TrainTableModel(model,train));
+        trainTable.setModel(new TrainTableModel());
         trainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ToolTipHeader header = new ToolTipHeaderWithPopupMenu(trainTable.getColumnModel());

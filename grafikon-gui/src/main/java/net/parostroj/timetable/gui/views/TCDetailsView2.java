@@ -21,7 +21,7 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
 
     private static final long serialVersionUID = 1L;
 
-	private TCDelegate delegate;
+	private transient TCDelegate delegate;
 
     /** Creates new form ECDetailsView2 */
     public TCDetailsView2() {

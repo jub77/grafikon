@@ -4,9 +4,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
@@ -24,9 +21,7 @@ public class ImportReplaceOutputTemplatesAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-	static final Logger log = LoggerFactory.getLogger(ImportReplaceOutputTemplatesAction.class);
-
-    private ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public ImportReplaceOutputTemplatesAction(ApplicationModel model) {
         this.model = model;

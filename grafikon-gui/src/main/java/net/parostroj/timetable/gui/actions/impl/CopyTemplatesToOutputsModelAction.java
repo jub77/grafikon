@@ -14,7 +14,7 @@ public class CopyTemplatesToOutputsModelAction extends EventDispatchModelAction 
 
     private static final Logger log = LoggerFactory.getLogger(CopyTemplatesToOutputsModelAction.class);
 
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     public CopyTemplatesToOutputsModelAction(ActionContext context, ApplicationModel model) {
         super(context);

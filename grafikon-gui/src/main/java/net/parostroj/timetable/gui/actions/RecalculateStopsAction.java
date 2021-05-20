@@ -27,7 +27,7 @@ public class RecalculateStopsAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	private static final Logger log = LoggerFactory.getLogger(RecalculateStopsAction.class);
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public RecalculateStopsAction(ApplicationModel model) {
         this.model = model;
@@ -46,7 +46,7 @@ public class RecalculateStopsAction extends AbstractAction {
         }
 
         // convert do double
-        double cRatio = 1.0d;
+        double cRatio;
         try {
             cRatio = Double.parseDouble(ratioStr);
         } catch (NumberFormatException e) {
@@ -72,7 +72,7 @@ public class RecalculateStopsAction extends AbstractAction {
                         train.changeStopTime(interval, time);
                     }
                 }
-                int time = 0;
+                int time;
                 // convert time before
                 if (train.getTimeBefore() != 0) {
                     time = train.getTimeBefore();
@@ -107,10 +107,8 @@ public class RecalculateStopsAction extends AbstractAction {
             .onEdt()
             .logTime()
             .setMessage(ResourceLoader.getString("wait.message.recalculate"))
-            .split(d -> d.getTrains(), 10)
+            .split(TrainDiagram::getTrains, 10)
             .onEdtWithDelay(Duration.ofMillis(1))
-            .addBatchConsumer((context, train) -> {
-                trainAction.execute(train);
-            }).execute();
+            .addBatchConsumer((context, train) -> trainAction.execute(train)).execute();
     }
 }

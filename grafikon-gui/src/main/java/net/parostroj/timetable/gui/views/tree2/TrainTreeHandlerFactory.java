@@ -23,38 +23,34 @@ public class TrainTreeHandlerFactory {
     }
 
     public TrainTreeHandler getFlatHandler(Predicate<Train> filter, TrainDiagram diagram) {
-        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<Pair<NodeDelegate,ChildrenDelegate>>();
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateRootImpl(), new ChildrenDelegateTrainsImpl(diagram)));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
-        TrainTreeHandler handler = new TrainTreeHandler(structure, filter);
-        return handler;
+        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<>();
+        structure.add(new Pair<>(new NodeDelegateRootImpl(), new ChildrenDelegateTrainsImpl(diagram)));
+        structure.add(new Pair<>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
+        return new TrainTreeHandler(structure, filter);
     }
 
     public TrainTreeHandler getTypesHandler(Predicate<Train> filter, TrainDiagram diagram) {
-        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<Pair<NodeDelegate,ChildrenDelegate>>();
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateRootImpl(), new ChildrenDelegateTypesImpl()));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTypeImpl(), new ChildrenDelegateTrainsImpl(diagram)));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
-        TrainTreeHandler handler = new TrainTreeHandler(structure, filter);
-        return handler;
+        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<>();
+        structure.add(new Pair<>(new NodeDelegateRootImpl(), new ChildrenDelegateTypesImpl()));
+        structure.add(new Pair<>(new NodeDelegateTypeImpl(), new ChildrenDelegateTrainsImpl(diagram)));
+        structure.add(new Pair<>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
+        return new TrainTreeHandler(structure, filter);
     }
 
     public TrainTreeHandler getGroupsHandler(TrainDiagram diagram) {
-        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<Pair<NodeDelegate,ChildrenDelegate>>();
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateRootImpl(), new ChildrenDelegateGroupsImpl()));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateGroupImpl(), new ChildrenDelegateTrainsImpl(diagram)));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
-        TrainTreeHandler handler = new TrainTreeHandler(structure, null);
-        return handler;
+        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<>();
+        structure.add(new Pair<>(new NodeDelegateRootImpl(), new ChildrenDelegateGroupsImpl()));
+        structure.add(new Pair<>(new NodeDelegateGroupImpl(), new ChildrenDelegateTrainsImpl(diagram)));
+        structure.add(new Pair<>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
+        return new TrainTreeHandler(structure, null);
     }
 
     public TrainTreeHandler getGroupsAndTypesHandler(TrainDiagram diagram) {
-        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<Pair<NodeDelegate,ChildrenDelegate>>();
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateRootImpl(), new ChildrenDelegateGroupsImpl()));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateGroupImpl(), new ChildrenDelegateTypesImpl()));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTypeImpl(), new ChildrenDelegateTrainsImpl(diagram)));
-        structure.add(new Pair<NodeDelegate, ChildrenDelegate>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
-        TrainTreeHandler handler = new TrainTreeHandler(structure, null);
-        return handler;
+        List<Pair<NodeDelegate, ChildrenDelegate>> structure = new LinkedList<>();
+        structure.add(new Pair<>(new NodeDelegateRootImpl(), new ChildrenDelegateGroupsImpl()));
+        structure.add(new Pair<>(new NodeDelegateGroupImpl(), new ChildrenDelegateTypesImpl()));
+        structure.add(new Pair<>(new NodeDelegateTypeImpl(), new ChildrenDelegateTrainsImpl(diagram)));
+        structure.add(new Pair<>(new NodeDelegateTrainImpl(), new ChildrenDelegateEmptyImpl()));
+        return new TrainTreeHandler(structure, null);
     }
 }

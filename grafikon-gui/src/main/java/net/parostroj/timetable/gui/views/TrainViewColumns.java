@@ -33,8 +33,8 @@ public class TrainViewColumns implements StorableGuiData {
 
     private static final Logger log = LoggerFactory.getLogger(TrainViewColumns.class);
 
-    private JTable trainTable;
-    private Map<String, String> columnConfigurations;
+    private final JTable trainTable;
+    private final Map<String, String> columnConfigurations;
 
     public TrainViewColumns(JTable trainTable) {
         this.trainTable = trainTable;
@@ -119,16 +119,14 @@ public class TrainViewColumns implements StorableGuiData {
         String[] ss = cStr.split(",");
         try {
             TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
-            if (column != null) {
-                TableColumn ac = column.createTableColumn();
-                if (ss.length > 1) {
-                    int wInt = Integer.parseInt(ss[1]);
-                    if (wInt != 0) {
-                        ac.setPreferredWidth(wInt);
-                    }
+            TableColumn ac = column.createTableColumn();
+            if (ss.length > 1) {
+                int wInt = Integer.parseInt(ss[1]);
+                if (wInt != 0) {
+                    ac.setPreferredWidth(wInt);
                 }
-                shownColumns.add(ac);
             }
+            shownColumns.add(ac);
         } catch (NumberFormatException e) {
             log.warn("Cannot load columns order for train view: {}", cStr);
         } catch (Exception e) {
@@ -159,7 +157,7 @@ public class TrainViewColumns implements StorableGuiData {
         while (e.hasMoreElements()) {
             columns.add(e.nextElement());
         }
-        columns.forEach(column -> trainTable.removeColumn(column));
+        columns.forEach(trainTable::removeColumn);
     }
 
     private IniConfigSection getTrainsSection(IniConfig prefs) {

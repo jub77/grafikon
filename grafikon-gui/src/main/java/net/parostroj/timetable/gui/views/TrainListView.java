@@ -50,12 +50,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
 	private static final Logger log = LoggerFactory.getLogger(TrainListView.class);
 
-    private ApplicationModel model;
+    private transient ApplicationModel model;
     private ButtonGroup groupsBG;
-    private final ItemListener groupL;
-    private GroupSelect groupSelect;
-    private final MenuAdapter menuAdapter;
-    private TrainTreeHandler trainTreeHandler;
+    private final transient ItemListener groupL;
+    private transient GroupSelect groupSelect;
+    private transient TrainTreeHandler trainTreeHandler;
     private TreeType treeType = TreeType.TYPES;
     private boolean selecting = false;
 
@@ -67,7 +66,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         private static final long serialVersionUID = 1L;
 
-		private final GroupSelect groupSelect;
+		private final transient GroupSelect groupSelect;
 
         public GroupMenuItem(String text, GroupSelect groupSelect) {
             super(text);
@@ -81,7 +80,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private class MenuAdapter extends MouseAdapter implements ActionListener {
 
-        private int x = -1, y = -1;
+        private int x = -1;
+        private int y = -1;
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -171,7 +171,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         trainTree.setRootVisible(false);
         trainTree.setShowsRootHandles(true);
         panel.setLayout(new BorderLayout(0, 0));
-        scrollPane = new javax.swing.JScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panel.add(scrollPane);
 
@@ -198,7 +198,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         menuButton = GuiComponentUtils.createButton(GuiIcon.CONFIGURE_T, 2);
         buttonPanel.add(menuButton);
-        menuAdapter = new MenuAdapter();
+        MenuAdapter menuAdapter = new MenuAdapter();
         menuButton.addActionListener(menuAdapter);
         menuButton.addMouseListener(menuAdapter);
 
@@ -254,7 +254,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             }
         } else {
             GroupMenuItem item = findByGroup(group);
-            if (item.isSelected()) {
+            if (Objects.requireNonNull(item).isSelected()) {
                 groupsMenu.getItem(0).setSelected(true);
             }
             removeFromGroupsMenu(item);
@@ -505,7 +505,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 }
                 TrainBuilder builder = new TrainBuilder();
                 model.setSelectedTrain(null);
-                this.deleteTrain(oldTrain, oldTrain.getDiagram());
+                this.deleteTrain(oldTrain);
                 Train newTrain = builder.createTrain(oldTrain, route);
                 model.getDiagram().getTrains().add(newTrain);
                 model.setSelectedTrain(newTrain);
@@ -535,7 +535,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             }
         }
         boolean selectionEmpty = trainTree.isSelectionEmpty() || (trainTree.getSelectionCount() == 1
-                && trainTree.getSelectionPath().getParentPath() == null);
+                && Objects.requireNonNull(trainTree.getSelectionPath()).getParentPath() == null);
         deleteButton.setEnabled(!selectionEmpty);
         copyButton.setEnabled(model.getSelectedTrain() != null);
         editButton.setEnabled(model.getSelectedTrain() != null);
@@ -578,7 +578,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         model.setSelectedTrain(null); // no train selected
 
         for (Train deletedTrain : selectedTrains) {
-            this.deleteTrain(deletedTrain, model.getDiagram());
+            this.deleteTrain(deletedTrain);
         }
     }
 
@@ -605,7 +605,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         return trainTree.isPathSelected(this.getPath(node));
     }
 
-    private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
+    private void deleteTrain(Train deletedTrain) {
         DeleteTrainCommand deleteCommand = new DeleteTrainCommand(deletedTrain);
         try {
             model.applyCommand(deleteCommand);
@@ -658,7 +658,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private final javax.swing.JRadioButtonMenuItem listFlatMenuItem;
     private final javax.swing.JRadioButtonMenuItem listGroupsMenuItem;
     private final javax.swing.JRadioButtonMenuItem listGroupsFlatMenuItem;
-    private final javax.swing.JScrollPane scrollPane;
     private final javax.swing.JTree trainTree;
     private final javax.swing.JPopupMenu treePopupMenu;
     private final javax.swing.JRadioButtonMenuItem listTypesMenuItem;

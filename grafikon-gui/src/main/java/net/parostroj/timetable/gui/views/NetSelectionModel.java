@@ -20,12 +20,12 @@ import com.mxgraph.view.mxGraphSelectionModel;
  */
 public class NetSelectionModel implements mxIEventListener {
 
-    private Set<NetSelectionListener> listeners;
+    private final Set<NetSelectionListener> listeners;
 
     private Collection<Object> selectedObjects = Collections.emptyList();
 
     public interface NetSelectionListener {
-        public void selection(Collection<Object> item);
+        void selection(Collection<Object> item);
     }
 
     public NetSelectionModel() {
@@ -34,10 +34,6 @@ public class NetSelectionModel implements mxIEventListener {
 
     public void addNetSelectionListener(NetSelectionListener listener) {
         listeners.add(listener);
-    }
-
-    public void removeNetSelectionListener(NetSelectionListener listener) {
-        listeners.remove(listener);
     }
 
     @Override

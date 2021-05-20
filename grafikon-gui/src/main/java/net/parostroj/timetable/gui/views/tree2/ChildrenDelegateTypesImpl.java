@@ -40,7 +40,7 @@ public class ChildrenDelegateTypesImpl extends ChildrenDelegateImpl implements C
     private int compareTypes(TrainDiagram diagram, TrainType type1, TrainType type2) {
         int i1 = diagram.getTrainTypes().indexOf(type1);
         int i2 = diagram.getTrainTypes().indexOf(type2);
-        return i1 < i2 ? -1 : (i1 == i2 ? 0 : 1);
+        return Integer.compare(i1, i2);
     }
 
     private TrainType getTypeFromNode(TrainTreeNode node) {

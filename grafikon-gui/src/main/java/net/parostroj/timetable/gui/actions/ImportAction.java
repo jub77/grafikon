@@ -1,13 +1,9 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 
@@ -38,14 +34,12 @@ public class ImportAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-	static final Logger log = LoggerFactory.getLogger(ImportAction.class);
-
     private final GroupChooserFromToDialog groupDialog;
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
     private final boolean trainImport;
     private final boolean supportLibrary;
 
-    public ImportAction(ApplicationModel model, Frame frame, boolean trainImport, boolean supportLibrary) {
+    public ImportAction(ApplicationModel model, boolean trainImport, boolean supportLibrary) {
         this.model = model;
         this.trainImport = trainImport;
         this.supportLibrary = supportLibrary;

@@ -16,17 +16,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class GuiUtils {
+public final class GuiUtils {
 
     public static final Logger log = LoggerFactory.getLogger(GuiUtils.class);
 
     private static final int BORDER_FOR_POSITIONING = 50;
 
+    private GuiUtils() {}
+
     public static void setPosition(String preferences, Component component) {
         if (preferences == null)
             return;
         StringTokenizer tokenizer = new StringTokenizer(preferences, "|");
-        List<Integer> values = new LinkedList<Integer>();
+        List<Integer> values = new LinkedList<>();
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             values.add(Integer.valueOf(token));

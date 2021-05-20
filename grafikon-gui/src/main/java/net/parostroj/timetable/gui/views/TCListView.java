@@ -39,7 +39,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
 
     private static final long serialVersionUID = 1L;
 
-	private TCDelegate delegate;
+	private transient TCDelegate delegate;
 
     private final WrapperListModel<TrainsCycle> cycles;
 
@@ -58,16 +58,16 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
 
         javax.swing.JPanel panel = new javax.swing.JPanel();
         add(panel, BorderLayout.SOUTH);
-        GridBagLayout gbl_panel = new GridBagLayout();
-        panel.setLayout(gbl_panel);
+        GridBagLayout gblPanel = new GridBagLayout();
+        panel.setLayout(gblPanel);
         newNameTextField = new javax.swing.JTextField();
-        GridBagConstraints gbc_newNameTextField = new GridBagConstraints();
-        gbc_newNameTextField.weightx = 1.0;
-        gbc_newNameTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_newNameTextField.insets = new Insets(3, 0, 0, 5);
-        gbc_newNameTextField.gridx = 0;
-        gbc_newNameTextField.gridy = 0;
-        panel.add(newNameTextField, gbc_newNameTextField);
+        GridBagConstraints gbcNewNameTextField = new GridBagConstraints();
+        gbcNewNameTextField.weightx = 1.0;
+        gbcNewNameTextField.fill = GridBagConstraints.HORIZONTAL;
+        gbcNewNameTextField.insets = new Insets(3, 0, 0, 5);
+        gbcNewNameTextField.gridx = 0;
+        gbcNewNameTextField.gridy = 0;
+        panel.add(newNameTextField, gbcNewNameTextField);
 
         newNameTextField.setColumns(7);
         newNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
@@ -77,20 +77,20 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
             }
         });
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
-        GridBagConstraints gbc_createButton = new GridBagConstraints();
-        gbc_createButton.fill = GridBagConstraints.BOTH;
-        gbc_createButton.insets = new Insets(3, 0, 0, 5);
-        gbc_createButton.gridx = 1;
-        gbc_createButton.gridy = 0;
-        panel.add(createButton, gbc_createButton);
+        GridBagConstraints gbcCreateButton = new GridBagConstraints();
+        gbcCreateButton.fill = GridBagConstraints.BOTH;
+        gbcCreateButton.insets = new Insets(3, 0, 0, 5);
+        gbcCreateButton.gridx = 1;
+        gbcCreateButton.gridy = 0;
+        panel.add(createButton, gbcCreateButton);
 
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        GridBagConstraints gbc_editButton = new GridBagConstraints();
-        gbc_editButton.fill = GridBagConstraints.BOTH;
-        gbc_editButton.insets = new Insets(3, 0, 0, 5);
-        gbc_editButton.gridx = 2;
-        gbc_editButton.gridy = 0;
-        panel.add(editButton, gbc_editButton);
+        GridBagConstraints gbcEditButton = new GridBagConstraints();
+        gbcEditButton.fill = GridBagConstraints.BOTH;
+        gbcEditButton.insets = new Insets(3, 0, 0, 5);
+        gbcEditButton.gridx = 2;
+        gbcEditButton.gridy = 0;
+        panel.add(editButton, gbcEditButton);
 
         sequenceButton = GuiComponentUtils.createButton(GuiIcon.VIEW_SORT, 2);
         GridBagConstraints gbcSeqB = new GridBagConstraints();
@@ -101,18 +101,18 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         panel.add(sequenceButton, gbcSeqB);
 
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
-        GridBagConstraints gbc_deleteButton = new GridBagConstraints();
-        gbc_deleteButton.insets = new Insets(3, 0, 0, 0);
-        gbc_deleteButton.fill = GridBagConstraints.BOTH;
-        gbc_deleteButton.gridx = 4;
-        gbc_deleteButton.gridy = 0;
-        panel.add(deleteButton, gbc_deleteButton);
+        GridBagConstraints gbcDeleteButton = new GridBagConstraints();
+        gbcDeleteButton.insets = new Insets(3, 0, 0, 0);
+        gbcDeleteButton.fill = GridBagConstraints.BOTH;
+        gbcDeleteButton.gridx = 4;
+        gbcDeleteButton.gridy = 0;
+        panel.add(deleteButton, gbcDeleteButton);
 
         deleteButton.setEnabled(false);
-        deleteButton.addActionListener(e -> deleteButtonActionPerformed(e));
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         createButton.setEnabled(false);
-        createButton.addActionListener(e -> createButtonActionPerformed(e));
+        createButton.addActionListener(this::createButtonActionPerformed);
 
         editButton.setEnabled(false);
         editButton.addActionListener(e -> {

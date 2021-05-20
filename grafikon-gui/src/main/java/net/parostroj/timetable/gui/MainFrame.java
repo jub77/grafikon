@@ -260,7 +260,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         GuiComponentUtils.runLaterInEDT(() -> {
             JMenuItem openItem;
             if (!lastOpened.containsKey(file)) {
-                openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, null));
+                openItem = new JMenuItem(new NewOpenAction(model, null));
                 openItem.setText("x " + file.getName());
                 openItem.setActionCommand("open:" + file.getAbsoluteFile());
                 lastOpened.put(file, openItem);
@@ -343,10 +343,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
         TemplateLoader<TrainDiagram> loader = TemplateLoader.getDefault(TrainDiagram.class);
-        this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this, loader), "new", false, null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, loader), "new", false, null); // NOI18N
         try {
             this.addMenuItem(fileMenu, "menu.file.new.default.url",
-                    new NewOpenAction(model, this, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()), TrainDiagram.class)),
+                    new NewOpenAction(model, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()), TrainDiagram.class)),
                     "new", false, null); // NOI18N
         } catch (MalformedURLException mue) {
             log.warn(mue.getMessage(), mue);
@@ -354,7 +354,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(new javax.swing.JSeparator());
 
-        this.addMenuItem(fileMenu, "menu.file.open", new NewOpenAction(model, this, null), "open", false, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK)); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.open", new NewOpenAction(model, null), "open", false, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK)); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.save", new SaveAction(model), "save", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK)); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.saveas", new SaveAction(model), "save_as", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK)); // NOI18N
 
@@ -363,8 +363,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenu importMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.file.importmenu")); // NOI18N
         fileMenu.add(importMenu);
 
-        this.addMenuItem(importMenu, "menu.file.exportimport", new ImportAction(model, this, false, true), null); // NOI18N
-        this.addMenuItem(importMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true, false), null); // NOI18N
+        this.addMenuItem(importMenu, "menu.file.exportimport", new ImportAction(model, false, true), null); // NOI18N
+        this.addMenuItem(importMenu, "menu.file.exportimport.trains", new ImportAction(model, true, false), null); // NOI18N
         this.addMenuItem(importMenu, "menu.file.outputs.import.replace", new ImportReplaceOutputTemplatesAction(model), null); // NOI18N
         this.addMenuItem(importMenu, "menu.file.outputs.import.replace.default.url", new ImportReplaceOutputTemplatesUrlAction(model), null); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.library.export", new ExportAction(model, this), null); // NOI18N
@@ -816,7 +816,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     public void forceLoad(File file) {
-        NewOpenAction action = new NewOpenAction(model, this, null);
+        NewOpenAction action = new NewOpenAction(model, null);
         action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
     }
 

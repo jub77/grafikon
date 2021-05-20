@@ -6,5 +6,5 @@ package net.parostroj.timetable.gui.actions.impl;
  * @author jub
  */
 public enum ElementType {
-    NODE, LINE, TRAIN_UNIT_CYCLE, ENGINE_CYCLE, DRIVER_CYCLE, TRAIN, ROUTE, CUSTOM_CYCLE;
+    NODE, LINE, TRAIN_UNIT_CYCLE, ENGINE_CYCLE, DRIVER_CYCLE, TRAIN, ROUTE, CUSTOM_CYCLE
 }

@@ -43,8 +43,8 @@ public class ExecuteScriptAction extends AbstractAction {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteScriptAction.class);
 
-    private final ApplicationModel model;
-    private Script lastScript;
+    private final transient ApplicationModel model;
+    private transient Script lastScript;
 
     public ExecuteScriptAction(ApplicationModel model) {
         this.model = model;
@@ -55,8 +55,8 @@ public class ExecuteScriptAction extends AbstractAction {
         if (ObjectsUtil.isEmpty(e.getActionCommand())) {
             editScriptExecution(e);
         } else {
-            String id = null;
-            ScriptsLoader loader = null;
+            String id;
+            ScriptsLoader loader;
             if (e.getActionCommand().startsWith(MODEL_PREFIX)) {
                 id = e.getActionCommand().substring(MODEL_PREFIX.length());
                 loader = model.getScriptsLoader();
@@ -75,7 +75,7 @@ public class ExecuteScriptAction extends AbstractAction {
         try {
             try {
                 ScriptAction scriptAction = loader.getScriptAction(scriptId);
-                scriptAction.execute(model.getDiagram(), Collections.<String, Object>singletonMap("parent", parent));
+                scriptAction.execute(model.getDiagram(), Collections.singletonMap("parent", parent));
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());
                 log.debug("Script {} finished in {}ms", scriptId, System.currentTimeMillis() - time);
@@ -89,8 +89,7 @@ public class ExecuteScriptAction extends AbstractAction {
 
     private void editScriptExecution(ActionEvent e) {
         Component parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
-        model.getDiagram();
-        ScriptDialog dialog = new ScriptDialog((Frame)parent, true);
+        ScriptDialog dialog = new ScriptDialog((Frame) parent, true);
         if (lastScript == null) {
             loadScriptFromPreferences();
         }
@@ -109,7 +108,7 @@ public class ExecuteScriptAction extends AbstractAction {
             binding.put("output", new PrintWriter(output));
             binding.put("parent", parent);
             try {
-                Object result = null;
+                Object result;
                 parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 long time = System.currentTimeMillis();
                 // execute

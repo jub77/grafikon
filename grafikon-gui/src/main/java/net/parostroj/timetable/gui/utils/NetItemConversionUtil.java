@@ -27,13 +27,13 @@ public class NetItemConversionUtil {
 
     public String collectRoutesString(Line line) {
         return collectRoutes(line)
-                .map(route -> route.getName())
+                .map(Route::getName)
                 .collect(Collectors.joining(", "));
     }
 
     public Stream<Route> collectRoutes(Line line) {
         return line.getDiagram().getRoutes().stream()
-                .filter(route -> route.isNetPart())
+                .filter(Route::isNetPart)
                 .filter(route -> route.contains(line));
     }
 }

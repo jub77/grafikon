@@ -24,9 +24,11 @@ import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 public class NetItemInfo implements NetSelectionListener {
 
-    private JLabel text;
-    private NetItemConversionUtil util;
-    private Supplier<ProgramSettings> settings;
+    public static final String BR_CONSTANT = "<br>";
+
+    private final JLabel text;
+    private final NetItemConversionUtil util;
+    private final Supplier<ProgramSettings> settings;
     private WeakReference<Object> itemRef;
 
     public NetItemInfo(JLabel text, Supplier<ProgramSettings> settings) {
@@ -88,7 +90,7 @@ public class NetItemInfo implements NetSelectionListener {
         }
         Collection<FreightColor> colors = OutputFreightUtil.sortFreightColors(node.getFreightColors());
         if (colors != null) {
-            String colorsStr = colors.stream().map(color -> color.getName()).collect(Collectors.joining(", "));
+            String colorsStr = colors.stream().map(FreightColor::getName).collect(Collectors.joining(", "));
             builder.append(getNL()).append(colorsStr);
         }
         return builder.toString();
@@ -121,6 +123,6 @@ public class NetItemInfo implements NetSelectionListener {
     }
 
     protected String getNL() {
-        return "<br>";
+        return BR_CONSTANT;
     }
 }

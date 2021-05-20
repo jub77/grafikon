@@ -47,33 +47,30 @@ public enum TrainTableColumn {
     REGION_CENTER_TRANSFER("train.table.region.center.transfer", 30, 30, 30, "fo", Boolean.class, false, null),
     FREIGHT_TO_STATIONS("train.table.freight.to.stations", 50, Integer.MAX_VALUE, 150, "w", String.class, false, null);
 
-    private String key;
-    private int minWidth;
-    private int prefWidth;
-    private int maxWidth;
-    private Class<?> clazz;
-    private boolean rightAling;
+    private final String key;
+    private final int minWidth;
+    private final int prefWidth;
+    private final int maxWidth;
+    private final Class<?> clazz;
+    private final boolean rightAling;
     private boolean even;
     private boolean odd;
     private boolean first;
     private boolean last;
     private boolean all;
     private boolean oneTrack;
-    private TableCellEditor editor;
+    private final TableCellEditor editor;
     private boolean time;
 
     private static class TimeCellRenderer implements TableCellRenderer {
 
         private static final String END;
-        private TableCellRenderer wrapped;
+        private final TableCellRenderer wrapped;
         private final int width;
         private final Icon icon;
 
         static {
-            StringBuilder b = new StringBuilder();
-            b.append(DecimalFormatSymbols.getInstance().getDecimalSeparator());
-            b.append('0');
-            END = b.toString();
+            END = String.valueOf(DecimalFormatSymbols.getInstance().getDecimalSeparator()) + '0';
         }
 
         public TimeCellRenderer(TableCellRenderer wrapped) {
@@ -102,28 +99,28 @@ public enum TrainTableColumn {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             String time = (String) value;
-            Component component = null;
+            Component component;
             if (time != null && time.endsWith(END)) {
                 String text = time.substring(0, time.length() - 2);
                 component = wrapped.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
                 final JLabel l = (JLabel) component;
                 l.setIcon(icon);
                 l.setIconTextGap(0);
-                l.setHorizontalTextPosition(JLabel.LEADING);
-                l.setAlignmentX(JLabel.RIGHT);
+                l.setHorizontalTextPosition(SwingConstants.LEADING);
+                l.setAlignmentX(SwingConstants.RIGHT);
             } else {
                 component = wrapped.getTableCellRendererComponent(table, time, isSelected, hasFocus, row, column);
                 JLabel l = (JLabel) component;
                 l.setIcon(null);
                 l.setIconTextGap(0);
-                l.setHorizontalTextPosition(JLabel.LEADING);
-                l.setAlignmentX(JLabel.RIGHT);
+                l.setHorizontalTextPosition(SwingConstants.LEADING);
+                l.setAlignmentX(SwingConstants.RIGHT);
             }
             return component;
         }
     }
 
-    private TrainTableColumn(String key, int minWidth, int maxWidth, int prefWidth, String forbidden, Class<?> clazz,
+    TrainTableColumn(String key, int minWidth, int maxWidth, int prefWidth, String forbidden, Class<?> clazz,
             boolean rightAling, TableCellEditor editor) {
         this.key = key;
         this.minWidth = minWidth;

@@ -66,26 +66,26 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
 
-    private ApplicationModel model;
-    private NetSelectionModel netEditModel;
+    private transient ApplicationModel model;
+    private transient NetSelectionModel netEditModel;
 
-    private NetItemInfo netItemInfo;
+    private transient NetItemInfo netItemInfo;
 
     private EditNodeDialog editNodeDialog;
     private EditLineDialog editLineDialog;
 
-    private final Action newNodeAction;
-    private final Action editAction;
-    private final Action deleteAction;
-    private final Action saveNetImageAction;
-    private final Action zoomInAction;
-    private final Action zoomOutAction;
+    private final transient Action newNodeAction;
+    private final transient Action editAction;
+    private final transient Action deleteAction;
+    private final transient Action saveNetImageAction;
+    private final transient Action zoomInAction;
+    private final transient Action zoomOutAction;
 
-    private NetGraphAdapter graph;
+    private transient NetGraphAdapter graph;
     private NetGraphComponent graphComponent;
     private mxGraphOutline graphOutline;
-    private NodeInsertHandler insertHandler;
-    private mxRubberband selectionHandler;
+    private transient NodeInsertHandler insertHandler;
+    private transient mxRubberband selectionHandler;
     private final Collection<JComponent> controls = new ArrayList<>();
 
     private JPanel outlinePanel;
@@ -104,10 +104,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         public void actionPerformed(ActionEvent e) {
             if (model.getDiagram() != null) {
                 String result = ResourceLoader.getString("node.station.text") + " " + (++cnt);
-                // do not create if empty or cancel selected
-                if (result == null || result.equals(""))
-                    return;
-                Point location = null;
+                Point location;
                 if (e instanceof ActionEventWithLocation) {
                     location = ((ActionEventWithLocation) e).getLocation();
                 } else {
@@ -168,18 +165,14 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             Component comp = NetEditView.this;
             // delete all lines
             for (Object o : netEditModel.getSelectedObjects()) {
-                if (o instanceof Line) {
-                    if (!deleteLine(comp, (Line) o)) {
-                        return;
-                    }
+                if (o instanceof Line && !deleteLine(comp, (Line) o)) {
+                    return;
                 }
             }
             // delete all nodes
             for (Object o : netEditModel.getSelectedObjects()) {
-                if (o instanceof Node) {
-                    if (!deleteNode(comp, (Node) o)) {
-                        return;
-                    }
+                if (o instanceof Node && !deleteNode(comp, (Node) o)) {
+                    return;
                 }
             }
         }
@@ -534,19 +527,19 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         controls.add(newLineButton);
         controls.add(selectionButton);
         javax.swing.JButton editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2, editAction);
-        GridBagConstraints gbc_2 = new GridBagConstraints();
-        gbc_2.fill = GridBagConstraints.HORIZONTAL;
-        gbc_2.anchor = GridBagConstraints.NORTH;
-        gbc_2.gridx = 0;
-        gbc_2.gridy = 1;
-        buttonPanel.add(editButton, gbc_2);
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.anchor = GridBagConstraints.NORTH;
+        gbc2.gridx = 0;
+        gbc2.gridy = 1;
+        buttonPanel.add(editButton, gbc2);
         javax.swing.JButton zoomIn = GuiComponentUtils.createButton(GuiIcon.ZOOM_IN, 2, zoomInAction);
-        GridBagConstraints gbc_3 = new GridBagConstraints();
-        gbc_3.fill = GridBagConstraints.HORIZONTAL;
-        gbc_3.anchor = GridBagConstraints.NORTH;
-        gbc_3.gridx = 0;
-        gbc_3.gridy = 2;
-        buttonPanel.add(zoomIn, gbc_3);
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.fill = GridBagConstraints.HORIZONTAL;
+        gbc3.anchor = GridBagConstraints.NORTH;
+        gbc3.gridx = 0;
+        gbc3.gridy = 2;
+        buttonPanel.add(zoomIn, gbc3);
         javax.swing.JButton saveNetImageButton = new javax.swing.JButton();
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -557,19 +550,19 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         buttonPanel.add(saveNetImageButton, gbc);
         saveNetImageButton.setAction(saveNetImageAction);
         javax.swing.JButton deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, deleteAction);
-        GridBagConstraints gbc_1 = new GridBagConstraints();
-        gbc_1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_1.anchor = GridBagConstraints.NORTH;
-        gbc_1.gridx = 1;
-        gbc_1.gridy = 1;
-        buttonPanel.add(deleteButton, gbc_1);
+        GridBagConstraints gbc1 = new GridBagConstraints();
+        gbc1.fill = GridBagConstraints.HORIZONTAL;
+        gbc1.anchor = GridBagConstraints.NORTH;
+        gbc1.gridx = 1;
+        gbc1.gridy = 1;
+        buttonPanel.add(deleteButton, gbc1);
         javax.swing.JButton zoomOut = GuiComponentUtils.createButton(GuiIcon.ZOOM_OUT, 2, zoomOutAction);
-        GridBagConstraints gbc_4 = new GridBagConstraints();
-        gbc_4.fill = GridBagConstraints.HORIZONTAL;
-        gbc_4.anchor = GridBagConstraints.NORTH;
-        gbc_4.gridx = 1;
-        gbc_4.gridy = 2;
-        buttonPanel.add(zoomOut, gbc_4);
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.fill = GridBagConstraints.HORIZONTAL;
+        gbc4.anchor = GridBagConstraints.NORTH;
+        gbc4.gridx = 1;
+        gbc4.gridy = 2;
+        buttonPanel.add(zoomOut, gbc4);
 
         textArea = new JLabel();
         textArea.setVerticalAlignment(SwingConstants.TOP);
@@ -752,8 +745,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     // remove the added cell for edge and create new line,
                     // creating new edge by callback
                     mxCell cell = (mxCell) result;
-                    Node srcNode = (Node) ((NodeCell) cell.getSource()).getValue();
-                    Node dstNode = (Node) ((NodeCell) cell.getTarget()).getValue();
+                    Node srcNode = (Node) cell.getSource().getValue();
+                    Node dstNode = (Node) cell.getTarget().getValue();
                     TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
                     Line l = factory.createLine(factory.createId());
                     l.setLength(1000);
@@ -804,7 +797,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     private void updateActions(ApplicationModel model) {
-        boolean isDiagram = model != null ? model.getDiagram() != null : false;
+        boolean isDiagram = model != null && model.getDiagram() != null;
         newNodeAction.setEnabled(isDiagram);
         saveNetImageAction.setEnabled(isDiagram);
     }

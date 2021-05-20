@@ -15,7 +15,6 @@ import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ public class SaveAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	private static final Logger log = LoggerFactory.getLogger(SaveAction.class);
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public SaveAction(ApplicationModel model) {
         this.model = model;
@@ -87,7 +86,7 @@ public class SaveAction extends AbstractAction {
     }
 
     public static ModelAction getSaveModelAction(ActionContext context, final File file, final Component parent, final ApplicationModel model) {
-        ModelAction action = new EventDispatchAfterModelAction(context) {
+        return new EventDispatchAfterModelAction(context) {
 
             private String errorMessage;
 
@@ -98,9 +97,6 @@ public class SaveAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     ModelUtils.saveModelData(model, file);
-                } catch (LSException e) {
-                    log.warn("Error saving model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } catch (Exception e) {
                     log.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -119,7 +115,5 @@ public class SaveAction extends AbstractAction {
                 }
             }
         };
-
-        return action;
     }
 }

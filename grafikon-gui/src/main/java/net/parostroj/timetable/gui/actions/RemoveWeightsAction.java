@@ -23,7 +23,7 @@ public class RemoveWeightsAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-	private final ApplicationModel model;
+	private final transient ApplicationModel model;
 
     public RemoveWeightsAction(ApplicationModel model) {
         this.model = model;
@@ -48,9 +48,7 @@ public class RemoveWeightsAction extends AbstractAction {
                     .setMessage(ResourceLoader.getString("wait.message.recalculate"))
                     .split(TrainDiagram::getTrains, 10)
                     .onEdtWithDelay(Duration.ofMillis(1))
-                    .addBatchConsumer((context, train) -> {
-                        train.removeAttribute(Train.ATTR_WEIGHT);
-                    })
+                    .addBatchConsumer((context, train) -> train.removeAttribute(Train.ATTR_WEIGHT))
                     .execute();
         }
     }

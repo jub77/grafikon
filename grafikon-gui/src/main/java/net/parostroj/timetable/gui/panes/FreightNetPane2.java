@@ -8,15 +8,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
@@ -78,7 +76,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         @Override
         public List<FNConnection> getSelected() {
-            return selected == null ? Collections.<FNConnection>emptyList() : Collections.singletonList(selected);
+            return selected == null ? Collections.emptyList() : Collections.singletonList(selected);
         }
 
         @Override
@@ -149,13 +147,12 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         private TimeInterval lastInterval;
-        private final Predicate<TimeInterval> nodeIntervalFilter = interval -> interval.isNodeOwner();
 
         private TimeInterval chooseInterval(List<TimeInterval> intervals) {
             TimeInterval selected = SelectorUtils.select(
-                    Iterables.filter(intervals, interval -> interval.isStop()),
+                    intervals.stream().filter(TimeInterval::isStop).collect(Collectors.toList()),
                     lastInterval,
-                    nodeIntervalFilter);
+                    TimeInterval::isNodeOwner);
             lastInterval = selected;
             return selected;
         }
@@ -165,6 +162,12 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             // nothing ...
             return false;
         }
+
+        private boolean checkEnabled() {
+            return connection.first != null && connection.second != null &&
+                    connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() &&
+                    !connection.second.isLast() && !connection.first.isFirst();
+        }
     }
 
     private static final Logger log = LoggerFactory.getLogger(FreightNetPane2.class);
@@ -172,7 +175,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final GraphicalTimetableViewWithSave graphicalTimetableView;
     private final GTLayeredPane2 scrollPane;
 
-    private final Tuple<TimeInterval> connection = new Tuple<>();
+    private final transient Tuple<TimeInterval> connection = new Tuple<>();
 
     private final JButton newButton;
     private final JButton deleteButton;
@@ -181,9 +184,9 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final JButton downButton;
     private final JTextField infoTextField;
 
-    private ApplicationModel model;
+    private transient ApplicationModel model;
 
-    private final ConnectionSelector selector;
+    private final transient ConnectionSelector selector;
 
     public FreightNetPane2() {
         setLayout(new BorderLayout());
@@ -206,7 +209,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                     public void visitFreightNetEvent(Event event) {
                         if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
                                 getSelector().getSelected().contains(event.getObject())) {
-                            getSelector().regionsSelected(Collections.<FNConnection>emptyList());
+                            getSelector().regionsSelected(Collections.emptyList());
                         }
                     }
                 };
@@ -219,7 +222,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         // change cursor to hand if the stop interval can be selected
         graphicalTimetableView.setParameter(GraphicalTimetableView.MOUSE_OVER_HANDLER_KEY,
                 (MouseOverHandler) intervals -> {
-                    if (!intervals.isEmpty() && intervals.stream().anyMatch(i -> i.isStop())) {
+                    if (!intervals.isEmpty() && intervals.stream().anyMatch(TimeInterval::isStop)) {
                         scrollPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     } else {
                         scrollPane.setCursor(null);
@@ -262,14 +265,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         upButton = GuiComponentUtils.createButton(GuiIcon.ARROW_UP, 2);
         upButton.setEnabled(false);
-        upButton.addActionListener(e -> {
-            moveConnection(1);
-        });
+        upButton.addActionListener(e -> moveConnection(1));
         downButton = GuiComponentUtils.createButton(GuiIcon.ARROW_DOWN, 2);
         downButton.setEnabled(false);
-        downButton.addActionListener(e -> {
-            moveConnection(-1);
-        });
+        downButton.addActionListener(e -> moveConnection(-1));
 
         buttonPanel.add(newButton);
         buttonPanel.add(deleteButton);
@@ -328,12 +327,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         int currentIndex = conns.indexOf(conn);
         int newIndex = currentIndex + indexChange;
         return newIndex >=0 && newIndex < conns.size();
-    }
-
-    private boolean checkEnabled() {
-        return connection.first != null && connection.second != null &&
-                connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() &&
-                !connection.second.isLast() && !connection.first.isFirst();
     }
 
     private void updateInfo() {

@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import java.util.Collection;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
@@ -25,7 +26,6 @@ import net.parostroj.timetable.gui.dialogs.ExportImportSelectionBaseDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryBuilder;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -40,7 +40,7 @@ public class ExportAction extends AbstractAction {
 	private static final Logger log = LoggerFactory.getLogger(ExportAction.class);
 
     private final ExportImportSelectionBaseDialog exportDialog;
-    private final ApplicationModel model;
+    private final transient ApplicationModel model;
 
     public ExportAction(ApplicationModel model, Frame frame) {
         this.model = model;
@@ -74,12 +74,12 @@ public class ExportAction extends AbstractAction {
 
     private Library createLibrary(ExportImportSelection selection) {
         LibraryBuilder libBuilder = new LibraryBuilder(new LibraryBuilder.Config().setAddMissing(true));
-        selection.getObjectMap().values().stream().flatMap(item -> item.stream()).forEach(object -> libBuilder.importObject(object));
+        selection.getObjectMap().values().stream().flatMap(Collection::stream).forEach(libBuilder::importObject);
         return libBuilder.build();
     }
 
     public static ModelAction getSaveModelAction(ActionContext context, final File file, final Component parent, final Library library) {
-        ModelAction action = new EventDispatchAfterModelAction(context) {
+        return new EventDispatchAfterModelAction(context) {
 
             private String errorMessage;
 
@@ -90,9 +90,6 @@ public class ExportAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     ModelUtils.saveLibraryData(library, file);
-                } catch (LSException e) {
-                    log.warn("Error saving library.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } catch (Exception e) {
                     log.warn("Error saving library.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -109,7 +106,5 @@ public class ExportAction extends AbstractAction {
                 }
             }
         };
-
-        return action;
     }
 }

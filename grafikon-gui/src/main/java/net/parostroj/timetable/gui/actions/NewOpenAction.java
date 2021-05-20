@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -40,17 +39,16 @@ public class NewOpenAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
 	private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
-    private final ApplicationModel model;
 
-    private TemplateLoader<TrainDiagram> templateLoader;
+    private final transient ApplicationModel model;
+    private final transient TemplateLoader<TrainDiagram> templateLoader;
 
     /**
      * creates a new instance
      *
      * @param model application model
-     * @param owner frame
      */
-    public NewOpenAction(ApplicationModel model, Frame owner, TemplateLoader<TrainDiagram> templateLoader) {
+    public NewOpenAction(ApplicationModel model, TemplateLoader<TrainDiagram> templateLoader) {
         this.model = model;
         this.templateLoader = templateLoader;
     }
@@ -228,7 +226,6 @@ public class NewOpenAction extends AbstractAction {
                         diagram = diagramCreator.call();
                     } catch (Exception ex) {
                         error = ex;
-                        return;
                     }
                 } finally {
                     log.debug("Template loaded in {}ms", System.currentTimeMillis() - time);
