@@ -273,10 +273,15 @@ public abstract class Import {
         }
     }
 
-    protected Attributes importAttributes(Attributes orig) {
+    protected Attributes importAttributes(Attributes orig, String... skippedKeys) {
         Attributes dest = new Attributes();
+        Set<String> keys = new HashSet<>(Arrays.asList(skippedKeys));
         // copy values
         for (Map.Entry<String, Object> entry : orig.entrySet()) {
+            if (keys.contains(entry.getKey())) {
+                // skip import of a key
+                continue;
+            }
             if (entry.getValue() instanceof ObjectWithId) {
                 ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
                 if (objectWithId != null) {

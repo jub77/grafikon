@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.imports;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,7 +51,8 @@ public class TrainImport extends Import {
         }
         Train train = getDiagram().getPartFactory().createTrain(this.getId(importedTrain));
         train.setNumber(importedTrain.getNumber());
-        train.getAttributes().add(this.importAttributes(importedTrain.getAttributes()));
+        train.getAttributes().add(this.importAttributes(importedTrain.getAttributes(),
+                Train.ATTR_NEXT_JOINED_TRAIN, Train.ATTR_PREVIOUS_JOINED_TRAIN));
         train.setDescription(importedTrain.getDescription());
         train.setType(trainType);
         train.setTopSpeed(importedTrain.getTopSpeed());
@@ -58,7 +60,7 @@ public class TrainImport extends Import {
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(train, importedTrain.getStartTime());
         // create route (new)
         List<Triplet<NetSegment<?>, Track, TimeInterval>> route = createNewRoute(importedTrain);
-        if (route == null) {
+        if (route.isEmpty()) {
             String message = "error creating route for train";
             this.addError(importedTrain, message);
             log.debug("{}: {}", message, importedTrain);
@@ -96,7 +98,7 @@ public class TrainImport extends Import {
                 Track nodeTrack = node != null ? this.getTrack(node, interval.getTrack()) : null;
                 if (node == null || nodeTrack == null) {
                     log.trace("Cannot find node or track: {}", interval.getOwnerAsNode());
-                    return null;
+                    return Collections.emptyList();
                 }
                 if (previousNode != null) {
                     // add line
@@ -104,7 +106,7 @@ public class TrainImport extends Import {
                     Track lineTrack = line != null ? this.getTrack(line, previousLineTrack) : null;
                     if (line == null || lineTrack == null) {
                         log.trace("Cannot find line or track: {}, {}", previousNode, node);
-                        return null;
+                        return Collections.emptyList();
                     }
                     segments.add(new Triplet<>(line, lineTrack, previousLineInterval));
                 }
