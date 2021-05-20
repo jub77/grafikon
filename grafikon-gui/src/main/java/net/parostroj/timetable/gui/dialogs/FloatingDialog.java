@@ -49,7 +49,7 @@ public class FloatingDialog extends javax.swing.JDialog implements FloatingWindo
         String positionStr = section.get("position");
         GuiUtils.setPosition(positionStr, this);
         // set visibility
-        if (section.get("visible", Boolean.class, false)) {
+        if (section.get("visible", Boolean.class, false) == Boolean.TRUE) {
             this.visibleOnInit = true;
         }
         return section;

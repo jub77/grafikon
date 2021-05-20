@@ -11,13 +11,13 @@ import net.parostroj.timetable.gui.ini.StorableGuiData;
  */
 public interface FloatingWindow extends StorableGuiData {
 
-    public String getTitle();
+    String getTitle();
 
-    public void setVisibleOnInit();
+    void setVisibleOnInit();
 
-    public boolean isVisible();
+    boolean isVisible();
 
-    public void setVisible(boolean visible);
+    void setVisible(boolean visible);
 
-    public void setLocationRelativeTo(Component component);
+    void setLocationRelativeTo(Component component);
 }

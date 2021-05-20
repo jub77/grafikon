@@ -43,10 +43,10 @@ public class EditImagesDialog extends javax.swing.JDialog {
 	private static final Logger log = LoggerFactory.getLogger(EditImagesDialog.class);
     private static JFileChooser fileChooserInstance;
 
-    private TrainDiagram diagram;
+    private transient TrainDiagram diagram;
     private WrapperListModel<TimetableImage> listModel;
 
-    private synchronized static JFileChooser getFileChooser() {
+    private static synchronized JFileChooser getFileChooser() {
         if (fileChooserInstance == null) {
             fileChooserInstance = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "jpeg", "gif", "bmp", "png");
@@ -60,13 +60,13 @@ public class EditImagesDialog extends javax.swing.JDialog {
 
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == newButton) {
-                EditImagesDialog.this.newButtonActionPerformed(evt);
+                EditImagesDialog.this.newButtonActionPerformed();
             }
             else if (evt.getSource() == renameButton) {
-                EditImagesDialog.this.renameButtonActionPerformed(evt);
+                EditImagesDialog.this.renameButtonActionPerformed();
             }
             else if (evt.getSource() == deleteButton) {
-                EditImagesDialog.this.deleteButtonActionPerformed(evt);
+                EditImagesDialog.this.deleteButtonActionPerformed();
             }
         }
 
@@ -93,21 +93,19 @@ public class EditImagesDialog extends javax.swing.JDialog {
     }
 
     private void updateValues() {
-        listModel = new WrapperListModel<TimetableImage>();
+        listModel = new WrapperListModel<>();
         imagesList.setModel(listModel);
         if (this.diagram != null) {
             for (TimetableImage item : this.diagram.getImages()) {
-                listModel.addWrapper(new Wrapper<TimetableImage>(item));
+                listModel.addWrapper(new Wrapper<>(item));
             }
         }
     }
 
     private boolean checkExistence(String filename, TimetableImage ignore) {
         for (TimetableImage image : diagram.getImages()) {
-            if (image != ignore) {
-                if (image.getFilename().equals(filename)) {
-                    return true;
-                }
+            if (image != ignore && image.getFilename().equals(filename)) {
+                return true;
             }
         }
         return false;
@@ -115,7 +113,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        imagesList = new javax.swing.JList<Wrapper<TimetableImage>>();
+        imagesList = new javax.swing.JList<>();
         imagesList.setVisibleRowCount(12);
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         renameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
@@ -168,7 +166,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
         pack();
     }
 
-    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void newButtonActionPerformed() {
         // new image based on selected file ...
         JFileChooser chooser = getFileChooser();
 
@@ -197,7 +195,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
                 diagram.getImages().add(image);
-                listModel.addWrapper(new Wrapper<TimetableImage>(image));
+                listModel.addWrapper(new Wrapper<>(image));
             } catch (IOException e) {
                 log.warn("Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
@@ -208,7 +206,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
         }
     }
 
-    private void renameButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void renameButtonActionPerformed() {
         TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         // ask for a new name
         String newName = (String) JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),
@@ -230,7 +228,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
             diagram.getImages().add(newImage);
             // list model
             listModel.removeObject(selected);
-            Wrapper<TimetableImage> newWrapper = new Wrapper<TimetableImage>(newImage);
+            Wrapper<TimetableImage> newWrapper = new Wrapper<>(newImage);
             listModel.addWrapper(newWrapper);
             // set selected
             imagesList.setSelectedValue(newWrapper, true);
@@ -246,7 +244,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
         }
     }
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void deleteButtonActionPerformed() {
         TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         diagram.getImages().remove(selected);
         listModel.removeIndex(imagesList.getSelectedIndex());

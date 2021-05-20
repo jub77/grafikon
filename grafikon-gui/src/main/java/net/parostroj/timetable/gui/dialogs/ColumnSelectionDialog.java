@@ -29,8 +29,8 @@ public class ColumnSelectionDialog extends EditItemsDialog<String, TrainViewColu
 
     private static final long serialVersionUID = 1L;
 
-	private ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
-    private Supplier<Collection<? extends TrainTableColumn>> selected;
+	private final ElementSelectionCheckBoxPanel<TrainTableColumn> panel;
+    private transient Supplier<Collection<? extends TrainTableColumn>> selected;
 
     public ColumnSelectionDialog(Window owner, boolean modal) {
         super(owner, modal, false, true, true, false, false);

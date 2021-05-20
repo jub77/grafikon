@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.util.Arrays;
 
+import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JColorChooser;
@@ -42,16 +43,14 @@ public class TrainTypeDialog extends javax.swing.JDialog {
 
     private static final Wrapper<TrainTypeCategory> NONE_CATEGORY = Wrapper.getEmptyWrapper("-");
 
-    private final WrapperDelegate<LineType> lineTypeWrapperDelegate;
-
-    private TrainType trainType;
+    private transient TrainType trainType;
 
     public TrainTypeDialog(java.awt.Window parent, boolean modal) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initComponents();
         nameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
         cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
-        this.lineTypeWrapperDelegate = new LineTypeWrapperDelegate();
+        WrapperDelegate<LineType> lineTypeWrapperDelegate = new LineTypeWrapperDelegate();
         for (LineType type : LineType.values()) {
             lineTypeComboBox.addItem(Wrapper.getWrapper(type, lineTypeWrapperDelegate));
         }
@@ -72,7 +71,7 @@ public class TrainTypeDialog extends javax.swing.JDialog {
         abbrPm.init(LocalizedString.fromString(""));
         abbrTextField.setPresentationModel(abbrPm);
         brakeComboBox = new javax.swing.JComboBox<>();
-        editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        JButton editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         descTextField = new LocalizedStringField<>();
         LocalizedStringPM descPm = new LocalizedStringPM();
         descPm.init(LocalizedString.fromString(""));
@@ -91,28 +90,13 @@ public class TrainTypeDialog extends javax.swing.JDialog {
 
         brakeComboBox.setMaximumRowCount(2);
 
-        editColorButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editColorButtonActionPerformed(evt);
-            }
-        });
+        editColorButton.addActionListener(this::editColorButtonActionPerformed);
 
         nameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
-        nameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected());
-            }
-        });
+        nameTemplateCheckBox.addActionListener(evt -> nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected()));
 
         completeNameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
-        completeNameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected());
-            }
-        });
+        completeNameTemplateCheckBox.addActionListener(evt -> cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected()));
 
         jLabel1.setText(ResourceLoader.getString("edit.traintypes.abbr")); // NOI18N
 
@@ -322,8 +306,7 @@ public class TrainTypeDialog extends javax.swing.JDialog {
 
     private int convertDoubleValueToPercent(TrainType selected, String attribute) {
         Double ratio = selected.getAttributes().get(attribute, Double.class);
-        int percentage = ratio != null ? (int) (100 * ratio) : 100;
-        return percentage;
+        return ratio != null ? (int) (100 * ratio) : 100;
     }
 
     private void updateButtonActionPerformed() {
@@ -344,7 +327,7 @@ public class TrainTypeDialog extends javax.swing.JDialog {
             Color c = Conversions.convertTextToColor(colorLabel.getText());
             type.setColor(c);
             Wrapper<?> categoryWrapper = (Wrapper<?>) brakeComboBox.getSelectedItem();
-            type.setCategory(categoryWrapper != NONE_CATEGORY ? (TrainTypeCategory) categoryWrapper.getElement() : null);
+            type.setCategory(categoryWrapper != NONE_CATEGORY ? (TrainTypeCategory) Objects.requireNonNull(categoryWrapper).getElement() : null);
             if (nameTemplateCheckBox.isSelected()) {
                 try {
                     type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
@@ -376,7 +359,7 @@ public class TrainTypeDialog extends javax.swing.JDialog {
 
     private Integer extractLineType() {
         Wrapper<?> selectedType = (Wrapper<?>) lineTypeComboBox.getSelectedItem();
-        LineType type = (LineType) selectedType.getElement();
+        LineType type = (LineType) Objects.requireNonNull(selectedType).getElement();
         // solid is default value -> null
         return type == LineType.SOLID ? null : type.getValue();
     }
@@ -409,7 +392,6 @@ public class TrainTypeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox completeNameTemplateCheckBox;
     private javax.swing.JCheckBox platformNeededCheckBox;
     private LocalizedStringField<LocalizedStringPM> descTextField;
-    private javax.swing.JButton editColorButton;
     private javax.swing.JCheckBox nameTemplateCheckBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JCheckBox showWeightInfoCheckBox;

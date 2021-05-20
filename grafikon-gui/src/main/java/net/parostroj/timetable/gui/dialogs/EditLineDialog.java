@@ -10,9 +10,9 @@ import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.swing.GroupLayout;
+import java.util.Objects;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.beanfabrics.Path;
@@ -51,7 +51,7 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
         noneLineClass.setName(ResourceLoader.getString("line.class.none"));
     }
 
-    private Line line;
+    private transient Line line;
 
     /** Creates new form EditLineDialog */
     public EditLineDialog(java.awt.Frame parent, boolean modal) {
@@ -136,12 +136,12 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
             line.setLength(length);
         }
 
-        if (line.getTopSpeed() != speed) {
+        if (!Objects.equals(line.getTopSpeed(), speed)) {
             line.setTopSpeed(speed);
         }
 
         Boolean bool = line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class);
-        if ((bool == null && controlledCheckBox.isSelected()) || (bool != null && controlledCheckBox.isSelected() != bool.booleanValue()))
+        if ((bool == null && controlledCheckBox.isSelected()) || (bool != null && controlledCheckBox.isSelected() != bool))
             line.setAttribute(Line.ATTR_CONTROLLED, controlledCheckBox.isSelected());
 
         // set line class
@@ -155,7 +155,7 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
         javax.swing.JLabel lengthLabel = new javax.swing.JLabel();
         speedTextField = new javax.swing.JTextField();
         speedTextField.setColumns(30);
-        speedTextField.setHorizontalAlignment(JTextField.RIGHT);
+        speedTextField.setHorizontalAlignment(SwingConstants.RIGHT);
         controlledCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel speedLabel = new javax.swing.JLabel();
         BnButton okButton = new BnButton();
@@ -318,20 +318,16 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Object lc = lineClassComboBox.getSelectedItem();
             Object lcb = lineClassBackComboBox.getSelectedItem();
-            Object nlc = lc;
             Object nlcb = lcb;
 
             if (lc == noneLineClass) {
-                nlc = noneLineClass;
                 nlcb = noneLineClass;
-            } else if (lc != noneLineClass && lcb == noneLineClass) {
-                nlc = lc;
+            } else if (lcb == noneLineClass) {
                 nlcb = lc;
             }
-            if (lc != nlc)
-                lineClassComboBox.setSelectedItem(nlc);
-            if (lcb != nlcb)
+            if (lcb != nlcb) {
                 lineClassBackComboBox.setSelectedItem(nlcb);
+            }
         }
     }
 
@@ -341,5 +337,5 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
     private javax.swing.JComboBox<LineClass> lineClassBackComboBox;
     private javax.swing.JComboBox<LineClass> lineClassComboBox;
     private javax.swing.JTextField speedTextField;
-    private BnTable tracksTable = new BnTable();
+    private final BnTable tracksTable = new BnTable();
 }

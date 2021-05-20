@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Frame;
 
 import javax.swing.JList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
@@ -33,20 +31,16 @@ public class FloatingWindowsFactory {
 
     private static final Logger log = LoggerFactory.getLogger(FloatingWindowsFactory.class);
 
+    private FloatingWindowsFactory() {}
+
     private static FloatingWindow createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
-        panel.addTrainSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    JList<?> list = (JList<?>) e.getSource();
-                    Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
-                    if (wrapper != null) {
-                        if (wrapper.getElement() != model.getSelectedTrain()) {
-                            model.setSelectedTrain((Train) wrapper.getElement());
-                        }
-                    }
+        panel.addTrainSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                JList<?> list = (JList<?>) e.getSource();
+                Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
+                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
+                    model.setSelectedTrain((Train) wrapper.getElement());
                 }
             }
         });
@@ -114,18 +108,12 @@ public class FloatingWindowsFactory {
 
     private static FloatingWindow createTrainsWithZeroWeightsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithZeroWeightsPanel panel = new TrainsWithZeroWeightsPanel();
-        panel.addTrainSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    JList<?> list = (JList<?>) e.getSource();
-                    Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
-                    if (wrapper != null) {
-                        if (wrapper.getElement() != model.getSelectedTrain()) {
-                            model.setSelectedTrain((Train) wrapper.getElement());
-                        }
-                    }
+        panel.addTrainSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                JList<?> list = (JList<?>) e.getSource();
+                Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
+                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
+                    model.setSelectedTrain((Train) wrapper.getElement());
                 }
             }
         });
@@ -222,7 +210,7 @@ public class FloatingWindowsFactory {
         return dialog;
     }
 
-    private static FloatingWindow createEventsViewerDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingWindow createEventsViewerDialog(final Frame frame, final Mediator mediator) {
         final EventsViewerPanel panel = new EventsViewerPanel();
         panel.addConverter(new GTEventTypeConverter());
         panel.addConverter(new ApplicationEventTypeConverter());
@@ -266,16 +254,13 @@ public class FloatingWindowsFactory {
         return dialog;
     }
 
-    private static FloatingWindow createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createChangesTrackedDialog(Frame frame, ApplicationModel model) {
         final ChangesTrackerPanel panel = new ChangesTrackerPanel();
-        model.addListener(new ApplicationModelListener() {
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
-                    panel.setTrainDiagram(event.getModel().getDiagram());
-            }
+        model.addListener(event -> {
+            if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
+                panel.setTrainDiagram(event.getModel().getDiagram());
         });
-        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
+        return new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
             private static final long serialVersionUID = 1L;
 
@@ -297,17 +282,16 @@ public class FloatingWindowsFactory {
                 return section;
             }
         };
-        return dialog;
     }
 
-    private static FloatingWindow createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createGTViewDialog(Frame frame, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
         final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
         gtView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         gtView.setRegionSelector(hts, TimeInterval.class);
 
-        FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
+        return new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 
             private static final long serialVersionUID = 1L;
 
@@ -330,17 +314,15 @@ public class FloatingWindowsFactory {
                 return section;
             }
         };
-        return dialog;
     }
 
-    private static FloatingWindow createNetView(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createNetView(Frame frame, ApplicationModel model) {
         NetEditView netEditView = new NetEditView();
         netEditView.setModel(model);
-        FloatingFrame dialog = new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view");
-        return dialog;
+        return new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view");
     }
 
-    private static FloatingWindow createFreightDestinationView(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createFreightDestinationView(Frame frame, Mediator mediator) {
         final FreightPanel panel = new FreightPanel();
         FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.freightdestination.title", "freight.destination");
         mediator.addColleague(new ApplicationGTEventColleague() {
@@ -354,7 +336,7 @@ public class FloatingWindowsFactory {
         return dialog;
     }
 
-    private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator) {
         final CirculationViewPanel panel = new CirculationViewPanel();
         mediator.addColleague(new ApplicationGTEventColleague() {
             @Override
@@ -396,7 +378,7 @@ public class FloatingWindowsFactory {
                 panel.circulationUpdated((TrainsCycle) event.getSource());
             }
         });
-        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
+        return new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
             private static final long serialVersionUID = 1L;
 
 			@Override
@@ -417,23 +399,16 @@ public class FloatingWindowsFactory {
                 return section;
             }
         };
-        return dialog;
     }
 
     private static FloatingWindow createTimeIntervalsTrainsChanged(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final ChangedTrainsPanel panel = new ChangedTrainsPanel();
-        panel.addTrainSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    JList<?> list = (JList<?>) e.getSource();
-                    Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
-                    if (wrapper != null) {
-                        if (wrapper.getElement() != model.getSelectedTrain()) {
-                            model.setSelectedTrain((Train) wrapper.getElement());
-                        }
-                    }
+        panel.addTrainSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                JList<?> list = (JList<?>) e.getSource();
+                Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
+                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
+                    model.setSelectedTrain((Train) wrapper.getElement());
                 }
             }
         });
@@ -463,13 +438,13 @@ public class FloatingWindowsFactory {
         FloatingWindowsList list = new FloatingWindowsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
         list.add(createTrainsWithZeroWeightsDialog(frame, mediator, model));
-        list.add(createEventsViewerDialog(frame, mediator, model));
-        list.add(createChangesTrackedDialog(frame, mediator, model));
-        list.add(createGTViewDialog(frame, mediator, model));
-        list.add(createCirculationViewDialog(frame, mediator, model));
+        list.add(createEventsViewerDialog(frame, mediator));
+        list.add(createChangesTrackedDialog(frame, model));
+        list.add(createGTViewDialog(frame, model));
+        list.add(createCirculationViewDialog(frame, mediator));
         list.add(createTimeIntervalsTrainsChanged(frame, mediator, model));
-        list.add(createNetView(frame, mediator, model));
-        list.add(createFreightDestinationView(frame, mediator, model));
+        list.add(createNetView(frame, model));
+        list.add(createFreightDestinationView(frame, mediator));
         return list;
     }
 }

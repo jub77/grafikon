@@ -129,7 +129,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     private static final Logger log = LoggerFactory.getLogger(EngineClassesDialog.class);
 
-    private TrainDiagram diagram;
+    private transient TrainDiagram diagram;
     private WrapperListModel<EngineClass> listModel;
     private final WeightTableModel tableModel;
 
@@ -218,7 +218,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         copyButton.setEnabled(false);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
-        newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
+        javax.swing.JButton newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         newRowButton.setEnabled(false);
         deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         speedTextField = new javax.swing.JTextField();
@@ -413,7 +413,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton editButton;
-    private javax.swing.JButton newRowButton;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JTable weightTable;
 }

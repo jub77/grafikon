@@ -60,13 +60,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private static final String TO_STATION = "${stations.last}";
     private static final String STATION_X = "${stations.get(%d)}";
 
-    private Train train;
+    private transient Train train;
 
     /**
      * Creates new form EditTrainDialog.
      *
-     * @param parent
-     * @param modal
+     * @param parent parent window
+     * @param modal modal
      */
     public EditTrainDialog(java.awt.Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
@@ -133,7 +133,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             previousTrainModel.clear();
             previousTrainModel.addWrapper(Wrapper.getEmptyWrapper("-"));
 
-            diagram.getTrains().stream().forEach(t -> {
+            diagram.getTrains().forEach(t -> {
                 if (t != train) {
                     if (t.getFirstInterval().getOwner() == to) {
                         nextTrainModel.addWrapper(Wrapper.getWrapper(t));

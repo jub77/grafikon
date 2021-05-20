@@ -50,7 +50,7 @@ public class TrainTypesDialog extends EditItemsDialog<TrainType, TrainDiagram> {
 
     @Override
     protected boolean deleteAllowed(TrainType item) {
-        return !element.getTrains().stream().anyMatch(train -> train.getType() == item);
+        return element.getTrains().stream().noneMatch(train -> train.getType() == item);
     }
 
     @Override

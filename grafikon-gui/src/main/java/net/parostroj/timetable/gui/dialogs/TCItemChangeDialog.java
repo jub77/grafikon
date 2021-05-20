@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.List;
 
+import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -67,81 +68,81 @@ public class TCItemChangeDialog extends JDialog {
         JButton buttonCancel = new JButton(ResourceLoader.getString("button.cancel"));
         buttonCancel.addActionListener(e -> setVisible(false));
         buttonPanel.add(buttonCancel);
-        GridBagLayout gbl_panel = new GridBagLayout();
-        panel.setLayout(gbl_panel);
+        GridBagLayout gblPanel = new GridBagLayout();
+        panel.setLayout(gblPanel);
 
         JLabel fromLabel = new JLabel(ResourceLoader.getString("from.node"));
-        GridBagConstraints gbc_fromLabel = new GridBagConstraints();
-        gbc_fromLabel.gridx = 0;
-        gbc_fromLabel.gridy = 0;
-        gbc_fromLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_fromLabel.anchor = GridBagConstraints.WEST;
-        panel.add(fromLabel, gbc_fromLabel);
+        GridBagConstraints gbcFromLabel = new GridBagConstraints();
+        gbcFromLabel.gridx = 0;
+        gbcFromLabel.gridy = 0;
+        gbcFromLabel.insets = new Insets(0, 0, 5, 5);
+        gbcFromLabel.anchor = GridBagConstraints.WEST;
+        panel.add(fromLabel, gbcFromLabel);
 
         fromComboBox = new javax.swing.JComboBox<>();
         fromComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
 
-        GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
-        gbc_fromComboBox.gridx = 1;
-        gbc_fromComboBox.gridy = 0;
-        gbc_fromComboBox.anchor = GridBagConstraints.WEST;
-        gbc_fromComboBox.insets = new Insets(0, 0, 5, 5);
-        panel.add(fromComboBox, gbc_fromComboBox);
+        GridBagConstraints gbcFromComboBox = new GridBagConstraints();
+        gbcFromComboBox.gridx = 1;
+        gbcFromComboBox.gridy = 0;
+        gbcFromComboBox.anchor = GridBagConstraints.WEST;
+        gbcFromComboBox.insets = new Insets(0, 0, 5, 5);
+        panel.add(fromComboBox, gbcFromComboBox);
 
         JLabel toLabel = new JLabel(ResourceLoader.getString("to.node"));
-        GridBagConstraints gbc_toLabel = new GridBagConstraints();
-        gbc_toLabel.gridx = 2;
-        gbc_toLabel.gridy = 0;
-        gbc_toLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_toLabel.anchor = GridBagConstraints.WEST;
-        panel.add(toLabel, gbc_toLabel);
+        GridBagConstraints gbcToLabel = new GridBagConstraints();
+        gbcToLabel.gridx = 2;
+        gbcToLabel.gridy = 0;
+        gbcToLabel.insets = new Insets(0, 0, 5, 5);
+        gbcToLabel.anchor = GridBagConstraints.WEST;
+        panel.add(toLabel, gbcToLabel);
         toComboBox = new javax.swing.JComboBox<>();
         toComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
-        GridBagConstraints gbc_toComboBox = new GridBagConstraints();
-        gbc_toComboBox.gridx = 3;
-        gbc_toComboBox.gridy = 0;
-        gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
-        gbc_toComboBox.anchor = GridBagConstraints.WEST;
-        panel.add(toComboBox, gbc_toComboBox);
+        GridBagConstraints gbcToComboBox = new GridBagConstraints();
+        gbcToComboBox.gridx = 3;
+        gbcToComboBox.gridy = 0;
+        gbcToComboBox.insets = new Insets(0, 0, 5, 0);
+        gbcToComboBox.anchor = GridBagConstraints.WEST;
+        panel.add(toComboBox, gbcToComboBox);
 
         JLabel noteLabel = new JLabel(ResourceLoader.getString("ec.list.comment"));
-        GridBagConstraints gbc_noteLabel = new GridBagConstraints();
-        gbc_noteLabel.anchor = GridBagConstraints.WEST;
-        gbc_noteLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_noteLabel.gridx = 0;
-        gbc_noteLabel.gridy = 1;
-        panel.add(noteLabel, gbc_noteLabel);
+        GridBagConstraints gbcNoteLabel = new GridBagConstraints();
+        gbcNoteLabel.anchor = GridBagConstraints.WEST;
+        gbcNoteLabel.insets = new Insets(0, 0, 5, 5);
+        gbcNoteLabel.gridx = 0;
+        gbcNoteLabel.gridy = 1;
+        panel.add(noteLabel, gbcNoteLabel);
 
         commentTextField = new LocalizedStringField<>();
         commentTextField.setPresentationModel(new LocalizedStringPM());
-        GridBagConstraints gbc_noteTextField = new GridBagConstraints();
-        gbc_noteTextField.insets = new Insets(0, 0, 5, 0);
-        gbc_noteTextField.weightx = 1.0;
-        gbc_noteTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_noteTextField.gridwidth = 3;
-        gbc_noteTextField.gridx = 1;
-        gbc_noteTextField.gridy = 1;
-        panel.add(commentTextField, gbc_noteTextField);
+        GridBagConstraints gbcNoteTextField = new GridBagConstraints();
+        gbcNoteTextField.insets = new Insets(0, 0, 5, 0);
+        gbcNoteTextField.weightx = 1.0;
+        gbcNoteTextField.fill = GridBagConstraints.HORIZONTAL;
+        gbcNoteTextField.gridwidth = 3;
+        gbcNoteTextField.gridx = 1;
+        gbcNoteTextField.gridy = 1;
+        panel.add(commentTextField, gbcNoteTextField);
         commentTextField.setColumns(50);
 
         if (setupTime) {
             JLabel setupTimeLabel = new JLabel(ResourceLoader.getString("ec.list.setup.time"));
-            GridBagConstraints gbc_setupTimeLabel = new GridBagConstraints();
-            gbc_setupTimeLabel.anchor = GridBagConstraints.WEST;
-            gbc_setupTimeLabel.insets = new Insets(0, 0, 5, 5);
-            gbc_setupTimeLabel.gridx = 0;
-            gbc_setupTimeLabel.gridy = 2;
-            panel.add(setupTimeLabel, gbc_setupTimeLabel);
+            GridBagConstraints gbcSetupTimeLabel = new GridBagConstraints();
+            gbcSetupTimeLabel.anchor = GridBagConstraints.WEST;
+            gbcSetupTimeLabel.insets = new Insets(0, 0, 5, 5);
+            gbcSetupTimeLabel.gridx = 0;
+            gbcSetupTimeLabel.gridy = 2;
+            panel.add(setupTimeLabel, gbcSetupTimeLabel);
 
             setupTimeTextField = new JTextField();
-            GridBagConstraints gbc_setupTimeTextField = new GridBagConstraints();
-            gbc_setupTimeTextField.weightx = 1.0;
-            gbc_setupTimeTextField.gridwidth = 3;
-            gbc_setupTimeTextField.insets = new Insets(0, 0, 5, 0);
-            gbc_setupTimeTextField.fill = GridBagConstraints.HORIZONTAL;
-            gbc_setupTimeTextField.gridx = 1;
-            gbc_setupTimeTextField.gridy = 2;
-            panel.add(setupTimeTextField, gbc_setupTimeTextField);
+            GridBagConstraints gbcSetupTimeTextField = new GridBagConstraints();
+            gbcSetupTimeTextField.weightx = 1.0;
+            gbcSetupTimeTextField.gridwidth = 3;
+            gbcSetupTimeTextField.insets = new Insets(0, 0, 5, 0);
+            gbcSetupTimeTextField.fill = GridBagConstraints.HORIZONTAL;
+            gbcSetupTimeTextField.gridx = 1;
+            gbcSetupTimeTextField.gridy = 2;
+            panel.add(setupTimeTextField, gbcSetupTimeTextField);
             setupTimeTextField.setColumns(10);
         }
     }
@@ -182,11 +183,11 @@ public class TCItemChangeDialog extends JDialog {
     }
 
     public TimeInterval getFrom() {
-        return (TimeInterval) ((Wrapper<?>)fromComboBox.getSelectedItem()).getElement();
+        return (TimeInterval) ((Wrapper<?>) Objects.requireNonNull(fromComboBox.getSelectedItem())).getElement();
     }
 
     public TimeInterval getTo() {
-        return (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
+        return (TimeInterval) ((Wrapper<?>) Objects.requireNonNull(toComboBox.getSelectedItem())).getElement();
     }
 
     public LocalizedString getComment() {

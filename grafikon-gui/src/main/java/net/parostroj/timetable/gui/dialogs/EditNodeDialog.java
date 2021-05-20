@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
@@ -52,9 +51,9 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
 
-    private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
+    private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.getEmptyWrapper("-");
 
-    private Node node;
+    private transient Node node;
     private Set<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
@@ -76,11 +75,11 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
         lengthCheckBox = new javax.swing.JCheckBox();
         lengthPanel.add(lengthCheckBox, BorderLayout.EAST);
-        lengthCheckBox.addItemListener(evt -> lengthCheckBoxItemStateChanged(evt));
+        lengthCheckBox.addItemListener(this::lengthCheckBoxItemStateChanged);
         nsSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
-        nsSpeedCheckBox.addItemListener(evt -> nsSpeedCheckBoxItemStateChanged(evt));
+        nsSpeedCheckBox.addItemListener(this::nsSpeedCheckBoxItemStateChanged);
         sSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
-        sSpeedCheckBox.addItemListener(evt -> sSpeedCheckBoxItemStateChanged(evt));
+        sSpeedCheckBox.addItemListener(this::sSpeedCheckBoxItemStateChanged);
     }
 
     public void showDialog(Node node, LengthUnit unit, SpeedUnit speedUnit) {
@@ -220,20 +219,20 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
     private void initComponents() {
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
-        nameTextField = new BnTextField();
+        BnTextField nameTextField = new BnTextField();
         nameTextField.setColumns(40);
         nameTextField.setModelProvider(localProvider);
         nameTextField.setPath(new Path("name"));
         javax.swing.JLabel abbrLabel = new javax.swing.JLabel();
-        abbrTextField = new BnTextField();
+        BnTextField abbrTextField = new BnTextField();
         abbrTextField.setModelProvider(localProvider);
         abbrTextField.setPath(new Path("abbr"));
         javax.swing.JLabel telephoneLabel = new javax.swing.JLabel();
-        telephoneTextField = new BnTextField();
+        BnTextField telephoneTextField = new BnTextField();
         telephoneTextField.setModelProvider(localProvider);
         telephoneTextField.setPath(new Path("telephone"));
         javax.swing.JLabel freightCapacityLabel = new javax.swing.JLabel();
-        freightCapacityPanel = new ValueWithUnitEditPanel<>(5);
+        ValueWithUnitEditPanel<LengthUnit> freightCapacityPanel = new ValueWithUnitEditPanel<>(5);
         freightCapacityPanel.setModelProvider(localProvider);
         freightCapacityPanel.setPath(new Path("freightCapacity"));
 
@@ -251,7 +250,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         javax.swing.JLabel centerRegionsLabel = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
-        tracksAndConnectorsPanel = new EditNodeTracksAndConnectorsPanel();
+        EditNodeTracksAndConnectorsPanel tracksAndConnectorsPanel = new EditNodeTracksAndConnectorsPanel();
         tracksAndConnectorsPanel.setModelProvider(localProvider);
         tracksAndConnectorsPanel.setPath(new Path("this"));
 
@@ -284,7 +283,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
         lengthLabel.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
-        typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
+        typeComboBox.addItemListener(this::typeComboBoxItemStateChanged);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(evt -> {
@@ -299,7 +298,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
 
         javax.swing.JPanel panel = new javax.swing.JPanel();
 
-        colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors"));
+        javax.swing.JButton colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors"));
         colorsButton.addActionListener(e -> {
             FreightColorsDialog dialog = new FreightColorsDialog(EditNodeDialog.this);
             dialog.setLocationRelativeTo(EditNodeDialog.this);
@@ -469,7 +468,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
                         .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel});
+        layout.linkSize(SwingConstants.HORIZONTAL, nameLabel, abbrLabel, typeLabel, lengthLabel, regionsLabel, centerRegionsLabel, companyLabel, nsSpeedLabel, sSpeedLabel);
 
         sSpeedEditBox = new ValueWithUnitEditBox();
         sSpeedPanel.add(sSpeedEditBox, BorderLayout.CENTER);
@@ -533,9 +532,6 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
         sSpeedEditBox.setValueInUnit(selected ? DEFAULT_STRAIGHT_SPEED : BigDecimal.ZERO, SpeedUnit.KMPH);
     }
 
-    private BnTextField nameTextField;
-    private BnTextField abbrTextField;
-    private BnTextField telephoneTextField;
     private javax.swing.JCheckBox controlCheckBox;
     private final javax.swing.JCheckBox lengthCheckBox;
     private ValueWithUnitEditBox lengthEditBox;
@@ -545,16 +541,13 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
     private javax.swing.JTextField regionsTextField;
     private javax.swing.JTextField centerRegionsTextField;
     private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
-    private javax.swing.JButton colorsButton;
     private javax.swing.JPanel lengthPanel;
     private ValueWithUnitEditBox nsSpeedEditBox;
     private javax.swing.JCheckBox nsSpeedCheckBox;
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
-    private EditNodeTracksAndConnectorsPanel tracksAndConnectorsPanel;
-    private ValueWithUnitEditPanel<LengthUnit> freightCapacityPanel;
 
     private WrapperListModel<Company> companies;
-    private Set<Region> regions;
-    private Set<Region> centerRegions;
+    private transient Set<Region> regions;
+    private transient Set<Region> centerRegions;
 }

@@ -27,8 +27,8 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
 
 	private static final int COLUMNS = 3;
 
-    private List<Pair<TrainType,JCheckBox>> typesList;
-    private Set<TrainType> selectedTypes;
+    private transient List<Pair<TrainType,JCheckBox>> typesList;
+    private transient Set<TrainType> selectedTypes;
 
     /** Creates new form TrainsFilterDialog */
     public TrainsFilterDialog(java.awt.Frame parent, boolean modal) {
@@ -41,10 +41,10 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
             return;
         typesPanel.removeAll();
         typesPanel.setLayout(new GridLayout((diagram.getTrainTypes().size() - 1) / COLUMNS + 1, COLUMNS));
-        typesList = new LinkedList<Pair<TrainType, JCheckBox>>();
+        typesList = new LinkedList<>();
         for (TrainType type : diagram.getTrainTypes()) {
             JCheckBox checkBox = new JCheckBox(type.getDefaultAbbr() + " (" + type.getDesc() + ")");
-            typesList.add(new Pair<TrainType, JCheckBox>(type, checkBox));
+            typesList.add(new Pair<>(type, checkBox));
             checkBox.setSelected(types.contains(type));
             typesPanel.add(checkBox);
         }
@@ -57,8 +57,8 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         typesPanel = new javax.swing.JPanel();
-        okPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
+        javax.swing.JPanel okPanel = new javax.swing.JPanel();
+        javax.swing.JButton okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -68,11 +68,7 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
         okPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(this::okButtonActionPerformed);
         okPanel.add(okButton);
 
         getContentPane().add(okPanel, java.awt.BorderLayout.SOUTH);
@@ -81,7 +77,7 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        selectedTypes = new HashSet<TrainType>();
+        selectedTypes = new HashSet<>();
         for (Pair<TrainType, JCheckBox> pair : typesList) {
             if (pair.second.isSelected())
                 selectedTypes.add(pair.first);
@@ -89,7 +85,5 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }
 
-    private javax.swing.JButton okButton;
-    private javax.swing.JPanel okPanel;
     private javax.swing.JPanel typesPanel;
 }

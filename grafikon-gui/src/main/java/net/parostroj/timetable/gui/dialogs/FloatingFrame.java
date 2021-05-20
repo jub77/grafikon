@@ -4,8 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
@@ -34,7 +33,7 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
 
         this.storageKeyPrefix = storageKeyPrefix;
 
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         setSize(SIZE); // initial size
         setIconImages(parent.getIconImages());
@@ -45,7 +44,7 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         prefs.removeSection(storageKeyPrefix);
         IniConfigSection section = prefs.getSection(storageKeyPrefix);
-        boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
+        boolean maximized = (this.getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
         section.put("maximized", maximized);
         section.put("position", GuiUtils.getPositionFrame(this, maximized));
         section.put("visible", this.isVisible());
@@ -60,12 +59,12 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
             // set position
             GuiUtils.setPosition(positionStr, this);
         }
-        if (section.get("maximized", Boolean.class, false)) {
+        if (section.get("maximized", Boolean.class, false) == Boolean.TRUE) {
             // setting maximized state
-            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            this.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
         // set visibility
-        if (section.get("visible", Boolean.class, false)) {
+        if (section.get("visible", Boolean.class, false) == Boolean.TRUE) {
             this.visibleOnInit = true;
         }
         return section;

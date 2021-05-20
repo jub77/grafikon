@@ -29,19 +29,15 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 	private static final int NAME_COLUMNS = 25;
     private static final Logger log = LoggerFactory.getLogger(TCDetailsViewDialog.class);
 
-    private TCDelegate delegate;
+    private transient TCDelegate delegate;
     private static final Wrapper<EngineClass> NO_ENGINE = Wrapper.getEmptyWrapper("-");
-    private static final String noLevel = "-";
-
-    public TCDetailsViewDialog() {
-        this(null, true);
-    }
+    private static final String NO_LEVEL = "-";
 
     public TCDetailsViewDialog(Window window, boolean modal) {
         super(window, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         attributesPanel.setCategory(TrainsCycle.CATEGORY_USER);
-        levelComboBox.addItem(noLevel);
+        levelComboBox.addItem(NO_LEVEL);
         for (int i = 1; i <= 10; i++) {
             levelComboBox.addItem(i);
         }
@@ -70,7 +66,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         if (isDriverCycle) {
             Integer level = cycle.getAttribute(TrainsCycle.ATTR_LEVEL, Integer.class);
             if (level == null) {
-                levelComboBox.setSelectedItem(noLevel);
+                levelComboBox.setSelectedItem(NO_LEVEL);
             } else {
                 levelComboBox.setSelectedItem(level);
             }
@@ -86,7 +82,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         this.freightCheckBox.setVisible(isTrainUnitCycle);
         this.freightLabel.setVisible(isTrainUnitCycle);
         this.companies = new WrapperListModel<>(true);
-        Wrapper<Company> emptyCompany = Wrapper.<Company>getEmptyWrapper("-");
+        Wrapper<Company> emptyCompany = Wrapper.getEmptyWrapper("-");
         this.companies.addWrapper(emptyCompany);
         for (Company company : diagram.getCompanies()) {
             this.companies.addWrapper(Wrapper.getWrapper(company));
@@ -222,7 +218,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
             Integer level = null;
             if (objectLevel instanceof Integer) {
                 level = (Integer) objectLevel;
-            } else if (objectLevel instanceof String && !objectLevel.equals(noLevel)) {
+            } else if (objectLevel instanceof String && !objectLevel.equals(NO_LEVEL)) {
                 try {
                     level = Integer.parseInt((String) objectLevel);
                 } catch (NumberFormatException e) {

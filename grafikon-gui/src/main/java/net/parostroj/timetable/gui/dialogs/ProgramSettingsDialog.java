@@ -60,9 +60,9 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         setTitle(ResourceLoader.getString("program.settings.title")); // NOI18N
         setResizable(false);
 
-        GridBagLayout gbl_dataPanel = new GridBagLayout();
-        gbl_dataPanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0 };
-        dataPanel.setLayout(gbl_dataPanel);
+        GridBagLayout gblDataPanel = new GridBagLayout();
+        gblDataPanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0 };
+        dataPanel.setLayout(gblDataPanel);
 
         nameLabel.setText(ResourceLoader.getString("program.settings.username")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -72,17 +72,17 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         dataPanel.add(nameLabel, gridBagConstraints);
 
         nameTextField.setColumns(25);
-        GridBagConstraints gridBagConstraints_1 = new java.awt.GridBagConstraints();
-        gridBagConstraints_1.gridwidth = 4;
-        gridBagConstraints_1.gridx = 1;
-        gridBagConstraints_1.gridy = 0;
-        gridBagConstraints_1.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints_1.weightx = 1.0;
-        gridBagConstraints_1.insets = new Insets(5, 0, 5, 5);
-        dataPanel.add(nameTextField, gridBagConstraints_1);
+        GridBagConstraints gridBagConstraints1 = new java.awt.GridBagConstraints();
+        gridBagConstraints1.gridwidth = 4;
+        gridBagConstraints1.gridx = 1;
+        gridBagConstraints1.gridy = 0;
+        gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints1.weightx = 1.0;
+        gridBagConstraints1.insets = new Insets(5, 0, 5, 5);
+        dataPanel.add(nameTextField, gridBagConstraints1);
 
-        FlowLayout fl_unitsPanel = new FlowLayout(FlowLayout.LEFT);
-        javax.swing.JPanel unitsPanel = new javax.swing.JPanel(fl_unitsPanel);
+        FlowLayout flUnitsPanel = new FlowLayout(FlowLayout.LEFT);
+        javax.swing.JPanel unitsPanel = new javax.swing.JPanel(flUnitsPanel);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -101,14 +101,14 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         unitsPanel.add(speedUnitComboBox);
 
         debugLoggingCheckBox.setText(ResourceLoader.getString("program.settings.debug.logging")); // NOI18N
-        GridBagConstraints gridBagConstraints_log = new java.awt.GridBagConstraints();
-        gridBagConstraints_log.gridwidth = 4;
-        gridBagConstraints_log.gridx = 0;
-        gridBagConstraints_log.gridy = 2;
-        gridBagConstraints_log.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints_log.weightx = 1.0;
-        gridBagConstraints_log.insets = new Insets(0, 5, 0, 5);
-        dataPanel.add(debugLoggingCheckBox, gridBagConstraints_log);
+        GridBagConstraints gridBagConstraintsLog = new java.awt.GridBagConstraints();
+        gridBagConstraintsLog.gridwidth = 4;
+        gridBagConstraintsLog.gridx = 0;
+        gridBagConstraintsLog.gridy = 2;
+        gridBagConstraintsLog.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraintsLog.weightx = 1.0;
+        gridBagConstraintsLog.insets = new Insets(0, 5, 0, 5);
+        dataPanel.add(debugLoggingCheckBox, gridBagConstraintsLog);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
