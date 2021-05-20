@@ -80,10 +80,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private Map<File, JMenuItem> lastOpened;
     private final List<Component> enabledComponents = new ArrayList<>();
 
-    public MainFrame(SplashScreenInfo info, Image iconImage) {
-        this.setIconImage(iconImage);
-        ActionHandler.getInstance().setWaitIconImage(iconImage);
-        RsActionHandler.getInstance().setWaitIconImage(iconImage);
+    public MainFrame(SplashScreenInfo info, List<? extends Image> iconImages) {
+        this.setIconImages(iconImages);
+        ActionHandler.getInstance().setWaitIconImages(iconImages);
+        RsActionHandler.getInstance().setWaitIconImages(iconImages);
         model = new ApplicationModel();
         frameTitle = new FrameTitle(model);
         log.info("Version: {}", model.getVersionInfo().getVersion());

@@ -1,12 +1,9 @@
 package net.parostroj.timetable.gui;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import java.net.URL;
-import javax.imageio.ImageIO;
+import java.util.Arrays;
 import javax.swing.*;
 
 import org.apache.logging.log4j.Level;
@@ -50,7 +47,9 @@ public class Main {
         setLookAndFeel();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<>(
                 MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"),
-                Main.class.getResource("/images/grafikon.png"),
+                Arrays.asList(
+                        Main.class.getResource("/images/grafikon16.png"),
+                        Main.class.getResource("/images/grafikon32.png")),
                 frame -> {
                     if (args.length > 0) {
                         // trying to load file
@@ -92,11 +91,5 @@ public class Main {
         } catch (Exception e) {
             log.warn("Error setting up look and feel.", e);
         }
-    }
-
-    private static void addIcon(JFrame frame) {
-        URL url = Main.class.getResource("/images/grafikon.png");
-        Image image = Toolkit.getDefaultToolkit().getImage(url);
-        frame.setIconImage(image);
     }
 }

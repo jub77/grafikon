@@ -5,7 +5,9 @@ import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.net.URL;
 
-import java.util.function.Consumer;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JFrame;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -31,19 +33,23 @@ public class ApplicationStarter<T extends JFrame> {
 
     private final Class<T> applicationClass;
     private final Image image;
-    private final Image iconImage;
+    private final List<Image> iconImages;
     private final int x;
     private final int y;
     private final StartAction<T> afterAction;
 
-    public ApplicationStarter(Class<T> applicationClass, int x, int y, URL url, URL iconUrl,
+    public ApplicationStarter(Class<T> applicationClass, int x, int y, URL url, Collection<? extends URL> iconUrls,
             StartAction<T> afterAction) {
         this.x = x;
         this.y =y;
         this.applicationClass = applicationClass;
         this.afterAction = afterAction;
         this.image = this.loadImage(url);
-        this.iconImage = this.loadImage(iconUrl);
+        this.iconImages = this.loadImages(iconUrls);
+    }
+
+    private List<Image> loadImages(Collection<? extends URL> iconUrls) {
+        return iconUrls.stream().map(this::loadImage).collect(Collectors.toList());
     }
 
     private Image loadImage(URL url) {
@@ -62,7 +68,7 @@ public class ApplicationStarter<T extends JFrame> {
 
     private T getApplicationInstance(SplashScreenInfo splash) throws ApplicationStarterException {
         try {
-            return applicationClass.getConstructor(SplashScreenInfo.class, Image.class).newInstance(splash, iconImage);
+            return applicationClass.getConstructor(SplashScreenInfo.class, List.class).newInstance(splash, iconImages);
         } catch (NoSuchMethodException e) {
             try {
                 return applicationClass.getDeclaredConstructor().newInstance();
@@ -92,7 +98,7 @@ public class ApplicationStarter<T extends JFrame> {
     private void startFrame() throws ApplicationStarterException {
         log.info("Showing JFrame splash screen.");
         final SplashScreenFrame spl = new SplashScreenFrame(x, y, image);
-        spl.setIconImage(iconImage);
+        spl.setIconImages(iconImages);
         spl.setVisible(true);
         log.trace("Splash initialized.");
         final T frm = this.getApplicationInstance(spl);

@@ -71,8 +71,8 @@ public class RsActionHandler {
         });
     }
 
-    public void setWaitIconImage(Image waitIconImage) {
-        this.waitDialog.setIconImage(waitIconImage);
+    public void setWaitIconImages(List<? extends Image> waitIconImages) {
+        this.waitDialog.setIconImages(waitIconImages);
     }
 
     private class BuilderImpl<T> implements ExecutionBuilder<T> {

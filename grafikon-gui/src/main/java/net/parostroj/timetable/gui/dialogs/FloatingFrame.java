@@ -37,7 +37,7 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         setSize(SIZE); // initial size
-        setIconImage(parent.getIconImage());
+        setIconImages(parent.getIconImages());
     }
 
 
