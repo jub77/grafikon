@@ -1,8 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.util.*;
-
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 public class GTStorage {
 

@@ -5,11 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.*;
 
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TimeIntervalResult.Status;
 import net.parostroj.timetable.model.events.*;
-
-import com.google.common.base.Predicate;
 
 /**
  * Modified classic look with trains in stations.

@@ -4,8 +4,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.LineMetrics;
 import java.util.Arrays;
-
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 /**
  * @author jub

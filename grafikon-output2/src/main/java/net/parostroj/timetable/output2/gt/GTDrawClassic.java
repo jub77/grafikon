@@ -3,8 +3,7 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.*;
 import java.util.*;
 
-import com.google.common.base.Predicate;
-
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.*;
 
 /**

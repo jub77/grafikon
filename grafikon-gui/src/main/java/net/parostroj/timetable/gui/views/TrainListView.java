@@ -11,6 +11,7 @@ import java.awt.Frame;
 import java.awt.event.*;
 import java.util.*;
 
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
@@ -35,9 +36,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * View with list of trains.
@@ -421,7 +419,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private Predicate<Train> createFilter() {
         if (groupSelect.getType() == Type.ALL) {
-            return Predicates.alwaysTrue();
+            return value -> true;
         } else {
             return ModelPredicates.inGroup(groupSelect.getGroup());
         }

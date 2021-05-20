@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import java.util.function.Predicate;
 
 /**
  * Utility methods for collections.
@@ -21,7 +21,7 @@ public final class CollectionUtils {
 
     public static <T> boolean advanceTo(PeekingIterator<T> iterator, Predicate<T> predicate) {
         boolean found = false;
-        while (iterator.hasNext() && !(found = predicate.apply(iterator.peek()))) {
+        while (iterator.hasNext() && !(found = predicate.test(iterator.peek()))) {
             iterator.next();
         }
         return found;
@@ -122,7 +122,7 @@ public final class CollectionUtils {
     public static <T> Iterator<List<T>> slidingWindow(final Iterator<T> iterator, final int count) {
         return new AbstractIterator<List<T>>() {
 
-            private LinkedList<T> window = new LinkedList<>();
+            private final LinkedList<T> window = new LinkedList<>();
             private int cnt = 0;
 
             @Override

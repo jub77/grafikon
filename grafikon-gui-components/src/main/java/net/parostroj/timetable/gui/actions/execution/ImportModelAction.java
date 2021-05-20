@@ -46,9 +46,9 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
     private static final Logger log = LoggerFactory.getLogger(ImportModelAction.class);
 
     public static class TrainImportConfig {
-        private boolean removeExisting;
-        private Group fromGroup;
-        private Group toGroup;
+        private final boolean removeExisting;
+        private final Group fromGroup;
+        private final Group toGroup;
 
         public TrainImportConfig(boolean removeExisting, Group fromGroup, Group toGroup) {
             this.removeExisting = removeExisting;
@@ -95,7 +95,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             if (trainImportConfig != null && trainImportConfig.isRemoveExisting()) {
                 // remove existing trains in group
                 Consumer<ObjectWithId> deleteProcess = item -> diagram.getTrains().remove(item);
-                Iterable<Train> filteredTrains = Iterables.filter(diagram.getTrains(), ModelPredicates.inGroup(trainImportConfig.getToGroup()));
+                Iterable<Train> filteredTrains = Iterables.filter(diagram.getTrains(), ModelPredicates.inGroup(trainImportConfig.getToGroup())::test);
                 processItems(filteredTrains, deleteProcess);
             }
             // import new objects
@@ -185,7 +185,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     private String getText(ImportError error) {
         Object oid = error.getObject();
-        String oidStr = null;
+        String oidStr;
         if (oid instanceof Train) {
             oidStr = ((Train) oid).getDefaultName();
         } else if (oid instanceof Node) {

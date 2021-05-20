@@ -2,9 +2,8 @@ package net.parostroj.timetable.gui.views.tree2;
 
 import java.util.*;
 
+import java.util.function.Predicate;
 import javax.swing.tree.DefaultTreeModel;
-
-import com.google.common.base.Predicate;
 
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.Pair;
@@ -33,7 +32,7 @@ public class TrainTreeHandler {
     }
 
     public TrainTreeNode addTrain(Train train) {
-        if (filter != null && !filter.apply(train))
+        if (filter != null && !filter.test(train))
             return null;
         TrainTreeNode node = (TrainTreeNode) treeModel.getRoot();
         Iterator<Pair<NodeDelegate, ChildrenDelegate>> i = structure.iterator();

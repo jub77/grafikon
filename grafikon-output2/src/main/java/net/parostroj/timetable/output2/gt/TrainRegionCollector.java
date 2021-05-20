@@ -95,8 +95,8 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
     @Override
     public Rectangle getRectangleForItems(List<TimeInterval> items) {
-        Iterable<Train> trains = Iterables.transform(items, SelectorUtils.createToTrainFunction());
-        Iterable<Train> uniqueTrains = Iterables.filter(trains, SelectorUtils.createUniqueTrainFilter());
+        Iterable<Train> trains = Iterables.transform(items, SelectorUtils.createToTrainFunction()::apply);
+        Iterable<Train> uniqueTrains = Iterables.filter(trains, SelectorUtils.createUniqueTrainFilter()::test);
 
         Rectangle result = null;
         for (Train train : uniqueTrains) {

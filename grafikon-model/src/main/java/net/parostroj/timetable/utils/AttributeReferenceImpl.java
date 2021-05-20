@@ -1,7 +1,6 @@
 package net.parostroj.timetable.utils;
 
-import com.google.common.base.Objects;
-
+import java.util.Objects;
 import net.parostroj.timetable.model.AttributesHolder;
 
 /**
@@ -64,13 +63,13 @@ class AttributeReferenceImpl<T> implements AttributeReference<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(holder, category, name);
+        return Objects.hash(holder, category, name);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof AttributeReferenceImpl)) return false;
         AttributeReferenceImpl<?> ref = (AttributeReferenceImpl<?>) obj;
-        return Objects.equal(category, ref.category) && Objects.equal(name, ref.name) && holder.equals(ref.holder);
+        return Objects.equals(category, ref.category) && Objects.equals(name, ref.name) && holder.equals(ref.holder);
     }
 }

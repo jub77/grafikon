@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public final class SelectorUtils {
@@ -16,7 +16,7 @@ public final class SelectorUtils {
     private SelectorUtils() {}
 
     public static <T> T select(Iterable<? extends T> list, T old, Predicate<? super T> filter) {
-        Iterable<? extends T> filteredList = Iterables.filter(list, filter);
+        Iterable<? extends T> filteredList = Iterables.filter(list, filter::test);
         return select(filteredList, old);
     }
 

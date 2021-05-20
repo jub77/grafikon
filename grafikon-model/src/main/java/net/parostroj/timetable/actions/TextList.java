@@ -1,7 +1,7 @@
 package net.parostroj.timetable.actions;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import java.util.function.Function;
 
 public class TextList {
 
@@ -48,7 +48,7 @@ public class TextList {
     }
 
     public <T> TextList addItems(Iterable<T> iterable, Function<T, String> f) {
-        return this.addItems(Iterables.transform(iterable, f));
+        return this.addItems(Iterables.transform(iterable, f::apply));
     }
 
     public void finish() {

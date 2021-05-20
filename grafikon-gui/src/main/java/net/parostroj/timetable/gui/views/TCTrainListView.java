@@ -13,14 +13,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.filters.ModelPredicates.PredefinedTrainTypes;
@@ -100,9 +99,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         switch (action) {
             case REFRESH:
-                this.updateListAllTrains();
-                break;
             case NEW_TRAIN:
+            case DELETED_CYCLE:
+            case NEW_CYCLE:
                 this.updateListAllTrains();
                 break;
             case DELETED_TRAIN:
@@ -114,14 +113,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 this.updateListCycle();
                 this.updateErrors();
                 break;
-            case DELETED_CYCLE:
-                this.updateListAllTrains();
-                break;
             case REFRESH_TRAIN_NAME:
                 this.updateTrainName(train);
-                break;
-            case NEW_CYCLE:
-                this.updateListAllTrains();
                 break;
             default:
                 // nothing
@@ -135,7 +128,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // get all trains (sort)
             List<Train> trainsList = new ArrayList<>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
-                if ((overlappingEnabled || !train.isCovered(delegate.getType())) && (filter == null || filter.apply(train)))
+                if ((overlappingEnabled || !train.isCovered(delegate.getType())) && (filter == null || filter.test(train)))
                     trainsList.add(train);
             }
             for (Train train : trainsList) {

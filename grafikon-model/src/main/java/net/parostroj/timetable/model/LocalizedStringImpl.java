@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import java.util.Objects;
 
 /**
  * Localized string implementation.
@@ -53,7 +53,7 @@ class LocalizedStringImpl implements LocalizedString {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(defaultString, localizedStrings);
+        return Objects.hash(defaultString, localizedStrings);
     }
 
     @Override
@@ -91,7 +91,7 @@ class LocalizedStringImpl implements LocalizedString {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(string, locale);
+            return Objects.hash(string, locale);
         }
 
         @Override

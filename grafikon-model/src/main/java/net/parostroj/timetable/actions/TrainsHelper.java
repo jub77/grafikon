@@ -14,7 +14,6 @@ import net.parostroj.timetable.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
 /**
@@ -29,7 +28,7 @@ public final class TrainsHelper {
     private static final Logger log = LoggerFactory.getLogger(TrainsHelper.class);
 
     public enum NextType {
-        LAST_STATION, FIRST_STATION, BRANCH_STATION;
+        LAST_STATION, FIRST_STATION, BRANCH_STATION
     }
 
     public static Integer getLength(TimeInterval interval) {
@@ -140,7 +139,7 @@ public final class TrainsHelper {
                     }
                 }
                 return w;
-            }, (x, y) -> x + y);
+            }, Integer::sum);
 
             if (weight != null) {
                 retValue = new Pair<>(weight, items);
@@ -194,7 +193,7 @@ public final class TrainsHelper {
         LengthUnit lu = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
         // length in mm
         double axles = (double) (weight * 1000) / wpa;
-        Integer result = null;
+        Integer result;
         if (lu == LengthUnit.AXLE) {
             // number of axles should be an even number
             result = (int) axles;
@@ -291,7 +290,7 @@ public final class TrainsHelper {
                     .reduce(0, (w, rfs) -> {
                         Integer ew = rfs != null ? rfs.getWeight(lineClass) : null;
                         return ew == null ? w : w + ew;
-                    }, (w1, w2) -> w1 + w2);
+                    }, Integer::sum);
 
             if (totalWeight >= weight) {
                 break;
@@ -475,9 +474,9 @@ public final class TrainsHelper {
      * @return iterable with trains
      */
     public static Iterable<Train> filterAndSortByNode(Iterable<Train> trains, final NetSegment<?> segment) {
-        Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.<TimeInterval>find(train.getTimeIntervalList(),
-                interval -> segment.equals(interval.getOwner()), null)), Predicates.notNull());
-        Ordering<TimeInterval> sort = Ordering.from((TimeInterval i1, TimeInterval i2) -> i1.getStart() - i2.getStart());
+        Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.find(train.getTimeIntervalList(),
+                interval -> segment.equals(interval.getOwner()), null)), Objects::nonNull);
+        Ordering<TimeInterval> sort = Ordering.from(Comparator.comparingInt(TimeInterval::getStart));
         return Iterables.transform(sort.sortedCopy(intervals), TimeInterval::getTrain);
     }
 }

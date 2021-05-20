@@ -1,10 +1,9 @@
 package net.parostroj.timetable.filters;
 
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.*;
 
 import java.util.Set;
-
-import com.google.common.base.Predicate;
 
 public final class ModelPredicates {
 
@@ -15,7 +14,7 @@ public final class ModelPredicates {
 
         private final String key;
 
-        private PredefinedTrainTypes(String key) {
+        PredefinedTrainTypes(String key) {
             this.key = key;
         }
 

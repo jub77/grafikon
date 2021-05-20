@@ -3,8 +3,7 @@ package net.parostroj.timetable.gui.views.tree2;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.base.Predicate;
-
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Pair;

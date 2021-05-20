@@ -3,9 +3,8 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 
+import java.util.function.Predicate;
 import javax.swing.AbstractAction;
-
-import com.google.common.base.Predicate;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,6 @@ import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.model.FreightColor;
@@ -47,7 +47,7 @@ public class RegionPM extends AbstractPM {
 
     private WeakReference<Region> regionRef;
 
-    private Collator collator = Collator.getInstance();
+    private final Collator collator = Collator.getInstance();
 
     public RegionPM(Collection<Locale> locales) {
         locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
@@ -81,7 +81,6 @@ public class RegionPM extends AbstractPM {
             mapping.set(entry.getKey(), entry.getValue(), allRegions.stream()
                     .filter(notThisOne)
                     .filter(Region::isFreightColorRegion)
-                    .sorted(comparator)
                     .collect(Collectors.toSet()));
             colorMap.add(mapping);
         }
@@ -105,7 +104,7 @@ public class RegionPM extends AbstractPM {
     @Operation(path = "add")
     public boolean add() {
         ColorMappingPM mapping = new ColorMappingPM();
-        mapping.set(null, null, Iterables.filter(superRegion.getValues(), Predicates.notNull()));
+        mapping.set(null, null, Iterables.filter(superRegion.getValues(), Objects::nonNull));
         colorMap.add(mapping);
         return true;
     }

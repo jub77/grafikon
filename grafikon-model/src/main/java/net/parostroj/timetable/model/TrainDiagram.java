@@ -43,8 +43,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public static final String ATTR_INFO = "info";
     public static final String ATTR_RUNNING_SCRIPT = "running.script";
     public static final String ATTR_TRAIN_SORT_PATTERN = "train.sort.pattern";
-    public static final String ATTR_NET = "net";
-    public static final String ATTR_FREIGHT_NET = "freight.net";
     public static final String ATTR_LOCALES = "locales";
     public static final String ATTR_SAVE_VERSION = "save.version";
     public static final String ATTR_SAVE_TIMESTAMP = "save.timestamp";
@@ -253,7 +251,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     private <T extends ObjectWithId> T getById(String id, Iterable<T> items) {
-        return Iterables.tryFind(items, ModelPredicates.matchId(id)).orNull();
+        return Iterables.tryFind(items, ModelPredicates.matchId(id)::test).orNull();
     }
 
     public ItemWithIdSet<TimetableImage> getImages() {

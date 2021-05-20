@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.actions.impl;
 
-import com.google.common.base.Predicate;
-
+import java.util.function.Predicate;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
 import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
@@ -37,7 +36,7 @@ public class ImportSelectionModelAction extends EventDispatchModelAction {
         }
 
         @Override
-        public boolean apply(ObjectWithId item) {
+        public boolean test(ObjectWithId item) {
             if (item instanceof Train) {
                 Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
                 if (group == null) {
@@ -69,7 +68,7 @@ public class ImportSelectionModelAction extends EventDispatchModelAction {
             ExportImportSelectionSource source;
             if (trainImport) {
                 source = ExportImportSelectionSource.fromDiagramSingleTypeWithFilter(diagram, ImportComponent.TRAINS,
-                        filter::apply);
+                        filter);
             } else {
                 source = diagram != null ? ExportImportSelectionSource.fromDiagramToDiagram(diagram)
                         : ExportImportSelectionSource.fromLibraryToDiagram(library);

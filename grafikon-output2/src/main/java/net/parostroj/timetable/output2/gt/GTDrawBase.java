@@ -5,6 +5,7 @@ import java.awt.geom.*;
 import java.util.*;
 import java.util.List;
 
+import java.util.function.Predicate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.Event;
@@ -15,8 +16,6 @@ import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * Abstract class for all graphical timetable draws.
@@ -399,7 +398,7 @@ public abstract class GTDrawBase implements GTDraw {
     }
 
     protected boolean checkIntervalFilter(TimeInterval interval) {
-        return intervalFilter == null || intervalFilter.apply(interval);
+        return intervalFilter == null || intervalFilter.test(interval);
     }
 
     protected void paintTrainsOnLine(Line line, Graphics2D g) {
@@ -486,7 +485,7 @@ public abstract class GTDrawBase implements GTDraw {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            String name = null;
+            String name;
             int y = this.getY(s, null);
             // draw name of the station
             if (!nodeStrings.containsKey(s)) {
@@ -821,7 +820,7 @@ public abstract class GTDrawBase implements GTDraw {
 
     protected Stroke getTrainStroke(Train train) {
         boolean extended = config.isOption(GTDrawSettings.Key.EXTENDED_LINES);
-        Stroke stroke = null;
+        Stroke stroke;
         if (!extended) {
             stroke = getTrainStrokeCache().getStroke();
         } else {
