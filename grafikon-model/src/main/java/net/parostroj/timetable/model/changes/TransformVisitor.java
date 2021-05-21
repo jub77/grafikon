@@ -115,41 +115,21 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TRAIN, train.getId());
         change.setObject(train.getDefaultName());
         change.setAction(DiagramChange.Action.MODIFIED);
-        String desc = this.addDescription(event);
-        switch (event.getType()) {
-            case ATTRIBUTE:
-                if (event.getAttributeChange().checkName(Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
-                    change.addDescription(new DiagramChangeDescription(desc,
-                            new Parameter(event.getAttributeChange().getName(), true)));
-                }
-                break;
-            case OBJECT_ATTRIBUTE:
-                if (event.getObject() instanceof TimeInterval) {
-                    TimeInterval ti = (TimeInterval) event.getObject();
-                    change.addDescription(new DiagramChangeDescription(desc,
-                            new Parameter(event.getAttributeChange().getName(), true),
-                            new Parameter(this.getSegmentDescription(ti))));
-                }
-                break;
-            case SPECIAL:
-                if (event.getData() instanceof SpecialTrainTimeIntervalList) {
-                    SpecialTrainTimeIntervalList special = (SpecialTrainTimeIntervalList) event.getData();
-                    desc = converter.getTilDesc(special.getType());
-                    DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
-                    switch (special.getType()) {
-                        case SPEED:
-                        case STOP_TIME:
-                        case TRACK:
-                            dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event, special))));
-                            break;
-                        default:
-                            break;
-                    }
-                    change.addDescription(dcd);
-                }
-                break;
-            default:
-                break;
+        this.addDescription(event);
+        if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
+            SpecialTrainTimeIntervalList special = (SpecialTrainTimeIntervalList) event.getData();
+            String desc = converter.getTilDesc(special.getType());
+            DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
+            switch (special.getType()) {
+                case SPEED:
+                case STOP_TIME:
+                case TRACK:
+                    dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event, special))));
+                    break;
+                default:
+                    break;
+            }
+            change.addDescription(dcd);
         }
     }
 
