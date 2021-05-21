@@ -84,30 +84,34 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
 
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class)));
 
-        // update line class combo box
+        // initialize line classes
         List<LineClass> classes = line.getDiagram().getNet().getLineClasses();
         lineClassComboBox.removeAllItems();
+        lineClassBackComboBox.removeAllItems();
         lineClassComboBox.addItem(noneLineClass);
+        lineClassBackComboBox.addItem(noneLineClass);
         for (LineClass clazz : classes) {
             lineClassComboBox.addItem(clazz);
         }
-        if (line.getAttribute(Line.ATTR_CLASS, LineClass.class) == null)
+        for (LineClass clazz : classes) {
+            lineClassBackComboBox.addItem(clazz);
+        }
+
+        // update line class combo box
+        if (line.getAttribute(Line.ATTR_CLASS, LineClass.class) == null) {
             lineClassComboBox.setSelectedItem(noneLineClass);
-        else
+        }
+        else {
             lineClassComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS, LineClass.class));
+        }
 
         // update line class back combo box
-        lineClassBackComboBox.removeAllItems();
-        lineClassBackComboBox.addItem(noneLineClass);
-        for (LineClass clazz : classes)
-            lineClassBackComboBox.addItem(clazz);
         if (line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class) == null)
             lineClassBackComboBox.setSelectedItem(lineClassComboBox.getSelectedItem());
         else
             lineClassBackComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class));
 
         this.pack();
-
         this.setVisible(true);
     }
 
@@ -316,17 +320,16 @@ public class EditLineDialog extends BaseEditDialog<LinePM> {
     private void lineClassChanged(java.awt.event.ItemEvent evt) {
         // check consistency
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            Object lc = lineClassComboBox.getSelectedItem();
-            Object lcb = lineClassBackComboBox.getSelectedItem();
-            Object nlcb = lcb;
+            JComboBox<LineClass> changed = evt.getSource() == lineClassComboBox ? lineClassComboBox : lineClassBackComboBox;
+            JComboBox<LineClass> other = evt.getSource() == lineClassComboBox ? lineClassBackComboBox : lineClassComboBox;
 
-            if (lc == noneLineClass) {
-                nlcb = noneLineClass;
-            } else if (lcb == noneLineClass) {
-                nlcb = lc;
-            }
-            if (lcb != nlcb) {
-                lineClassBackComboBox.setSelectedItem(nlcb);
+            Object changedItem = changed.getSelectedItem();
+            Object otherItem = other.getSelectedItem();
+
+            if (changedItem == noneLineClass && otherItem != noneLineClass) {
+                other.setSelectedItem(noneLineClass);
+            } else if (changedItem != noneLineClass && otherItem == noneLineClass) {
+                other.setSelectedItem(changedItem);
             }
         }
     }
