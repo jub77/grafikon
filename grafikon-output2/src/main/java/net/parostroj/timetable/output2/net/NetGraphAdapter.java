@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -59,13 +60,14 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private final Supplier<SpeedUnit> speedUnit;
 
     public NetGraphAdapter(ListenableGraph<Node, Line> graphT, Supplier<LengthUnit> lengthUnit,
-            Supplier<SpeedUnit> speedUnit) {
-        super(graphT);
+            Supplier<SpeedUnit> speedUnit, boolean listenToChanges) {
+        super(graphT, listenToChanges);
         this.lengthUnit = lengthUnit;
         this.speedUnit = speedUnit;
         conv = new NetItemConversionUtil();
         this.refresh();
         this.setHtmlLabels(true);
+        this.initializeNodeLocations();
     }
 
     @Override
@@ -87,31 +89,33 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         return true;
     }
 
-    private String convertNode(Node node) {
+    protected String convertNode(Node node) {
         StringBuilder value = new StringBuilder();
         Company company = node.getCompany();
         List<Region> regions = OutputFreightUtil.sortRegions(node.getRegions(), Locale.getDefault());
         Set<Region> centerRegions = node.getCenterRegions();
-        value.append("<font color=black>").append(node.getName()).append("</font>");
+        addTextWithColor(value, "black", node.getName());
         if (company != null) {
-            value.append(" <font color=gray>[").append(company.getAbbr()).append("]</font>");
+            value.append(" ");
+            addTextWithColor(value, "gray", "[" + company.getAbbr() + "]");
         }
         if (!regions.isEmpty()) {
             String regionsStr = regions.stream()
                     .map(region -> centerRegions.contains(region) ?
-                            String.format("<b>%s</b>", region.getName()) : region.getName())
+                            String.format(getBoldFormat(), region.getName()) : region.getName())
                     .collect(Collectors.joining(","));
             value.append("\n(").append(regionsStr).append(')');
         }
         Collection<FreightColor> colors = OutputFreightUtil.sortFreightColors(node.getFreightColors());
         if (!colors.isEmpty()) {
-            String colorsStr = colors.stream().map(FreightColor::getName).collect(Collectors.joining(","));
-            value.append("\n<font color=gray>[").append(colorsStr).append("]</font>");
+            String colorsStr = colors.stream().map(FreightColor::getName).collect(Collectors.joining(",", "[", "]"));
+            value.append("\n");
+            addTextWithColor(value, "gray", colorsStr);
         }
         return value.toString();
     }
 
-    private String convertLine(Line line) {
+    protected String convertLine(Line line) {
         if (speedUnit == null || lengthUnit == null) {
             return line.toString();
         }
@@ -138,6 +142,21 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         return result;
     }
 
+    private void initializeNodeLocations() {
+        Map<Node, mxCell> map = getVertexToCellMap();
+        this.getModel().beginUpdate();
+        try {
+            map.forEach((node, cell) -> {
+                mxGeometry geometry = cell.getGeometry();
+                this.moveCells(new Object[] { cell },
+                        node.getLocation().getX() - geometry.getX(),
+                        node.getLocation().getY() - geometry.getY());
+            });
+        } finally {
+            this.getModel().endUpdate();
+        }
+    }
+
     @Override
     protected mxCell getVertexCell(Node vertex) {
         NodeCell cell = new NodeCell(vertex);
@@ -157,5 +176,19 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         cell.getGeometry().setRelative(true);
         cell.setStyle("endArrow=none;startArrow=none");
         return cell;
+    }
+
+    private void addTextWithColor(StringBuilder builder, String color, String text) {
+        if (isHtmlLabels()) {
+            builder.append("<font color=").append(color).append(">");
+        }
+        builder.append(text);
+        if (isHtmlLabels()) {
+            builder.append("</font>");
+        }
+    }
+
+    private String getBoldFormat() {
+        return isHtmlLabels() ? "<b>%s</b>" : "%s";
     }
 }

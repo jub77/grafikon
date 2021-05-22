@@ -637,7 +637,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         // TODO set states of handlers according to buttons ...
         graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(),
                 model.getProgramSettings()::getLengthUnit,
-                model.getProgramSettings()::getSpeedUnit);
+                model.getProgramSettings()::getSpeedUnit,
+                true);
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
         graph.setEdgeLabelsMovable(false);
@@ -784,14 +785,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         outlinePanel.add(BorderLayout.CENTER, graphOutline);
 
         graph.addListener(mxEvent.CELLS_MOVED, this);
-        graph.getModel().beginUpdate();
-        try {
-            for (Node node : net.getNodes()) {
-                updateNodeLocation(node);
-            }
-        } finally {
-            graph.getModel().endUpdate();
-        }
         Dimension size = buttonPanel.getSize();
         size.width = size.width * 2;
         graphOutline.setPreferredSize(size);
