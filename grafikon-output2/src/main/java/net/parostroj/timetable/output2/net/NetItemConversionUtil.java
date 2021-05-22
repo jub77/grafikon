@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.utils;
+package net.parostroj.timetable.output2.net;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;

@@ -6,6 +6,7 @@ import java.awt.event.MouseWheelListener;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 
+import net.parostroj.timetable.output2.net.NetGraphAdapter;
 import org.jgrapht.Graph;
 
 import com.mxgraph.model.mxCell;

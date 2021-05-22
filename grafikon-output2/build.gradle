@@ -2,6 +2,7 @@ dependencies {
 	api project(':grafikon-model')
 
 	api 'org.apache.xmlgraphics:fop'
+	api 'com.github.vlsi.mxgraph:jgraphx'
 
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
 	implementation 'org.slf4j:slf4j-api'

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views.graph;
+package net.parostroj.timetable.output2.net;
 
 import net.parostroj.timetable.model.Line;
 

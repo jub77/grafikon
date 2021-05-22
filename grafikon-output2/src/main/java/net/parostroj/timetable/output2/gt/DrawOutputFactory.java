@@ -6,6 +6,7 @@ import java.util.*;
 import net.parostroj.timetable.output2.Output;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputFactory;
+import net.parostroj.timetable.output2.net.NetDrawOutput;
 
 /**
  * Html output factory - groovy.

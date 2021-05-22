@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views.graph;
+package net.parostroj.timetable.output2.net;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import org.jgrapht.ListenableGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +25,6 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.utils.NetItemConversionUtil;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
@@ -36,7 +37,6 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
     private static final Logger log = LoggerFactory.getLogger(NetGraphAdapter.class);
 
-    private final ApplicationModel appModel;
     private final NetItemConversionUtil conv;
 
     static {
@@ -55,10 +55,15 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         }
     }
 
-    public NetGraphAdapter(ListenableGraph<Node, Line> graphT, ApplicationModel model) {
+    private final Supplier<LengthUnit> lengthUnit;
+    private final Supplier<SpeedUnit> speedUnit;
+
+    public NetGraphAdapter(ListenableGraph<Node, Line> graphT, Supplier<LengthUnit> lengthUnit,
+            Supplier<SpeedUnit> speedUnit) {
         super(graphT);
+        this.lengthUnit = lengthUnit;
+        this.speedUnit = speedUnit;
         conv = new NetItemConversionUtil();
-        appModel = model;
         this.refresh();
         this.setHtmlLabels(true);
     }
@@ -107,17 +112,17 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     }
 
     private String convertLine(Line line) {
-        if (appModel == null) {
+        if (speedUnit == null || lengthUnit == null) {
             return line.toString();
         }
         StringBuilder result = new StringBuilder(conv.collectRoutesString(line));
         if (result.length() != 0) {
             result.append('\n');
         }
-        result.append(conv.getLineLengthString(line, appModel.getProgramSettings().getLengthUnit()));
+        result.append(conv.getLineLengthString(line, lengthUnit.get()));
         Integer topSpeed = line.getTopSpeed();
         if (topSpeed != null) {
-            result.append(" (").append(conv.getLineSpeedString(line, appModel.getProgramSettings().getSpeedUnit())).append(')');
+            result.append(" (").append(conv.getLineSpeedString(line, speedUnit.get())).append(')');
         }
         return result.toString();
     }

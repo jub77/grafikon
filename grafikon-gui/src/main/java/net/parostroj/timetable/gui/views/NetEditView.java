@@ -33,6 +33,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.output2.net.NetGraphAdapter;
 import net.parostroj.timetable.utils.*;
 
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -634,7 +635,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         }
 
         // TODO set states of handlers according to buttons ...
-        graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
+        graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(),
+                model.getProgramSettings()::getLengthUnit,
+                model.getProgramSettings()::getSpeedUnit);
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
         graph.setEdgeLabelsMovable(false);

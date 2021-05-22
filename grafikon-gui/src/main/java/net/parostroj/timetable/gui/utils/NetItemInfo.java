@@ -20,6 +20,7 @@ import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.output2.net.NetItemConversionUtil;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 
 public class NetItemInfo implements NetSelectionListener {

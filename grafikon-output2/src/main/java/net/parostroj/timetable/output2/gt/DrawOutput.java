@@ -29,7 +29,6 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontConfig;
@@ -61,7 +60,7 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         Dimension getSize(Graphics2D g);
     }
 
-    DrawOutput(Locale locale) {
+    protected DrawOutput(Locale locale) {
         super(locale);
     }
 
@@ -157,7 +156,8 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
 
             FopFactory fopFactory = PdfTransformer.createFopFactory();
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
-            FontConfig fc = userAgent.getRendererConfig(MimeConstants.MIME_PDF, new PDFRendererConfigParser()).getFontInfoConfig();
+            FontConfig fc = userAgent.getRendererConfig(org.apache.xmlgraphics.util.MimeConstants.MIME_PDF,
+                    new PDFRendererConfigParser()).getFontInfoConfig();
             FontManager fontManager = fopFactory.getFontManager();
             DefaultFontConfigurator fontInfoConfigurator = new DefaultFontConfigurator(fontManager, null, false);
             List<EmbedFontInfo> fontInfoList = fontInfoConfigurator.configure(fc);
