@@ -132,7 +132,7 @@ public class FileLoadSaveImpl implements LSFile {
             }
             TrainDiagram trainDiagram = builder.getTrainDiagram();
             new LoadFilter().checkDiagram(trainDiagram, version);
-            trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_LOADED_VERSION, version);
+            trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, version);
             return trainDiagram;
         } catch (IOException e) {
             throw new LSException(e);

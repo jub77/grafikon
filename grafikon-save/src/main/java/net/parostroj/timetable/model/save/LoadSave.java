@@ -98,7 +98,7 @@ public class LoadSave implements LSFile {
                 throw new LSException("Model not found.");
             }
             diagram = this.loadTrainDiagram(modelVersion, metadata, new InputStreamReader(zip.getInputStream(entry), "utf-8"), trainTypeList);
-            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_LOADED_VERSION, modelVersion);
+            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, modelVersion);
 
             // load images
             LoadSaveImages lsImages = new LoadSaveImages();

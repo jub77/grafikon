@@ -5,7 +5,8 @@ import net.parostroj.timetable.model.events.AttributeChange;
 
 public class RuntimeInfo implements AttributesHolder {
 
-    public static final String ATTR_LOADED_VERSION = "loaded.version";
+    public static final String ATTR_FILE_VERSION = "file.version";
+    public static final String ATTR_FILE = "file";
 
     private final Attributes attributes;
 

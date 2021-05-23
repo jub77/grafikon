@@ -1,9 +1,12 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.time.Instant;
 
+import net.parostroj.timetable.model.RuntimeInfo;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.beanfabrics.model.*;
@@ -30,7 +33,7 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
     private WeakReference<TrainDiagram> diagramRef;
 
-    private DateTimeFormatter format = DateTimeFormat.mediumDateTime();
+    private final DateTimeFormatter format = DateTimeFormat.mediumDateTime();
 
     public InfoPM() {
         PMManager.setup(this);
@@ -47,6 +50,12 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         this.routeNodes.setText(nodes);
         this.validity.setText(diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
         this.info.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
+        this.version.setText(this.createVersionText(diagram));
+        this.version.setEditable(false);
+        this.checkRouteInfo();
+    }
+
+    private String createVersionText(TrainDiagram diagram) {
         String versionText = "[" + diagram.getSaveVersion() + "]";
         Instant timestamp = diagram.getSaveTimestamp();
         if (timestamp != null) {
@@ -56,8 +65,17 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         if (user != null) {
             versionText += " " + user;
         }
-        this.version.setText(versionText);
-        this.checkRouteInfo();
+        ModelVersion modelVersion = diagram.getRuntimeInfo()
+                .getAttribute(RuntimeInfo.ATTR_FILE_VERSION, ModelVersion.class);
+        if (modelVersion != null) {
+            versionText += "\n" + modelVersion;
+        }
+        File file = diagram.getRuntimeInfo()
+                .getAttribute(RuntimeInfo.ATTR_FILE, File.class);
+        if (file != null) {
+            versionText += "\n" + file.getAbsolutePath();
+        }
+        return versionText;
     }
 
     private void writeResult() {
@@ -82,7 +100,7 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
     @OnChange(path = "isRouteInfo")
     public void checkRouteInfo() {
-        Boolean isInfo = isRouteInfo.getBoolean();
+        boolean isInfo = isRouteInfo.getBoolean();
         routeNodes.setEditable(isInfo);
         routeNumbers.setEditable(isInfo);
         if (!isInfo) {

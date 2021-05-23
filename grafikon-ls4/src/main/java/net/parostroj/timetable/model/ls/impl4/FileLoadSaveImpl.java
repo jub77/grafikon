@@ -98,7 +98,10 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     @Override
     public TrainDiagram load(File file) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            return this.load(inputStream);
+            TrainDiagram diagram = this.load(inputStream);
+            // set file info
+            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
+            return diagram;
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -108,6 +111,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     public void save(TrainDiagram diagram, File file) throws LSException {
         try (ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(file))) {
             this.save(diagram, outputStream);
+            // set file info
+            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -186,7 +191,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             for (LoadFilter filter : loadFilters) {
                 filter.checkDiagram(trainDiagram, version);
             }
-            trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_LOADED_VERSION, version);
+            // set file version
+            trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, version);
             log.debug("Loaded version: {}", version != null ? version : "<missing>");
             return trainDiagram;
         } catch (IOException e) {
@@ -280,6 +286,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             // save freight net
             this.save(zipOutput, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
 
+            // update file version
+            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, this.getSaveVersion());
         } catch (IOException ex) {
             throw new LSException(ex);
         }

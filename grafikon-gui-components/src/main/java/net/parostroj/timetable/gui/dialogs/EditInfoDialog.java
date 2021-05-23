@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+import javax.swing.*;
 import net.parostroj.timetable.gui.components.BnTextAreaGrey;
 import net.parostroj.timetable.gui.pm.InfoPM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -17,10 +18,6 @@ import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.View;
 import org.beanfabrics.swing.*;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 
 /**
  * Dialog for editing additional information - routes, validity.
@@ -106,6 +103,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
 
         BnTextArea infoTextArea = new BnTextArea();
+        infoTextArea.setRows(3);
         scrollPane.setViewportView(infoTextArea);
 
         GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -148,11 +146,15 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
 
         java.awt.GridBagConstraints gridBagConstraints_5 = new java.awt.GridBagConstraints();
         gridBagConstraints_5.weightx = 1.0;
+        gridBagConstraints_5.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints_5.gridx = 0;
         gridBagConstraints_5.gridy = 5;
         gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints_5.insets = new Insets(0, 3, 5, 5);
-        BnLabel versionLabel = new BnLabel();
+        BnTextAreaGrey versionLabel = new BnTextAreaGrey();
+        versionLabel.setFont(validityTextField.getFont());
+        versionLabel.setBorder(scrollPane.getBorder());
+        versionLabel.setRows(3);
         dataPanel.add(versionLabel, gridBagConstraints_5);
 
         infoTextArea.setModelProvider(provider);
