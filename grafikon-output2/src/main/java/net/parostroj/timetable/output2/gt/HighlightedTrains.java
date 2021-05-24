@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public interface HighlightedTrains {
 
-    public boolean isHighlighedInterval(TimeInterval interval);
+    boolean isHighlighedInterval(TimeInterval interval);
 
-    public Color getColor(TimeInterval interval);
+    Color getColor(TimeInterval interval);
 }

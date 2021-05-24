@@ -14,18 +14,37 @@ public interface GTDraw {
 		void trainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
 	}
 
-    public String TRAIN_COLOR_CHOOSER = "gt.chooser";
-    public String HIGHLIGHTED_TRAINS = "gt.highlight";
+    String TRAIN_COLOR_CHOOSER = "gt.chooser";
+    String HIGHLIGHTED_TRAINS = "gt.highlight";
 
-    public enum TrainColors {
-        BY_TYPE, BY_COLOR_CHOOSER;
+    enum TrainColors {
+        BY_TYPE, BY_COLOR_CHOOSER
     }
 
-    public enum Type {
-        CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
+    enum Type {
+        CLASSIC("classic"), WITH_TRACKS("tracks"), CLASSIC_STATION_STOPS("stops");
+
+        private final String key;
+
+        Type(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public static Type fromKey(String key) {
+            for (Type type : values()) {
+                if (type.key.equals(key)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
-    public enum Refresh {
+    enum Refresh {
         NONE, REPAINT, RECREATE, RECREATE_WITH_TIME;
 
         public Refresh update(Refresh refresh) {
