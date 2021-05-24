@@ -146,11 +146,8 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
     }
 
     private void processPdf(Collection<Image> images, OutputStream stream, DrawLayout layout) throws OutputException {
-
-
-        PDFDocumentGraphics2D g2d;
         try {
-            g2d = new PDFDocumentGraphics2D();
+            PDFDocumentGraphics2D g2d = new PDFDocumentGraphics2D();
 
             g2d.setGraphicContext(new GraphicContext());
 
@@ -171,6 +168,7 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
             Dimension size = this.getTotalSize(sizes, layout);
 
             g2d.setupDocument(stream, size.width, size.height);
+            g2d.create();
 
             this.drawImages(sizes, images, g2d, layout);
             g2d.finish();
