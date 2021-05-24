@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.net;
 
 import java.util.Map;
 
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.event.GraphEdgeChangeEvent;
@@ -16,35 +17,71 @@ import com.mxgraph.view.mxGraph;
 /**
  * Adapter for jgrapht graph to mxGraph.
  */
-public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
+public abstract class JGraphTAdapter<V, E> extends mxGraph {
 
-    private final ListenableGraph<V, E> graphT;
+    private final Graph<V, E> graphT;
     private final BiMap<V, mxCell> vertexToCellMap = HashBiMap.create();
     private final BiMap<E, mxCell> edgeToCellMap = HashBiMap.create();
+    private final GraphListener<V, E> graphListener;
+    private final Function<Object, String> valueToString;
 
-    protected JGraphTAdapter(final ListenableGraph<V, E> graphT, boolean listenToChanges) {
-        super();
-        this.setGridEnabled(false);
-        this.graphT = graphT;
-        if (listenToChanges) {
-            graphT.addGraphListener(this);
-        }
+    protected JGraphTAdapter(final Graph<V, E> aGraphT, Function<Object, String> aValueToString) {
+        valueToString = aValueToString;
+        setGridEnabled(false);
+        graphT = aGraphT;
         insertJGraphT(graphT);
+        graphListener = new GraphListener<V, E>() {
+            @Override
+            public void edgeAdded(GraphEdgeChangeEvent<V, E> e) {
+                addJGraphTEdge(e.getEdge());
+            }
+
+            @Override
+            public void edgeRemoved(GraphEdgeChangeEvent<V, E> e) {
+                mxCell cell = edgeToCellMap.remove(e.getEdge());
+                removeCells(new Object[]{cell});
+            }
+
+            @Override
+            public void vertexAdded(GraphVertexChangeEvent<V> e) {
+                addJGraphTVertex(e.getVertex());
+            }
+
+            @Override
+            public void vertexRemoved(GraphVertexChangeEvent<V> e) {
+                mxCell cell = vertexToCellMap.remove(e.getVertex());
+                removeCells(new Object[]{cell});
+            }
+        };
     }
 
-    public void addJGraphTVertex(V vertex) {
+    public void listenToChanges() {
+        if (graphT instanceof ListenableGraph) {
+            ((ListenableGraph<V, E>) graphT).addGraphListener(graphListener);
+        } else {
+            throw new IllegalStateException("The graph is not listenable");
+        }
+    }
+
+    @Override
+    public final String convertValueToString(Object cell) {
+        return valueToString.apply(cell);
+    }
+
+    private void addJGraphTVertex(V vertex) {
         getModel().beginUpdate();
         try {
             mxCell cell = this.getVertexCell(vertex);
             addCell(cell, defaultParent);
             this.updateCellSize(cell);
             vertexToCellMap.put(vertex, cell);
+            updateVertexLocation(vertex, cell);
         } finally {
             getModel().endUpdate();
         }
     }
 
-    public void addJGraphTEdge(E edge) {
+    private void addJGraphTEdge(E edge) {
         getModel().beginUpdate();
         try {
             V source = graphT.getEdgeSource(edge);
@@ -65,36 +102,6 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
         return edgeToCellMap;
     }
 
-    public Map<mxCell, E> getCellToEdgeMap() {
-        return edgeToCellMap.inverse();
-    }
-
-    public Map<mxCell, V> getCellToVertexMap() {
-        return vertexToCellMap.inverse();
-    }
-
-    @Override
-    public void vertexAdded(GraphVertexChangeEvent<V> e) {
-        addJGraphTVertex(e.getVertex());
-    }
-
-    @Override
-    public void vertexRemoved(GraphVertexChangeEvent<V> e) {
-        mxCell cell = vertexToCellMap.remove(e.getVertex());
-        removeCells(new Object[] { cell });
-    }
-
-    @Override
-    public void edgeAdded(GraphEdgeChangeEvent<V, E> e) {
-        addJGraphTEdge(e.getEdge());
-    }
-
-    @Override
-    public void edgeRemoved(GraphEdgeChangeEvent<V, E> e) {
-        mxCell cell = edgeToCellMap.remove(e.getEdge());
-        removeCells(new Object[] { cell });
-    }
-
     private void insertJGraphT(Graph<V, E> graphT) {
         getModel().beginUpdate();
         try {
@@ -111,9 +118,8 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
 
     protected abstract mxCell getEdgeCell(E edge);
 
-    /**
-     * @return net
-     */
+    protected void updateVertexLocation(V vertex, mxCell cell) {}
+
     public Graph<V, E> getNet() {
         return graphT;
     }

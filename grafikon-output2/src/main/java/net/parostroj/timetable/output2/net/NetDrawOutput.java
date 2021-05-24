@@ -29,8 +29,8 @@ public class NetDrawOutput extends DrawOutput {
         FileOutputType outputType = this.getFileOutputType(params);
         LengthUnit lu = this.getLengthUnit(params);
         SpeedUnit su = this.getSpeedUnit(params);
-        NetGraphAdapter nga = new NetGraphAdapter((ListenableGraph<Node, Line>) diagram.getNet().getGraph(),
-                () -> lu, () -> su, false);
+        NetGraphAdapter nga = new NetGraphAdapter(diagram.getNet().getGraph(), Node::getName, line -> "");
+//                () -> lu, () -> su);
         this.draw(Collections.singletonList(createImage(nga)),
                 outputType, stream, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }

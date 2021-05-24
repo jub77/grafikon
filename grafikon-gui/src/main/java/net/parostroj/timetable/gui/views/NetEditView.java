@@ -33,27 +33,26 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.output2.net.LineToStringBasic;
 import net.parostroj.timetable.output2.net.NetGraphAdapter;
+import net.parostroj.timetable.output2.net.NodeToTextBasic;
 import net.parostroj.timetable.utils.*;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
-import org.jgrapht.ListenableGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.*;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
 
 /**
@@ -61,7 +60,7 @@ import com.mxgraph.view.mxCellState;
  *
  * @author jub
  */
-public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, mxIEventListener {
+public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -598,9 +597,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         }
         moveBlock = true;
         try {
-            mxCell cell = graph.getVertexToCellMap().get(node);
-            mxGeometry geometry = cell.getGeometry();
-            graph.moveCells(new Object[] { cell }, node.getLocation().getX() - geometry.getX(), node.getLocation().getY() - geometry.getY());
+            graph.updateNodeLocation(node);
         } finally {
             moveBlock = false;
         }
@@ -635,10 +632,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         }
 
         // TODO set states of handlers according to buttons ...
-        graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(),
-                model.getProgramSettings()::getLengthUnit,
-                model.getProgramSettings()::getSpeedUnit,
-                true);
+        graph = new NetGraphAdapter(net.getGraph(),
+                new NodeToTextBasic(),
+                new LineToStringBasic(
+                    model.getProgramSettings()::getLengthUnit,
+                    model.getProgramSettings()::getSpeedUnit));
+        graph.listenToChanges();
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
         graph.setEdgeLabelsMovable(false);
@@ -784,7 +783,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphOutline = graphComponent.createOutline();
         outlinePanel.add(BorderLayout.CENTER, graphOutline);
 
-        graph.addListener(mxEvent.CELLS_MOVED, this);
+        graph.addListener(mxEvent.CELLS_MOVED, this::mxEventInvoke);
         Dimension size = buttonPanel.getSize();
         size.width = size.width * 2;
         graphOutline.setPreferredSize(size);
@@ -798,8 +797,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         saveNetImageAction.setEnabled(isDiagram);
     }
 
-    @Override
-    public void invoke(Object sender, mxEventObject evt) {
+    private void mxEventInvoke(Object sender, mxEventObject evt) {
         if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
             Object[] cells = (Object[]) evt.getProperty("cells");
             if (cells != null) {
