@@ -13,14 +13,14 @@ public enum SpeedUnit implements Unit {
     KMPH(BigDecimal.valueOf(36, 1).pow(-1, Unit.MATH_CONTEXT), "kmph"),
     MPH(BigDecimal.valueOf(1609344, 3).divide(BigDecimal.valueOf(1000), Unit.MATH_CONTEXT).divide(BigDecimal.valueOf(36, 1), Unit.MATH_CONTEXT), "mph");
 
-    private BigDecimal ratio;
-    private String key;
+    private final BigDecimal ratio;
+    private final String key;
 
-    private SpeedUnit(long ratio, String key) {
+    SpeedUnit(long ratio, String key) {
         this(BigDecimal.valueOf(ratio), key);
     }
 
-    private SpeedUnit(BigDecimal ratio, String key) {
+    SpeedUnit(BigDecimal ratio, String key) {
         this.ratio = ratio;
         this.key = key;
     }

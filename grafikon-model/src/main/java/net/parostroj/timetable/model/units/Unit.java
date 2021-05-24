@@ -11,26 +11,26 @@ import java.util.Locale;
  */
 public interface Unit {
 
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
-    public BigDecimal getRatio();
+    BigDecimal getRatio();
 
-    public BigDecimal convertTo(BigDecimal value, Unit to);
+    BigDecimal convertTo(BigDecimal value, Unit to);
 
-    public BigDecimal convertFrom(BigDecimal value, Unit from);
+    BigDecimal convertFrom(BigDecimal value, Unit from);
 
-    public String getUnitString();
+    String getUnitString();
 
-    public String getUnitString(Locale locale);
+    String getUnitString(Locale locale);
 
-    public String getUnitsString();
+    String getUnitsString();
 
-    public String getUnitsString(Locale locale);
+    String getUnitsString(Locale locale);
 
-    public String getUnitsOfString();
+    String getUnitsOfString();
 
-    public String getUnitsOfString(Locale locale);
+    String getUnitsOfString(Locale locale);
 
     @Override
-    public String toString();
+    String toString();
 }

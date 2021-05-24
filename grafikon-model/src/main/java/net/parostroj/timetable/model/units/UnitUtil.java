@@ -43,8 +43,6 @@ public class UnitUtil {
         return value.setScale(0, RoundingMode.HALF_UP).intValueExact();
     }
 
-    public static final String FORMAT_F = "#0.########";
-
     public static String convertToString(String formatPattern, BigDecimal value) {
         DecimalFormat format = new  DecimalFormat(formatPattern);
         format.setDecimalSeparatorAlwaysShown(false);

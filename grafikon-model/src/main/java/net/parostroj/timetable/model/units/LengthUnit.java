@@ -20,23 +20,23 @@ public enum LengthUnit implements Unit {
     MILE(1609344, "mile"),
     AXLE("axle");
 
-    private BigDecimal ratio;
-    private String key;
-    private boolean scaleDependent;
+    private final BigDecimal ratio;
+    private final String key;
+    private final boolean scaleDependent;
 
-    private LengthUnit(String key) {
+    LengthUnit(String key) {
         this(null, key, false);
     }
 
-    private LengthUnit(long ratio, String key) {
+    LengthUnit(long ratio, String key) {
         this(BigDecimal.valueOf(ratio), key, true);
     }
 
-    private LengthUnit(BigDecimal ratio, String key) {
+    LengthUnit(BigDecimal ratio, String key) {
         this(ratio, key, true);
     }
 
-    private LengthUnit(BigDecimal ratio, String key, boolean scaleDependent) {
+    LengthUnit(BigDecimal ratio, String key, boolean scaleDependent) {
         this.ratio = ratio;
         this.key = key;
         this.scaleDependent = scaleDependent;

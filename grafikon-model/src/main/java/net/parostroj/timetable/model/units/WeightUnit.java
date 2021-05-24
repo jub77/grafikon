@@ -12,10 +12,10 @@ public enum WeightUnit implements Unit {
     KG(1, "kg"),
     T(1000, "t");
 
-    private BigDecimal ratio;
-    private String key;
+    private final BigDecimal ratio;
+    private final String key;
 
-    private WeightUnit(long ratio, String key) {
+    WeightUnit(long ratio, String key) {
         this.ratio = BigDecimal.valueOf(ratio);
         this.key = key;
     }
