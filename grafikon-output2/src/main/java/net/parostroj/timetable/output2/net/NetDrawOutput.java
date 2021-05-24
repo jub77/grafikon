@@ -2,10 +2,12 @@ package net.parostroj.timetable.output2.net;
 
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.util.mxRectangle;
+import groovy.lang.Closure;
 import java.awt.*;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.function.Function;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -16,7 +18,6 @@ import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.gt.DrawLayout;
 import net.parostroj.timetable.output2.gt.DrawOutput;
 import net.parostroj.timetable.output2.gt.FileOutputType;
-import org.jgrapht.ListenableGraph;
 
 public class NetDrawOutput extends DrawOutput {
 
@@ -29,8 +30,10 @@ public class NetDrawOutput extends DrawOutput {
         FileOutputType outputType = this.getFileOutputType(params);
         LengthUnit lu = this.getLengthUnit(params);
         SpeedUnit su = this.getSpeedUnit(params);
-        NetGraphAdapter nga = new NetGraphAdapter(diagram.getNet().getGraph(), Node::getName, line -> "");
-//                () -> lu, () -> su);
+        NetGraphAdapter nga = new NetGraphAdapter(diagram.getNet().getGraph(),
+                getNodeConversion(params),
+                getLineConversion(params, lu, su));
+        getNodeConversion(params);
         this.draw(Collections.singletonList(createImage(nga)),
                 outputType, stream, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }
@@ -45,6 +48,30 @@ public class NetDrawOutput extends DrawOutput {
         String suStr = params.getParamValue("speed.unit", String.class, "kmph");
         SpeedUnit su = SpeedUnit.getByKey(suStr);
         return su != null ? su : SpeedUnit.KMPH;
+    }
+
+    private Function<Node, String> getNodeConversion(OutputParams params) {
+        Object closure = params.getParamValue("node.to.text", Object.class);
+        if (closure == null) {
+            return new NodeToTextBasic();
+        } else {
+            if (!(closure instanceof Closure)) {
+                throw new IllegalArgumentException("Parameter node.to.text is not closure");
+            }
+            return node -> ((Closure<?>) closure).call(node).toString();
+        }
+    }
+
+    private Function<Line, String> getLineConversion(OutputParams params, LengthUnit lu, SpeedUnit su) {
+        Object closure = params.getParamValue("line.to.text", Object.class);
+        if (closure == null) {
+            return new LineToStringBasic(() -> lu, () -> su);
+        } else {
+            if (!(closure instanceof Closure)) {
+                throw new IllegalArgumentException("Parameter line.to.text is not closure");
+            }
+            return line -> ((Closure<?>) closure).call(line).toString();
+        }
     }
 
     private Image createImage(NetGraphAdapter nga) {
