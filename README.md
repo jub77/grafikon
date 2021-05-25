@@ -22,7 +22,7 @@ Output templates and outputs can be added from menu (downloaded from web): *File
 
 ![Grafikon](http://jub.parostroj.net/grafikon/grafikon.png)
 
-## Binaries With Bundled Java
+## Binaries with Bundled Java
 
 Binaries are available for Windows and Linux and contains startup binary and bundled java
 (`grafikon-<x.y.z>-<windows|linux>-x86_64.zip`).

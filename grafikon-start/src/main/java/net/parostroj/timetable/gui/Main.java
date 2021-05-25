@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui;
 import java.io.File;
 import java.io.IOException;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import javax.swing.*;
 
@@ -40,6 +42,7 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
+        Instant start = Instant.now();
         if (Boolean.TRUE.equals(AppPreferences.getPreferences().getSection(DEBUG_SECTION).get(DEBUG_KEY, Boolean.class, false))) {
             setDebug();
         }
@@ -51,6 +54,7 @@ public class Main {
                         Main.class.getResource("/images/grafikon16.png"),
                         Main.class.getResource("/images/grafikon32.png")),
                 frame -> {
+                    log.debug("Started in {}ms", Duration.between(start, Instant.now()).toMillis());
                     if (args.length > 0) {
                         // trying to load file
                         File file = new File(args[0]);
