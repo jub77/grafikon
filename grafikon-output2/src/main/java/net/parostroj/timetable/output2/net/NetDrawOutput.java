@@ -30,12 +30,17 @@ public class NetDrawOutput extends DrawOutput {
         FileOutputType outputType = this.getFileOutputType(params);
         LengthUnit lu = this.getLengthUnit(params);
         SpeedUnit su = this.getSpeedUnit(params);
+        double zoom = this.getZoom(params);
         NetGraphAdapter nga = new NetGraphAdapter(diagram.getNet().getGraph(),
                 getNodeConversion(params),
                 getLineConversion(params, lu, su));
-        getNodeConversion(params);
+        nga.getView().setScale(zoom);
         this.draw(Collections.singletonList(createImage(nga)),
                 outputType, stream, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
+    }
+
+    private double getZoom(OutputParams params) {
+        return params.getParamValue("zoom", Double.class, 1.0);
     }
 
     private LengthUnit getLengthUnit(OutputParams params) {
@@ -74,23 +79,23 @@ public class NetDrawOutput extends DrawOutput {
         }
     }
 
-    private Image createImage(NetGraphAdapter nga) {
+    private Image createImage(NetGraphAdapter graph) {
         return new Image() {
             @Override
             public Dimension getSize(Graphics2D g) {
-                mxRectangle bounds = nga.getGraphBounds();
-                int border = nga.getBorder();
+                mxRectangle bounds = graph.getGraphBounds();
+                int border = graph.getBorder();
                 return new Dimension(
-                        (int) Math.round(bounds.getX() + bounds.getWidth()) + border
-                                + 1, (int) Math.round(bounds.getY()
-                        + bounds.getHeight())
-                        + border + 1);
+                        (int) Math.round(bounds.getX() + bounds.getWidth()) + border + 1,
+                        (int) Math.round(bounds.getY() + bounds.getHeight()) + border + 1);
             }
 
             @Override
             public void draw(Graphics2D g) {
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                nga.drawGraph(new mxGraphics2DCanvas(g));
+                mxGraphics2DCanvas canvas = new mxGraphics2DCanvas(g);
+                canvas.setScale(graph.getView().getScale());
+                graph.drawGraph(canvas);
             }
         };
     }
