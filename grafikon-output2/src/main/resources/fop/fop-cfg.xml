@@ -25,23 +25,27 @@
                     <!-- substitutions needed for pdf net view -->
                     <font-triplet name="Dialog" style="normal" weight="normal"/>
                     <font-triplet name="Arial" style="normal" weight="normal"/>
+                    <font-triplet name="Helvetica" style="normal" weight="normal"/>
                 </font>
                 <font embed-url="fop/DejaVuSansCondensed-Oblique.ttf" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="italic" weight="normal"/>
                     <!-- substitutions needed for pdf net view -->
                     <font-triplet name="Dialog" style="italic" weight="normal"/>
+                    <font-triplet name="Arial" style="italic" weight="normal"/>
                     <font-triplet name="Helvetica" style="italic" weight="normal"/>
                 </font>
                 <font embed-url="fop/DejaVuSansCondensed-Bold.ttf" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="normal" weight="bold"/>
                     <!-- substitutions needed for pdf net view -->
                     <font-triplet name="Dialog" style="normal" weight="bold"/>
+                    <font-triplet name="Arial" style="normal" weight="bold"/>
                     <font-triplet name="Helvetica" style="normal" weight="bold"/>
                 </font>
                 <font embed-url="fop/DejaVuSansCondensed-BoldOblique.ttf" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="italic" weight="bold"/>
                     <!-- substitutions needed for pdf net view -->
                     <font-triplet name="Dialog" style="italic" weight="bold"/>
+                    <font-triplet name="Arial" style="italic" weight="bold"/>
                     <font-triplet name="Helvetica" style="italic" weight="bold"/>
                 </font>
             </fonts>
