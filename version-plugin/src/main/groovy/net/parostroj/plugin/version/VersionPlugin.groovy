@@ -24,6 +24,8 @@ class VersionExtension {
 	String distVersion
 	String baseVersion
 	String shortVersion
+
+	String year
 }
 
 @CompileStatic
@@ -64,13 +66,13 @@ class VersionPlugin implements Plugin<Project> {
 		def head = grgit.head()
 		ver.dirty = !grgit.status().clean
 
-
 		def formatter = DateTimeFormatter.ofPattern('yyyyMMddHHmm')
 		def commitTimestamp = formatter.format(head.dateTime.toInstant().atZone(ZoneOffset.UTC))
 		def commitId = head.id.substring(0, 12)
 		ver.buildHash = commitId
 		ver.buildTimestamp = formatter.format(Instant.now().atOffset(ZoneOffset.UTC))
 		ver.buildId = "${ver.buildTimestamp}-${commitId}"
+		ver.year = DateTimeFormatter.ofPattern("yyyy").format(head.dateTime)
 
 		def tagVersion
 		def prerelease

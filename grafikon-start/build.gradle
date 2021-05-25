@@ -88,15 +88,19 @@ runtime {
 	jpackage {
 		imageName = 'grafikon'
 		installerName = 'grafikon'
+		def commonOptions = ['--copyright', "(c) ${scmVersion.year} jub", '--vendor', 'www.parostroj.net',
+			'--description', 'Train diagram editor']
+		installerOptions = ['--file-associations', 'src/main/deployment/resources/associations.properties'] + commonOptions
 		if (osdetector.os == 'windows') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.baseVersion
-			installerOptions = ['--win-dir-chooser', '--win-menu']
-			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.ico']
+			installerOptions += ['--win-dir-chooser', '--win-menu',
+				'--win-upgrade-uuid', '2318a3ac-b334-4978-90d1-987da0d4379f']
+			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.ico'] + commonOptions
 			installerType = project.findProperty('installerType') ?: 'msi'
 		} else if (osdetector.os == 'linux') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.shortVersion
-			installerOptions = ['--linux-shortcut', '--resource-dir', 'src/main/deployment/linux-resources']
-			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.png']
+			installerOptions += ['--linux-shortcut', '--resource-dir', 'src/main/deployment/linux-resources']
+			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.png'] + commonOptions
 			installerType = project.findProperty('installerType') ?: 'deb'
 		}
 	}
