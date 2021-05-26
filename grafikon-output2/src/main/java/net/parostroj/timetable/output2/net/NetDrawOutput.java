@@ -34,8 +34,7 @@ public class NetDrawOutput extends DrawOutput {
         NetGraphAdapter nga = new NetGraphAdapter(diagram.getNet().getGraph(),
                 getNodeConversion(params),
                 getLineConversion(params, lu, su));
-        nga.getView().setScale(zoom);
-        this.draw(Collections.singletonList(createImage(nga)),
+        this.draw(Collections.singletonList(createImage(nga, zoom)),
                 outputType, stream, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }
 
@@ -79,15 +78,18 @@ public class NetDrawOutput extends DrawOutput {
         }
     }
 
-    private Image createImage(NetGraphAdapter graph) {
+    private Image createImage(NetGraphAdapter graph, double zoom) {
+        mxRectangle bounds = graph.getGraphBounds();
+        graph.getView().scaleAndTranslate(zoom, - bounds.getX(), - bounds.getY());
+        bounds = graph.getGraphBounds();
+        int border = graph.getBorder();
+        int w = border + 1 + (int) bounds.getWidth();
+        int h = border + 1 + (int) bounds.getHeight();
+        final Dimension d = new Dimension(w, h);
         return new Image() {
             @Override
             public Dimension getSize(Graphics2D g) {
-                mxRectangle bounds = graph.getGraphBounds();
-                int border = graph.getBorder();
-                return new Dimension(
-                        (int) Math.round(bounds.getX() + bounds.getWidth()) + border + 1,
-                        (int) Math.round(bounds.getY() + bounds.getHeight()) + border + 1);
+                return d;
             }
 
             @Override
