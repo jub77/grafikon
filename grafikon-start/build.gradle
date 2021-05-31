@@ -7,10 +7,6 @@ configurations {
 	assembly
 }
 
-dependencies {
-	assembly project
-}
-
 def dist = tasks.register('distribution', Zip) {
 	group = "distribution"
 	archiveBaseName = "grafikon"
@@ -35,6 +31,7 @@ tasks.register('jpackageImageZip', Zip) {
 	archiveClassifier = osdetector.classifier
 	destinationDirectory = file("${buildDir}/jpackage-zip")
 	dependsOn tasks.named('jpackageImage')
+	dependsOn tasks.named('jpackage')
 	from file("${buildDir}/jpackage/grafikon")
 }
 
@@ -48,6 +45,8 @@ tasks.register('runMain', JavaExec) {
 }
 
 dependencies {
+	assembly project
+
 	implementation project(':grafikon-gui')
 	implementation project(':grafikon-save')
 	implementation project(':grafikon-templates')
