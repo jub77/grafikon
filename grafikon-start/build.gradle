@@ -96,14 +96,20 @@ runtime {
 			installerOptions += ['--win-dir-chooser', '--win-menu', '--win-menu-group', '',
 				'--win-upgrade-uuid', '2318a3ac-b334-4978-90d1-987da0d4379f',
 				'--file-associations', 'src/main/deployment/resources/win-associations.properties']
-			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.ico']
+			imageOptions += ['--icon', 'src/main/deployment/icons/grafikon.ico']
 			installerType = project.findProperty('installerType') ?: 'msi'
 		} else if (osdetector.os == 'linux') {
 			appVersion = project.findProperty('appVersion') ?: scmVersion.shortVersion
 			installerOptions += ['--linux-shortcut', '--resource-dir', 'src/main/deployment/linux-resources',
 				'--file-associations', 'src/main/deployment/resources/linux-associations.properties']
-			imageOptions = ['--icon', 'src/main/deployment/icons/grafikon.png']
+			imageOptions += ['--icon', 'src/main/deployment/icons/grafikon.png']
 			installerType = project.findProperty('installerType') ?: 'deb'
+		} else if (osdetector.os == "osx") {
+			appVersion = project.findProperty('appVersion') ?: scmVersion.baseVersion
+			installerOptions += ['--mac-package-name', 'Grafikon',
+				'--file-associations', 'src/main/deployment/resources/mac-associations.properties']
+			imageOptions += ['--icon', 'src/main/deployment/icons/grafikon.icns']
+			installerType = project.findProperty('installerType') ?: 'dmg'
 		}
 	}
 }
