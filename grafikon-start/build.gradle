@@ -32,7 +32,7 @@ tasks.register('jpackageImageZip', Zip) {
 	destinationDirectory = file("${buildDir}/jpackage-zip")
 	dependsOn tasks.named('jpackageImage')
 	dependsOn tasks.named('jpackage')
-	from file("${buildDir}/jpackage/grafikon")
+	from file("${buildDir}/jpackage/" + (osdetector.os == "osx" ? "grafikon.app" : "grafikon"))
 }
 
 ext {
