@@ -36,7 +36,7 @@ class ParsedVersion {
 	boolean forced
 
 	static ParsedVersion parse(String commit, Grgit grgit) {
-		def describe = grgit.describe([longDescr: true, commit: commit] as Map<String, Object>)
+		def describe = grgit.describe([longDescr: true, commit: commit, match: ["*.*.*"]] as Map<String, Object>)
 		def match = describe =~ /^(.*)-(\d*)-g([a-f0-9]*)$/
 		if (!match) {
 			return null
