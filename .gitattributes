@@ -6,3 +6,4 @@
 *.md            text
 
 *.sh            text eol=lf
+gradlew         text eol=lf
