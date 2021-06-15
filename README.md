@@ -38,3 +38,11 @@ Installer is available for Windows (`grafikon-<x.y.z>.msi`) and has the same con
 1. download the installer
 2. install
 3. start from Start menu
+
+## Deb Package for Linux
+
+Package is available for Linux and has the content as the binary bundled with Java
+
+## Zip with Bundled Java for macOS
+
+The package for macOS contains only application bundled with Java without generated binaries.
