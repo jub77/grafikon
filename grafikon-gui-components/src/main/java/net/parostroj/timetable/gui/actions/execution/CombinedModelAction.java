@@ -9,7 +9,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
  */
 public abstract class CombinedModelAction extends CheckedModelAction {
 
-    public CombinedModelAction(ActionContext context) {
+    protected CombinedModelAction(ActionContext context) {
         super(context);
     }
 

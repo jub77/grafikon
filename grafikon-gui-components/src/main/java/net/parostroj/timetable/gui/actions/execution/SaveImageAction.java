@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SaveImageAction extends EventDispatchAfterModelAction {
 
-    public static interface DrawOutput {
-        public void draw(Dimension size, File output, SaveImageDialog.Type type) throws OutputException;
+    public interface DrawOutput {
+        void draw(Dimension size, File output, SaveImageDialog.Type type) throws OutputException;
     }
 
     private static final Logger log = LoggerFactory.getLogger(SaveImageAction.class);

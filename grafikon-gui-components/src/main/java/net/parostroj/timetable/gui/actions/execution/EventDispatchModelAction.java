@@ -9,7 +9,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
  */
 public abstract class EventDispatchModelAction extends CheckedModelAction {
 
-    public EventDispatchModelAction(ActionContext context) {
+    protected EventDispatchModelAction(ActionContext context) {
         super(context);
     }
 

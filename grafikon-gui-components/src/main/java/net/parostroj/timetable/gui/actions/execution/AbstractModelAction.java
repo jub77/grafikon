@@ -11,7 +11,7 @@ public abstract class AbstractModelAction implements ModelAction {
 
     protected final ActionContext context;
 
-    public AbstractModelAction(ActionContext context) {
+    protected AbstractModelAction(ActionContext context) {
         this.context = context;
     }
 

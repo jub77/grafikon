@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui.actions.execution;
  */
 public abstract class CheckedModelAction extends AbstractModelAction {
 
-    public CheckedModelAction(ActionContext context) {
+    protected CheckedModelAction(ActionContext context) {
         super(context);
     }
 

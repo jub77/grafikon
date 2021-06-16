@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 public class ActionContext {
 
     public enum WaitDialogState {
-        HIDE, SHOW;
+        HIDE, SHOW
     }
 
     private static final int DEFAULT_DELAY = 200;
@@ -47,7 +47,7 @@ public class ActionContext {
     }
 
     public ActionContext() {
-        this((Component) null);
+        this(null);
     }
 
     public ActionContext(Component locationComponent) {

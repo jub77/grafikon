@@ -169,15 +169,13 @@ public class RsActionHandler {
         }
 
         public Execution<T> setMessageDealy(int delay) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
-                context.setDelay(delay);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).doFirst(() -> context.setDelay(delay)));
         }
 
         public Execution<T> logTime() {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
-                context.setLogTime(true);
-            }));
+            return new Execution<>(context,
+                    observable.filter(item -> !context.isCancelled()).doFirst(() -> context.setLogTime(true)));
         }
 
         public <Y> BatchExecution<Y> split(Function<T, Collection<Y>> mapping, int chunkSize) {
