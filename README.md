@@ -43,6 +43,14 @@ Installer is available for Windows (`grafikon-<x.y.z>.msi`) and has the same con
 
 Package is available for Linux and has the content as the binary bundled with Java
 
+1. download the package
+2. install
+3. 
+
 ## Zip with Bundled Java for macOS
 
 The package for macOS contains only application bundled with Java without generated binaries.
+
+1. download zip file
+2. unpack it
+3. start `grafikon-image/bin/grafikon`
