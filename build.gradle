@@ -2,6 +2,7 @@ plugins {
 	id 'io.spring.dependency-management' apply false
 	id 'net.parostroj.versioning'
 	id 'com.github.ben-manes.versions'
+	id 'se.ascp.gradle.gradle-versions-filter'
 }
 
 def nonJavaProjectsFilter = [
