@@ -10,7 +10,7 @@ def nonJavaProjectsFilter = [
 	"grafikon-webstart"
 ]
 
-def outputJavaVersion = (project.findProperty('javaVersion') ?: 8) as int
+def outputJavaVersion = (project.findProperty('javaVersion') ?: 11) as int
 
 subprojects { prj ->
 	apply plugin: 'io.spring.dependency-management'
