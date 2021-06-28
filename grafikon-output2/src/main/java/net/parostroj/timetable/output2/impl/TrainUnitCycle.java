@@ -3,7 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 /**
  * Train unit cycle.

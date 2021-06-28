@@ -3,8 +3,8 @@ package net.parostroj.timetable.output2.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainsCycle;

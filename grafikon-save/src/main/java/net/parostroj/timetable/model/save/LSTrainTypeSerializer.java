@@ -3,7 +3,7 @@ package net.parostroj.timetable.model.save;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
-import javax.xml.bind.*;
+import jakarta.xml.bind.*;
 
 /**
  * Train types serializer.

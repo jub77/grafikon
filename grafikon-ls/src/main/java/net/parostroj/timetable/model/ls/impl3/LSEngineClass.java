@@ -2,10 +2,10 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.WeightTableRow;

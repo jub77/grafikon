@@ -1,7 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;

@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.TrainDiagram;

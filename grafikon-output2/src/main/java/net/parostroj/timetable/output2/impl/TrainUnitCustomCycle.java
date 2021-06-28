@@ -1,7 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
 

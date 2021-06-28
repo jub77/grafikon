@@ -2,7 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.Locale;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Adapter for locale.

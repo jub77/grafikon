@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.ls.impl3;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Sort pattern group storage.

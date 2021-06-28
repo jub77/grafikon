@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.templates;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 import net.parostroj.timetable.model.ls.ModelVersion;
 

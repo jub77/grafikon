@@ -3,7 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 import net.parostroj.timetable.model.TranslatedString;
 

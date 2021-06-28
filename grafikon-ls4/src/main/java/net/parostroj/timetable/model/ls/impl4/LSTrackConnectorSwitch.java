@@ -2,7 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrackConnector;

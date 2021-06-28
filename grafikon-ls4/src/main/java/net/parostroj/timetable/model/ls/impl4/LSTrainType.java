@@ -6,9 +6,9 @@ import net.parostroj.timetable.model.TrainTypeCategory;
 import java.awt.Color;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.ObjectWithId;

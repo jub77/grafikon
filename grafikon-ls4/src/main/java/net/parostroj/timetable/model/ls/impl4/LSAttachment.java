@@ -1,7 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Attachment - contains only reference to data.

@@ -1,6 +1,6 @@
 package net.parostroj.timetable.actions.scripts;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Script.Language;
 

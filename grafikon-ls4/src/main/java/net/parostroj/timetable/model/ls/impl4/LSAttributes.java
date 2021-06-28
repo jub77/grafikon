@@ -3,8 +3,8 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.*;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.ObjectWithId;
