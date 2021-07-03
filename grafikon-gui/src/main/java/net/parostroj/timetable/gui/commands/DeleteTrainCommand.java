@@ -3,15 +3,17 @@ package net.parostroj.timetable.gui.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * Delete train command.
  *
  * @author jub
  */
-public class DeleteTrainCommand implements Command {
+public class DeleteTrainCommand {
 
     private final Train train;
 
@@ -19,9 +21,7 @@ public class DeleteTrainCommand implements Command {
         this.train = train;
     }
 
-    @Override
-    public void accept(ApplicationModel model) {
-        TrainDiagram diagram = model.getDiagram();
+    public void execute(TrainDiagram diagram) {
         // remove train from cycles
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!train.getCycles(type).isEmpty()) {

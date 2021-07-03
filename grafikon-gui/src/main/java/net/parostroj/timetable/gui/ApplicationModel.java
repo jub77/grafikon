@@ -12,7 +12,6 @@ import com.github.zafarkhaja.semver.Version;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.UrlConstants;
-import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
 import net.parostroj.timetable.gui.ini.IniConfig;
@@ -169,16 +168,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         for (ApplicationModelListener listener : listeners)
             listener.modelChanged(event);
         this.checkModelChanged(event);
-    }
-
-    /**
-     * executes command.
-     *
-     * @param command command to be executed
-     */
-    public void applyCommand(Command command)  {
-        // execute command
-        command.execute(this);
     }
 
     /**

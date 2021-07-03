@@ -606,7 +606,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private void deleteTrain(Train deletedTrain) {
         DeleteTrainCommand deleteCommand = new DeleteTrainCommand(deletedTrain);
         try {
-            model.applyCommand(deleteCommand);
+        	deleteCommand.execute(model.get());
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
         }
@@ -623,10 +623,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         createDialog.setVisible(true);
         createDialog.dispose();
 
-        Command command = createDialog.getCreateTrainCommand();
+        CreateTrainCommand command = createDialog.getCreateTrainCommand();
         try {
             if (command != null) {
-                model.applyCommand(command);
+            	command.execute(model.get());
             }
         } catch (GrafikonException e) {
             log.warn("Error executing create train command.", e);

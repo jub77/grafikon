@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.commands;
 
 import net.parostroj.timetable.actions.TrainBuilder;
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -15,7 +14,7 @@ import net.parostroj.timetable.utils.IdGenerator;
  *
  * @author jub
  */
-public class CreateTrainCommand implements Command {
+public class CreateTrainCommand {
 
     private final String number;
     private final TrainType type;
@@ -61,13 +60,12 @@ public class CreateTrainCommand implements Command {
         this.managedFreight = managedFreight;
     }
 
-    @Override
-    public void accept(ApplicationModel model) {
+    public void execute(TrainDiagram diagram) {
         TrainBuilder trainBuilder = new TrainBuilder();
 
         Train train;
         try {
-            train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
+            train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, diagram, defaultStop);
         } catch (Exception e) {
             throw new GrafikonException(e.getMessage(), e);
         }
@@ -89,6 +87,6 @@ public class CreateTrainCommand implements Command {
         }
 
         // add train to diagram
-        model.getDiagram().getTrains().add(train);
+        diagram.getTrains().add(train);
     }
 }
