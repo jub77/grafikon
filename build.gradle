@@ -28,8 +28,8 @@ subprojects { prj ->
 			dependency 'org.mvel:mvel2:2.4.12.Final'
 			dependency 'org.codehaus.groovy:groovy-templates:3.0.8'
 			dependency 'org.codehaus.groovy:groovy-jsr223:3.0.8'
-			dependency 'org.slf4j:slf4j-api:1.7.31'
-			dependency 'org.slf4j:jcl-over-slf4j:1.7.31'
+			dependency 'org.slf4j:slf4j-api:1.7.32'
+			dependency 'org.slf4j:jcl-over-slf4j:1.7.32'
 			dependency 'joda-time:joda-time:2.10.10'
 			dependency 'com.google.guava:guava:30.1.1-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
@@ -69,6 +69,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 			dependency 'org.hamcrest:hamcrest:2.2'
 			dependency 'io.projectreactor.addons:reactor-extra:3.4.3'
+			dependency 'io.projectreactor:reactor-core:3.4.8'
 		}
 	}
 
