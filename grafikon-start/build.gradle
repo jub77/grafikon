@@ -41,7 +41,9 @@ ext {
 
 tasks.register('runMain', JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
-	main = gMainClass
+	mainClass = gMainClass
+	group = "application"
+	description = "Runs application"
 }
 
 dependencies {
