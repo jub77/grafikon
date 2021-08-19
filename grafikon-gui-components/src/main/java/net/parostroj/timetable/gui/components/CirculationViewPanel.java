@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -81,9 +82,10 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private void updateListOfTypes(TrainDiagram diagram) {
         typeComboBox.removeAllItems();
         if (diagram != null) {
-            for (TrainsCycleType type : diagram.getCycleTypes()) {
-                typeComboBox.addItem(new Wrapper<>(type));
-            }
+            diagram.getCycleTypes().stream()
+                    .map(Wrapper::new)
+                    .sorted(Comparator.comparing(Wrapper::toString))
+                    .forEach(typeComboBox::addItem);
         }
     }
 
