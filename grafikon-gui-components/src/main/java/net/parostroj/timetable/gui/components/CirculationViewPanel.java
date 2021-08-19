@@ -39,15 +39,15 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
     private SaveImageDialog dialog;
 
-    private static enum DrawType {
+    private enum DrawType {
         NORMAL("circulation.view.panel.type.normal"),
         NO_BG("circulation.view.panel.type.nobg"),
         TRAIN_COLORS("circulation.view.panel.type.traincolors"),
         TRAIN_COLORS_NO_BG("circulation.view.panel.type.traincolors.nobg");
 
-        private String key;
+        private final String key;
 
-        private DrawType(String key) {
+        DrawType(String key) {
             this.key = key;
         }
 
@@ -82,7 +82,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         typeComboBox.removeAllItems();
         if (diagram != null) {
             for (TrainsCycleType type : diagram.getCycleTypes()) {
-                typeComboBox.addItem(new Wrapper<TrainsCycleType>(type));
+                typeComboBox.addItem(new Wrapper<>(type));
             }
         }
     }
@@ -109,11 +109,11 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }
 
     public void typeAdded(TrainsCycleType type) {
-        typeComboBox.addItem(new Wrapper<TrainsCycleType>(type));
+        typeComboBox.addItem(new Wrapper<>(type));
     }
 
     public void typeRemoved(TrainsCycleType type) {
-        typeComboBox.removeItem(new Wrapper<TrainsCycleType>(type));
+        typeComboBox.removeItem(new Wrapper<>(type));
     }
 
     public void timeLimitsUpdated() {
@@ -187,8 +187,8 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         zoomSlider.setLabelTable(this.createDictionaryZoom(zoomSlider));
         zoomSlider.setPaintLabels(true);
 
-        drawTypeComboBox = new javax.swing.JComboBox<DrawType>();
-        drawTypeComboBox.addItemListener(event -> drawTypeComboBoxItemStateChanged(event));
+        drawTypeComboBox = new javax.swing.JComboBox<>();
+        drawTypeComboBox.addItemListener(this::drawTypeComboBoxItemStateChanged);
 
         circulationView.setZoom(this.computeZoom(zoomSlider.getValue()));
 
@@ -196,67 +196,67 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
         saveButton.setText(ResourceLoader.getString("gt.save")); // NOI18N
         saveButton.setEnabled(false);
-        saveButton.addActionListener(evt -> saveButtonActionPerformed(evt));
-        sizeSlider.addChangeListener(evt -> sizeSliderStateChanged(evt));
-        zoomSlider.addChangeListener(evt -> zoomSliderStateChanged(evt));
-        GridBagLayout gbl_buttonPanel = new GridBagLayout();
-        buttonPanel.setLayout(gbl_buttonPanel);
-        typeComboBox = new javax.swing.JComboBox<Wrapper<TrainsCycleType>>();
+        saveButton.addActionListener(this::saveButtonActionPerformed);
+        sizeSlider.addChangeListener(this::sizeSliderStateChanged);
+        zoomSlider.addChangeListener(this::zoomSliderStateChanged);
+        GridBagLayout gblButtonPanel = new GridBagLayout();
+        buttonPanel.setLayout(gblButtonPanel);
+        typeComboBox = new javax.swing.JComboBox<>();
 
         typeComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmm"));
-        typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
-        GridBagConstraints gbc_typeComboBox = new GridBagConstraints();
-        gbc_typeComboBox.anchor = GridBagConstraints.WEST;
-        gbc_typeComboBox.insets = new Insets(0, 5, 0, 5);
-        gbc_typeComboBox.gridx = 0;
-        gbc_typeComboBox.gridy = 0;
-        buttonPanel.add(typeComboBox, gbc_typeComboBox);
+        typeComboBox.addItemListener(this::typeComboBoxItemStateChanged);
+        GridBagConstraints gbcTypeComboBox = new GridBagConstraints();
+        gbcTypeComboBox.anchor = GridBagConstraints.WEST;
+        gbcTypeComboBox.insets = new Insets(0, 5, 0, 5);
+        gbcTypeComboBox.gridx = 0;
+        gbcTypeComboBox.gridy = 0;
+        buttonPanel.add(typeComboBox, gbcTypeComboBox);
 
         JLabel wLabel = new JLabel(ResourceLoader.getString("circulation.view.panel.width") + ":"); // NOI18N
-        GridBagConstraints gbc_wLabel = new GridBagConstraints();
-        gbc_wLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_wLabel.gridx = 1;
-        gbc_wLabel.gridy = 0;
-        buttonPanel.add(wLabel, gbc_wLabel);
-        GridBagConstraints gbc_sizeSlider = new GridBagConstraints();
-        gbc_sizeSlider.insets = new Insets(0, 0, 0, 5);
-        gbc_sizeSlider.gridx = 2;
-        gbc_sizeSlider.gridy = 0;
-        buttonPanel.add(sizeSlider, gbc_sizeSlider);
+        GridBagConstraints gbcwLabel = new GridBagConstraints();
+        gbcwLabel.insets = new Insets(0, 0, 0, 5);
+        gbcwLabel.gridx = 1;
+        gbcwLabel.gridy = 0;
+        buttonPanel.add(wLabel, gbcwLabel);
+        GridBagConstraints gbcSizeSlider = new GridBagConstraints();
+        gbcSizeSlider.insets = new Insets(0, 0, 0, 5);
+        gbcSizeSlider.gridx = 2;
+        gbcSizeSlider.gridy = 0;
+        buttonPanel.add(sizeSlider, gbcSizeSlider);
 
         JLabel zLabel = new JLabel(ResourceLoader.getString("circulation.view.panel.zoom") + ":"); // NOI18N
-        GridBagConstraints gbc_zLabel = new GridBagConstraints();
-        gbc_zLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_zLabel.gridx = 3;
-        gbc_zLabel.gridy = 0;
-        buttonPanel.add(zLabel, gbc_zLabel);
+        GridBagConstraints gbczLabel = new GridBagConstraints();
+        gbczLabel.insets = new Insets(0, 0, 0, 5);
+        gbczLabel.gridx = 3;
+        gbczLabel.gridy = 0;
+        buttonPanel.add(zLabel, gbczLabel);
 
-        GridBagConstraints gbc_zoomSlider = new GridBagConstraints();
-        gbc_zoomSlider.insets = new Insets(0, 0, 0, 5);
-        gbc_zoomSlider.gridx = 4;
-        gbc_zoomSlider.gridy = 0;
-        buttonPanel.add(zoomSlider, gbc_zoomSlider);
+        GridBagConstraints gbcZoomSlider = new GridBagConstraints();
+        gbcZoomSlider.insets = new Insets(0, 0, 0, 5);
+        gbcZoomSlider.gridx = 4;
+        gbcZoomSlider.gridy = 0;
+        buttonPanel.add(zoomSlider, gbcZoomSlider);
 
-        GridBagConstraints gbc_drawType = new GridBagConstraints();
-        gbc_drawType.insets = new Insets(0, 0, 0, 5);
-        gbc_zoomSlider.gridx = 5;
-        gbc_zoomSlider.gridy = 0;
-        buttonPanel.add(drawTypeComboBox, gbc_drawType);
+        GridBagConstraints gbcDrawType = new GridBagConstraints();
+        gbcDrawType.insets = new Insets(0, 0, 0, 5);
+        gbcZoomSlider.gridx = 5;
+        gbcZoomSlider.gridy = 0;
+        buttonPanel.add(drawTypeComboBox, gbcDrawType);
 
         Component horizontalGlue = Box.createHorizontalGlue();
-        GridBagConstraints gbc_horizontalGlue = new GridBagConstraints();
-        gbc_horizontalGlue.insets = new Insets(0, 0, 0, 5);
-        gbc_horizontalGlue.weightx = 1.0;
-        gbc_horizontalGlue.fill = GridBagConstraints.HORIZONTAL;
-        gbc_horizontalGlue.gridx = 6;
-        gbc_horizontalGlue.gridy = 0;
-        buttonPanel.add(horizontalGlue, gbc_horizontalGlue);
+        GridBagConstraints gbcHorizontalGlue = new GridBagConstraints();
+        gbcHorizontalGlue.insets = new Insets(0, 0, 0, 5);
+        gbcHorizontalGlue.weightx = 1.0;
+        gbcHorizontalGlue.fill = GridBagConstraints.HORIZONTAL;
+        gbcHorizontalGlue.gridx = 6;
+        gbcHorizontalGlue.gridy = 0;
+        buttonPanel.add(horizontalGlue, gbcHorizontalGlue);
 
-        GridBagConstraints gbc_saveButton = new GridBagConstraints();
-        gbc_saveButton.insets = new Insets(0, 0, 0, 5);
-        gbc_saveButton.gridx = 7;
-        gbc_saveButton.gridy = 0;
-        buttonPanel.add(saveButton, gbc_saveButton);
+        GridBagConstraints gbcSaveButton = new GridBagConstraints();
+        gbcSaveButton.insets = new Insets(0, 0, 0, 5);
+        gbcSaveButton.gridx = 7;
+        gbcSaveButton.gridy = 0;
+        buttonPanel.add(saveButton, gbcSaveButton);
     }
 
     private Dictionary<?, ?> createDictionaryZoom(JSlider slider) {
@@ -309,10 +309,10 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             dt = (DrawType) drawTypeComboBox.getSelectedItem();
         }
         switch(dt) {
-            case NORMAL: circulationView.setDrawColors(null); break;
             case NO_BG: circulationView.setDrawColors(getDrawColors(false, false)); break;
             case TRAIN_COLORS: circulationView.setDrawColors(getDrawColors(true, true)); break;
             case TRAIN_COLORS_NO_BG: circulationView.setDrawColors(getDrawColors(true, false)); break;
+            case NORMAL:
             default: circulationView.setDrawColors(null); break;
         }
     }
@@ -373,8 +373,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             Dimension d = super.getPreferredSize();
             Graphics2D g = (Graphics2D) this.getGraphics();
             if (g != null) {
-                int w = DrawUtils.getStringWidth(g, "M") * widthInChar;
-                d.width = w;
+                d.width = DrawUtils.getStringWidth(g, "M") * widthInChar;
             }
             return d;
         }
