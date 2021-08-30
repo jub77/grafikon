@@ -10,6 +10,7 @@ pluginManagement {
 		mavenCentral()
 		gradlePluginPortal()
 	}
+	includeBuild 'version-plugin'
 }
 
 rootProject.name = 'grafikon'
@@ -23,5 +24,3 @@ include 'grafikon-output2'
 include 'grafikon-gui-components'
 include 'grafikon-gui'
 include 'grafikon-start'
-
-includeBuild 'version-plugin'
