@@ -45,7 +45,7 @@ Package is available for Linux and has the content as the binary bundled with Ja
 
 1. download the package
 2. install
-3. 
+3. start from the desktop
 
 ## Zip with Bundled Java for macOS
 
