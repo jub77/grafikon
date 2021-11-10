@@ -13,8 +13,8 @@ jobs:
       - name: Java Setup
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
       - name: Gradle Build
         run: |
           ./gradlew build jpackage jpackageImageZip distribution
@@ -35,8 +35,8 @@ jobs:
       - name: Java Setup
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
       - name: Gradle Build
         run: |
           ./gradlew jpackage jpackageImageZip
@@ -56,8 +56,8 @@ jobs:
       - name: Java Setup
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
       - name: Gradle Build
         run: |
           ./gradlew runtimeZip
