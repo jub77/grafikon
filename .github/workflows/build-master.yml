@@ -1,4 +1,4 @@
-name: Build
+name: Build Master Branch
 on:
   push:
     branches:
