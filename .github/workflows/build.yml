@@ -16,8 +16,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Gradle Build
-        run: |
-          ./gradlew build jpackage jpackageImageZip distribution
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build jpackage jpackageImageZip distribution
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
@@ -38,8 +39,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Gradle Build
-        run: |
-          ./gradlew jpackage jpackageImageZip
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jpackage jpackageImageZip
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
@@ -59,8 +61,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Gradle Build
-        run: |
-          ./gradlew runtimeZip
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: runtimeZip
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
