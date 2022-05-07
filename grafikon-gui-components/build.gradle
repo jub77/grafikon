@@ -3,8 +3,7 @@ dependencies {
 	api project(':grafikon-output2')
 	api project(':grafikon-templates')
 
-	api 'io.projectreactor:reactor-core'
-	api 'io.projectreactor.addons:reactor-extra'
+	api 'io.smallrye.reactive:mutiny'
 	api 'org.beanfabrics:beanfabrics-swing'
 
 	implementation 'org.swinglabs:jxlayer'

@@ -1,23 +1,25 @@
 package net.parostroj.timetable.gui.actions.execution;
 
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import java.awt.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.dialogs.WaitDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-import reactor.swing.SwingScheduler;
 
 /**
  * Action handler - executes model actions using Reactive Streams.
@@ -29,6 +31,7 @@ public class RsActionHandler {
     private static final Logger log = LoggerFactory.getLogger(RsActionHandler.class);
 
     private static final RsActionHandler instance = new RsActionHandler();
+    private static final Executor executor = Executors.newSingleThreadExecutor();
     public static RsActionHandler getInstance() {
         return instance;
     }
@@ -41,11 +44,11 @@ public class RsActionHandler {
 
     public void execute(Execution<?> execution) {
         ActionContext context = execution.context;
-        Flux<?> observable = execution.observable;
+        Multi<?> observable = execution.observable;
         context.addPropertyChangeListener(waitDialog);
         context.setStartTime(System.currentTimeMillis());
-        observable = observable.subscribeOn(SwingScheduler.create());
-        observable.subscribe(next -> {
+        observable = observable.runSubscriptionOn(SwingUtilities::invokeLater);
+        observable.subscribe().with(next -> {
             // final value is ignored
         }, exception -> {
             context.setWaitDialogVisible(false);
@@ -79,9 +82,9 @@ public class RsActionHandler {
 
         private Component component;
         private String id = "<action>";
-        private final Flux<T> rs;
+        private final Multi<T> rs;
 
-        public BuilderImpl(Flux<T> rs) {
+        public BuilderImpl(Multi<T> rs) {
             this.rs = rs;
         }
 
@@ -104,31 +107,31 @@ public class RsActionHandler {
     }
 
     public final <T> ExecutionBuilder<T> fromValue(T value) {
-        return new BuilderImpl<>(Flux.just(value));
+        return new BuilderImpl<>(Multi.createFrom().item(value));
     }
 
     @SafeVarargs
     public final <T> ExecutionBuilder<T> fromValues(T... values) {
-        return new BuilderImpl<>(Flux.just(values));
+        return new BuilderImpl<>(Multi.createFrom().items(values));
     }
 
     public final <T> ExecutionBuilder<T> fromIterable(Iterable<T> values) {
-        return new BuilderImpl<>(Flux.fromIterable(values));
+        return new BuilderImpl<>(Multi.createFrom().iterable(values));
     }
 
     public class Execution<T> {
 
         protected final ActionContext context;
-        protected final Flux<T> observable;
+        protected final Multi<T> observable;
 
-        protected Execution(ActionContext context, Flux<T> observable) {
+        protected Execution(ActionContext context, Multi<T> observable) {
             this.context = context;
             this.observable = observable;
         }
 
         public Execution<T> addConsumer(BiConsumer<ActionContext, T> consumer) {
             return new Execution<>(context,
-                    observable.filter(item -> !context.isCancelled()).doOnNext(t -> consumer.accept(context, t)));
+                    observable.filter(item -> !context.isCancelled()).onItem().invoke(t -> consumer.accept(context, t)));
         }
 
         public <U> Execution<U> addAction(BiFunction<ActionContext, T, U> function) {
@@ -138,20 +141,20 @@ public class RsActionHandler {
 
         public <U> Execution<U> addSplitAction(BiFunction<ActionContext, T, ? extends Iterable<U>> function) {
             return new Execution<>(context,
-                    observable.filter(item -> !context.isCancelled()).flatMapIterable(t -> function.apply(context, t)));
+                    observable.filter(item -> !context.isCancelled()).flatMap(t -> Multi.createFrom().iterable(function.apply(context, t))));
         }
 
-        public <U> Execution<U> addSplitObservable(BiFunction<ActionContext, T, Flux<U>> function) {
+        public <U> Execution<U> addSplitObservable(BiFunction<ActionContext, T, Multi<U>> function) {
             return new Execution<>(context,
                     observable.filter(item -> !context.isCancelled()).flatMap(t -> function.apply(context, t)));
         }
 
         public Execution<T> onEdt() {
-            return new Execution<>(context, observable.publishOn(SwingScheduler.create()));
+            return new Execution<>(context, observable.emitOn(SwingUtilities::invokeLater));
         }
 
         public Execution<T> onBackground() {
-            return new Execution<>(context, observable.publishOn(Schedulers.parallel()));
+            return new Execution<>(context, observable.emitOn(RsActionHandler.executor));
         }
 
         public void execute() {
@@ -160,7 +163,7 @@ public class RsActionHandler {
 
 
         public Execution<T> setMessage(String message) {
-            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).doFirst(() -> {
+            return new Execution<>(context, observable.filter(item -> !context.isCancelled()).onSubscription().invoke(() -> {
                 context.setWaitMessage(message);
                 context.setProgress(0);
                 context.setShowProgress(true);
@@ -170,12 +173,12 @@ public class RsActionHandler {
 
         public Execution<T> setMessageDealy(int delay) {
             return new Execution<>(context,
-                    observable.filter(item -> !context.isCancelled()).doFirst(() -> context.setDelay(delay)));
+                    observable.filter(item -> !context.isCancelled()).onSubscription().invoke(() -> context.setDelay(delay)));
         }
 
         public Execution<T> logTime() {
             return new Execution<>(context,
-                    observable.filter(item -> !context.isCancelled()).doFirst(() -> context.setLogTime(true)));
+                    observable.filter(item -> !context.isCancelled()).onSubscription().invoke(() -> context.setLogTime(true)));
         }
 
         public <Y> BatchExecution<Y> split(Function<T, Collection<Y>> mapping, int chunkSize) {
@@ -185,27 +188,31 @@ public class RsActionHandler {
                         Collection<Y> allItems = mapping.apply(t);
                         context.setAttribute("total", allItems.size());
                         context.setAttribute("current", 0);
-                        return Flux.fromIterable(allItems).buffer(chunkSize);
+                        return Multi.createFrom().iterable(allItems).group().intoLists().of(chunkSize);
                     }));
         }
 
         public Execution<T> onEdtWithDelay(Duration duration) {
-            return new Execution<>(context, observable.delayElements(duration, SwingScheduler.create()));
+            return new Execution<>(context, observable.
+                    onItem().transformToUniAndConcatenate(
+                            t -> Uni.createFrom().item(t)
+                                    .onItem().delayIt().by(duration)
+                                    .emitOn(SwingUtilities::invokeLater)));
         }
 
         public Execution<T> onFinish(Consumer<ActionContext> action) {
-            return new Execution<>(context, observable.doFinally(t -> action.accept(context)));
+            return new Execution<>(context, observable.onTermination().invoke(() -> action.accept(context)));
         }
     }
 
     public class BatchExecution<T> extends Execution<List<T>> {
 
-        protected BatchExecution(ActionContext context, Flux<List<T>> observable) {
+        protected BatchExecution(ActionContext context, Multi<List<T>> observable) {
             super(context, observable);
         }
 
         public BatchExecution<T> addBatchConsumer(BiConsumer<ActionContext, T> consumer) {
-            return new BatchExecution<>(context, observable.filter(item -> !context.isCancelled()).doOnNext(values -> {
+            return new BatchExecution<>(context, observable.filter(item -> !context.isCancelled()).onItem().invoke(values -> {
                 for (T value : values) {
                     consumer.accept(context, value);
                 }

@@ -68,8 +68,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 			dependency 'org.hamcrest:hamcrest:2.2'
-			dependency 'io.projectreactor.addons:reactor-extra:3.4.8'
-			dependency 'io.projectreactor:reactor-core:3.4.17'
+			dependency 'io.smallrye.reactive:mutiny:1.4.0'
 		}
 	}
 
