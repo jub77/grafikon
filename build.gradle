@@ -64,12 +64,12 @@ subprojects { prj ->
 			dependency 'org.glassfish.jaxb:jaxb-runtime:3.0.2', {
 				exclude 'org.glassfish.jaxb:txw2'
 			}
-			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
 			dependency 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 			dependency 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 			dependency 'org.hamcrest:hamcrest:2.2'
-			dependency 'io.projectreactor.addons:reactor-extra:3.4.7'
-			dependency 'io.projectreactor:reactor-core:3.4.16'
+			dependency 'io.projectreactor.addons:reactor-extra:3.4.8'
+			dependency 'io.projectreactor:reactor-core:3.4.17'
 		}
 	}
 
