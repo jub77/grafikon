@@ -187,7 +187,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         TrainsCycle current = this;
         T result = value;
         do {
-            function.apply(result, current);
+            result = function.apply(result, current);
             current = current.getNext();
         } while (current != this);
         return result;
