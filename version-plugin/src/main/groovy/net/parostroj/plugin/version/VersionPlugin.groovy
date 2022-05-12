@@ -38,13 +38,13 @@ class ParsedVersion {
 	static ParsedVersion parse(String commit, Grgit grgit) {
 		try {
 			def describe = grgit.describe([longDescr: true, tags: true, commit: commit, match: ["*.*.*"]] as Map<String, Object>)
-			def match = describe =~ /^(.*)-(\d*)-g([a-f0-9]*)$/
+			def match = describe =~ /^(.*)-(\d*)-g([a-f\d]*)$/
 			if (!match) {
 				return null
 			} else {
 				return new ParsedVersion(tag: match.group(1), since: match.group(2) as int, hash: match.group(3))
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			// failed describe - fallback to null
 			return null
 		}
@@ -54,7 +54,7 @@ class ParsedVersion {
 @CompileStatic
 class VersionPlugin implements Plugin<Project> {
 
-	private ParsedVersion getForcedVersion(Project project) {
+	private static ParsedVersion getForcedVersion(Project project) {
 		String forcedVersion = project.findProperty("forceVersion")
 		if (forcedVersion) {
 			return new ParsedVersion(tag: forcedVersion, since: 0, forced: true)
