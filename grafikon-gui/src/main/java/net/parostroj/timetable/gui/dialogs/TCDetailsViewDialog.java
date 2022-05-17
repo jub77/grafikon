@@ -48,6 +48,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         this.delegate = delegate;
         TrainsCycle cycle = delegate.getSelectedCycle();
         EngineClass clazz = cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
+        EngineClass backupClazz = cycle.getAttribute(TrainsCycle.ATTR_BACKUP_ENGINE_CLASS, EngineClass.class);
         Company selCompany = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
         this.nameTextField.setText(cycle.getName());
         this.descTextField.setText(cycle.getDescription());
@@ -56,12 +57,17 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         boolean isTrainUnitCycle = delegate.getType().isTrainUnitType();
         if (isEngineType) {
             this.engines = new WrapperListModel<>(true);
+            this.backupEngines = new WrapperListModel<>(true);
             this.engines.addWrapper(NO_ENGINE);
+            this.backupEngines.addWrapper(NO_ENGINE);
             for (EngineClass c : diagram.getEngineClasses()) {
                 this.engines.addWrapper(Wrapper.getWrapper(c));
+                this.backupEngines.addWrapper(Wrapper.getWrapper(c));
             }
             this.engineClassComboBox.setModel(engines);
             this.engineClassComboBox.setSelectedItem(clazz != null ? Wrapper.getWrapper(clazz) : NO_ENGINE);
+            this.backupEngineClassComboBox.setModel(backupEngines);
+            this.backupEngineClassComboBox.setSelectedItem(backupClazz != null ? Wrapper.getWrapper(backupClazz) : NO_ENGINE);
         }
         if (isDriverCycle) {
             Integer level = cycle.getAttribute(TrainsCycle.ATTR_LEVEL, Integer.class);
@@ -79,6 +85,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         this.levelLabel.setVisible(isDriverCycle);
         this.engineClassComboBox.setVisible(isEngineType);
         this.engineClassLabel.setVisible(isEngineType);
+        this.backupEngineClassComboBox.setVisible(isEngineType);
+        this.backupEngineClassLabel.setVisible(isEngineType);
         this.freightCheckBox.setVisible(isTrainUnitCycle);
         this.freightLabel.setVisible(isTrainUnitCycle);
         this.companies = new WrapperListModel<>(true);
@@ -100,12 +108,14 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         freightCheckBox.setBorder(null);
         nameTextField = new javax.swing.JTextField();
         engineClassComboBox = new javax.swing.JComboBox<>();
+        backupEngineClassComboBox = new javax.swing.JComboBox<>();
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         javax.swing.JLabel descLabel = new javax.swing.JLabel();
         descTextField = new javax.swing.JTextField();
         companyComboBox = new javax.swing.JComboBox<>();
         levelComboBox = new javax.swing.JComboBox<>();
         engineClassLabel = new javax.swing.JLabel();
+        backupEngineClassLabel = new javax.swing.JLabel();
         levelLabel = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
         attributesPanel = new net.parostroj.timetable.gui.components.AttributesPanel();
@@ -115,6 +125,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         nameLabel.setText(ResourceLoader.getString("ec.details.name") + ": "); // NOI18N
         descLabel.setText(ResourceLoader.getString("ec.details.description") + ": "); // NOI18N
         engineClassLabel.setText(ResourceLoader.getString("ec.details.engineclass") + ": "); // NOI18N
+        backupEngineClassLabel.setText(ResourceLoader.getString("ec.details.backupengine") + ": "); // NOI18N
         companyLabel.setText(ResourceLoader.getString("ec.details.company") + ": "); // NOI18N
         levelLabel.setText(ResourceLoader.getString("ec.details.level") + ": "); // NOI18N
         freightLabel.setText(ResourceLoader.getString("ec.details.freight") + ": "); // NOI18N
@@ -147,6 +158,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                             .addComponent(descLabel)
                             .addComponent(nameLabel)
                             .addComponent(engineClassLabel)
+                            .addComponent(backupEngineClassLabel)
                             .addComponent(companyLabel)
                             .addComponent(levelLabel)
                             .addComponent(freightLabel))
@@ -155,6 +167,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                             .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(engineClassComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addComponent(backupEngineClassComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(companyComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(levelComboBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(freightCheckBox, 0, javax.swing.GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))))
@@ -175,6 +188,10 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(engineClassComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(engineClassLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(backupEngineClassComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(backupEngineClassLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(companyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -212,6 +229,9 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
             // write back engine class
             EngineClass selEngineClass = engines.getSelectedObject();
             cycle.getAttributes().setRemove(TrainsCycle.ATTR_ENGINE_CLASS, selEngineClass);
+            // write back backup engine class
+            EngineClass selBackupEngineClass = backupEngines.getSelectedObject();
+            cycle.getAttributes().setRemove(TrainsCycle.ATTR_BACKUP_ENGINE_CLASS, selBackupEngineClass);
         }
         if (delegate.getType().isDriverType()) {
             Object objectLevel = levelComboBox.getSelectedItem();
@@ -244,14 +264,17 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;
     private javax.swing.JTextField descTextField;
     private javax.swing.JComboBox<Wrapper<EngineClass>> engineClassComboBox;
+    private javax.swing.JComboBox<Wrapper<EngineClass>> backupEngineClassComboBox;
     private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
     private javax.swing.JComboBox<Object> levelComboBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JLabel engineClassLabel;
+    private javax.swing.JLabel backupEngineClassLabel;
     private javax.swing.JLabel levelLabel;
     private javax.swing.JLabel freightLabel;
     private javax.swing.JCheckBox freightCheckBox;
 
     private WrapperListModel<Company> companies;
     private WrapperListModel<EngineClass> engines;
+    private WrapperListModel<EngineClass> backupEngines;
 }

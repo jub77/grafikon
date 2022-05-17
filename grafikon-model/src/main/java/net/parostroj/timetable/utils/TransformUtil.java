@@ -199,9 +199,13 @@ public final class TransformUtil {
 
         String result = ObjectsUtil.trimNonEmpty(ec.getDescription());
         EngineClass cl = ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
+        EngineClass bCl = ec.getAttribute(TrainsCycle.ATTR_BACKUP_ENGINE_CLASS, EngineClass.class);
         if (cl != null) {
             String desc = result;
             result = cl.getName();
+            if (bCl != null) {
+                desc = ObjectsUtil.isEmpty(desc) ? bCl.getName() : String.format("%s, %s", bCl.getName(), desc);
+            }
             if (!ObjectsUtil.isEmpty(desc)) {
                 result = String.format("%s (%s)", result, desc);
             }

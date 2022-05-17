@@ -26,6 +26,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainDiagramPart, ObservableObject {
 
     public static final String ATTR_ENGINE_CLASS = "engine.class";
+    public static final String ATTR_BACKUP_ENGINE_CLASS = "backup.engine.class";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_TYPE = "type";
