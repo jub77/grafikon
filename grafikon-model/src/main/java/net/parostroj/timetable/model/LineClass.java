@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.ObservableObject;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -11,9 +12,11 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject, ObservableObject {
+public class LineClass implements AttributesHolder, ObjectWithId, Visitable, ItemCollectionObject,
+        ObservableObject, ObjectWithVersion {
 
     public static final String ATTR_NAME = "name";
+    public static final String ATTR_VERSION = "version";
 
     private final String id;
     private final Attributes attributes;
@@ -25,6 +28,11 @@ public class LineClass implements AttributesHolder, ObjectWithId, Visitable, Ite
         this.listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(LineClass.this, change)));
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     public String getName() {

@@ -9,6 +9,7 @@ import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.ObservableObject;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -19,7 +20,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, ObservableObject, CompounedObservable {
+public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, ObservableObject,
+        CompounedObservable, ObjectWithVersion {
 
     public static final String ATTR_SCALE = "scale";
     public static final String ATTR_TIME_SCALE = "time.scale";
@@ -48,6 +50,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public static final String ATTR_SAVE_TIMESTAMP = "save.timestamp";
     public static final String ATTR_SAVE_USER = "save.user";
     public static final String ATTR_CHANGE_DIRECTION_STOP = "change.direction.stop";
+    public static final String ATTR_VERSION = "version";
 
     /** Id. */
     private final String id;
@@ -315,6 +318,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     public int getSaveVersion() {

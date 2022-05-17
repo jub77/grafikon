@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -18,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class Node extends NetSegmentImpl<NodeTrack> implements NetSegment<NodeTrack>,
-        AttributesHolder, ObjectWithId, Visitable, TrainDiagramPart {
+        AttributesHolder, ObjectWithId, Visitable, TrainDiagramPart, ObjectWithVersion {
 
     public static final String IP_NEW_SIGNALS = "new.signals";
 
@@ -39,6 +40,7 @@ public class Node extends NetSegmentImpl<NodeTrack> implements NetSegment<NodeTr
     public static final String ATTR_TELEPHONE = "telephone";
     public static final String ATTR_FREIGHT_CAPACITY = "freight.capacity";
     public static final String ATTR_FREIGHT_NOTE = "freight.note";
+    public static final String ATTR_VERSION = "version";
 
     public enum Side {
         LEFT {
@@ -123,6 +125,11 @@ public class Node extends NetSegmentImpl<NodeTrack> implements NetSegment<NodeTr
     @Override
     public TrainDiagram getDiagram() {
         return diagram;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     public String getName() {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.ObservableObject;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -13,10 +14,12 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, ObservableObject, ItemCollectionObject {
+public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, ObservableObject,
+        ItemCollectionObject, ObjectWithVersion {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_GROUP_KEY = "group.key";
+    public static final String ATTR_VERSION = "version";
 
     private final String id;
     private final List<WeightTableRow> weightTable;
@@ -52,6 +55,11 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     public WeightTableRow createWeightTableRow(int speed) {

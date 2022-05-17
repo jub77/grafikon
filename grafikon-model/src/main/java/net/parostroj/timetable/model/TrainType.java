@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import net.parostroj.timetable.model.Train.NameType;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -13,7 +14,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder, ObservableObject, TrainDiagramPart {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, ObservableObject,
+        TrainDiagramPart, ObjectWithVersion {
 
     public static final String ATTR_SHOW_WEIGHT_INFO = "weight.info";
     public static final String ATTR_ABBR = "abbr";
@@ -26,6 +28,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
     public static final String ATTR_LINE_TYPE = "line.type";
     public static final String ATTR_LINE_WIDTH = "line.width";
     public static final String ATTR_LINE_LENGTH = "line.length";
+    public static final String ATTR_VERSION = "version";
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -70,6 +73,11 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
     @Override
     public TrainDiagram getDiagram() {
         return diagram;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     /**

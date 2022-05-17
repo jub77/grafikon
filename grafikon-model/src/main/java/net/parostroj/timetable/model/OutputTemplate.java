@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -10,7 +11,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, TrainDiagramPart, ObservableObject {
+public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, TrainDiagramPart,
+        ObservableObject, ObjectWithVersion {
 
     public static final String ATTR_OUTPUT = "output";
     public static final String ATTR_OUTPUT_TYPE = "output.type";
@@ -22,6 +24,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_ATTACHMENT = "attachment";
     public static final String ATTR_SELECTION_TYPE = "selection.type";
+    public static final String ATTR_VERSION = "version";
 
     public static final String CATEGORY_I18N = "localization";
     public static final String CATEGORY_SETTINGS = "settings";
@@ -74,6 +77,11 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     @Override
     public TrainDiagram getDiagram() {
         return diagram;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     public LocalizedString getName() {

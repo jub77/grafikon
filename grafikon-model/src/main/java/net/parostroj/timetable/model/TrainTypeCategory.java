@@ -10,22 +10,24 @@ import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.ObservableObject;
+import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
  * Category of train types - freight, passenger ...
  *
  * @author jub
  */
-public class TrainTypeCategory implements ObjectWithId, ObservableObject, AttributesHolder {
+public class TrainTypeCategory implements ObjectWithId, ObservableObject, AttributesHolder, ObjectWithVersion {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_KEY = "key";
+    public static final String ATTR_VERSION = "version";
 
     private final String id;
 
     private final Attributes attributes;
 
-    private List<PenaltyTableRow> penaltyRows;
+    private final List<PenaltyTableRow> penaltyRows;
 
     private final ListenerSupport listenerSupport;
 
@@ -56,6 +58,11 @@ public class TrainTypeCategory implements ObjectWithId, ObservableObject, Attrib
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ModelVersion getVersion() {
+        return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
     }
 
     @Override

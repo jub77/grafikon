@@ -7,6 +7,8 @@ package net.parostroj.timetable.model.ls;
  */
 public class ModelVersion implements Comparable<ModelVersion> {
 
+    private static final ModelVersion INITIAL_MODEL_VERSION = new ModelVersion(0, 0, 0);
+
     private final int majorVersion;
     private final int minorVersion;
     private final int patchVersion;
@@ -17,6 +19,10 @@ public class ModelVersion implements Comparable<ModelVersion> {
         int minorVersion = Integer.parseInt(parts[1]);
         int patchVersion = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
         return new ModelVersion(majorVersion, minorVersion, patchVersion);
+    }
+
+    public static ModelVersion initialModelVersion() {
+        return INITIAL_MODEL_VERSION;
     }
 
     public ModelVersion(int majorVersion, int minorVersion) {
