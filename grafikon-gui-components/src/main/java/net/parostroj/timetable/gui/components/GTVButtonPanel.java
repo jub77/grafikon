@@ -38,7 +38,7 @@ public class GTVButtonPanel extends JPanel {
     private Timer showTask = null;
 
     public GTVButtonPanel(GraphicalTimetableView aView, Insets borderInsets) {
-        this.showTask = new Timer(250, new ActionListener() {
+        this.showTask = new Timer(200, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.setVisible(shown);
@@ -56,7 +56,7 @@ public class GTVButtonPanel extends JPanel {
             public Dimension getPreferredSize() {
                 Dimension dimension = super.getPreferredSize();
                 if (!panel.isVisible()) {
-                    dimension.height = 10;
+                    dimension.height = 15;
                 }
                 return dimension;
             }
@@ -102,6 +102,7 @@ public class GTVButtonPanel extends JPanel {
         layer.setUI(layerUI);
         layer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK);
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+        flowLayout.setVgap(0);
         flowLayout.setAlignment(FlowLayout.RIGHT);
         add(layer, BorderLayout.NORTH);
 
