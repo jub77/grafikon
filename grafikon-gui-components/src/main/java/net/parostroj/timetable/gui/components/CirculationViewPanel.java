@@ -98,16 +98,19 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
     public void circulationRemoved(TrainsCycle circulation) {
         circulationView.circulationRemoved(circulation);
+        this.updateCirculationsInfo();
         this.enabledDisableSave();
     }
 
     public void circulationAdded(TrainsCycle circulation) {
         circulationView.circulationAdded(circulation);
+        this.updateCirculationsInfo();
         this.enabledDisableSave();
     }
 
     public void circulationUpdated(TrainsCycle circulation) {
         circulationView.circulationUpdated(circulation);
+        this.updateCirculationsInfo();
     }
 
     public void typeAdded(TrainsCycleType type) {
@@ -189,6 +192,10 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         zoomSlider.setLabelTable(this.createDictionaryZoom(zoomSlider));
         zoomSlider.setPaintLabels(true);
 
+        infoTextField = new javax.swing.JTextField();
+        infoTextField.setEditable(false);
+        infoTextField.setColumns(15);
+
         drawTypeComboBox = new javax.swing.JComboBox<>();
         drawTypeComboBox.addItemListener(this::drawTypeComboBoxItemStateChanged);
 
@@ -245,18 +252,24 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         gbcZoomSlider.gridy = 0;
         buttonPanel.add(drawTypeComboBox, gbcDrawType);
 
+        GridBagConstraints gbcInfo = new GridBagConstraints();
+        gbcInfo.insets = new Insets(0, 10, 0, 5);
+        gbcZoomSlider.gridx = 6;
+        gbcZoomSlider.gridy = 0;
+        buttonPanel.add(infoTextField, gbcInfo);
+
         Component horizontalGlue = Box.createHorizontalGlue();
         GridBagConstraints gbcHorizontalGlue = new GridBagConstraints();
         gbcHorizontalGlue.insets = new Insets(0, 0, 0, 5);
         gbcHorizontalGlue.weightx = 1.0;
         gbcHorizontalGlue.fill = GridBagConstraints.HORIZONTAL;
-        gbcHorizontalGlue.gridx = 6;
+        gbcHorizontalGlue.gridx = 7;
         gbcHorizontalGlue.gridy = 0;
         buttonPanel.add(horizontalGlue, gbcHorizontalGlue);
 
         GridBagConstraints gbcSaveButton = new GridBagConstraints();
         gbcSaveButton.insets = new Insets(0, 0, 0, 5);
-        gbcSaveButton.gridx = 7;
+        gbcSaveButton.gridx = 8;
         gbcSaveButton.gridy = 0;
         buttonPanel.add(saveButton, gbcSaveButton);
     }
@@ -288,9 +301,23 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         if (evt.getStateChange() == ItemEvent.DESELECTED && typeComboBox.getSelectedItem() == null) {
             circulationView.setType(null);
         } else if (evt.getStateChange() == ItemEvent.SELECTED) {
-            circulationView.setType((TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement());
+            circulationView.setType(getCirculationType());
         }
+        this.updateCirculationsInfo();
         this.enabledDisableSave();
+    }
+
+    private TrainsCycleType getCirculationType() {
+        return (TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement();
+    }
+
+    private void updateCirculationsInfo() {
+        Wrapper<?> wrapper = (Wrapper<?>) typeComboBox.getSelectedItem();
+        infoTextField.setText(wrapper == null
+                ? ""
+                : String.format("%s: %d",
+                        wrapper,
+                        ((TrainsCycleType) wrapper.getElement()).getCycles().size()));
     }
 
     private void sizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {
@@ -356,6 +383,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private LimitedSlider sizeSlider;
     private javax.swing.JComboBox<Wrapper<TrainsCycleType>> typeComboBox;
     private javax.swing.JComboBox<DrawType> drawTypeComboBox;
+    private javax.swing.JTextField infoTextField;
     private LimitedSlider zoomSlider;
 
     static class LimitedSlider extends javax.swing.JSlider {
