@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,7 @@ import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
 	private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
@@ -201,14 +203,14 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory());
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.HIGHLIGHT_KEY, selector);
-        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>() {
+        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<>() {
             @Override
             public void processEvent(Event event) {
                 AbstractEventVisitor visitor = new AbstractEventVisitor() {
                     @Override
                     public void visitFreightNetEvent(Event event) {
                         if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
-                                getSelector().getSelected().contains(event.getObject())) {
+                                getSelector().getSelected().contains((FNConnection) event.getObject())) {
                             getSelector().regionsSelected(Collections.emptyList());
                         }
                     }

@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
+import com.google.common.collect.Lists;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
@@ -18,7 +19,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             Color c = g.getColor();
             Stroke s = g.getStroke();
             // get connections and paint (if exist)
-            Collection<FNConnection> fromConnections = freightNet.getTrainsFrom(timeInterval);
+            List<FNConnection> fromConnections = freightNet.getTrainsFrom(timeInterval);
             fromConnections = reorderConnections(timeInterval, fromConnections);
             if (!fromConnections.isEmpty()) {
                 g.setStroke(connectionStroke);
@@ -41,12 +42,10 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
          * Reverses connections depending on the order in which are needed
          * (first node is in inverse order).
          */
-        private Collection<FNConnection> reorderConnections(TimeInterval timeInterval,
-                Collection<FNConnection> fromConnections) {
+        private List<FNConnection> reorderConnections(TimeInterval timeInterval,
+                List<FNConnection> fromConnections) {
             if (timeInterval.getOwnerAsNode() == firstNode) {
-                List<FNConnection> connections = new ArrayList<>(fromConnections);
-                Collections.reverse(connections);
-                return connections;
+                return Lists.reverse(fromConnections);
             } else {
                 return fromConnections;
             }
@@ -80,7 +79,6 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private final Stroke connectionStroke;
 
-    private final Set<Node> routeNodes;
     private final Node firstNode;
     private final FreightNet freightNet;
 
@@ -98,11 +96,6 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         arrow = (int) (zoom * 5);
         lineExtend = (int) (zoom * 16);
         connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);
-
-        routeNodes = new HashSet<>();
-        for (Node node : draw.getRoute().getNodes()) {
-            routeNodes.add(node);
-        }
     }
 
     @Override
