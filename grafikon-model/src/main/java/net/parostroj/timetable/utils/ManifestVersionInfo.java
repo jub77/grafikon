@@ -1,5 +1,6 @@
 package net.parostroj.timetable.utils;
 
+import de.skuzzle.semantic.Version;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
@@ -12,7 +13,6 @@ import java.util.jar.Manifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.zafarkhaja.semver.Version;
 import com.google.common.collect.Iterators;
 
 /**
@@ -24,7 +24,7 @@ public class ManifestVersionInfo {
 
     private static final Logger log = LoggerFactory.getLogger(ManifestVersionInfo.class);
 
-    public static interface VersionData {
+    public interface VersionData {
         String getTitle();
         Version getVersion();
     }
@@ -53,7 +53,7 @@ public class ManifestVersionInfo {
             String title = m.getMainAttributes().getValue("Implementation-Title");
             String versionString = m.getMainAttributes().getValue("Implementation-Version");
             if (title != null && title.startsWith("grafikon")) {
-                Version version = Version.valueOf(versionString);
+                Version version = Version.parseVersion(versionString);
                 versions.put(title, new VersionData() {
                     @Override
                     public Version getVersion() {

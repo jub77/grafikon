@@ -5,6 +5,7 @@
  */
 package net.parostroj.timetable.gui;
 
+import de.skuzzle.semantic.Version;
 import groovy.lang.GroovyShell;
 
 import java.awt.*;
@@ -55,8 +56,6 @@ import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.zafarkhaja.semver.Version;
 
 /**
  * Main frame for the application.

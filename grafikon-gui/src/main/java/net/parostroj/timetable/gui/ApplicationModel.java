@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui;
 
+import de.skuzzle.semantic.Version;
 import java.io.File;
 import java.util.*;
 
@@ -7,8 +8,6 @@ import javax.swing.UIManager;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
-
-import com.github.zafarkhaja.semver.Version;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.UrlConstants;
@@ -317,6 +316,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     private String getMajorMinorString(Version version) {
-        return String.format("%d.%d", version.getMajorVersion(), version.getMinorVersion());
+        return String.format("%d.%d", version.getMajor(), version.getMinor());
     }
 }

@@ -4,7 +4,7 @@ dependencies {
 	api 'org.codehaus.groovy:groovy-jsr223'
 	api 'joda-time:joda-time'
 	api 'com.google.guava:guava'
-	api 'com.github.zafarkhaja:java-semver'
+	api 'de.skuzzle:semantic-version'
 
 	implementation 'org.slf4j:slf4j-api'
 	implementation 'org.codehaus.groovy:groovy-templates'
