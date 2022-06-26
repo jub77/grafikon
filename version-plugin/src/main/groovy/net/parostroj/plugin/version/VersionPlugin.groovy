@@ -1,6 +1,6 @@
 package net.parostroj.plugin.version
 
-import com.github.zafarkhaja.semver.*
+import de.skuzzle.semantic.Version
 import groovy.transform.CompileStatic
 import java.time.Instant
 import java.time.ZoneOffset
@@ -85,14 +85,14 @@ class VersionPlugin implements Plugin<Project> {
 		def parsedVersion = getForcedVersion(project) ?: ParsedVersion.parse('HEAD', grgit)
 
 		if (parsedVersion == null) {
-			tagVersion = Version.valueOf("0.0.0")
+			tagVersion = Version.parseVersion("0.0.0")
 			ver.snapshot = true
 			prerelease = false
 		} else {
-			tagVersion = Version.valueOf(parsedVersion.tag)
+			tagVersion = Version.parseVersion(parsedVersion.tag)
 			ver.since = parsedVersion.since
 			ver.snapshot = ver.since != 0
-			if ("alfa" == tagVersion.preReleaseVersion) {
+			if ("alfa" == tagVersion.preRelease) {
 				ver.snapshot = true
 			}
 			if (ver.since == 0 && !parsedVersion.forced) {
@@ -101,21 +101,21 @@ class VersionPlugin implements Plugin<Project> {
 					ver.sincePrevious = previousParsedVersion.since
 				}
 			}
-			prerelease = tagVersion.preReleaseVersion as Boolean
+			prerelease = tagVersion.preRelease as Boolean
 		}
 
 		def baseVersion
 		if (ver.snapshot) {
 			if (prerelease) {
-				baseVersion = tagVersion.normalVersion
-				ver.baseVersion = tagVersion.normalVersion
+				baseVersion = tagVersion.toStable()
+				ver.baseVersion = tagVersion.toStable()
 			} else {
-				baseVersion = tagVersion.incrementPatchVersion().toString()
-				ver.baseVersion = tagVersion.incrementPatchVersion().normalVersion
+				baseVersion = tagVersion.nextPatch().toString()
+				ver.baseVersion = tagVersion.nextPatch().toStable()
 			}
 		} else {
 			baseVersion = tagVersion.toString()
-			ver.baseVersion = tagVersion.normalVersion
+			ver.baseVersion = tagVersion.toStable()
 		}
 
 		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
