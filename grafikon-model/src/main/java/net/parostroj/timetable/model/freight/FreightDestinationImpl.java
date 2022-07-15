@@ -41,17 +41,17 @@ class FreightDestinationImpl implements FreightDestination {
     }
 
     @Override
-    public boolean isNode() {
+    public boolean isNodeDestination() {
         return node != null;
     }
 
     @Override
-    public boolean isRegions() {
+    public boolean isRegionsDestination() {
         return !getRegions().isEmpty();
     }
 
     @Override
-    public boolean isFreightColors() {
+    public boolean isFreightColorsDestination() {
         return !getFreightColors().isEmpty();
     }
 

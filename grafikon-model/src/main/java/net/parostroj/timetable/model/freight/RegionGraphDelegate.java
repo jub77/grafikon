@@ -61,7 +61,7 @@ class RegionGraphDelegate {
 
     private Stream<FreightConnectionPath> toDirectRegionConnections(List<FreightConnectionPath> l) {
         return l.stream()
-                .filter(d -> d.getTo().isRegions())
+                .filter(d -> d.getTo().isRegionsDestination())
                 .filter(d -> d.getFrom() != d.getTo().getNode());
     }
 

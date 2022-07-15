@@ -85,7 +85,7 @@ public class OutputFreightUtil {
     }
 
     public String freightNodeToString(FreightDestination dest, Locale locale, boolean abbreviation) {
-        if (!dest.isNode()) {
+        if (!dest.isNodeDestination()) {
             throw new IllegalArgumentException("Destination is not to node: " + dest);
         }
         Node node = dest.getNode();
@@ -93,7 +93,7 @@ public class OutputFreightUtil {
     }
 
     public List<String> freightColorsToString(FreightDestination dest, Locale locale) {
-        if (!dest.isFreightColors()) {
+        if (!dest.isFreightColorsDestination()) {
             throw new IllegalArgumentException("Destination is not to freight colors: " + dest);
         }
         return sortFreightColors(dest.getFreightColors()).stream()
@@ -102,7 +102,7 @@ public class OutputFreightUtil {
     }
 
     public List<String> freightRegionsToString(FreightDestination dest, Locale locale) {
-        if (!dest.isRegions()) {
+        if (!dest.isRegionsDestination()) {
             throw new IllegalArgumentException("Destination is not to regions: " + dest);
         }
         Set<Region> regions = dest.getRegions();
@@ -155,14 +155,14 @@ public class OutputFreightUtil {
 
     public String freightToString(FreightDestination dest, Locale locale) {
         StringBuilder result = new StringBuilder();
-        if (dest.isNode() && dest.isVisible()) {
+        if (dest.isNodeDestination() && dest.isVisible()) {
             result.append(freightNodeToString(dest, locale, true));
         }
-        if (dest.isFreightColors()) {
+        if (dest.isFreightColorsDestination()) {
             result.append('[').append(String.join(",", freightColorsToString(dest, locale)))
                     .append(']');
         }
-        if (dest.isRegions()) {
+        if (dest.isRegionsDestination()) {
             boolean empty = result.length() == 0;
             if (!empty) result.append('(');
             result.append(String.join(",", freightRegionsToString(dest, locale)));

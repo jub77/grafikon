@@ -35,7 +35,7 @@ class NodeFreightImpl implements NodeFreight {
     @Override
     public Set<FreightConnectionVia> getNodeConnections() {
         return connections.stream()
-                .filter(c -> c.getTo().isNode())
+                .filter(c -> c.getTo().isNodeDestination())
                 .collect(groupingBy(c -> c.getTo().getNode()))
                 .values().stream()
                     .map(conns -> merge(conns,
@@ -46,7 +46,7 @@ class NodeFreightImpl implements NodeFreight {
     @Override
     public Set<FreightConnectionVia> getRegionConnections() {
         return connections.stream()
-                .filter(c -> c.getTo().isRegions())
+                .filter(c -> c.getTo().isRegionsDestination())
                 .collect(groupingBy(c -> c.getTo().getRegions()))
                 .values().stream()
                 .map(conns -> merge(conns, c -> FreightFactory.createFreightDestination(c.getFrom(),
@@ -57,7 +57,7 @@ class NodeFreightImpl implements NodeFreight {
     @Override
     public Set<FreightConnectionVia> getFreightColorConnections() {
         return connections.stream()
-                .filter(c -> c.getTo().isFreightColors())
+                .filter(c -> c.getTo().isFreightColorsDestination())
                 .collect(groupingBy(c -> c.getTo().getFreightColors()))
                 .values().stream()
                     .map(conns -> merge(conns,

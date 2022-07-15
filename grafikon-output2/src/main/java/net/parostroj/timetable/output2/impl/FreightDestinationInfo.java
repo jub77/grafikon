@@ -121,7 +121,7 @@ public class FreightDestinationInfo {
 
     public static FreightDestinationInfo convert(Locale locale, FreightConnection dst) {
         FreightDestinationInfo info = new FreightDestinationInfo();
-        if (dst.getTo().isNode()) {
+        if (dst.getTo().isNodeDestination()) {
             Node to = dst.getTo().getNode();
             info.setName(to.getName());
             info.setAbbr(to.getAbbr());
@@ -134,7 +134,7 @@ public class FreightDestinationInfo {
                 info.setCapacity(to.getFreightCapacity());
             }
         }
-        if (dst.getTo().isRegions()) {
+        if (dst.getTo().isRegionsDestination()) {
             Set<Region> regions = dst.getTo().getRegions();
             info.setRegions(new OutputFreightUtil().regionsToString(regions, locale));
         }

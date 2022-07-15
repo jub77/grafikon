@@ -27,6 +27,6 @@ class RegionToConnectionStrategy extends BaseConnectionStrategy {
     }
 
     private FilterResult regionTransferStop(FilterContext context, FreightConnection dst, int level) {
-        return dst.getTo().isRegions() ? STOP_INCLUDE : OK;
+        return dst.getTo().isRegionsDestination() ? STOP_INCLUDE : OK;
     }
 }

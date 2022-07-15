@@ -19,13 +19,13 @@ public interface FreightDestination {
 
     Set<FreightColor> getFreightColors();
 
-    boolean isRegions();
+    boolean isRegionsDestination();
 
-    boolean isNode();
+    boolean isNodeDestination();
 
-    boolean isFreightColors();
+    boolean isFreightColorsDestination();
 
     default boolean isVisible() {
-        return !isNode() || !getNode().getType().isHidden();
+        return !isNodeDestination() || !getNode().getType().isHidden();
     }
 }

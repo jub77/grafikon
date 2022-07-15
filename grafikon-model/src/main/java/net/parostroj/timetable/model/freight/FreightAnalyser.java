@@ -114,7 +114,7 @@ public class FreightAnalyser {
 
     private Map<Node, FreightConnectionVia> getToCenterMap(Set<FreightConnectionVia> connections) {
         return connections.stream()
-                .filter(c -> c.getTo().isRegions())
+                .filter(c -> c.getTo().isRegionsDestination())
                 .collect(toMap(c -> c.getTo().getNode(), Function.identity()));
     }
 

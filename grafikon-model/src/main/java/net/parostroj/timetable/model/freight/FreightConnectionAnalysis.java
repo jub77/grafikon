@@ -148,7 +148,7 @@ class FreightConnectionAnalysis {
 
         Stream<Node> otherCenters = finder.getConnectionFrom(context.current).stream()
             .map(FreightConnectionPath::getTo)
-            .filter(d -> d.isNode() && d.isRegions())
+            .filter(d -> d.isNodeDestination() && d.isRegionsDestination())
             .map(FreightDestination::getNode)
             .filter(n -> !nodeCenters.contains(n));
 
