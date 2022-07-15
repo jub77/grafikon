@@ -4,16 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
-import java.io.Serial;
+import java.awt.event.ItemEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.freight.FreightConnectionPath;
+import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
+import net.parostroj.timetable.output2.util.OutputFreightUtil;
+import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,16 +55,18 @@ import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
-	private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
+    private enum EditType { CONNECTIONS, SHUNTING}
+
+	private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.ConnectionHighlight {
 
         private FNConnection selected = null;
 
         @Override
         public boolean regionsSelected(List<FNConnection> regions) {
-            return this.setSelected(SelectorUtils.select(regions, selected));
+            return editType == EditType.CONNECTIONS
+                    && this.setSelected(SelectorUtils.select(regions, selected));
         }
 
         @Override
@@ -101,6 +110,35 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
     }
 
+    private static final class FreightDataImpl implements ManagedFreightGTDraw.FreightData {
+
+        private final OutputFreightUtil freightUtil = new OutputFreightUtil();
+
+        @Override
+        public String getFreightText(TimeInterval interval) {
+            FreightConnectionStrategy strategy = interval.getTrain().getDiagram().getFreightNet().getConnectionStrategy();
+            if (interval.isFreight() || interval.isFreightConnection()) {
+                StringBuilder result = new StringBuilder();
+                Map<Train, List<FreightConnectionPath>> passedCargoDst = strategy.getFreightPassedInNode(interval);
+                for (Map.Entry<Train, List<FreightConnectionPath>> entry : passedCargoDst.entrySet()) {
+                    List<FreightConnectionPath> mList = entry.getValue();
+                    result.append('(').append(freightUtil.freightListToString(mList, Locale.getDefault()));
+                    result.append(" > ").append(entry.getKey().getDefaultName()).append(')');
+                }
+                if (interval.isFreightFrom()) {
+                    List<FreightConnectionPath> cargoDst = strategy.getFreightToNodes(interval);
+                    if (!cargoDst.isEmpty() && result.length() > 0) {
+                        result.append(' ');
+                    }
+                    result.append(freightUtil.freightListToString(cargoDst, Locale.getDefault()));
+                }
+                return result.toString();
+            } else {
+                return null;
+            }
+        }
+    }
+
     private final class HighlightSelection implements HighlightedTrains, RegionSelector<TimeInterval> {
 
         @Override
@@ -125,7 +163,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                     connection.first = null;
                     connection.second = null;
                 }
-                if (connection.first == null) {
+                if (connection.first == null || editType == EditType.SHUNTING) {
                     connection.first = interval;
                 } else {
                     if (connection.first.getOwnerAsNode() != interval.getOwnerAsNode() ||
@@ -139,6 +177,25 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             }
             newButton.setEnabled(enabled);
             graphicalTimetableView.repaint();
+            if (editType == EditType.CONNECTIONS) {
+                manageFreightCheckBox.setEnabled(false);
+                manageFreightCheckBox.setSelected(false);
+            } else {
+                if (connection.first == null) {
+                    manageFreightCheckBox.setEnabled(false);
+                    manageFreightCheckBox.setSelected(false);
+                } else {
+                    Train train = connection.first.getTrain();
+                    if (train.isManagedFreight() && !connection.first.isFirst()
+                            && !connection.first.isLast() && connection.first.isInnerStop()) {
+                        manageFreightCheckBox.setEnabled(true);
+                        manageFreightCheckBox.setSelected(!connection.first.isNotManagedFreight());
+                    } else {
+                        manageFreightCheckBox.setEnabled(false);
+                        manageFreightCheckBox.setSelected(false);
+                    }
+                }
+            }
             updateInfo();
             return interval != null;
         }
@@ -166,7 +223,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         private boolean checkEnabled() {
-            return connection.first != null && connection.second != null &&
+            return editType == EditType.CONNECTIONS &&
+                    connection.first != null && connection.second != null &&
                     connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() &&
                     !connection.second.isLast() && !connection.first.isFirst();
         }
@@ -186,9 +244,14 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final JButton downButton;
     private final JTextField infoTextField;
 
+    private final JComboBox<Wrapper<EditType>> editTypeComboBox;
+    private final JCheckBox manageFreightCheckBox;
+
     private transient ApplicationModel model;
 
     private final transient ConnectionSelector selector;
+    private final transient AtomicReference<HighlightSelection> intervalSelector = new AtomicReference<>();
+    private transient EditType editType = EditType.CONNECTIONS;
 
     public FreightNetPane2() {
         setLayout(new BorderLayout());
@@ -203,6 +266,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory());
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.HIGHLIGHT_KEY, selector);
+        graphicalTimetableView.setParameter(ManagedFreightGTDraw.FREIGHT_KEY, new FreightDataImpl());
         RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<>() {
             @Override
             public void processEvent(Event event) {
@@ -284,13 +348,53 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         buttonPanel.add(upButton);
         buttonPanel.add(downButton);
 
+        buttonPanel.add(Box.createHorizontalStrut(10));
+
+        manageFreightCheckBox = new JCheckBox(ResourceLoader.getString("freight.pane.shunting"));
+        manageFreightCheckBox.setEnabled(false);
+        buttonPanel.add(manageFreightCheckBox);
+        manageFreightCheckBox.addActionListener(e -> {
+            if (editType == EditType.SHUNTING && connection.first != null) {
+                connection.first.setAttributeAsBool(
+                        TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !manageFreightCheckBox.isSelected());
+            }
+        });
+
+        editTypeComboBox = new JComboBox<>();
+        configureEditTypeComboBox();
+        buttonPanel.add(editTypeComboBox);
+        editTypeComboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                editType = (EditType) ((Wrapper<?>) e.getItem()).getElement();
+                graphicalTimetableView.setParameter(ManagedFreightGTDraw.FREIGHT_KEY, editType == EditType.SHUNTING
+                        ? new FreightDataImpl() : null);
+                graphicalTimetableView.refresh();
+                selector.setSelected(null);
+                HighlightSelection hts = intervalSelector.get();
+                if (hts != null) {
+                    hts.regionsSelected(List.of());
+                }
+            }
+        });
+        editTypeComboBox.setSelectedItem(Wrapper.getWrapper(EditType.CONNECTIONS));
+
         infoTextField.setColumns(35);
+    }
+
+    private void configureEditTypeComboBox() {
+        String shuntingText = ResourceLoader.getString("freight.pane.type.shunting");
+        String connectionsText = ResourceLoader.getString("freight.pane.type.connections");
+        editTypeComboBox.addItem(Wrapper.getWrapper(EditType.SHUNTING, type -> shuntingText));
+        editTypeComboBox.addItem(Wrapper.getWrapper(EditType.CONNECTIONS, type -> connectionsText));
+        editTypeComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper(
+                (shuntingText.length() > connectionsText.length() ? shuntingText : connectionsText) + "MM"));
     }
 
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection("freigh.net");
         section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
+        section.put("edit.type", editType.name());
         return section;
     }
 
@@ -307,6 +411,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         if (gtvs != null) {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         }
+        EditType loadedEditType = section.get("edit.type", "CONNECTIONS").equals("CONNECTIONS")
+                ? EditType.CONNECTIONS
+                : EditType.SHUNTING;
+        editTypeComboBox.setSelectedItem(Wrapper.getWrapper(loadedEditType));
         return section;
     }
 
@@ -332,18 +440,22 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     }
 
     private void updateInfo() {
-        StringBuilder builder = new StringBuilder();
-        FNConnection conn = selector.getSelectedConnection();
-        TimeInterval from = conn != null ? conn.getFrom() : connection.first;
-        TimeInterval to = conn != null ? conn.getTo() : connection.second;
-        if (from != null) {
-            builder.append(from.getOwnerAsNode().getAbbr()).append(": ");
-            builder.append(getIntervalInfo(from, true));
+        if (editType == EditType.CONNECTIONS) {
+            StringBuilder builder = new StringBuilder();
+            FNConnection conn = selector.getSelectedConnection();
+            TimeInterval from = conn != null ? conn.getFrom() : connection.first;
+            TimeInterval to = conn != null ? conn.getTo() : connection.second;
+            if (from != null) {
+                builder.append(from.getOwnerAsNode().getAbbr()).append(": ");
+                builder.append(getIntervalInfo(from, true));
+            }
+            if (to != null) {
+                builder.append(" -> ").append(getIntervalInfo(to, false));
+            }
+            infoTextField.setText(builder.toString());
+        } else {
+            infoTextField.setText("");
         }
-        if (to != null) {
-            builder.append(" -> ").append(getIntervalInfo(to, false));
-        }
-        infoTextField.setText(builder.toString());
     }
 
     private String getIntervalInfo(TimeInterval interval, boolean first) {
@@ -362,5 +474,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());
             }
         });
+        intervalSelector.set(hts);
     }
 }

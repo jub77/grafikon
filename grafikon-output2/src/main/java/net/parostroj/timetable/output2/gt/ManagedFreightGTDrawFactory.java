@@ -13,7 +13,6 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
         storage.setFilter(TimeInterval.class, item -> trainPredicate.test(item.getTrain()));
         GTDraw draw = super.createInstance(type, settings, route, storage);
         // decorate
-        return new ManagedFreightGTDraw(settings, draw, storage.getCollector(FNConnection.class), storage);
+        return new ManagedFreightGTDraw(settings, draw, storage);
     }
-
 }

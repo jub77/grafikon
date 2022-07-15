@@ -432,8 +432,7 @@ public abstract class GTDrawBase implements GTDraw {
             this.addShapeToCollector(interval, line2D);
         }
 
-        g.draw(line2D);
-        this.fireListenerOnLine(g, interval, i, line2D);
+        this.paintAndFireListenersOnLine(g, interval, i, line2D);
 
         if (paintTrainName) {
             this.paintTrainNameOnLine(g, interval, line2D);
@@ -443,9 +442,13 @@ public abstract class GTDrawBase implements GTDraw {
         }
     }
 
-    private void fireListenerOnLine(Graphics2D g, TimeInterval interval, Interval i, Line2D line2D) {
+    private void paintAndFireListenersOnLine(Graphics2D g, TimeInterval interval, Interval i, Line2D line) {
         for (GTDraw.Listener listener : listeners) {
-            listener.trainOnLine(g, interval, i, line2D);
+            listener.beforeTrainOnLine(g, interval, i, line);
+        }
+        g.draw(line);
+        for (GTDraw.Listener listener : listeners) {
+            listener.afterTrainOnLine(g, interval, i, line);
         }
     }
 
@@ -458,8 +461,7 @@ public abstract class GTDrawBase implements GTDraw {
             if (isCollected) {
                 this.addShapeToCollector(interval, line);
             }
-            g.draw(line);
-            this.fireListenerInStation(g, interval, normalized, line);
+            this.paintAndfireListenersInStation(g, interval, normalized, line);
         }
         Interval overThreshold = normalized.getComplementatyIntervalOverThreshold(startTime);
         if (overThreshold != null && this.isTimeVisible(overThreshold.getStart(), overThreshold.getEnd())) {
@@ -467,14 +469,17 @@ public abstract class GTDrawBase implements GTDraw {
             if (isCollected) {
                 this.addShapeToCollector(interval, line);
             }
-            g.draw(line);
-            this.fireListenerInStation(g, interval, overThreshold, line);
+            this.paintAndfireListenersInStation(g, interval, overThreshold, line);
         }
     }
 
-    private void fireListenerInStation(Graphics2D g, TimeInterval interval, Interval i, Line2D line) {
+    private void paintAndfireListenersInStation(Graphics2D g, TimeInterval interval, Interval i, Line2D line) {
         for (GTDraw.Listener listener : listeners) {
-            listener.trainInStation(g, interval, i, line);
+            listener.beforeTrainInStation(g, interval, i, line);
+        }
+        g.draw(line);
+        for (GTDraw.Listener listener : listeners) {
+            listener.afterTrainInStation(g, interval, i, line);
         }
     }
 

@@ -9,10 +9,12 @@ import net.parostroj.timetable.model.events.Event;
 
 public interface GTDraw {
 
-	interface Listener {
-		void trainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
-		void trainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
-	}
+    interface Listener {
+        void beforeTrainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+        void beforeTrainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+        void afterTrainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+        void afterTrainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+    }
 
     String TRAIN_COLOR_CHOOSER = "gt.chooser";
     String HIGHLIGHTED_TRAINS = "gt.highlight";
