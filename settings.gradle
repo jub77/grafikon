@@ -4,7 +4,7 @@ pluginManagement {
 		id 'com.github.ben-manes.versions' version '0.42.0'
 		id 'se.ascp.gradle.gradle-versions-filter' version '0.1.16'
 		id 'org.beryx.runtime' version '1.12.7'
-		id 'com.google.osdetector' version '1.7.0'
+		id 'com.google.osdetector' version '1.7.1'
 	}
 	repositories {
 		mavenCentral()
