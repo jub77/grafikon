@@ -1,6 +1,6 @@
 pluginManagement {
 	plugins {
-		id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+		id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 		id 'com.github.ben-manes.versions' version '0.42.0'
 		id 'se.ascp.gradle.gradle-versions-filter' version '0.1.16'
 		id 'org.beryx.runtime' version '1.12.7'
