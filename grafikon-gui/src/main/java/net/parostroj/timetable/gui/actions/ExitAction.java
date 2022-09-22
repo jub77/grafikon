@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
 
+import java.time.Duration;
+import java.time.Instant;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
@@ -12,6 +14,8 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
+import org.joda.time.PeriodType;
+import org.joda.time.format.PeriodFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +95,10 @@ public class ExitAction extends AbstractAction {
                 // dispose main window - it should close application
                 parent.dispose();
 
+                log.debug("Running time: {}", PeriodFormat.getDefault().print(
+                        org.joda.time.Duration.standardSeconds(
+                                Duration.between(model.getStartTime(),
+                                        Instant.now()).toSeconds()).toPeriod(PeriodType.time())));
                 log.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
 
                 // close application by force (possible problems with web start)

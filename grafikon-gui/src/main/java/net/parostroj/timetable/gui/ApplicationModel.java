@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui;
 
 import de.skuzzle.semantic.Version;
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 
 import javax.swing.UIManager;
@@ -59,6 +60,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final Version currentVersion;
     private final VersionInfo versionInfo;
 
+    private final Instant startTime;
+
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<String> lookAndFeel;
 
@@ -88,6 +91,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
         lookAndFeel = new EnumeratedValuesPM<>(lookAndFeelMap);
         PMManager.setup(this);
+        startTime = Instant.now();
     }
 
     private Map<String, String> getLookAndFeelMap() {
@@ -313,6 +317,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public VersionInfo getVersionInfo() {
         return versionInfo;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
     }
 
     private String getMajorMinorString(Version version) {

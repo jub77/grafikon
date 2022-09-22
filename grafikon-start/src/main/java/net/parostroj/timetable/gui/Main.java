@@ -67,12 +67,6 @@ public class Main {
                     }
                 });
         starter.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Duration duration = Duration.between(start, Instant.now());
-            log.debug("Running time: {} minutes and {} seconds",
-                    duration.toMinutes(),
-                    duration.toSecondsPart());
-        }));
     }
 
     private static void printJavaInfo() {
