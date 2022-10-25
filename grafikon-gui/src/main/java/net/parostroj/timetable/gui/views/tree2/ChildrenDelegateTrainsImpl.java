@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class ChildrenDelegateTrainsImpl extends ChildrenDelegateImpl implements ChildrenDelegate {
+public class ChildrenDelegateTrainsImpl extends ChildrenDelegateImpl {
 
     private final TrainComparator comparator;
 

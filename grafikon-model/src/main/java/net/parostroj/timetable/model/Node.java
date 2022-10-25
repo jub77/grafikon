@@ -18,8 +18,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node extends NetSegmentImpl<NodeTrack> implements NetSegment<NodeTrack>,
-        AttributesHolder, ObjectWithId, Visitable, TrainDiagramPart, ObjectWithVersion {
+public class Node extends NetSegmentImpl<NodeTrack> implements Visitable, TrainDiagramPart, ObjectWithVersion {
 
     public static final String IP_NEW_SIGNALS = "new.signals";
 

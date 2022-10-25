@@ -10,8 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line extends NetSegmentImpl<LineTrack> implements NetSegment<LineTrack>, AttributesHolder,
-        ObjectWithId, Visitable, TrainDiagramPart {
+public class Line extends NetSegmentImpl<LineTrack> implements Visitable, TrainDiagramPart {
 
     public static final String ATTR_CLASS = "line.class";
     public static final String ATTR_CLASS_BACK = "line.class.back";

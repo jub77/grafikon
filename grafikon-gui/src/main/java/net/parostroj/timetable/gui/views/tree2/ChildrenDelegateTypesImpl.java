@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.TrainType;
  *
  * @author jub
  */
-public class ChildrenDelegateTypesImpl extends ChildrenDelegateImpl implements ChildrenDelegate {
+public class ChildrenDelegateTypesImpl extends ChildrenDelegateImpl {
 
     @Override
     public boolean isLeaf() {

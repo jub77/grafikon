@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.Group;
  *
  * @author jub
  */
-public class ChildrenDelegateGroupsImpl extends ChildrenDelegateImpl implements ChildrenDelegate {
+public class ChildrenDelegateGroupsImpl extends ChildrenDelegateImpl {
 
     @Override
     public boolean isLeaf() {
