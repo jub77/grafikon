@@ -649,7 +649,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graph.setCellsCloneable(false);
         graph.getSelectionModel().addListener(mxEvent.CHANGE, netEditModel);
         graph.setCellsDisconnectable(false);
-        graph.setDisconnectOnMove(false);
 
         graphComponent = new NetGraphComponent(graph);
         graphComponent.setDoubleBuffered(false);
