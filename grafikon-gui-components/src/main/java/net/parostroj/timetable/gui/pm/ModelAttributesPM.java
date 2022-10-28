@@ -42,7 +42,6 @@ public class ModelAttributesPM extends AbstractPM {
     }
 
     public Attributes getFinalAttributes() {
-        // TODO allow repeated call??
         finished = true;
         this.getPropertyChangeSupport().firePropertyChange("finished", false, true);
         return this.attributes;

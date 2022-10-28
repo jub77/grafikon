@@ -631,7 +631,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             return;
         }
 
-        // TODO set states of handlers according to buttons ...
         graph = new NetGraphAdapter(net.getGraph(),
                 new NodeToTextBasic(),
                 new LineToStringBasic(
