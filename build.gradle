@@ -40,7 +40,7 @@ subprojects { prj ->
 				exclude 'org.checkerframework:checker-qual'
 				exclude 'com.google.guava:listenablefuture'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.7', {
+			dependency 'org.apache.xmlgraphics:fop:2.8', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
