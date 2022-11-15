@@ -84,6 +84,8 @@ class VersionPlugin implements Plugin<Project> {
 		ver.distVersion = "${ver.shortVersion}+${ver.buildId}"
 
 		project.tasks.register('version', { Task t ->
+			t.group = "application"
+			t.description = "Prints application version"
 			t.doLast {
 				VersionExtension scmVersion = project.extensions.getByType(VersionExtension)
 				project.logger.lifecycle("Base version: {}", scmVersion.baseVersion)
