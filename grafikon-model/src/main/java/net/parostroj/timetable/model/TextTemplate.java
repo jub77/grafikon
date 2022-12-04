@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Text template.
@@ -13,7 +14,7 @@ import java.util.Map;
 public abstract class TextTemplate {
 
     public enum Language {
-        GROOVY, MVEL, PLAIN, XSL;
+        GROOVY, MVEL, PLAIN
     }
 
     private final String template;
@@ -68,8 +69,6 @@ public abstract class TextTemplate {
                 return new TextTemplateGroovy(template, initialize);
             case PLAIN:
                 return new TextTemplatePlain(template);
-            case XSL:
-                return new TextTemplateXsl(template, initialize);
             default:
                 throw new IllegalArgumentException("No template for language available.");
         }
@@ -88,7 +87,7 @@ public abstract class TextTemplate {
             return false;
         }
         final TextTemplate other = (TextTemplate) obj;
-        if (this.template != other.template && (this.template == null || !this.template.equals(other.template))) {
+        if (!Objects.equals(this.template, other.template)) {
             return false;
         }
         return this.getLanguage() == other.getLanguage();
