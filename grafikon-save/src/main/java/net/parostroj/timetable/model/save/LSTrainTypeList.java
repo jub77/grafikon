@@ -69,23 +69,7 @@ public class LSTrainTypeList {
                 TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
                 TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
-                Script.createScript(
-                "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +
-                "int penalty = 0;\n" +
-                "if (toSpeed < speed) {\n" +
-                "  int penalty1 = penaltySolver.getDecelerationPenalty(speed);\n" +
-                "  int penalty2 = penaltySolver.getDecelerationPenalty(toSpeed);\n" +
-                "  penalty = penalty1 - penalty2;\n" +
-                "}\n" +
-                "if (fromSpeed < speed) {\n" +
-                "  int penalty1 = penaltySolver.getAccelerationPenalty(fromSpeed);\n" +
-                "  int penalty2 = penaltySolver.getAccelerationPenalty(speed);\n" +
-                "  penalty = penalty + penalty2 - penalty1;\n" +
-                "}\n" +
-                "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
-                "time = time + addedTime;\n" +
-                "time = ((int)((time + 40) / 60)) * 60;\n" +
-                "return time;\n", Script.Language.GROOVY));
+                null);
         } catch (GrafikonException e) {
             log.error("Couldn't create trains data." ,e);
         }

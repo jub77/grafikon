@@ -64,23 +64,7 @@ public class LSTrainsData {
             trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
             trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
             trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
-            trainsData.setRunningTimeScript(Script.createScript(
-                    "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +
-                    "int penalty = 0;\n" +
-                    "if (toSpeed < speed) {\n" +
-                    "  int penalty1 = penaltySolver.getDecelerationPenalty(speed);\n" +
-                    "  int penalty2 = penaltySolver.getDecelerationPenalty(toSpeed);\n" +
-                    "  penalty = penalty1 - penalty2;\n" +
-                    "}\n" +
-                    "if (fromSpeed < speed) {\n" +
-                    "  int penalty1 = penaltySolver.getAccelerationPenalty(fromSpeed);\n" +
-                    "  int penalty2 = penaltySolver.getAccelerationPenalty(speed);\n" +
-                    "  penalty = penalty + penalty2 - penalty1;\n" +
-                    "}\n" +
-                    "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
-                    "time = time + addedTime;\n" +
-                    "time = ((int)((time + 40) / 60)) * 60;\n" +
-                    "return time;\n", Script.Language.GROOVY));
+            trainsData.setRunningTimeScript(null);
         } catch (GrafikonException e) {
             throw new LSException(e);
         }

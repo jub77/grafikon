@@ -5,7 +5,6 @@ import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.model.Script.Language;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -36,14 +35,11 @@ public class TrainDiagramFactory {
             sPattern.getGroups().add(new SortPatternGroup(1, SortPatternGroup.Type.NUMBER));
             sPattern.getGroups().add(new SortPatternGroup(2, SortPatternGroup.Type.STRING));
 
-            String scriptCode = getDefaultTimeScript();
-            Script timeScript = Script.createScript(scriptCode, Language.GROOVY);
-
             TrainDiagram diagram = new TrainDiagram(IdGenerator.getInstance().getId());
             diagram.getTrainsData().setTrainNameTemplate(name);
             diagram.getTrainsData().setTrainCompleteNameTemplate(completeName);
             diagram.getTrainsData().setTrainSortPattern(sPattern);
-            diagram.getTrainsData().setRunningTimeScript(timeScript);
+            diagram.getTrainsData().setRunningTimeScript(null);
 
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, Scale.getFromPredefined("H0"));
             diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, 5.0d);
