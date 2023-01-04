@@ -13,6 +13,7 @@ import net.parostroj.timetable.model.Attachment;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.PartFactory;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -128,7 +129,7 @@ public class LSOutputTemplate {
             outputTemplate.setKey(name);
         }
         if (this.template != null) {
-            outputTemplate.setTemplate(this.template.createTextTemplate());
+            outputTemplate.setTemplate(this.template.createTextTemplate("", TextTemplate.Language.GROOVY));
         }
         if (this.script != null) {
             outputTemplate.setScript(this.script.createScript());

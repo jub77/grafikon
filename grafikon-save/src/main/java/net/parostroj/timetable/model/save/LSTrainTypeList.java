@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
 
+import static net.parostroj.timetable.model.save.LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE;
+import static net.parostroj.timetable.model.save.LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE;
+
 /**
  * List of train types.
  *
@@ -63,8 +66,8 @@ public class LSTrainTypeList {
     private void createData() {
         try {
             data = new TrainsDataDto(
-                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}", TextTemplate.Language.MVEL),
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}@if{train.description != ''} @{train.description}@end{}", TextTemplate.Language.MVEL),
+                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
                 Script.createScript(
                 "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +

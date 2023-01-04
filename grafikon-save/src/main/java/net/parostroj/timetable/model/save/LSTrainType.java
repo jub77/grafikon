@@ -17,6 +17,9 @@ public class LSTrainType {
 
     private static final Logger log = LoggerFactory.getLogger(LSTrainType.class);
 
+    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}";
+    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}${train.description ? (' ' + train.description) : ''}";
+
     private String key;
     private String abbr;
     private String desc;
@@ -115,13 +118,13 @@ public class LSTrainType {
         type.setCategory(this.getCategory(diagram));
         try {
             type.setTrainNameTemplate(this.trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(this.trainNameTemplate, TextTemplate.Language.MVEL) : null);
+                TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
         } catch (GrafikonException e) {
             log.error("Couldn't create train name template.", e);
         }
         try {
             type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, TextTemplate.Language.MVEL) : null);
+                TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
         } catch (GrafikonException e) {
             log.error("Couldn't create complete train name template.", e);
         }

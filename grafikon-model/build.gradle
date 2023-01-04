@@ -1,6 +1,5 @@
 dependencies {
 	api 'org.jgrapht:jgrapht-core'
-	api 'org.mvel:mvel2'
 	api 'org.apache.groovy:groovy-jsr223'
 	api 'joda-time:joda-time'
 	api 'com.google.guava:guava'

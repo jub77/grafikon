@@ -293,9 +293,10 @@ public class LSAttributesItem {
 
     private Object convertTextTemplate(String value, String valueType) throws LSException {
         String languageStr = valueType.substring(TEXT_TEMPLATE_KEY_PREFIX.length());
-        TextTemplate.Language language = TextTemplate.Language.valueOf(languageStr);
+        TextTemplate.Language language = TextTemplate.Language.fromString(languageStr);
         try {
-            return TextTemplate.createTextTemplate(value, language);
+            return TextTemplate.createTextTemplate(language == null ? "" : value,
+                    language == null ? TextTemplate.Language.GROOVY : language);
         } catch (GrafikonException e) {
             throw new LSException("Cannot convert template: " + e.getMessage(), e);
         }

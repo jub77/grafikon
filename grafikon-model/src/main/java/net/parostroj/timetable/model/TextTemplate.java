@@ -14,7 +14,16 @@ import java.util.Objects;
 public abstract class TextTemplate {
 
     public enum Language {
-        GROOVY, MVEL, PLAIN
+        GROOVY, PLAIN;
+
+        public static Language fromString(String str) {
+            for (Language language : values()) {
+                if (language.name().equals(str)) {
+                    return language;
+                }
+            }
+            return null;
+        }
     }
 
     private final String template;
@@ -63,8 +72,6 @@ public abstract class TextTemplate {
 
     public static TextTemplate createTextTemplate(String template, Language language, boolean initialize) throws GrafikonException {
         switch(language) {
-            case MVEL:
-                return new TextTemplateMvel(template, initialize);
             case GROOVY:
                 return new TextTemplateGroovy(template, initialize);
             case PLAIN:

@@ -99,7 +99,7 @@ public class LoadFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.MVEL);
+        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.GROOVY);
     }
 
     private void convertToLocalizedStrings(TrainDiagram diagram) {

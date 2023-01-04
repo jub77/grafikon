@@ -66,6 +66,6 @@ public class LoadFilter4d2 implements LoadFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.MVEL);
+        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.GROOVY);
     }
 }

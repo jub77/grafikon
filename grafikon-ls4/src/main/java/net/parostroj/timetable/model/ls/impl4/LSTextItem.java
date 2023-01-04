@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -76,7 +77,7 @@ public class LSTextItem {
         TextItem item = new TextItem(id, diagram);
         item.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         if (template != null) {
-            item.setTemplate(template.createTextTemplate());
+            item.setTemplate(template.createTextTemplate("", TextTemplate.Language.GROOVY));
         }
         item.setType(TextItem.Type.fromKey(type));
         item.setName(name);

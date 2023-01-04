@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 
@@ -25,6 +26,9 @@ import net.parostroj.timetable.utils.Conversions;
 @XmlType(propOrder = {"id", "abbr", "desc", "color", "categoryId", "platform", "trainNameTemplate",
         "trainCompleteNameTemplate", "attributes"})
 public class LSTrainType {
+
+    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}";
+    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}${train.description ? (' ' + train.description) : ''}";
 
     private String id;
     // not used anymore for serialization - backward compatibility
@@ -141,9 +145,9 @@ public class LSTrainType {
         }
         type.setPlatform(platform);
         type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-            trainCompleteNameTemplate.createTextTemplate() : null);
+            trainCompleteNameTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?
-            trainNameTemplate.createTextTemplate() : null);
+            trainNameTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
         type.setCategory(categoryMapping.apply(categoryId));
         if (attributes != null) {
             type.getAttributes().add(attributes.createAttributes(mapping));

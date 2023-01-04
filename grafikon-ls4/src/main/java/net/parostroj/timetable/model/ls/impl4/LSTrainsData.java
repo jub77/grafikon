@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.Script;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainsData;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -70,8 +71,12 @@ public class LSTrainsData {
     }
 
     public void updateTrainsData(TrainsData trainsData) throws LSException {
-        trainsData.setTrainNameTemplate(trainNameTemplate.createTextTemplate());
-        trainsData.setTrainCompleteNameTemplate(trainCompleteNameTemplate.createTextTemplate());
+        trainsData.setTrainNameTemplate(
+                trainNameTemplate.createTextTemplate(
+                        LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
+        trainsData.setTrainCompleteNameTemplate(
+                trainCompleteNameTemplate.createTextTemplate(
+                        LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
         trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
         if (runningTimeScript != null) {
             trainsData.setRunningTimeScript(runningTimeScript.createScript());
