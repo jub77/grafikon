@@ -34,6 +34,14 @@
         </name>
     </template>
     <template>
+        <id>empty_script</id>
+        <filename>empty_script.gtm</filename>
+        <name>
+            <default>Empty (script)</default>
+            <localized lang="cs">Prázdná (skript)</localized>
+        </name>
+    </template>
+    <template>
         <id>empty_classic</id>
         <filename>empty_classic.gtm</filename>
         <name>
