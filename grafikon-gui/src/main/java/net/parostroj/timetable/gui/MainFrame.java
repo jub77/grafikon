@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 
@@ -345,7 +345,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, loader), "new", false, null); // NOI18N
         try {
             this.addMenuItem(fileMenu, "menu.file.new.default.url",
-                    new NewOpenAction(model, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()), TrainDiagram.class)),
+                    new NewOpenAction(model, TemplateLoader.getFromUrl(URI.create(model.getTemplatesBaseUrl()).toURL(), TrainDiagram.class)),
                     "new", false, null); // NOI18N
         } catch (MalformedURLException mue) {
             log.warn(mue.getMessage(), mue);

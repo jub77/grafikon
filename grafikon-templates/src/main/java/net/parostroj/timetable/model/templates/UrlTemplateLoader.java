@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.templates;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -32,12 +33,12 @@ class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
 
     @Override
     protected InputStream getTemplateListStream() throws IOException {
-        return new URL(baseUrl.toString() + "/" + templateListFile).openStream();
+        return URI.create(baseUrl.toString() + "/" + templateListFile).toURL().openStream();
     }
 
     @Override
     protected InputStream getTemplateStream(Template template) throws IOException {
-        return new URL(baseUrl.toString() + "/" + template.getFilename()).openStream();
+        return URI.create(baseUrl.toString() + "/" + template.getFilename()).toURL().openStream();
     }
 
     @Override

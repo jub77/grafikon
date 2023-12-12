@@ -1,7 +1,7 @@
 package net.parostroj.timetable.gui.actions.impl;
 
 import java.io.FileNotFoundException;
-import java.net.URL;
+import java.net.URI;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
         try {
-            try (ZipInputStream is = new ZipInputStream(new URL(url).openStream())){
+            try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
                 context.setAttribute("library", ls.load(is));
             } catch (LSException e) {
