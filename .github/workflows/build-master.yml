@@ -12,7 +12,7 @@ jobs:
       - name: Java Setup
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
       - name: Gradle Build
         uses: gradle/gradle-build-action@v2
