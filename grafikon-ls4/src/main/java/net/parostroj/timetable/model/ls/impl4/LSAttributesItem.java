@@ -345,6 +345,6 @@ public class LSAttributesItem {
 
     @Override
     public String toString() {
-        return String.format("item(%s,%s,%s,%s)", key, type, values);
+        return String.format("item(%s,%s,%s)", key, type, values);
     }
 }
