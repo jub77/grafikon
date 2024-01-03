@@ -193,8 +193,13 @@ public class LSAttributesItem {
             } else {
                 result = new ArrayList<>();
             }
-            for (LSAttributesValue value : getValues()) {
-                result.add(convertSimpleValue(mapping, value.getValue(), value.getType()));
+            for (LSAttributesValue lsValue : getValues()) {
+                Object value = convertSimpleValue(mapping, lsValue.getValue(), lsValue.getType());
+                if (value != null) {
+                    result.add(value);
+                } else {
+                    log.warn("Null value in collection - type: {}, value: {}", lsValue.getType(), lsValue.getValue());
+                }
             }
             return result;
         } else if (MAP_KEY.equals(type)) {
