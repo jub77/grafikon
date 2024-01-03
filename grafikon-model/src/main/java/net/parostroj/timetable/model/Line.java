@@ -84,7 +84,9 @@ public class Line extends NetSegmentImpl<LineTrack> implements Visitable, TrainD
     }
 
     public String toString(TimeIntervalDirection direction) {
-        return String.format("%s-%s", this.getFrom(direction).getAbbr(), this.getTo(direction).getAbbr());
+        Node from = this.getFrom(direction);
+        Node to = this.getTo(direction);
+        return from != null && to !=null ? String.format("%s-%s", from.getAbbr(), to.getAbbr()) : "<not connected>";
     }
 
     public Node getFrom() {
