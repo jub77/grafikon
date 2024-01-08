@@ -27,11 +27,11 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:4.0.17'
-			dependency 'org.apache.groovy:groovy-jsr223:4.0.17'
-			dependency 'org.slf4j:slf4j-api:2.0.10'
-			dependency 'org.slf4j:jcl-over-slf4j:2.0.10'
-			dependency 'joda-time:joda-time:2.12.5'
+			dependency 'org.apache.groovy:groovy-templates:4.0.18'
+			dependency 'org.apache.groovy:groovy-jsr223:4.0.18'
+			dependency 'org.slf4j:slf4j-api:2.0.11'
+			dependency 'org.slf4j:jcl-over-slf4j:2.0.11'
+			dependency 'joda-time:joda-time:2.12.6'
 			dependency 'com.google.guava:guava:33.0.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
@@ -67,7 +67,7 @@ subprojects { prj ->
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
 			dependency 'org.junit.jupiter:junit-jupiter:5.10.1'
 			dependency 'org.hamcrest:hamcrest:2.2'
-			dependency 'io.smallrye.reactive:mutiny:2.5.3'
+			dependency 'io.smallrye.reactive:mutiny:2.5.5'
 		}
 	}
 
