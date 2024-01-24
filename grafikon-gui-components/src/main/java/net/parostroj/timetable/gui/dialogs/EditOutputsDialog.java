@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -20,18 +19,15 @@ import org.beanfabrics.ModelSubscriber;
 import org.beanfabrics.Path;
 import org.beanfabrics.View;
 import org.beanfabrics.swing.BnButton;
-import org.beanfabrics.swing.BnCheckBox;
 import org.beanfabrics.swing.BnTextField;
 
 import com.google.common.collect.Collections2;
-import com.google.common.io.Files;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.GuiContextDataListener;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.execution.OutputTemplateAction;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM.Action;
@@ -49,10 +45,8 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     private static final long serialVersionUID = 1L;
 
-	private static final String INI_KEY_CLEAR_DIRECTORY = "clear.directory";
-
-    private ModelProvider provider;
-    private Link link;
+    private final ModelProvider provider;
+    private final Link link;
     private GuiContext context;
     private Settings settings;
 
@@ -112,17 +106,10 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         generateAllButton.setModelProvider(provider);
         generateAllButton.setPath(new Path("generateAll"));
 
-        BnCheckBox clearDirectoryCheckBox = new BnCheckBox();
-        clearDirectoryCheckBox.setText(ResourceLoader.getString("ot.clear.directory"));
-        clearDirectoryCheckBox.setModelProvider(provider);
-        clearDirectoryCheckBox.setPath(new Path("clearDirectory"));
-
         GroupLayout generatePanelLayout = new GroupLayout(generatePanel);
         generatePanelLayout.setHorizontalGroup(
             generatePanelLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(generatePanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(clearDirectoryCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(generateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -134,8 +121,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
                 .addGroup(generatePanelLayout.createSequentialGroup()
                     .addGroup(generatePanelLayout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(generateAllButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(generateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(clearDirectoryCheckBox))
+                        .addComponent(generateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addContainerGap())
         );
         generatePanel.setLayout(generatePanelLayout);
@@ -205,14 +191,8 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     @Override
     public void registerContext(GuiContext context) {
         context.registerWindow("output.list", this, GuiContextDataListener.create(initMap -> {
-            getPresentationModel().setClearDirectory(initMap.containsKey(INI_KEY_CLEAR_DIRECTORY));
-        }, () -> {
-            if (getPresentationModel().isClearDirectory()) {
-                return Collections.singletonMap(INI_KEY_CLEAR_DIRECTORY, "clear");
-            } else {
-                return Collections.emptyMap();
-            }
-        }));
+            // no settings
+        }, Collections::emptyMap));
 
         this.context = context;
     }
@@ -231,19 +211,10 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         pModel.setAction(Action.GENERATE_ALL, () -> {
             generateOutputs(pModel, Collections2.transform(
                     listModel.getListOfWrappers(),
-                    wrapper -> wrapper.getElement()));
+                    Wrapper::getElement));
             return true;
         });
         provider.setPresentationModel(pModel);
-    }
-
-    private void clearDirectory(File location) {
-        Files.fileTraverser().depthFirstPostOrder(location).forEach(file -> {
-            // try to delete - ignore if it doesn't succeed (successful operation is not required)
-            if (!file.equals(location)) {
-                file.delete();
-            }
-        });
     }
 
     private void generateOutputs(final GenerateOutputPM pModel, Collection<Output> outputs) {
@@ -251,11 +222,6 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         context.setLocationComponent(this);
         OutputTemplateAction action = new OutputTemplateAction(context, element, settings, pModel.getLocation(),
                 outputs);
-        if (pModel.isClearDirectory()) {
-            ActionHandler.getInstance().execute(ModelAction.newAction(context, () -> {
-                clearDirectory(pModel.getLocation());
-            }));
-        }
         ActionHandler.getInstance().execute(action);
     }
 

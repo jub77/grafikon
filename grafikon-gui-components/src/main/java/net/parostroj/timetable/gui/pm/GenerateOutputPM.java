@@ -11,8 +11,6 @@ import java.util.function.Supplier;
 import javax.swing.JFileChooser;
 
 import org.beanfabrics.model.AbstractPM;
-import org.beanfabrics.model.BooleanPM;
-import org.beanfabrics.model.IBooleanPM;
 import org.beanfabrics.model.IntegerPM;
 import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
@@ -28,7 +26,7 @@ public class GenerateOutputPM extends AbstractPM {
     public static final Logger log = LoggerFactory.getLogger(GenerateOutputPM.class);
 
     public enum Action {
-        GENERATE, GENERATE_ALL, EDIT_PATH;
+        GENERATE, GENERATE_ALL, EDIT_PATH
     }
 
     private static final ValidationState DEFAULT_ERROR = ValidationState.create("");
@@ -39,7 +37,6 @@ public class GenerateOutputPM extends AbstractPM {
     OperationPM generateAll = new OperationPM();
     OperationPM editPath = new OperationPM();
     IntegerPM selectedCount = new IntegerPM();
-    IBooleanPM clearDirectory = new BooleanPM();
 
     private final Collection<Locale> locales;
     private final Collection<Locale> modelLocales;
@@ -128,13 +125,5 @@ public class GenerateOutputPM extends AbstractPM {
 
     public Collection<Locale> getModelLocales() {
         return modelLocales;
-    }
-
-    public boolean isClearDirectory() {
-        return clearDirectory.getBoolean();
-    }
-
-    public void setClearDirectory(boolean clear) {
-        clearDirectory.setBoolean(clear);
     }
 }
