@@ -18,3 +18,4 @@ version-plugin/out/*
 /build
 /*.iml
 .idea
+.vscode
