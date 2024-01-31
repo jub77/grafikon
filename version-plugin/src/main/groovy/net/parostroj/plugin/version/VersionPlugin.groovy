@@ -78,9 +78,9 @@ class VersionPlugin implements Plugin<Project> {
 
 		ver.projectVersion = "${baseVersion}${ver.snapshot ? '-SNAPSHOT' : ''}"
 		def dirtySuffix = ver.dirty ? '.dirty' : ''
-		ver.shortVersion = ver.snapshot
+		ver.shortVersion = ver.snapshot || ver.dirty
 				? "${baseVersion}-dev.${commitTimestamp}${dirtySuffix}"
-				: "${baseVersion}${dirtySuffix}"
+				: "${baseVersion}"
 		ver.distVersion = "${ver.shortVersion}+${ver.buildId}"
 
 		project.tasks.register('version', { Task t ->
