@@ -119,13 +119,29 @@ public class OutputFreightUtil {
      */
     public List<FreightConnection> reorderFreightListByDirection(
             Collection<? extends FreightConnection> list) {
-        List<Pair<Boolean, List<FreightConnection>>> rr = list.stream()
+        List<Pair<Boolean, FreightConnection>> rr = list.stream()
                 .map(d -> new Pair<>(d instanceof FreightConnectionPath && ((FreightConnectionPath) d).getPath()
-                        .isDirectionReversed(), d))
-                .collect(FreightCollectors.freightDirectionCollector());
-        return rr.stream()
-                .flatMap(i -> i.first ? Lists.reverse(i.second).stream() : i.second.stream())
+                        .isDirectionReversed(), (FreightConnection) d))
                 .collect(Collectors.toList());
+        rr = Lists.reverse(rr);
+        LinkedList<FreightConnection> result = new LinkedList<>();
+        Iterator<Pair<Boolean, FreightConnection>> i = rr.iterator();
+        Pair<Boolean, FreightConnection> current = i.hasNext() ? i.next() : null;
+        if (current != null) {
+            result.add(current.second);
+        }
+        while (current != null) {
+            Pair<Boolean, FreightConnection> previous = current;
+            current = i.hasNext() ? i.next() : null;
+            if (current != null) {
+                if (current.first == previous.first) {
+                    if (!current.first) result.addFirst(current.second); else result.addLast(current.second);
+                } else {
+                    if (current.first) result.addFirst(current.second); else result.addLast(current.second);
+                }
+            }
+        }
+        return result;
     }
 
     /**

@@ -40,7 +40,8 @@ public interface TrainPath extends List<TrainConnection> {
     }
 
     /**
-     * @return true if at the destination the direction of the train is in reverse
+     * @return true if at the destination the direction of the train is in reverse (if the
+     *      next station is in other direction)
      */
     default boolean isDirectionReversed() {
         boolean reverse = false;
