@@ -9,18 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Java Setup
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
       - name: Gradle Build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build jpackage jpackageImageZip distribution
+        uses: gradle/actions/setup-gradle@v3
+      - name: Execute Gradle Build
+        run: ./gradlew build jpackage jpackageImageZip distribution
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux
           retention-days: 5
@@ -32,18 +32,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Java Setup
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
       - name: Gradle Build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: jpackage jpackageImageZip
+        uses: gradle/actions/setup-gradle@v3
+      - name: Execute Gradle Build
+        run: ./gradlew jpackage jpackageImageZip
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows
           retention-days: 5
@@ -54,18 +54,18 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Java Setup
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
       - name: Gradle Build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: runtimeZip
+        uses: gradle/actions/setup-gradle@v3
+      - name: Execute Gradle Build
+        run: ./gradlew runtimeZip
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos
           retention-days: 5
@@ -76,7 +76,7 @@ jobs:
     needs: [build-linux, build-windows, build-macos]
     steps:
       - name: Download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: List files
         run: ls -R
       - name: Collect Files
