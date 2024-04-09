@@ -27,12 +27,12 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:4.0.20'
-			dependency 'org.apache.groovy:groovy-jsr223:4.0.20'
-			dependency 'org.slf4j:slf4j-api:2.0.12'
-			dependency 'org.slf4j:jcl-over-slf4j:2.0.12'
+			dependency 'org.apache.groovy:groovy-templates:4.0.21'
+			dependency 'org.apache.groovy:groovy-jsr223:4.0.21'
+			dependency 'org.slf4j:slf4j-api:2.0.13'
+			dependency 'org.slf4j:jcl-over-slf4j:2.0.13'
 			dependency 'joda-time:joda-time:2.12.7'
-			dependency 'com.google.guava:guava:33.1.0-jre', {
+			dependency 'com.google.guava:guava:33.2.1-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
