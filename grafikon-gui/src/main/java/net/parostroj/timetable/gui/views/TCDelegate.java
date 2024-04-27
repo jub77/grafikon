@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.views;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -16,6 +17,7 @@ import net.parostroj.timetable.actions.TrainsCycleChecker.Conflict;
 import net.parostroj.timetable.actions.TrainsCycleChecker.ConflictType;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
+import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TimeConverter;
@@ -29,7 +31,7 @@ import net.parostroj.timetable.model.events.Special;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
- * Delegate for actions over trains cycles.
+ * Delegate for actions with train circulations.
  *
  * @author jub
  */
@@ -49,7 +51,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
     protected TrainsCycleChecker checker;
 
     protected TCDelegate(ApplicationModel model) {
-        this(model, new TrainsCycleChecker(ConflictType.NODE, ConflictType.TIME));
+        this(model, TrainsCycleChecker.forVehicleType());
     }
 
     protected TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
@@ -205,12 +207,8 @@ public abstract class TCDelegate implements ApplicationModelListener {
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                this.fireEvent(Action.DIAGRAM_CHANGE, null);
-                break;
-            default:
-                break;
+        if (Objects.requireNonNull(event.getType()) == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+            this.fireEvent(Action.DIAGRAM_CHANGE, null);
         }
     }
 

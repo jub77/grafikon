@@ -24,7 +24,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
- * Implementation of the interface for driver cycle.
+ * Implementation of the interface for driver circulations.
  *
  * @author jub
  */
@@ -33,7 +33,7 @@ public class DriverCycleDelegate extends TCDelegate {
     private TCDetailsViewDialog editDialog;
 
     public DriverCycleDelegate(ApplicationModel model) {
-        super(model, new TrainsCycleChecker(ConflictType.NODE, ConflictType.TIME, ConflictType.SETUP_TIME, ConflictType.TRANSITION_TIME));
+        super(model, TrainsCycleChecker.forDriverType());
     }
 
     @Override

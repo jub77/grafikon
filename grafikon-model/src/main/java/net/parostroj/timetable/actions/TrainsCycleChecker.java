@@ -10,19 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.parostroj.timetable.model.Interval;
-import net.parostroj.timetable.model.IntervalFactory;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 
 /**
  * Conflict checker for trains cycle.
  *
  * @author jub
  */
-public class TrainsCycleChecker {
+public final class TrainsCycleChecker {
 
     public enum ConflictType {
         NODE, TIME, SETUP_TIME, TRANSITION_TIME
@@ -52,15 +47,36 @@ public class TrainsCycleChecker {
         }
     }
 
+    private final static TrainsCycleChecker DRIVER_CHECKER = new TrainsCycleChecker(
+            ConflictType.NODE,
+            ConflictType.TIME,
+            ConflictType.SETUP_TIME,
+            ConflictType.TRANSITION_TIME);
+    private final static TrainsCycleChecker VEHICLE_CHECKER = new TrainsCycleChecker(
+            ConflictType.NODE,
+            ConflictType.TIME);
+
     private final Set<ConflictType> conflictTypes;
 
-    public TrainsCycleChecker(Collection<ConflictType> conflictTypes) {
+    private TrainsCycleChecker(Collection<ConflictType> conflictTypes) {
         this.conflictTypes = Collections.newSetFromMap(new EnumMap<>(ConflictType.class));
         this.conflictTypes.addAll(conflictTypes);
     }
 
-    public TrainsCycleChecker(ConflictType... conflictTypes) {
+    private TrainsCycleChecker(ConflictType... conflictTypes) {
         this(Arrays.asList(conflictTypes));
+    }
+
+    public static TrainsCycleChecker forType(TrainsCycleType type) {
+        return type.isDriverType() ? forDriverType() : forVehicleType();
+    }
+
+    public static TrainsCycleChecker forDriverType() {
+        return DRIVER_CHECKER;
+    }
+
+    public static TrainsCycleChecker forVehicleType() {
+        return VEHICLE_CHECKER;
     }
 
     public List<Conflict> checkConflicts(TrainsCycle cycle) {
@@ -112,7 +128,7 @@ public class TrainsCycleChecker {
         Interval firstInterval = getNormalizedIntervalFromItem(first);
         Interval secondInterval = getNormalizedIntervalFromItem(second);
         if (overCycles) {
-            firstInterval = getShiftedInterval(firstInterval, - TimeInterval.DAY);
+            firstInterval = getShiftedInterval(firstInterval);
         }
         return secondInterval.getStart() - firstInterval.getEnd();
     }
@@ -121,16 +137,16 @@ public class TrainsCycleChecker {
         return IntervalFactory.createInterval(item.getStartTime(), item.getEndTime()).normalize();
     }
 
-    private Interval getShiftedInterval(Interval interval, int shift) {
-        return IntervalFactory.createInterval(interval.getStart() + shift, interval.getEnd() + shift);
+    private Interval getShiftedInterval(Interval interval) {
+        return IntervalFactory.createInterval(interval.getStart() - TimeInterval.DAY, interval.getEnd() - TimeInterval.DAY);
     }
 
     private Integer getTransitionTime(TrainDiagram diagram) {
         Integer okDifference = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
         if (okDifference != null) {
             // computed difference in model seconds
-            okDifference = (int) (okDifference.intValue()
-                    * diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue() * 60);
+            okDifference = (int) (okDifference
+                    * diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class) * 60);
         }
         return okDifference;
     }
