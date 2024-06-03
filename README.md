@@ -4,7 +4,7 @@ Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo
 
 ## Examples
 
-Examples of gtm files with timetables can be found here: [gtm_examples.zip](http://jub.parostroj.net/grafikon/gtm_examples.zip)
+Examples of gtm files with timetables can be found here: [gtm_examples.zip](https://jub.parostroj.net/grafikon/gtm_examples.zip)
 
 ## Zip Archive
 
@@ -20,7 +20,7 @@ Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa an
 
 Output templates and outputs can be added from menu (downloaded from web): *File > Import > Import and replace templates (web)*.
 
-![Grafikon](http://jub.parostroj.net/grafikon/grafikon.png)
+![Grafikon](https://jub.parostroj.net/grafikon/grafikon.png)
 
 ## Binaries with Bundled Java
 
