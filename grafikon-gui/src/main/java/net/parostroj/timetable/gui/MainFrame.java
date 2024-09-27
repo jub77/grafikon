@@ -337,8 +337,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
         getContentPane().add(statusBar, BorderLayout.SOUTH);
 
-        tabbedPane.getAccessibleContext().setAccessibleName(ResourceLoader.getString("tab.trains")); // NOI18N
-
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
         TemplateLoader<TrainDiagram> loader = TemplateLoader.getDefault(TrainDiagram.class);
