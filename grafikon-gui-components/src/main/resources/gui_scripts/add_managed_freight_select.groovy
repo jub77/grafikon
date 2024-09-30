@@ -1,6 +1,6 @@
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog
 
-def allTrains = diagram.trains.findAll{train -> !train.attributes['managed.freight'] && train.type.category.key == "freight" && !train.cyclesMap.values().any{c -> c.cycle.attributes['freight']}}
+def allTrains = diagram.trains.findAll{train -> !train.attributes['managed.freight'] && train.type?.category?.key == "freight" && !train.cyclesMap.values().any{c -> c.cycle.attributes['freight']}}
 
 if (!allTrains) return
 
