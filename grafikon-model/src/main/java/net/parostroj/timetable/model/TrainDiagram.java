@@ -97,7 +97,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final RuntimeInfo runtimeInfo;
     private TimeConverter timeConverter;
 
-    private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;
+    private final Iterable<ItemWithIdIterable<?>> itemLists;
 
     /**
      * Default constructor.
@@ -105,7 +105,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public TrainDiagram(String id) {
         this.id = id;
         this.partFactory = new TrainDiagramPartFactory(this);
-        this.itemLists = new LinkedList<>();
         this.listener = this::fireNestedEvent;
         this.routes = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
@@ -164,7 +163,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new OutputTemplateRemoveValidator(this));
         this.validators.add(new OutputValidator(this));
         this.validators.add(new PreviousNextTrainValidator());
-        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
+        this.itemLists = List.of(routes, images, engineClasses, textItems, outputTemplates,
                 groups, companies, trainTypes, trains, cycleTypes, outputs);
     }
 
@@ -484,7 +483,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             return this;
         }
         ObjectWithId object;
-        for (ItemWithIdIterable<? extends ObjectWithId> itemList : itemLists) {
+        for (ItemWithIdIterable<?> itemList : itemLists) {
             object = itemList.getById(id);
             if (object != null) {
                 return object;

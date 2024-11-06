@@ -30,13 +30,12 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
     private final SystemListener listener;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
-    private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;
+    private final Iterable<ItemWithIdIterable<?>> itemLists;
 
     /**
      * Constructor.
      */
     public Net(TrainDiagram diagram) {
-        this.itemLists = new LinkedList<>();
         this.netDelegate = new DefaultListenableGraph<>(new SimpleGraph<>(Line.class));
         this.lineClasses = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
         this.regions = new ItemWithIdSetImpl<>(
@@ -45,7 +44,7 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
         this.listenerSupportAll = new ListenerSupport();
         this.listener = this::fireNestedEvent;
         this.diagram = diagram;
-        Collections.addAll(itemLists, lineClasses, regions);
+        this.itemLists = List.of(lineClasses, regions);
     }
 
     @Override
@@ -227,7 +226,7 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
 
     public ObjectWithId getObjectById(String id) {
         ObjectWithId object;
-        for (ItemWithIdIterable<? extends ObjectWithId> itemList : itemLists) {
+        for (ItemWithIdIterable<?> itemList : itemLists) {
             object = itemList.getById(id);
             if (object != null) {
                 return object;
