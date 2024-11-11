@@ -27,8 +27,8 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:4.0.23'
-			dependency 'org.apache.groovy:groovy-jsr223:4.0.23'
+			dependency 'org.apache.groovy:groovy-templates:4.0.24'
+			dependency 'org.apache.groovy:groovy-jsr223:4.0.24'
 			dependency 'org.slf4j:slf4j-api:2.0.16'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.16'
 			dependency 'joda-time:joda-time:2.13.0'
