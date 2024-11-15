@@ -37,9 +37,8 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
      */
     public Net(TrainDiagram diagram) {
         this.netDelegate = new DefaultListenableGraph<>(new SimpleGraph<>(Line.class));
-        this.lineClasses = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
-        this.regions = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEvent(type, item, null, null));
+        this.lineClasses = new ItemWithIdListImpl<>(this::fireEvent);
+        this.regions = new ItemWithIdSetImpl<>(this::fireEvent);
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.listener = this::fireNestedEvent;
@@ -249,36 +248,26 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
         return null;
     }
 
+    private void fireEvent(Event.Type type, Object item) {
+        this.fireEvent(type, item, null, null);
+    }
+
     private void fireEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
         Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
-        Net.this.fireEvent(event);
-    }
-
-    private void fireCollectionEvent(Event.Type type, ItemCollectionObject item, Integer newIndex, Integer oldIndex) {
-        fireEvent(type, item, newIndex, oldIndex);
-        switch (type) {
-            case ADDED:
-                item.added();
-                break;
-            case REMOVED:
-                item.removed();
-                break;
-            default: // nothing
-                break;
+        this.fireEvent(event);
+        if (item instanceof ItemCollectionObject o) {
+            switch (type) {
+                case ADDED -> o.added();
+                case REMOVED -> o.removed();
+                default -> {}
+            }
         }
-    }
-
-    protected void fireCollectionEventObservable(Event.Type type, ObservableObject item, Integer newIndex, Integer oldIndex) {
-        fireEvent(type, item, newIndex, oldIndex);
-        switch (type) {
-            case ADDED:
-                item.addListener(listener);
-                break;
-            case REMOVED:
-                item.removeListener(listener);
-                break;
-            default: // nothing
-                break;
+        if (item instanceof ObservableObject o) {
+            switch (type) {
+                case ADDED -> o.addListener(listener);
+                case REMOVED -> o.removeListener(listener);
+                default -> {}
+            }
         }
     }
 }

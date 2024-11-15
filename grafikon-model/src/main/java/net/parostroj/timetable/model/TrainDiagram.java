@@ -8,7 +8,6 @@ import com.google.common.collect.Iterables;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -106,34 +105,26 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.id = id;
         this.partFactory = new TrainDiagramPartFactory(this);
         this.listener = this::fireNestedEvent;
-        this.routes = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEvent(type, item, null, null));
+        this.routes = new ItemWithIdSetImpl<>(this::fireEvent);
         this.trains = new ItemWithIdSetImpl<>((type, item) -> {
             if (type == Event.Type.ADDED) {
                 item.attach();
             } else {
                 item.detach();
             }
-            this.fireCollectionEventObservable(type, item, null, null);
+            this.fireEvent(type, item);
         });
-        this.cycleTypes = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.images = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEvent(type, item, null, null));
-        this.engineClasses = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.textItems = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
-        this.outputTemplates = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.outputs = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.groups = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.companies = new ItemWithIdSetImpl<>(
-                (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.trainTypeCategories = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
+        this.cycleTypes = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.images = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.engineClasses = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.textItems = new ItemWithIdListImpl<>(this::fireEvent);
+        this.outputTemplates = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.outputs = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.groups = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.companies = new ItemWithIdSetImpl<>(this::fireEvent);
+        this.trainTypeCategories = new ItemWithIdListImpl<>(this::fireEvent);
         this.net = new Net(this);
-        this.trainTypes = new ItemWithIdListImpl<>(this::fireCollectionEventObservable);
+        this.trainTypes = new ItemWithIdListImpl<>(this::fireEvent);
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
         this.trainsData = new TrainsData(this);
@@ -271,7 +262,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     @Override
-	public Attributes getAttributes() {
+    public Attributes getAttributes() {
         return attributes;
     }
 
@@ -497,36 +488,26 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return object;
     }
 
-    private void fireCollectionEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
+    protected void fireEvent(Event.Type type, Object item) {
+        this.fireEvent(type, item, null, null);
+    }
+
+    private void fireEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
         Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
-        TrainDiagram.this.fireEvent(event);
-    }
-
-    private void fireCollectionEventListObject(Event.Type type, ItemCollectionObject item, Integer newIndex, Integer oldIndex) {
-        fireCollectionEvent(type, item, newIndex, oldIndex);
-        switch (type) {
-            case ADDED:
-                item.added();
-                break;
-            case REMOVED:
-                item.removed();
-                break;
-            default: // nothing
-                break;
+        this.fireEvent(event);
+        if (item instanceof ItemCollectionObject o) {
+            switch (type) {
+                case ADDED -> o.added();
+                case REMOVED -> o.removed();
+                default -> {}
+            }
         }
-    }
-
-    protected void fireCollectionEventObservable(Event.Type type, ObservableObject item, Integer newIndex, Integer oldIndex) {
-        fireCollectionEvent(type, item, newIndex, oldIndex);
-        switch (type) {
-            case ADDED:
-                item.addListener(listener);
-                break;
-            case REMOVED:
-                item.removeListener(listener);
-                break;
-            default: // nothing
-                break;
+        if (item instanceof ObservableObject o) {
+            switch (type) {
+                case ADDED -> o.addListener(listener);
+                case REMOVED -> o.removeListener(listener);
+                default -> {}
+            }
         }
     }
 }

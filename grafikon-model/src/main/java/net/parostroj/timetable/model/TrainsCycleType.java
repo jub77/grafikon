@@ -56,7 +56,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
                     if (type == Event.Type.REMOVED) {
                         item.clear();
                     }
-                    diagram.fireCollectionEventObservable(type, item, null, null);
+                    diagram.fireEvent(type, item);
                 });
         listenerSupport = new ListenerSupport();
         attributes = new Attributes(
