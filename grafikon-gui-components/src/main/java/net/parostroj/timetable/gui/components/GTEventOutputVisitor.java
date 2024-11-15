@@ -63,6 +63,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName().getDefaultString());
                 if (event.getObject() instanceof Output)
                     str.append("    Output: ").append(((Output) event.getObject()).toString());
+                if (event.getObject() instanceof EngineClass)
+                    str.append("    Engine class: ").append(((EngineClass) event.getObject()).toString());
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
