@@ -36,8 +36,8 @@ public class ExportImportSelectionDialog extends ExportImportSelectionBaseDialog
         exportImportSelectionPanel.getLeftPanel().add(overwriteCheckBox);
 
         // initialize combobox for matching
-        matchComboBox.addItem(Wrapper.getWrapper(ImportMatch.NAME));
         matchComboBox.addItem(Wrapper.getWrapper(ImportMatch.ID));
+        matchComboBox.addItem(Wrapper.getWrapper(ImportMatch.NAME));
     }
 
     public ImportMatch getImportMatch() {
