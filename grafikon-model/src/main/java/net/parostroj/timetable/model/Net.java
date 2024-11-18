@@ -66,6 +66,8 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
     }
 
     public void removeNode(Node node) {
+        List<Line> lines = List.copyOf(netDelegate.edgesOf(node));
+        lines.forEach(this::removeLine);
         netDelegate.removeVertex(node);
         this.fireEvent(new Event(this, Event.Type.REMOVED, node));
         node.removeListener(listener);

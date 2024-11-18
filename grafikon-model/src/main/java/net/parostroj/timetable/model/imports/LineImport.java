@@ -23,19 +23,22 @@ public class LineImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId importedObject) {
         // check class
-        if (!(importedObject instanceof Line)) {
+        if (!(importedObject instanceof Line importedLine)) {
             // skip other objects
             return null;
         }
-        Line importedLine = (Line) importedObject;
 
         // check if the train already exist
         Line checkedLine = this.getLine(importedLine);
         if (checkedLine != null) {
-            String message = "line already exists";
-            this.addError(importedLine, message);
-            log.debug("{}: {}", message, checkedLine);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getNet().removeLine(checkedLine);
+            } else {
+                String message = "line already exists";
+                this.addError(importedLine, message);
+                log.debug("{}: {}", message, checkedLine);
+                return null;
+            }
         }
 
         // create line
@@ -63,10 +66,10 @@ public class LineImport extends Import {
             // add line track to connectors
             importedTrack.getFromTrackConnector()
                     .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeFrom, c)))
-                    .ifPresent(c -> c.setLineTrack(Optional.ofNullable(track)));
+                    .ifPresent(c -> c.setLineTrack(Optional.of(track)));
             importedTrack.getToTrackConnector()
                     .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeTo, c)))
-                    .ifPresent(c -> c.setLineTrack(Optional.ofNullable(track)));
+                    .ifPresent(c -> c.setLineTrack(Optional.of(track)));
         }
 
         // add to diagram

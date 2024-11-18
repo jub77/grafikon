@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class NodeImport extends Import {
+public class NodeImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImport.class);
 
@@ -30,17 +30,21 @@ class NodeImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof Node))
+        if (!(o instanceof Node importedNode)) {
             return null;
-        Node importedNode = (Node)o;
+        }
 
         // check if the train already exist
         Node checkedNode = this.getNode(importedNode);
         if (checkedNode != null) {
-            String message = "station already exists";
-            this.addError(importedNode, message);
-            log.debug("{}: {}", message, checkedNode);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getNet().removeNode(checkedNode);
+            } else {
+                String message = "station already exists";
+                this.addError(importedNode, message);
+                log.debug("{}: {}", message, checkedNode);
+                return null;
+            }
         }
 
         // create new node

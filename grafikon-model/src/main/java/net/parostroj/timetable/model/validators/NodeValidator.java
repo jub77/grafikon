@@ -38,8 +38,7 @@ public class NodeValidator implements TrainDiagramValidator {
             } else if (event.getAttributeChange().checkName(Node.ATTR_FREIGHT_COLORS, Node.ATTR_REGIONS)) {
                 checkAllowedFreightColors((Node) event.getSource());
             }
-        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node) {
-            Node node = (Node) event.getObject();
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node node) {
             return checkNodeControl(node);
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ATTRIBUTE
                 && event.getAttributeChange().checkName(TrainDiagram.ATTR_CHANGE_DIRECTION_STOP)) {
@@ -48,6 +47,7 @@ public class NodeValidator implements TrainDiagramValidator {
 
         return false;
     }
+
     private boolean inCheckNodeControl;
 
     private boolean checkNodeControl(Node node) {
