@@ -1,6 +1,8 @@
 package net.parostroj.timetable.gui.actions.impl;
 
 import java.util.function.Predicate;
+
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
 import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
@@ -29,21 +31,16 @@ import net.parostroj.timetable.model.library.Library;
 public class ImportSelectionModelAction extends EventDispatchModelAction {
 
     public static final class TrainGroupFilter implements Predicate<ObjectWithId> {
-        private final Group group;
+        private final Predicate<Train> trainPredicate;
 
         public TrainGroupFilter(Group group) {
-            this.group = group;
+            this.trainPredicate = ModelPredicates.inGroup(group);
         }
 
         @Override
         public boolean test(ObjectWithId item) {
-            if (item instanceof Train) {
-                Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
-                if (group == null) {
-                    return foundGroup == null;
-                } else {
-                    return group.equals(foundGroup);
-                }
+            if (item instanceof Train train) {
+                return trainPredicate.test(train);
             } else {
                 throw new IllegalArgumentException("Train expected: " + item);
             }
@@ -61,7 +58,6 @@ public class ImportSelectionModelAction extends EventDispatchModelAction {
         boolean trainImport = context.hasAttribute("trainImport");
         TrainGroupFilter filter = (TrainGroupFilter) context.getAttribute("trainFilter");
         if (diagram != null || library != null) {
-
             final ExportImportSelectionDialog importDialog = new ExportImportSelectionDialog(
                     GuiComponentUtils.getWindow(context.getLocationComponent()), true);
 

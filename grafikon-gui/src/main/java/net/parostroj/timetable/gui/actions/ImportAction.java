@@ -79,8 +79,9 @@ public class ImportAction extends AbstractAction {
                 context.setAttribute("trainFilter", filter);
                 context.setCancelled(cancelled);
                 if (trainImport) {
-                    context.setAttribute("trainImport", new ImportModelAction.TrainImportConfig(groupDialog.isRemoveExistingTrains(),
-                            groupDialog.getSelectedFrom(), groupDialog.getSelectedTo()));
+                    context.setAttribute("trainImport", new ImportModelAction.TrainImportConfig(
+                            groupDialog.isRemoveExistingTrains(),
+                            groupDialog.getSelectedTo()));
                 }
             }
         });

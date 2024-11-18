@@ -45,28 +45,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     private static final Logger log = LoggerFactory.getLogger(ImportModelAction.class);
 
-    public static class TrainImportConfig {
-        private final boolean removeExisting;
-        private final Group fromGroup;
-        private final Group toGroup;
-
-        public TrainImportConfig(boolean removeExisting, Group fromGroup, Group toGroup) {
-            this.removeExisting = removeExisting;
-            this.fromGroup = fromGroup;
-            this.toGroup = toGroup;
-        }
-
-        public boolean isRemoveExisting() {
-            return removeExisting;
-        }
-
-        public Group getFromGroup() {
-            return fromGroup;
-        }
-
-        public Group getToGroup() {
-            return toGroup;
-        }
+    public record TrainImportConfig(boolean removeExisting, Group toGroup) {
     }
 
     private static final int CHUNK_SIZE = 10;
@@ -88,14 +67,14 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             TrainImportConfig trainImportConfig = context.getAttribute("trainImport", TrainImportConfig.class);
             Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjectMap();
             imports = new TrainDiagramPartImport(diagram, selection.getImportMatch(), selection.isImportOverwrite());
-            List<ObjectWithId> list = map.values().stream().sequential().flatMap(item -> item.stream().sequential()).collect(Collectors.toList());
+            List<ObjectWithId> list = map.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
             if (list.isEmpty()) {
                 return;
             }
-            if (trainImportConfig != null && trainImportConfig.isRemoveExisting()) {
+            if (trainImportConfig != null && trainImportConfig.removeExisting()) {
                 // remove existing trains in group
-                Consumer<ObjectWithId> deleteProcess = item -> diagram.getTrains().remove(item);
-                Iterable<Train> filteredTrains = Iterables.filter(diagram.getTrains(), ModelPredicates.inGroup(trainImportConfig.getToGroup())::test);
+                Consumer<ObjectWithId> deleteProcess = item -> diagram.getTrains().remove((Train) item);
+                Iterable<Train> filteredTrains = Iterables.filter(diagram.getTrains(), ModelPredicates.inGroup(trainImportConfig.toGroup())::test);
                 processItems(filteredTrains, deleteProcess);
             }
             // import new objects
@@ -168,7 +147,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             int lineLength = 70;
             int nextLimit = lineLength;
             for (ImportError error : errors) {
-                if (message.length() != 0) {
+                if (!message.isEmpty()) {
                     message.append(", ");
                 }
                 if (nextLimit < message.length()) {
@@ -202,7 +181,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         // process new trains
         // if train import -> move to appropriate group
         if (o instanceof Train && trainImportConfig != null) {
-            Group destGroup = trainImportConfig.getToGroup();
+            Group destGroup = trainImportConfig.toGroup();
             ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
         }
     }
