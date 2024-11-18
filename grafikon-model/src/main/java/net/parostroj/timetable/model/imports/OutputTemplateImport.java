@@ -16,9 +16,9 @@ public class OutputTemplateImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof OutputTemplate))
+        if (!(o instanceof OutputTemplate importedOutputTemplate)) {
             return null;
-        OutputTemplate importedOutputTemplate = (OutputTemplate) o;
+        }
 
         // check existence
         OutputTemplate checkedOutputTemplate = this.getOutputTemplate(importedOutputTemplate);

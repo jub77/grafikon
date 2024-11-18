@@ -18,22 +18,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public abstract class Import {
 
-    public static class ImportError {
-        private final ObjectWithId object;
-        private final String text;
-
-        public ImportError(ObjectWithId object, String text) {
-            this.object = object;
-            this.text = text;
-        }
-
-        public ObjectWithId getObject() {
-            return object;
-        }
-
-        public String getText() {
-            return text;
-        }
+    public record ImportError(ObjectWithId object, String text) {
     }
 
     private static final Logger log = LoggerFactory.getLogger(Import.class);
@@ -409,37 +394,22 @@ public abstract class Import {
 
     public static Import getInstance(ImportComponent components, TrainDiagram diagram,
             ImportMatch match, boolean overwrite) {
-        switch (components) {
-            case COMPANIES:
-                return new CompanyImport(diagram, match, overwrite);
-            case REGIONS:
-                return new RegionImport(diagram, match, overwrite);
-            case NODES:
-                return new NodeImport(diagram, match, overwrite);
-            case GROUPS:
-                return new GroupImport(diagram, match, overwrite);
-            case TRAINS:
-                return new TrainImport(diagram, match, overwrite);
-            case TRAIN_TYPES:
-                return new TrainTypeImport(diagram, match, overwrite);
-            case LINE_CLASSES:
-                return new LineClassImport(diagram, match, overwrite);
-            case ENGINE_CLASSES:
-                return new EngineClassImport(diagram, match, overwrite);
-            case OUTPUT_TEMPLATES:
-                return new OutputTemplateImport(diagram, match, overwrite);
-            case TRAINS_CYCLES:
-                return new TrainsCycleImport(diagram, match, overwrite);
-            case TRAINS_CYCLE_TYPES:
-                return new TrainsCycleTypeImport(diagram, match, overwrite);
-            case LINES:
-                return new LineImport(diagram, match, overwrite);
-            case ROUTES:
-                return new RouteImport(diagram, match, overwrite);
-            case TRAIN_TYPE_CATEGORIES:
-                return new TrainTypeCategoryImport(diagram, match, overwrite);
-        }
-        throw new IllegalArgumentException("No import for component type: " + components);
+        return switch (components) {
+            case COMPANIES -> new CompanyImport(diagram, match, overwrite);
+            case REGIONS -> new RegionImport(diagram, match, overwrite);
+            case NODES -> new NodeImport(diagram, match, overwrite);
+            case GROUPS -> new GroupImport(diagram, match, overwrite);
+            case TRAINS -> new TrainImport(diagram, match, overwrite);
+            case TRAIN_TYPES -> new TrainTypeImport(diagram, match, overwrite);
+            case LINE_CLASSES -> new LineClassImport(diagram, match, overwrite);
+            case ENGINE_CLASSES -> new EngineClassImport(diagram, match, overwrite);
+            case OUTPUT_TEMPLATES -> new OutputTemplateImport(diagram, match, overwrite);
+            case TRAINS_CYCLES -> new TrainsCycleImport(diagram, match, overwrite);
+            case TRAINS_CYCLE_TYPES -> new TrainsCycleTypeImport(diagram, match, overwrite);
+            case LINES -> new LineImport(diagram, match, overwrite);
+            case ROUTES -> new RouteImport(diagram, match, overwrite);
+            case TRAIN_TYPE_CATEGORIES -> new TrainTypeCategoryImport(diagram, match, overwrite);
+        };
     }
 
     public void setProperty(String key, Object value) {

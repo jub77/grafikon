@@ -27,19 +27,22 @@ public class TrainImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId importedObject) {
         // check class
-        if (!(importedObject instanceof Train)) {
+        if (!(importedObject instanceof Train importedTrain)) {
             // skip other objects
             return null;
         }
-        Train importedTrain = (Train)importedObject;
 
         // check if the train already exist
         Train checkedTrain = this.getTrain(importedTrain);
         if (checkedTrain != null) {
-            String message = "train already exists";
-            this.addError(importedTrain, message);
-            log.debug("{}: {}", message, checkedTrain);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getTrains().remove(checkedTrain);
+            } else {
+                String message = "train already exists";
+                this.addError(importedTrain, message);
+                log.debug("{}: {}", message, checkedTrain);
+                return null;
+            }
         }
         // create a new train
         TrainType trainType = this.getTrainType(importedTrain.getType());
@@ -67,9 +70,8 @@ public class TrainImport extends Import {
             return null;
         }
         for (Triplet<NetSegment<?>, Track, TimeInterval> seg : route) {
-            if (seg.first instanceof Node) {
+            if (seg.first instanceof Node node) {
                 // node
-                Node node = (Node)seg.first;
                 builder.addNode(this.getId(seg.third), node, (NodeTrack)seg.second, seg.third.getLength(), seg.third.getAttributes());
             } else {
                 // line

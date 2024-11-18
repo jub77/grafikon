@@ -163,7 +163,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
     }
 
     private String getText(ImportError error) {
-        Object oid = error.getObject();
+        Object oid = error.object();
         String oidStr;
         if (oid instanceof Train) {
             oidStr = ((Train) oid).getDefaultName();
@@ -174,7 +174,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         } else {
             oidStr = oid.toString();
         }
-        return String.format("%s (%s)", oidStr, error.getText());
+        return String.format("%s (%s)", oidStr, error.text());
     }
 
     private void processImportedObject(ObjectWithId o, TrainImportConfig trainImportConfig) {
