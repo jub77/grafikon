@@ -24,17 +24,21 @@ public class TrainTypeImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof TrainType))
+        if (!(o instanceof TrainType importedType)) {
             return null;
-        TrainType importedType = (TrainType)o;
+        }
 
         // check existence
         TrainType checkedType = this.getTrainType(importedType);
         if (checkedType != null) {
-            String message = "train type already exists";
-            this.addError(importedType, message);
-            log.debug("{}: {}", message, checkedType);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getTrainTypes().remove(checkedType);
+            } else {
+                String message = "train type already exists";
+                this.addError(importedType, message);
+                log.debug("{}: {}", message, checkedType);
+                return null;
+            }
         }
 
         // get category

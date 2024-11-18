@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.Iterables;
 
+import com.google.common.collect.Lists;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -43,6 +44,11 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
         segments = new LinkedList<>(route.segments);
     }
 
+    public Route(String id, TrainDiagram diagram, Iterable<RouteSegment> segments) {
+        this(id, diagram);
+        this.segments = Lists.newLinkedList(segments);
+    }
+
     @SafeVarargs
     public Route(String id, TrainDiagram diagram, RouteSegment... segments) {
         this(id, diagram);
@@ -54,6 +60,8 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
         this(id, diagram, segments);
         this.setName(name);
     }
+
+
 
     public List<RouteSegment> getSegments() {
         return segments;
@@ -122,8 +130,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
     public boolean checkDuplicateNodes() {
         Set<Node> dNodes = new HashSet<>();
         for (RouteSegment segment : segments) {
-            if (segment instanceof Node) {
-                Node node = (Node) segment;
+            if (segment instanceof Node node) {
                 if (dNodes.contains(node)) {
                     return true;
                 } else {

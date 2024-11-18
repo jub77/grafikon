@@ -23,17 +23,21 @@ public class GroupImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof Group))
+        if (!(o instanceof Group importedGroup)) {
             return null;
-        Group importedGroup = (Group)o;
+        }
 
         // check existence
         Group checkedGroup = this.getGroup(importedGroup);
         if (checkedGroup != null) {
-            String message = "group already exists";
-            this.addError(importedGroup, message);
-            log.debug("{}: {}", message, checkedGroup);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getGroups().remove(checkedGroup);
+            } else {
+                String message = "group already exists";
+                this.addError(importedGroup, message);
+                log.debug("{}: {}", message, checkedGroup);
+                return null;
+            }
         }
 
         // create new group

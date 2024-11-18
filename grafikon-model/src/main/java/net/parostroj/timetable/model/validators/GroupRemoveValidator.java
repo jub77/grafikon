@@ -22,13 +22,13 @@ public class GroupRemoveValidator implements TrainDiagramValidator {
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
-                && event.getObject() instanceof Group) {
-            Group group = (Group) event.getObject();
+                && event.getObject() instanceof Group group) {
             // remove group from trains ...
             for (Train train : diagram.getTrains()) {
                 Group trainGroup = train.getAttributes().get(Train.ATTR_GROUP, Group.class);
-                if (group.equals(trainGroup))
+                if (group.equals(trainGroup)) {
                     train.removeAttribute(Train.ATTR_GROUP);
+                }
             }
             return true;
         }

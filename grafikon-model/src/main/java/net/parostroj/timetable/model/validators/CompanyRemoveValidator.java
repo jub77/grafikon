@@ -19,8 +19,8 @@ public class CompanyRemoveValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Company) {
-            Company removedCompany = (Company) event.getObject();
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
+                && event.getObject() instanceof Company removedCompany) {
             // remove company from circulations...
             for (TrainsCycleType type : diagram.getCycleTypes()) {
                 for (TrainsCycle circulation : type.getCycles()) {
@@ -28,6 +28,13 @@ public class CompanyRemoveValidator implements TrainDiagramValidator {
                     if (company == removedCompany) {
                         circulation.removeAttribute(TrainsCycle.ATTR_COMPANY);
                     }
+                }
+            }
+            // remove company from nodes
+            for (Node node : diagram.getNet().getNodes()) {
+                Company company = node.getCompany();
+                if (company == removedCompany) {
+                    node.removeAttribute(Node.ATTR_COMPANY);
                 }
             }
             return true;

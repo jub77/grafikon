@@ -24,6 +24,13 @@ public class TrainTypeValidator implements TrainDiagramValidator {
                 }
             }
             return true;
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
+                && event.getObject() instanceof TrainType type) {
+            for (Train train : diagram.getTrains()) {
+                if (train.getType() == type) {
+                    train.setType(null);
+                }
+            }
         }
         return false;
     }

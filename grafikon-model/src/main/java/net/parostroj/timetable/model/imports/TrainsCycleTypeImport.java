@@ -21,19 +21,22 @@ public class TrainsCycleTypeImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId importedObject) {
         // check class
-        if (!(importedObject instanceof TrainsCycleType)) {
+        if (!(importedObject instanceof TrainsCycleType importedCycleType)) {
             // skip other objects
             return null;
         }
-        TrainsCycleType importedCycleType = (TrainsCycleType) importedObject;
 
         // check if cycle type already exist
         TrainsCycleType checkedCycleType = this.getCycleType(importedCycleType);
         if (checkedCycleType != null) {
-            String message = "circulation type already exists";
-            this.addError(importedCycleType, message);
-            log.debug("{}: {}", message, checkedCycleType);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getCycleTypes().remove(checkedCycleType);
+            } else {
+                String message = "circulation type already exists";
+                this.addError(importedCycleType, message);
+                log.debug("{}: {}", message, checkedCycleType);
+                return null;
+            }
         }
 
         TrainsCycleType type = new TrainsCycleType(this.getId(importedCycleType), this.getDiagram());

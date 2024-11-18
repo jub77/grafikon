@@ -23,17 +23,21 @@ public class CompanyImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof Company))
+        if (!(o instanceof Company importedCompany)) {
             return null;
-        Company importedCompany = (Company)o;
+        }
 
         // check existence
         Company checkedCompany = this.getCompany(importedCompany);
         if (checkedCompany != null) {
-            String message = "company already exists";
-            this.addError(importedCompany, message);
-            log.debug("{}: {}", message, checkedCompany);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getCompanies().remove(checkedCompany);
+            } else {
+                String message = "company already exists";
+                this.addError(importedCompany, message);
+                log.debug("{}: {}", message, checkedCompany);
+                return null;
+            }
         }
 
         // create new company

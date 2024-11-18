@@ -24,24 +24,27 @@ public class RouteImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId importedObject) {
         // check class
-        if (!(importedObject instanceof Route)) {
+        if (!(importedObject instanceof Route importedRoute)) {
             // skip other objects
             return null;
         }
-        Route importedRoute = (Route) importedObject;
 
         // check if the route already exist
         Route checkedRoute = this.getRoute(importedRoute);
         if (checkedRoute != null) {
-            String message = "route already exists";
-            this.addError(importedRoute, message);
-            log.debug("{}: {}", message, checkedRoute);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getRoutes().remove(checkedRoute);
+            } else {
+                String message = "route already exists";
+                this.addError(importedRoute, message);
+                log.debug("{}: {}", message, checkedRoute);
+                return null;
+            }
         }
 
         // create route
-        NetSegment<?>[] segments = getSegments(importedRoute);
-        if (segments == null) {
+        List<RouteSegment> segments = getSegments(importedRoute);
+        if (segments.isEmpty()) {
             String message = "nodes missing";
             this.addError(importedRoute, message);
             log.debug("{}: {}", message, importedRoute);
@@ -58,8 +61,8 @@ public class RouteImport extends Import {
         return route;
     }
 
-    private NetSegment<?>[] getSegments(Route oRoute) {
-        List<NetSegment<?>> result = new LinkedList<>();
+    private List<RouteSegment> getSegments(Route oRoute) {
+        List<RouteSegment> result = new LinkedList<>();
         for (RouteSegment oSeg : oRoute.getSegments()) {
             if (oSeg instanceof Line) {
                 result.add(this.getLine((Line) oSeg));
@@ -67,6 +70,6 @@ public class RouteImport extends Import {
                 result.add(this.getNode((Node) oSeg));
             }
         }
-        return result.toArray(new NetSegment[0]);
+        return result;
     }
 }

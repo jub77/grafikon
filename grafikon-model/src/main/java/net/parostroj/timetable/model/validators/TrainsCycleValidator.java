@@ -28,9 +28,8 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
         if (event.getSource() instanceof TrainsCycle) {
             validated = handleTrainsCycleEvent(event);
         }
-        if (event.getSource() instanceof TrainDiagram && event.getObject() instanceof TrainsCycle
+        if (event.getSource() instanceof TrainDiagram && event.getObject() instanceof TrainsCycle deleted
                 && event.getType() == Event.Type.REMOVED) {
-            TrainsCycle deleted = (TrainsCycle) event.getObject();
             // handle sequence of circulations
             if (deleted.isPartOfSequence()) {
                 deleted.removeFromSequence();
@@ -77,7 +76,7 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
     }
 
     private void recalculateEngineClassChange(TrainsCycle circulation) {
-        for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(circulation.getItems())) {
+        for (TrainsCycleItem item : new ArrayList<>(circulation.getItems())) {
             item.getTrain().recalculate();
         }
     }
