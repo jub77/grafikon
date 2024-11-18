@@ -27,17 +27,21 @@ public class TrainTypeCategoryImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof TrainTypeCategory))
+        if (!(o instanceof TrainTypeCategory importedCategory)) {
             return null;
-        TrainTypeCategory importedCategory = (TrainTypeCategory) o;
+        }
 
         // check existence
         TrainTypeCategory checkedCategory = this.getTrainTypeCategory(importedCategory);
         if (checkedCategory != null) {
-            String message = "train type category already exists";
-            this.addError(importedCategory, message);
-            log.debug("{}: {}", message, checkedCategory);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getTrainTypeCategories().remove(checkedCategory);
+            } else {
+                String message = "train type category already exists";
+                this.addError(importedCategory, message);
+                log.debug("{}: {}", message, checkedCategory);
+                return null;
+            }
         }
 
         // create new category

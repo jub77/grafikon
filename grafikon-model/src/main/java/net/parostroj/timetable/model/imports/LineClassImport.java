@@ -23,17 +23,21 @@ public class LineClassImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof LineClass))
+        if (!(o instanceof LineClass importedLineClass)) {
             return null;
-        LineClass importedLineClass = (LineClass)o;
+        }
 
         // check existence
         LineClass checkedLineClass = this.getLineClass(importedLineClass);
         if (checkedLineClass != null) {
-            String message = "line class already exists";
-            this.addError(importedLineClass, message);
-            log.debug("{}: {}", message, checkedLineClass);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getNet().getLineClasses().remove(checkedLineClass);
+            } else {
+                String message = "line class already exists";
+                this.addError(importedLineClass, message);
+                log.debug("{}: {}", message, checkedLineClass);
+                return null;
+            }
         }
 
         // create new line class

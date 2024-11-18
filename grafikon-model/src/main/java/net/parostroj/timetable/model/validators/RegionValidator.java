@@ -140,7 +140,7 @@ public class RegionValidator implements TrainDiagramValidator {
             diagram.getNet().getRegions().stream().filter(r -> r != region).filter(Region::isFreightColorRegion)
                     .forEach(r -> {
                         Map<FreightColor, Region> colorMap = r.getFreightColorMap();
-                        if (colorMap.values().contains(region)) {
+                        if (colorMap.containsValue(region)) {
                             r.setFreightColorMap(colorMap.entrySet().stream().filter(e -> e.getValue() != region)
                                     .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
                         }
@@ -150,7 +150,7 @@ public class RegionValidator implements TrainDiagramValidator {
 
     private void checkRegionsInHierarchyForDuplicateColorCenter(Region region) {
         if (region.isFreightColorRegion()) {
-            // check all sub regions...
+            // check all subregions...
             removeColorCenterSubRegions(region);
             removeColorCenterSuperRegions(region);
             // check freight colors

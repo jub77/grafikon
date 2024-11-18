@@ -23,17 +23,21 @@ public class RegionImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof Region))
+        if (!(o instanceof Region importedRegion)) {
             return null;
-        Region importedRegion = (Region)o;
+        }
 
         // check existence
         Region checkedRegion = this.getRegion(importedRegion);
         if (checkedRegion != null) {
-            String message = "region already exists";
-            this.addError(importedRegion, message);
-            log.debug("{}: {}", message, checkedRegion);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getNet().getRegions().remove(checkedRegion);
+            } else {
+                String message = "region already exists";
+                this.addError(importedRegion, message);
+                log.debug("{}: {}", message, checkedRegion);
+                return null;
+            }
         }
 
         // create new region

@@ -27,9 +27,9 @@ public class EngineClassImport extends Import {
     @Override
     protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
-        if (!(o instanceof EngineClass))
+        if (!(o instanceof EngineClass importedEngineClass)) {
             return null;
-        EngineClass importedEngineClass = (EngineClass)o;
+        }
 
         // check existence
         EngineClass checkedEngineClass = this.getEngineClass(importedEngineClass);

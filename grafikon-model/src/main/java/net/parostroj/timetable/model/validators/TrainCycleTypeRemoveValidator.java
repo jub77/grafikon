@@ -18,9 +18,8 @@ public class TrainCycleTypeRemoveValidator implements TrainDiagramValidator {
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
-                && event.getObject() instanceof TrainsCycleType) {
+                && event.getObject() instanceof TrainsCycleType cycleType) {
             // remove all cycles ...
-            TrainsCycleType cycleType = (TrainsCycleType) event.getObject();
             List<TrainsCycle> copy = ImmutableList.copyOf(cycleType.getCycles());
             for (TrainsCycle cycle : copy) {
                 cycleType.getCycles().remove(cycle);

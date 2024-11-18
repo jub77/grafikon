@@ -17,8 +17,8 @@ public class LineClassRemoveValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED && event.getObject() instanceof LineClass) {
-            LineClass lineClass = (LineClass) event.getObject();
+        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED
+                && event.getObject() instanceof LineClass lineClass) {
             // remove item with this line class from weight tables
             for (EngineClass eClass : diagram.getEngineClasses()) {
                 for (WeightTableRow row : eClass.getWeightTable()) {
