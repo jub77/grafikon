@@ -125,12 +125,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.trainTypeCategories = new ItemWithIdListImpl<>(this::fireEvent);
         this.net = new Net(this);
         this.trainTypes = new ItemWithIdListImpl<>(this::fireEvent);
-        this.attributes = new Attributes(
-                (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
+        this.attributes = new Attributes(this::fireEvent);
         this.trainsData = new TrainsData(this);
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
-        this.runtimeInfo = new RuntimeInfo(change -> fireEvent(new Event(TrainDiagram.this, change)));
+        this.runtimeInfo = new RuntimeInfo(this::fireEvent);
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
@@ -371,6 +370,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         processValidators(event);
         listenerSupport.fireEvent(event);
         listenerSupportAll.fireEvent(event);
+    }
+
+    private void fireEvent(Attributes attrs, AttributeChange change) {
+        fireEvent(change);
+    }
+
+    private void fireEvent(AttributeChange change) {
+        fireEvent(new Event(this, change));
     }
 
     private void processValidators(Event event) {
