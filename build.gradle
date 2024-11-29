@@ -32,7 +32,7 @@ subprojects { prj ->
 			dependency 'org.slf4j:slf4j-api:2.0.16'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.16'
 			dependency 'joda-time:joda-time:2.13.0'
-			dependency 'com.google.guava:guava:33.3.1-jre', {
+			dependency 'com.google.guava:guava:33.4.0-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -54,20 +54,20 @@ subprojects { prj ->
 			}
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
-			dependency 'com.fifesoft:rsyntaxtextarea:3.5.2'
+			dependency 'com.fifesoft:rsyntaxtextarea:3.5.3'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
-			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
-			dependency 'org.apache.logging.log4j:log4j-core:2.24.1'
+			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3'
+			dependency 'org.apache.logging.log4j:log4j-core:2.24.3'
 			dependency 'de.skuzzle:semantic-version:2.1.1'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:4.0.5', {
 				exclude 'org.glassfish.jaxb:txw2'
 				exclude 'org.eclipse.angus:angus-activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-			dependency 'org.junit.jupiter:junit-jupiter:5.11.3'
+			dependency 'org.junit.jupiter:junit-jupiter:5.11.4'
 			dependency 'org.hamcrest:hamcrest:3.0'
-			dependency 'io.smallrye.reactive:mutiny:2.6.2'
+			dependency 'io.smallrye.reactive:mutiny:2.7.0'
 		}
 	}
 
