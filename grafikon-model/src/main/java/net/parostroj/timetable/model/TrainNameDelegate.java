@@ -81,7 +81,7 @@ class TrainNameDelegate {
      */
     public String formatTrainName(NameType nameType) {
         TextTemplate template = train.getType().getNameTemplate(nameType);
-        return template.evaluate(TextTemplate.getBinding(train));
+        return template.evaluate(train.getBinding());
     }
 
     /**
@@ -149,7 +149,7 @@ class TrainNameDelegate {
                 return getDefaultString();
             } else {
                 TextTemplate template = type.getNameTemplate(nameType);
-                Map<String, Object> binding = TextTemplate.getBinding(train, locale);
+                Map<String, Object> binding = train.getBinding(locale);
                 return template.evaluate(binding);
             }
         }

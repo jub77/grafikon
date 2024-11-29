@@ -5,6 +5,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
+import java.util.Map;
+
 
 /**
  * Text item.
@@ -109,7 +111,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Obse
     }
 
     public String getText() {
-        return template != null ? template.evaluate(TextTemplate.getBinding("diagram", diagram)) : "";
+        return template != null ? template.evaluate(Map.of("diagram", diagram)) : "";
     }
 
     @Override

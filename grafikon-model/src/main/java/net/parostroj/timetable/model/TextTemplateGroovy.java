@@ -27,11 +27,8 @@ public final class TextTemplateGroovy extends TextTemplate {
 
     private Template templateGString;
 
-    protected TextTemplateGroovy(String template, boolean initialize) throws GrafikonException {
+    TextTemplateGroovy(String template) throws GrafikonException {
         super(template);
-        if (initialize) {
-            initialize();
-        }
     }
 
     private void initialize() throws GrafikonException {
@@ -72,11 +69,6 @@ public final class TextTemplateGroovy extends TextTemplate {
     @Override
     public Language getLanguage() {
         return Language.GROOVY;
-    }
-
-    @Override
-    public void freeResources() {
-        templateGString = null;
     }
 
     @Override

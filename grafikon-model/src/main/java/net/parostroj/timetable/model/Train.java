@@ -1081,8 +1081,12 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable,
         return intervalList.iterator();
     }
 
-    TrainNameDelegate getNameDelegate() {
-        return nameDelegate;
+    public Map<String, Object> getBinding() {
+        return nameDelegate.createTemplateBinding();
+    }
+
+    public Map<String, Object> getBinding(Locale locale) {
+        return nameDelegate.createTemplateBinding(locale);
     }
 
     /**

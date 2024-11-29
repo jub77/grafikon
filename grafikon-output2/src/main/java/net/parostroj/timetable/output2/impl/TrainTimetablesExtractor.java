@@ -138,7 +138,7 @@ public class TrainTimetablesExtractor {
         if (routeTemplate == null) {
             return;
         }
-        String result = routeTemplate.evaluate(TextTemplate.getBinding(train));
+        String result = routeTemplate.evaluate(train.getBinding());
         timetable.setRouteInfo(new LinkedList<>());
         // split
         String[] splitted = result.split("-");

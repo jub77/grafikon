@@ -1,16 +1,17 @@
 package net.parostroj.timetable.model;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 /**
- * Plain text template - return template string without any modification.
+ * Simple text template - only simple variable substitution.
  *
  * @author jub
  */
-public final class TextTemplatePlain extends TextTemplate {
+public class TextTemplateSimple extends TextTemplate {
 
-    TextTemplatePlain(String template) {
+    TextTemplateSimple(String template) {
         super(template);
     }
 
@@ -25,11 +26,6 @@ public final class TextTemplatePlain extends TextTemplate {
     }
 
     @Override
-    public Language getLanguage() {
-        return Language.PLAIN;
-    }
-
-    @Override
     public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
         try {
             output.write(getTemplate());
@@ -37,5 +33,10 @@ public final class TextTemplatePlain extends TextTemplate {
         } catch (IOException e) {
             throw new GrafikonException("Error writing output.", e);
         }
+    }
+
+    @Override
+    public Language getLanguage() {
+        return Language.SIMPLE;
     }
 }
