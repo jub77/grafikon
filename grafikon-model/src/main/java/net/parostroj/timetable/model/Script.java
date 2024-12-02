@@ -46,18 +46,10 @@ public abstract class Script {
     public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
     public static Script createScript(String sourceCode, Language language) throws GrafikonException {
-        return createScript(sourceCode, language, false);
-    }
-
-    public static Script createScript(String sourceCode, Language language, boolean initizalize) throws GrafikonException {
         if (language == Language.GROOVY) {
-            return new ScriptEngineScript(sourceCode, language, initizalize);
+            return new ScriptEngineScript(sourceCode, language);
         }
         throw new IllegalArgumentException("No script for language available.");
-    }
-
-    public void freeResources() {
-        // nothing
     }
 
     @Override
@@ -65,10 +57,9 @@ public abstract class Script {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Script)) {
+        if (!(obj instanceof Script other)) {
             return false;
         }
-        final Script other = (Script) obj;
         if (!Objects.equals(this.sourceCode, other.sourceCode)) {
             return false;
         }

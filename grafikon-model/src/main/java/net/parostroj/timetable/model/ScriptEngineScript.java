@@ -21,10 +21,8 @@ public final class ScriptEngineScript extends Script {
 
     private CompiledScript script;
 
-    protected ScriptEngineScript(String sourceCode, Language language, boolean initialize) throws GrafikonException {
+    ScriptEngineScript(String sourceCode, Language language) throws GrafikonException {
         super(sourceCode, language);
-        if (initialize)
-            initialize();
     }
 
     private void initialize() throws GrafikonException {
@@ -64,10 +62,5 @@ public final class ScriptEngineScript extends Script {
     @Override
     public int hashCode() {
         return super.hashCode();
-    }
-
-    @Override
-    public void freeResources() {
-        script = null;
     }
 }
