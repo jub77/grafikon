@@ -5,10 +5,7 @@ plugins {
 	id 'se.ascp.gradle.gradle-versions-filter'
 }
 
-def nonJavaProjectsFilter = [
-	"grafikon-assembly",
-	"grafikon-webstart"
-]
+def nonJavaProjectsFilter = []
 
 def outputJavaVersion = (project.findProperty('javaVersion') ?: 17) as int
 
