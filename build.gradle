@@ -7,7 +7,7 @@ plugins {
 
 def nonJavaProjectsFilter = []
 
-def outputJavaVersion = (project.findProperty('javaVersion') ?: 17) as int
+def outputJavaVersion = (project.findProperty('javaVersion') ?: 21) as int
 
 subprojects { prj ->
 	apply plugin: 'io.spring.dependency-management'
