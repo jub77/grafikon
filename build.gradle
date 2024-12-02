@@ -27,8 +27,8 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:4.0.23'
-			dependency 'org.apache.groovy:groovy-jsr223:4.0.23'
+			dependency 'org.apache.groovy:groovy-templates:4.0.24'
+			dependency 'org.apache.groovy:groovy-jsr223:4.0.24'
 			dependency 'org.slf4j:slf4j-api:2.0.16'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.16'
 			dependency 'joda-time:joda-time:2.13.0'
@@ -41,7 +41,7 @@ subprojects { prj ->
 				exclude 'org.checkerframework:checker-qual'
 				exclude 'com.google.guava:listenablefuture'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.9', {
+			dependency 'org.apache.xmlgraphics:fop:2.10', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
@@ -54,20 +54,20 @@ subprojects { prj ->
 			}
 			dependency 'org.beanfabrics:beanfabrics-swing:1.4.3'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
-			dependency 'com.fifesoft:rsyntaxtextarea:3.5.1'
+			dependency 'com.fifesoft:rsyntaxtextarea:3.5.2'
 			dependency 'org.ini4j:ini4j:0.5.4'
 			dependency 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
-			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0'
-			dependency 'org.apache.logging.log4j:log4j-core:2.24.0'
+			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.2'
+			dependency 'org.apache.logging.log4j:log4j-core:2.24.2'
 			dependency 'de.skuzzle:semantic-version:2.1.1'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:4.0.5', {
 				exclude 'org.glassfish.jaxb:txw2'
 				exclude 'org.eclipse.angus:angus-activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-			dependency 'org.junit.jupiter:junit-jupiter:5.11.1'
+			dependency 'org.junit.jupiter:junit-jupiter:5.11.3'
 			dependency 'org.hamcrest:hamcrest:3.0'
-			dependency 'io.smallrye.reactive:mutiny:2.6.2'
+			dependency 'io.smallrye.reactive:mutiny:2.7.0'
 		}
 	}
 
