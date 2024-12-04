@@ -15,7 +15,7 @@ import net.parostroj.timetable.model.units.LengthUnit;
  * @author jub
  */
 @XmlRootElement(name="trains")
-@XmlType(propOrder={"routeLengthUnit", "routes", "routeNumbers", "routeStations", "validity", "cycle", "trainTimetables", "texts"})
+@XmlType(propOrder={"routeLengthUnit", "routes", "routeNumbers", "routeStations", "validity", "cycle", "trainTimetables"})
 public class TrainTimetables {
 
     private LengthUnit routeLengthUnit;
@@ -25,7 +25,6 @@ public class TrainTimetables {
     private String validity;
     private DriverCycle cycle;
     private List<TrainTimetable> trainTimetables;
-    private List<Text> texts;
 
     public TrainTimetables() {
     }
@@ -41,15 +40,6 @@ public class TrainTimetables {
 
     public void setTrainTimetables(List<TrainTimetable> trainTimetables) {
         this.trainTimetables = trainTimetables;
-    }
-
-    @XmlElement(name="text")
-    public List<Text> getTexts() {
-        return texts;
-    }
-
-    public void setTexts(List<Text> texts) {
-        this.texts = texts;
     }
 
     @XmlJavaTypeAdapter(LengthUnitAdapter.class)

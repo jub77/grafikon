@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.RuntimeInfo;
+import net.parostroj.timetable.model.ls.impl4.filters.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +32,6 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d13;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d18;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d19;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d2;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d21;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d22;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d24;
-import net.parostroj.timetable.model.ls.impl4.filters.LoadFilter4d7;
 
 /**
  * Implementation of FileLoadSave for model versions 4.x.
@@ -73,7 +66,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
         VERSIONS = getVersions("4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9", "4.10",
                 "4.11", "4.12", "4.13", "4.14", "4.15", "4.16", "4.17", "4.17.1", "4.18", "4.18.1", "4.18.2",
                 "4.18.3", "4.18.4", "4.19", "4.19.1", "4.19.2", "4.20", "4.21", "4.21.1", "4.21.2", "4.21.3",
-                "4.22", "4.23", "4.23.1", "4.24", "4.24.1", "4.24.2", "4.25", "4.26", "4.26.1");
+                "4.22", "4.23", "4.23.1", "4.24", "4.24.1", "4.24.2", "4.25", "4.26", "4.26.1", "4.27");
         CURRENT_VERSION = getLatestVersion(VERSIONS);
     }
 
@@ -93,6 +86,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
         loadFilters.add(new LoadFilter4d19());
         loadFilters.add(new LoadFilter4d21());
         loadFilters.add(new LoadFilter4d24());
+        loadFilters.add(new LoadFilter4d26());
     }
 
     @Override

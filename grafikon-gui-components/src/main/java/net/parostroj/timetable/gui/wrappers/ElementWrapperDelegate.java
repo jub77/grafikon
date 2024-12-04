@@ -29,8 +29,7 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
         } else if (element instanceof TimetableImage) {
             return element.toString();
         } else if (element instanceof TextItem) {
-            TextItem item = (TextItem) element;
-            return new StringBuilder(item.getName()).append(" (").append(item.getType()).append(')').toString();
+            return element.toString();
         } else if (element instanceof Route) {
             return element.toString();
         } else if (element instanceof Train) {

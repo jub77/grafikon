@@ -15,44 +15,13 @@ import java.util.Map;
  */
 public class TextItem implements ObjectWithId, AttributesHolder, Visitable, ObservableObject {
 
-    public static final String ATTR_TYPE = "type";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_TEMPLATE = "template";
-    public static final String ATTR_TRAIN_TIMETABLE_INFO = "train.timetable.info";
-
-    public enum Type {
-        PLAIN_TEXT("plain");
-
-        private final String key;
-
-        Type(String key) {
-            this.key = key;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public static Type fromKey(String key) {
-            for (Type type : values()) {
-                if (type.getKey().equals(key)) {
-                    return type;
-                }
-            }
-            return PLAIN_TEXT;
-        }
-
-        @Override
-        public String toString() {
-            return key;
-        }
-    }
 
     private final String id;
     private final TrainDiagram diagram;
 
     private String name;
-    private Type type;
     private TextTemplate template;
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
@@ -72,18 +41,6 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Obse
 
     public TrainDiagram getDiagram() {
         return diagram;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        if (type != this.type) {
-            Type oldType = this.type;
-            this.type = type;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
-        }
     }
 
     public String getName() {
@@ -150,6 +107,6 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Obse
 
     @Override
     public String toString() {
-        return name + "(" + type + ")";
+        return name;
     }
 }

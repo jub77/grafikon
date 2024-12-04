@@ -33,10 +33,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
     public TextItemsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        // type values ...
-        for (TextItem.Type type : TextItem.Type.values()) {
-            typeComboBox.addItem(type);
-        }
         // create model and set it
         itemsModel = new WrapperListModel<TextItem>(false);
         itemsModel.setObjectListener(new WrapperListModel.ObjectListener<TextItem>() {
@@ -92,7 +88,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel handlePanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
-        typeComboBox = new javax.swing.JComboBox<TextItem.Type>();
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
@@ -126,7 +121,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         controlPanel.setLayout(new java.awt.BorderLayout());
 
         handlePanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        handlePanel.setLayout(new java.awt.GridLayout(7, 0, 0, 3));
+        handlePanel.setLayout(new java.awt.GridLayout(6, 0, 0, 3));
 
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
@@ -135,7 +130,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
             }
         });
         handlePanel.add(nameTextField);
-        handlePanel.add(typeComboBox);
 
         createButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -189,7 +183,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TextItem item = new TextItem(IdGenerator.getInstance().getId(), diagram);
         item.setName(nameTextField.getText().trim());
-        item.setType((TextItem.Type) typeComboBox.getSelectedItem());
         item.setTemplate(null);
         Wrapper<TextItem> wrapper = Wrapper.getWrapper(item);
         itemsModel.addWrapper(wrapper);
@@ -236,11 +229,10 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TextItemDialog dialog = new TextItemDialog(this, true);
         dialog.setLocationRelativeTo(this);
-        dialog.showDialog(new TextItemModel(selectedItem.getTemplate(), selectedItem.getAttributes().getBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO)));
+        dialog.showDialog(new TextItemModel(selectedItem.getTemplate()));
         TextItemModel newItemModel = dialog.getResultModel();
         if (newItemModel != null) {
             selectedItem.setTemplate(newItemModel.template);
-            selectedItem.getAttributes().setBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO, newItemModel.trainTimetableInfo);
         }
     }
 
@@ -250,6 +242,5 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private javax.swing.JButton downButton;
     private javax.swing.JList<Wrapper<TextItem>> itemList;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JComboBox<TextItem.Type> typeComboBox;
     private javax.swing.JButton upButton;
 }

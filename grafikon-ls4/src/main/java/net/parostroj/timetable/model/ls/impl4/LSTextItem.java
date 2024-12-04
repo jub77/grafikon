@@ -13,13 +13,12 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name="text_item")
-@XmlType(propOrder={"id", "name", "template", "type", "attributes"})
+@XmlType(propOrder={"id", "name", "template", "attributes"})
 public class LSTextItem {
 
     private String id;
     private String name;
     private LSTextTemplate template;
-    private String type;
     private LSAttributes attributes;
 
     public LSTextItem() {
@@ -28,7 +27,6 @@ public class LSTextItem {
     public LSTextItem(TextItem item) {
         this.id = item.getId();
         this.template = item.getTemplate() == null ? null : new LSTextTemplate(item.getTemplate());
-        this.type = item.getType().getKey();
         this.name = item.getName();
         this.attributes = new LSAttributes(item.getAttributes());
     }
@@ -47,14 +45,6 @@ public class LSTextItem {
 
     public void setTemplate(LSTextTemplate template) {
         this.template = template;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getName() {
@@ -79,7 +69,6 @@ public class LSTextItem {
         if (template != null) {
             item.setTemplate(template.createTextTemplate("", TextTemplate.Language.GROOVY));
         }
-        item.setType(TextItem.Type.fromKey(type));
         item.setName(name);
         return item;
     }

@@ -42,7 +42,8 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     static {
         Map<Language, String> h = new EnumMap<>(Language.class);
         h.put(Language.GROOVY, SyntaxConstants.SYNTAX_STYLE_JSP);
-        h.put(Language.PLAIN, SyntaxConstants.SYNTAX_STYLE_HTML);
+        h.put(Language.PLAIN, SyntaxConstants.SYNTAX_STYLE_NONE);
+        h.put(Language.SIMPLE, SyntaxConstants.SYNTAX_STYLE_NONE);
         HIGHLIGHT = Collections.unmodifiableMap(h);
     }
 
