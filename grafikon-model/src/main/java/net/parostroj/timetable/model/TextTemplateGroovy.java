@@ -10,6 +10,7 @@ import groovy.text.TemplateEngine;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,27 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public final class TextTemplateGroovy extends TextTemplate {
+public final class TextTemplateGroovy implements TextTemplate {
 
     private static final Logger log = LoggerFactory.getLogger(TextTemplateGroovy.class);
 
     private static final Cache<String, Template> templateCache = CacheBuilder.newBuilder().softValues().build();
 
+    private final String template;
     private Template templateGString;
 
     TextTemplateGroovy(String template) throws GrafikonException {
-        super(template);
+        this.template = template;
+    }
+
+    @Override
+    public String getTemplate() {
+        return template;
+    }
+
+    @Override
+    public Language getLanguage() {
+        return Language.GROOVY;
     }
 
     private void initialize() throws GrafikonException {
@@ -67,11 +79,6 @@ public final class TextTemplateGroovy extends TextTemplate {
     }
 
     @Override
-    public Language getLanguage() {
-        return Language.GROOVY;
-    }
-
-    @Override
     public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
         if (templateGString == null) {
             initialize();
@@ -83,5 +90,22 @@ public final class TextTemplateGroovy extends TextTemplate {
         } catch (IOException e) {
             throw new GrafikonException("Error writing output.", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TextTemplateGroovy that = (TextTemplateGroovy) o;
+        return Objects.equals(template, that.template);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(template);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%d]", getLanguage(), template != null ? template.length() : 0);
     }
 }

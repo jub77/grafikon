@@ -1,27 +1,24 @@
 package net.parostroj.timetable.model;
 
-import java.io.*;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Plain text template - return template string without any modification.
  *
  * @author jub
  */
-public final class TextTemplatePlain extends TextTemplate {
+public final class TextTemplatePlain implements TextTemplate {
+
+    private final String template;
 
     TextTemplatePlain(String template) {
-        super(template);
+        this.template = template;
     }
 
     @Override
-    public String evaluateWithException(Map<String, Object> binding) throws GrafikonException {
-        return getTemplate();
-    }
-
-    @Override
-    public String evaluate(Map<String, Object> binding) {
-        return getTemplate();
+    public String getTemplate() {
+        return template;
     }
 
     @Override
@@ -30,12 +27,24 @@ public final class TextTemplatePlain extends TextTemplate {
     }
 
     @Override
-    public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
-        try {
-            output.write(getTemplate());
-            output.flush();
-        } catch (IOException e) {
-            throw new GrafikonException("Error writing output.", e);
-        }
+    public String evaluate(Map<String, Object> binding) {
+        return getTemplate();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TextTemplatePlain that = (TextTemplatePlain) o;
+        return Objects.equals(template, that.template);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(template);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%d]", getLanguage(), template != null ? template.length() : 0);
     }
 }
