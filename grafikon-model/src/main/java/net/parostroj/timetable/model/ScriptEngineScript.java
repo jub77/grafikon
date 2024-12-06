@@ -2,6 +2,9 @@ package net.parostroj.timetable.model;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -13,16 +16,30 @@ import javax.script.*;
  *
  * @author jub
  */
-public final class ScriptEngineScript extends Script {
+public final class ScriptEngineScript implements Script {
 
+    private static final Logger log = LoggerFactory.getLogger(ScriptEngineScript.class);
     private static final Cache<String, CompiledScript> scriptCache = CacheBuilder.newBuilder().softValues().build();
 
     private static final Map<Language, String> LANGUAGE_MAPPING = Collections.singletonMap(Language.GROOVY, "groovy");
 
+    private final String sourceCode;
+    private final Language language;
     private CompiledScript script;
 
     ScriptEngineScript(String sourceCode, Language language) throws GrafikonException {
-        super(sourceCode, language);
+        this.sourceCode = sourceCode;
+        this.language = language;
+    }
+
+    @Override
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    @Override
+    public Language getLanguage() {
+        return language;
     }
 
     private void initialize() throws GrafikonException {
@@ -55,6 +72,16 @@ public final class ScriptEngineScript extends Script {
     }
 
     @Override
+    public Object evaluate(Map<String, Object> binding) {
+        try {
+            return this.evaluateWithException(binding);
+        } catch (GrafikonException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         return super.equals(o);
     }
@@ -62,5 +89,10 @@ public final class ScriptEngineScript extends Script {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%d]", getLanguage(), sourceCode != null ? sourceCode.length() : 0);
     }
 }

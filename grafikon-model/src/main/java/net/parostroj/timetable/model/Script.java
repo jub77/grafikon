@@ -11,71 +11,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public abstract class Script {
+public interface Script {
 
-    private static final Logger log = LoggerFactory.getLogger(Script.class);
-
-    public enum Language {
+    enum Language {
         GROOVY
     }
 
-    private final String sourceCode;
-    private final Language language;
+    String getSourceCode();
 
-    protected Script(String sourceCode, Language language) {
-        this.sourceCode = sourceCode;
-        this.language = language;
-    }
-    public String getSourceCode() {
-        return sourceCode;
-    }
+    Language getLanguage();
 
-    public Language getLanguage() {
-        return language;
+    Object evaluate(Map<String, Object> binding);
+
+    default Object evaluateWithException(Map<String, Object> binding) throws GrafikonException {
+        return evaluate(binding);
     }
 
-    public Object evaluate(Map<String, Object> binding) {
-        try {
-            return this.evaluateWithException(binding);
-        } catch (GrafikonException e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
-
-    public static Script createScript(String sourceCode, Language language) throws GrafikonException {
+    static Script createScript(String sourceCode, Language language) throws GrafikonException {
         if (language == Language.GROOVY) {
             return new ScriptEngineScript(sourceCode, language);
         }
         throw new IllegalArgumentException("No script for language available.");
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Script other)) {
-            return false;
-        }
-        if (!Objects.equals(this.sourceCode, other.sourceCode)) {
-            return false;
-        }
-        return this.language == other.language;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + (this.sourceCode != null ? this.sourceCode.hashCode() : 0);
-        hash = 59 * hash + (this.language != null ? this.language.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s[%d]", getLanguage(), sourceCode != null ? sourceCode.length() : 0);
     }
 }
