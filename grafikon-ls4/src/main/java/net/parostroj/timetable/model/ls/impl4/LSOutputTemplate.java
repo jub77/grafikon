@@ -129,7 +129,7 @@ public class LSOutputTemplate {
             outputTemplate.setKey(name);
         }
         if (this.template != null) {
-            outputTemplate.setTemplate(this.template.createTextTemplate("", TextTemplate.Language.GROOVY));
+            outputTemplate.setTemplate(this.template.createTextTemplate("", TextTemplate.Language.SIMPLE));
         }
         if (this.script != null) {
             outputTemplate.setScript(this.script.createScript());

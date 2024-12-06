@@ -66,8 +66,8 @@ public class LSTrainTypeList {
     private void createData() {
         try {
             data = new TrainsDataDto(
-                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY),
+                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE),
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
                 null);
         } catch (GrafikonException e) {

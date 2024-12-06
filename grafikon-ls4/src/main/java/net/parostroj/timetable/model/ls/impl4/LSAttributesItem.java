@@ -301,7 +301,7 @@ public class LSAttributesItem {
         TextTemplate.Language language = TextTemplate.Language.fromString(languageStr);
         try {
             return TextTemplate.createTextTemplate(language == null ? "" : value,
-                    language == null ? TextTemplate.Language.GROOVY : language);
+                    language == null ? TextTemplate.Language.SIMPLE : language);
         } catch (GrafikonException e) {
             throw new LSException("Cannot convert template: " + e.getMessage(), e);
         }

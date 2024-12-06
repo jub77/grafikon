@@ -73,10 +73,10 @@ public class LSTrainsData {
     public void updateTrainsData(TrainsData trainsData) throws LSException {
         trainsData.setTrainNameTemplate(
                 trainNameTemplate.createTextTemplate(
-                        LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
+                        LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
         trainsData.setTrainCompleteNameTemplate(
                 trainCompleteNameTemplate.createTextTemplate(
-                        LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
+                        LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
         trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
         if (runningTimeScript != null) {
             trainsData.setRunningTimeScript(runningTimeScript.createScript());

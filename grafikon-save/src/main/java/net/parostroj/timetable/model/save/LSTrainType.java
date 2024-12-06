@@ -17,8 +17,8 @@ public class LSTrainType {
 
     private static final Logger log = LoggerFactory.getLogger(LSTrainType.class);
 
-    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}";
-    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}${train.description ? (' ' + train.description) : ''}";
+    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}";
+    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}";
 
     private String key;
     private String abbr;
@@ -118,13 +118,13 @@ public class LSTrainType {
         type.setCategory(this.getCategory(diagram));
         try {
             type.setTrainNameTemplate(this.trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
+                TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
         } catch (GrafikonException e) {
             log.error("Couldn't create train name template.", e);
         }
         try {
             type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
+                TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
         } catch (GrafikonException e) {
             log.error("Couldn't create complete train name template.", e);
         }

@@ -61,8 +61,8 @@ public class LSTrainsData {
 
     public void updateTrainsData(TrainsData trainsData) throws LSException {
         try {
-            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
-            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY));
+            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
+            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
             trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
             trainsData.setRunningTimeScript(null);
         } catch (GrafikonException e) {

@@ -29,8 +29,8 @@ public class TrainDiagramFactory {
 
     public TrainDiagram createDiagram() {
         try {
-            TextTemplate name = TextTemplate.createTextTemplate("${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' PP' : ''}", TextTemplate.Language.GROOVY);
-            TextTemplate completeName= TextTemplate.createTextTemplate("${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' PP' : ''}${train.description != '' ? (' ' + train.description) : ''}", TextTemplate.Language.GROOVY);
+            TextTemplate name = TextTemplate.createTextTemplate("${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}", TextTemplate.Language.SIMPLE);
+            TextTemplate completeName= TextTemplate.createTextTemplate("${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}", TextTemplate.Language.SIMPLE);
             SortPattern sPattern = new SortPattern("(\\d*)(.*)");
             sPattern.getGroups().add(new SortPatternGroup(1, SortPatternGroup.Type.NUMBER));
             sPattern.getGroups().add(new SortPatternGroup(2, SortPatternGroup.Type.STRING));

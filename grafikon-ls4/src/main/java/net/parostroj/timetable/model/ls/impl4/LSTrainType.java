@@ -27,8 +27,8 @@ import net.parostroj.timetable.utils.Conversions;
         "trainCompleteNameTemplate", "attributes"})
 public class LSTrainType {
 
-    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}";
-    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${train.attributes['electric']?'E':''}${train.attributes['diesel']?'M':''}${type.abbr} ${train.number}${train.attributes['optional'] ? ' pp' : ''}${train.description ? (' ' + train.description) : ''}";
+    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}";
+    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}";
 
     private String id;
     // not used anymore for serialization - backward compatibility
@@ -145,9 +145,9 @@ public class LSTrainType {
         }
         type.setPlatform(platform);
         type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-            trainCompleteNameTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
+            trainCompleteNameTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?
-            trainNameTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.GROOVY) : null);
+            trainNameTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
         type.setCategory(categoryMapping.apply(categoryId));
         if (attributes != null) {
             type.getAttributes().add(attributes.createAttributes(mapping));

@@ -56,6 +56,6 @@ public class RouteFilter implements TrainDiagramFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.GROOVY);
+        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
     }
 }

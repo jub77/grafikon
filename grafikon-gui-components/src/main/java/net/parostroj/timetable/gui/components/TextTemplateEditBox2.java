@@ -127,7 +127,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
             setTemplateLanguage(template.getLanguage());
         } else {
             setTemplateText("");
-            setTemplateLanguage(Language.GROOVY);
+            setTemplateLanguage(Language.SIMPLE);
         }
     }
 

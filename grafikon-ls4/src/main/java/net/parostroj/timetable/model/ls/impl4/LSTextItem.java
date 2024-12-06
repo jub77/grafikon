@@ -67,7 +67,7 @@ public class LSTextItem {
         TextItem item = new TextItem(id, diagram);
         item.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         if (template != null) {
-            item.setTemplate(template.createTextTemplate("", TextTemplate.Language.GROOVY));
+            item.setTemplate(template.createTextTemplate("", TextTemplate.Language.SIMPLE));
         }
         item.setName(name);
         return item;
