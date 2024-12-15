@@ -24,7 +24,7 @@ public class LSSortPattern {
 
     public LSSortPattern(SortPattern sPattern) {
         pattern = sPattern.getPattern();
-        rules = new LinkedList<LSSortPatternGroup>();
+        rules = new LinkedList<>();
         for (SortPatternGroup group : sPattern.getGroups()) {
             rules.add(new LSSortPatternGroup(group.getGroup(), group.getType().getId()));
         }

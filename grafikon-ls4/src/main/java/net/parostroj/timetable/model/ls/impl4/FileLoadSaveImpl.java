@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -117,14 +118,14 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
         lss.save(zipOutput, saved);
     }
 
-    private String createEntryName(String prefix, String suffix, int cnt) {
-        return String.format("%s%06d.%s", prefix, cnt, suffix);
+    private String createEntryName(String prefix, int cnt) {
+        return String.format("%s%06d.%s", prefix, cnt, "xml");
     }
 
     @Override
     public TrainDiagram load(ZipInputStream zipInput) throws LSException {
         try {
-            ZipEntry entry = null;
+            ZipEntry entry;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
@@ -173,7 +174,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                     if (entry.getName().endsWith(".xml")) {
                         builder.addImage(lss.load(zipInput, LSImage.class));
                     } else {
-                        builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput, entry));
+                        builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput));
                     }
                 } else if (entry.getName().startsWith(DATA_ATTACHMENTS)) {
                     attachments.load(zipInput, entry);
@@ -181,7 +182,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                     builder.setOutput(lss.load(zipInput, LSOutput.class));
                 }
             }
-            TrainDiagram trainDiagram = builder.getTrainDiagram();
+            TrainDiagram trainDiagram = Objects.requireNonNull(builder).getTrainDiagram();
             for (LoadFilter filter : loadFilters) {
                 filter.checkDiagram(trainDiagram, version);
             }
@@ -214,32 +215,32 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             int cnt = 0;
             // save train type categories
             for (TrainTypeCategory category : diagram.getTrainTypeCategories()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPE_CATEGORIES, "xml", cnt++), new LSTrainTypeCategory(category));
+                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPE_CATEGORIES, cnt++), new LSTrainTypeCategory(category));
             }
             cnt = 0;
             // save routes
             for (Route route : diagram.getRoutes()) {
-                this.save(zipOutput, this.createEntryName(DATA_ROUTES, "xml", cnt++), new LSRoute(route));
+                this.save(zipOutput, this.createEntryName(DATA_ROUTES, cnt++), new LSRoute(route));
             }
             cnt = 0;
             // save train types
             for (TrainType trainType : diagram.getTrainTypes()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPES, "xml", cnt++), new LSTrainType(trainType));
+                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPES, cnt++), new LSTrainType(trainType));
             }
             cnt = 0;
             // save trains
             for (Train train : diagram.getTrains()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS, "xml", cnt++), new LSTrain(train));
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS, cnt++), new LSTrain(train));
             }
             cnt = 0;
             // save engine classes
             for (EngineClass engineClass : diagram.getEngineClasses()) {
-                this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, "xml", cnt++), new LSEngineClass(engineClass));
+                this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, cnt++), new LSEngineClass(engineClass));
             }
             cnt = 0;
             // save text items
             for (TextItem item : diagram.getTextItems()) {
-                this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, "xml", cnt++), new LSTextItem(item));
+                this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, cnt++), new LSTextItem(item));
             }
             cnt = 0;
             // save output templates
@@ -247,31 +248,31 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 LSOutputTemplate lsOutputTemplate = Boolean.TRUE.equals(properties.get("inline.output.template.attachments")) ?
                         new LSOutputTemplate(template) :
                         new LSOutputTemplate(template, attachments);
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), lsOutputTemplate);
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, cnt++), lsOutputTemplate);
             }
             cnt = 0;
             // save diagram change sets
             for (String version : diagram.getChangesTracker().getVersions()) {
                 DiagramChangeSet set = diagram.getChangesTracker().getChangeSet(version);
                 if (!set.getChanges().isEmpty())
-                    this.save(zipOutput, this.createEntryName(DATA_CHANGES, "xml", cnt++), new LSDiagramChangeSet(set));
+                    this.save(zipOutput, this.createEntryName(DATA_CHANGES, cnt++), new LSDiagramChangeSet(set));
             }
             cnt = 0;
             // save trains cycles
             for (TrainsCycle cycle : diagram.getCycles()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, cnt++), new LSTrainsCycle(cycle));
             }
             cnt = 0;
             // save outputs
             for (Output output : diagram.getOutputs()) {
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUTS, "xml", cnt++), new LSOutput(output));
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUTS, cnt++), new LSOutput(output));
             }
 
             // save images
             cnt = 0;
             FileLoadSaveImages saveImages = new FileLoadSaveImages(DATA_IMAGES);
             for (TimetableImage image : diagram.getImages()) {
-                this.save(zipOutput, createEntryName(DATA_IMAGES, "xml", cnt++), new LSImage(image));
+                this.save(zipOutput, createEntryName(DATA_IMAGES, cnt++), new LSImage(image));
                 saveImages.saveTimetableImage(image, zipOutput);
             }
             // save attachments

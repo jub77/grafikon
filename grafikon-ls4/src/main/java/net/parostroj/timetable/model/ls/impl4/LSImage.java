@@ -68,7 +68,6 @@ public class LSImage {
     public TimetableImage createTimetableImage(TrainDiagram diagram) {
         String newId = this.id != null ? this.id : IdGenerator.getInstance().getId();
 
-        TimetableImage image = diagram.getPartFactory().createImage(newId, filename, imageWidth, imageHeight);
-        return image;
+        return diagram.getPartFactory().createImage(newId, filename, imageWidth, imageHeight);
     }
 }

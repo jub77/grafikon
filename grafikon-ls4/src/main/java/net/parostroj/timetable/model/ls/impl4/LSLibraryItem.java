@@ -86,7 +86,7 @@ public class LSLibraryItem {
         this.object = object;
     }
 
-    public LibraryItem createLibraryItem(LibraryBuilder libraryBuilder) throws LSException {
+    public void createLibraryItem(LibraryBuilder libraryBuilder) throws LSException {
         LibraryItemType type = LibraryItemType.valueOf(getType());
         ObjectWithId object = null;
         LSContext context = new LSContext() {
@@ -125,6 +125,5 @@ public class LSLibraryItem {
         }
         LibraryItem item = libraryBuilder.addObject(object);
         item.getAttributes().add(this.getAttributes().createAttributes(context));
-        return item;
     }
 }

@@ -71,7 +71,7 @@ public class FileLoadSaveAttachments {
 
     private Attachment getAttachment(Pair<LSAttachment, OutputTemplate> pair, byte[] bytes) {
         AttachmentType type = AttachmentType.valueOf(pair.first.getType());
-        Attachment attachment = null;
+        Attachment attachment;
         if (type == AttachmentType.BINARY) {
             attachment = new Attachment(pair.first.getName(), bytes);
         } else {

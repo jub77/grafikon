@@ -34,7 +34,7 @@ public abstract class AbstractLSImpl implements LSConfigurable, LSVersions {
         ModelVersion current = getSaveVersion();
         ModelVersion loaded = ModelVersion.parseModelVersion(props.getProperty(versionKey));
         if (current.compareTo(loaded) < 0) {
-            throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
+            throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current, loaded));
         }
         return loaded;
     }
@@ -48,7 +48,7 @@ public abstract class AbstractLSImpl implements LSConfigurable, LSVersions {
     }
 
     protected static ModelVersion getLatestVersion(List<ModelVersion> versions) {
-        return versions.get(versions.size() - 1);
+        return versions.getLast();
     }
 
     protected Properties createMetadata(String versionKey) {

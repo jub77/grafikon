@@ -4,6 +4,8 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TimeInterval;
 
+import java.util.Objects;
+
 /**
  * Route part for line.
  *
@@ -78,11 +80,7 @@ public class LSTrainRoutePartLine {
     }
 
     public LSAttributes getAttributes() {
-        if (attributes == null) {
-            return new LSAttributes();
-        } else {
-            return attributes;
-        }
+        return Objects.requireNonNullElseGet(attributes, LSAttributes::new);
     }
 
     public void setAttributes(LSAttributes attributes) {

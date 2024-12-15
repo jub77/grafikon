@@ -1,7 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
@@ -74,11 +73,11 @@ public class LSLineTrack extends LSTrack {
         this.addValuesTrack(context, lineTrack);
         if (fromConnector != null) {
             TrackConnector fromC = fromNode.getConnectors().getById(fromConnector);
-            fromC.setLineTrack(Optional.ofNullable(lineTrack));
+            fromC.setLineTrack(Optional.of(lineTrack));
         }
         if (toConnector != null) {
             TrackConnector toC = toNode.getConnectors().getById(toConnector);
-            toC.setLineTrack(Optional.ofNullable(lineTrack));
+            toC.setLineTrack(Optional.of(lineTrack));
         }
         return lineTrack;
     }

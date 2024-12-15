@@ -29,7 +29,7 @@ public class LSDiagramChangeSet {
         this.version = set.getVersion();
         this.author = set.getAuthor();
         this.date = set.getDate();
-        this.changes = new LinkedList<LSDiagramChange>();
+        this.changes = new LinkedList<>();
         for (DiagramChange change : set.getChanges()) {
             this.changes.add(new LSDiagramChange(change));
         }
@@ -38,7 +38,7 @@ public class LSDiagramChangeSet {
     @XmlElement(name="change")
     public List<LSDiagramChange> getChanges() {
         if (changes == null)
-            changes = new LinkedList<LSDiagramChange>();
+            changes = new LinkedList<>();
         return changes;
     }
 

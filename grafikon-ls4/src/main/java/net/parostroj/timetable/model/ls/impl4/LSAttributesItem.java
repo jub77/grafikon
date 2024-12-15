@@ -8,7 +8,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.CollectionUtils;
@@ -78,9 +77,8 @@ public class LSAttributesItem {
                 LSAttributesValue cValue = extractSimpleValue(key, entry.getValue());
                 this.getValues().add(cValue);
             }
-        } else if (value instanceof LocalizedString) {
+        } else if (value instanceof LocalizedString localizedString) {
             type = LOCALIZED_STRING_KEY;
-            LocalizedString localizedString = (LocalizedString) value;
             this.getValues().add(extractSimpleValue(key, localizedString.getDefaultString()));
             for (StringWithLocale stringWithLocale : localizedString.getLocalizedStrings()) {
                 this.getValues().add(extractSimpleValue(key, stringWithLocale));
@@ -95,56 +93,40 @@ public class LSAttributesItem {
 
     private LSAttributesValue extractSimpleValue(String key, Object value) {
         LSAttributesValue cValue = null;
-        if (value instanceof String) {
-            cValue = new LSAttributesValue((String) value, "string");
-        } else if (value instanceof Boolean) {
-            cValue = new LSAttributesValue(value.toString(), "boolean");
-        } else if (value instanceof Integer) {
-            cValue = new LSAttributesValue(value.toString(), "integer");
-        } else if (value instanceof Long) {
-            cValue = new LSAttributesValue(value.toString(), "long");
-        } else if (value instanceof Float) {
-            cValue = new LSAttributesValue(value.toString(), "float");
-        } else if (value instanceof Double) {
-            cValue = new LSAttributesValue(value.toString(), "double");
-        } else if (value instanceof Scale) {
-            cValue = new LSAttributesValue(value.toString(), "scale");
-        } else if (value instanceof FreightColor) {
-            cValue = new LSAttributesValue(((FreightColor) value).getKey(), "freight.color");
-        } else if (value instanceof LengthUnit) {
-            cValue = new LSAttributesValue(((LengthUnit) value).getKey(), "length.unit");
-        } else if (value instanceof WeightUnit) {
-            cValue = new LSAttributesValue(((WeightUnit) value).getKey(), "weight.unit");
-        } else if (value instanceof Locale) {
-            cValue = new LSAttributesValue(((Locale) value).toLanguageTag(), "locale");
-        } else if (value instanceof TextTemplate) {
-            TextTemplate tt = (TextTemplate) value;
-            cValue = new LSAttributesValue(tt.getTemplate(), TEXT_TEMPLATE_KEY_PREFIX + tt.getLanguage().name());
-        } else if (value instanceof Script) {
-            Script script = (Script) value;
-            cValue = new LSAttributesValue(script.getSourceCode(), SCRIPT_KEY_PREFIX + script.getLanguage().name());
-        } else if (value instanceof ObjectWithId) {
-            Pair<String, String> pair = this.convertToId((ObjectWithId) value);
-            cValue = new LSAttributesValue(pair.second, pair.first);
-        } else if (value instanceof StringWithLocale) {
-            StringWithLocale stringWithLocale = (StringWithLocale) value;
-            cValue = new LSAttributesValue(
+        switch (value) {
+            case String s -> cValue = new LSAttributesValue(s, "string");
+            case Boolean b -> cValue = new LSAttributesValue(b.toString(), "boolean");
+            case Integer i -> cValue = new LSAttributesValue(i.toString(), "integer");
+            case Long l -> cValue = new LSAttributesValue(l.toString(), "long");
+            case Float v -> cValue = new LSAttributesValue(v.toString(), "float");
+            case Double v -> cValue = new LSAttributesValue(v.toString(), "double");
+            case Scale scale -> cValue = new LSAttributesValue(scale.toString(), "scale");
+            case FreightColor freightColor -> cValue = new LSAttributesValue(freightColor.getKey(), "freight.color");
+            case LengthUnit lengthUnit -> cValue = new LSAttributesValue(lengthUnit.getKey(), "length.unit");
+            case WeightUnit weightUnit -> cValue = new LSAttributesValue(weightUnit.getKey(), "weight.unit");
+            case Locale locale -> cValue = new LSAttributesValue(locale.toLanguageTag(), "locale");
+            case TextTemplate tt ->
+                    cValue = new LSAttributesValue(tt.getTemplate(), TEXT_TEMPLATE_KEY_PREFIX + tt.getLanguage().name());
+            case Script script ->
+                    cValue = new LSAttributesValue(script.getSourceCode(), SCRIPT_KEY_PREFIX + script.getLanguage().name());
+            case ObjectWithId objectWithId -> {
+                Pair<String, String> pair = this.convertToId(objectWithId);
+                cValue = new LSAttributesValue(pair.second, pair.first);
+            }
+            case StringWithLocale stringWithLocale -> cValue = new LSAttributesValue(
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());
-        } else if (value instanceof Location) {
-            Location loc = (Location) value;
-            cValue = new LSAttributesValue(String.format("%d;%d", loc.getX(), loc.getY()),
+            case Location loc -> cValue = new LSAttributesValue(String.format("%d;%d", loc.getX(), loc.getY()),
                     "location");
-        } else if (value instanceof Enum<?>) {
-            Enum<?> e = (Enum<?>) value;
-            String type = ENUM_TYPE_MAP.get(e.getDeclaringClass());
-            if (type != null) {
-                cValue = new LSAttributesValue(((Enum<?>) value).name(), "enum." + type);
-            } else {
-                log.warn("Unknown enum type: {}", e.getDeclaringClass().getName());
+            case Enum<?> e -> {
+                String type = ENUM_TYPE_MAP.get(e.getDeclaringClass());
+                if (type != null) {
+                    cValue = new LSAttributesValue(((Enum<?>) value).name(), "enum." + type);
+                } else {
+                    log.warn("Unknown enum type: {}", e.getDeclaringClass().getName());
+                }
             }
-        } else {
-            log.warn("Cannot convert value to string: {} ({})", key, value);
+            case null, default -> log.warn("Cannot convert value to string: {} ({})", key, value);
         }
         return cValue;
     }
@@ -185,49 +167,54 @@ public class LSAttributesItem {
         this.category = category;
     }
 
-    public Object convertValue(LSContext context) throws LSException {
-        if (SET_KEY.equals(type) || LIST_KEY.equals(type)) {
-            Collection<Object> result = null;
-            if (type.equals(SET_KEY)) {
-                result = new HashSet<>();
-            } else {
-                result = new ArrayList<>();
-            }
-            for (LSAttributesValue lsValue : getValues()) {
-                Object value = convertSimpleValue(context, lsValue.getValue(), lsValue.getType());
-                if (value != null) {
-                    result.add(value);
+    public Object convertValue(LSContext context) {
+        switch (type) {
+            case SET_KEY, LIST_KEY -> {
+                Collection<Object> result;
+                if (type.equals(SET_KEY)) {
+                    result = new HashSet<>();
                 } else {
-                    log.warn("Null value in collection - type: {}, value: {}", lsValue.getType(), lsValue.getValue());
+                    result = new ArrayList<>();
                 }
-            }
-            return result;
-        } else if (MAP_KEY.equals(type)) {
-            Map<Object, Object> result = new HashMap<>();
-            for (Tuple<LSAttributesValue> t : CollectionUtils.tuples(getValues())) {
-                Object key = convertSimpleValue(context, t.first.getValue(), t.first.getType());
-                Object value = convertSimpleValue(context, t.second.getValue(), t.second.getType());
-                result.put(key, value);
-            }
-            return result;
-        } else if (LOCALIZED_STRING_KEY.equals(type)) {
-            LocalizedString.Builder builder = LocalizedString.newBuilder();
-            for (LSAttributesValue value : getValues()) {
-                Object lString = convertSimpleValue(context, value.getValue(), value.getType());
-                if (lString instanceof String) {
-                    builder.setDefaultString((String) lString);
-                } else if (lString instanceof StringWithLocale) {
-                    builder.addStringWithLocale((StringWithLocale) lString);
+                for (LSAttributesValue lsValue : getValues()) {
+                    Object value = convertSimpleValue(context, lsValue.getValue(), lsValue.getType());
+                    if (value != null) {
+                        result.add(value);
+                    } else {
+                        log.warn("Null value in collection - type: {}, value: {}", lsValue.getType(), lsValue.getValue());
+                    }
                 }
+                return result;
             }
-            return builder.build();
-        } else {
-            LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
-            return value == null ? null : convertSimpleValue(context, value.getValue(), value.getType() == null ? type : value.getType());
+            case MAP_KEY -> {
+                Map<Object, Object> result = new HashMap<>();
+                for (Tuple<LSAttributesValue> t : CollectionUtils.tuples(getValues())) {
+                    Object key = convertSimpleValue(context, t.first.getValue(), t.first.getType());
+                    Object value = convertSimpleValue(context, t.second.getValue(), t.second.getType());
+                    result.put(key, value);
+                }
+                return result;
+            }
+            case LOCALIZED_STRING_KEY -> {
+                LocalizedString.Builder builder = LocalizedString.newBuilder();
+                for (LSAttributesValue value : getValues()) {
+                    Object lString = convertSimpleValue(context, value.getValue(), value.getType());
+                    if (lString instanceof String) {
+                        builder.setDefaultString((String) lString);
+                    } else if (lString instanceof StringWithLocale) {
+                        builder.addStringWithLocale((StringWithLocale) lString);
+                    }
+                }
+                return builder.build();
+            }
+            case null, default -> {
+                LSAttributesValue value = getValues().isEmpty() ? null : getValues().getFirst();
+                return value == null ? null : convertSimpleValue(context, value.getValue(), value.getType() == null ? type : value.getType());
+            }
         }
     }
 
-    private Object convertSimpleValue(LSContext context, String value, String valueType) throws LSException {
+    private Object convertSimpleValue(LSContext context, String value, String valueType) {
         if (valueType == null) {
             return null;
         } else if (valueType.equals("string")) {
@@ -306,7 +293,7 @@ public class LSAttributesItem {
         }
     }
 
-    private Object convertScript(LSContext context, String value, String valueType) throws LSException {
+    private Object convertScript(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(SCRIPT_KEY_PREFIX.length());
         Script.Language language = Script.Language.valueOf(languageStr);
         if (context.getPartFactory().getType().isAllowed(language)) {
@@ -332,8 +319,8 @@ public class LSAttributesItem {
     }
 
     private Pair<String, String> convertToId(ObjectWithId object) {
-        String lKey = null;
-        String lValue = null;
+        String lKey;
+        String lValue;
         if (object instanceof EngineClass) {
             lKey = ENGINE_CLASS_KEY;
             lValue = object.getId();

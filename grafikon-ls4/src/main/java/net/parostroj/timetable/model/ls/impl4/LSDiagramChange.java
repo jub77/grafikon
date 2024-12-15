@@ -29,7 +29,7 @@ public class LSDiagramChange {
         this.objectId = change.getObjectId();
         this.object = change.getObject();
         if (change.getDescriptions() != null) {
-            this.descs = new LinkedList<LSDiagramChangeDescription>();
+            this.descs = new LinkedList<>();
             for (DiagramChangeDescription d : change.getDescriptions()) {
                 this.descs.add(new LSDiagramChangeDescription(d));
             }
@@ -84,7 +84,7 @@ public class LSDiagramChange {
         change.setObjectId(objectId);
         change.setObject(object);
         if (this.descs != null) {
-            List<DiagramChangeDescription> ds = new LinkedList<DiagramChangeDescription>();
+            List<DiagramChangeDescription> ds = new LinkedList<>();
             for (LSDiagramChangeDescription d : this.descs) {
                 ds.add(d.createDiagramChangeDescription());
             }

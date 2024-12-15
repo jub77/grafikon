@@ -87,7 +87,7 @@ public class LSTrainDiagram {
     @XmlElement(name = "cycle_type")
     public Set<LSTrainsCycleType> getCycleTypes() {
         if (cycleTypes == null) {
-            cycleTypes = new HashSet<LSTrainsCycleType>();
+            cycleTypes = new HashSet<>();
         }
         return cycleTypes;
     }
@@ -99,7 +99,7 @@ public class LSTrainDiagram {
     @XmlElement(name = "group")
     public List<LSGroup> getGroups() {
         if (groups == null) {
-            groups = new LinkedList<LSGroup>();
+            groups = new LinkedList<>();
         }
         return groups;
     }
@@ -111,7 +111,7 @@ public class LSTrainDiagram {
     @XmlElement(name = "company")
     public List<LSCompany> getCompanies() {
         if (companies == null) {
-            companies = new LinkedList<LSCompany>();
+            companies = new LinkedList<>();
         }
         return companies;
     }
@@ -120,4 +120,3 @@ public class LSTrainDiagram {
         this.companies = companies;
     }
 }
-

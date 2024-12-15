@@ -32,7 +32,6 @@ public class FileLoadSaveImages {
      *
      * @param image image
      * @param os zip output stream
-     * @throws java.io.IOException
      */
     public void saveTimetableImage(TimetableImage image, ZipOutputStream os) throws IOException {
         // copy image to zip
@@ -53,11 +52,9 @@ public class FileLoadSaveImages {
      * loads image for timetable.
      *
      * @param is input stream
-     * @param entry current entry
      * @return file
-     * @throws java.io.IOException
      */
-    public File loadTimetableImage(ZipInputStream is, ZipEntry entry) throws IOException {
+    public File loadTimetableImage(ZipInputStream is) throws IOException {
         File tempFile = File.createTempFile("gt_", ".temp");
 
         Files.asByteSink(tempFile).writeFrom(is);

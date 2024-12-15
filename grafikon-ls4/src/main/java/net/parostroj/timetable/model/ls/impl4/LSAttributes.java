@@ -48,7 +48,7 @@ public class LSAttributes {
 
     private Set<String> getMap(String[] ignore) {
         if (ignore.length == 0) {
-            return Collections.<String>emptySet();
+            return Set.of();
         } else {
             return new HashSet<>(Arrays.asList(ignore));
         }
