@@ -265,7 +265,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         OutputTemplate template = diagram.getPartFactory().createOutputTemplate(IdGenerator.getInstance().getId());
         template.setKey(nameTextField.getText().trim());
         try {
-            template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
+            template.setTemplate(TextTemplate.create("", TextTemplate.Language.GROOVY));
         } catch (GrafikonException e) {
             log.error("Error creating template.", e);
         }

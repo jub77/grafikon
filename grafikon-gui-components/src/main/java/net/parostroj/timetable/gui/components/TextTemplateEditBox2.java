@@ -118,7 +118,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     }
 
     public TextTemplate getTemplate() throws GrafikonException {
-        return TextTemplate.createTextTemplate(getTemplateText(), getTemplateLanguage());
+        return TextTemplate.create(getTemplateText(), getTemplateLanguage());
     }
 
     public void setTemplate(TextTemplate template) {

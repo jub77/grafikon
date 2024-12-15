@@ -1,11 +1,9 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Track;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -66,8 +64,8 @@ abstract public class LSTrack {
         this.version = version;
     }
 
-    protected void addValuesTrack(Function<String, ObjectWithId> mapping, Track track) throws LSException {
-        track.getAttributes().add(attributes.createAttributes(mapping));
+    protected void addValuesTrack(LSContext context, Track track) throws LSException {
+        track.getAttributes().add(attributes.createAttributes(context));
         if (version == 0) {
             track.setNumber(number);
         }

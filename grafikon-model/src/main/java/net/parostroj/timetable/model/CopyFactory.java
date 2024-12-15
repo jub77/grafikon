@@ -19,10 +19,13 @@ public class CopyFactory {
     }
 
     public OutputTemplate copy(OutputTemplate template, String id) {
+        if (partFactory.getType() == TrainDiagramType.NORMAL) {
+            throw new GrafikonException("Not allowed for type");
+        }
         OutputTemplate copy = partFactory.createOutputTemplate(id);
         try {
             if (template.getTemplate() != null) {
-                copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
+                copy.setTemplate(partFactory.getType().createTextTemplate(template.getTemplate().getTemplate(),
                         template.getTemplate().getLanguage()));
             }
         } catch (GrafikonException e) {
@@ -30,7 +33,7 @@ public class CopyFactory {
         }
         try {
             if (template.getScript() != null) {
-                copy.setScript(Script.createScript(template.getScript().getSourceCode(),
+                copy.setScript(Script.create(template.getScript().getSourceCode(),
                         template.getScript().getLanguage()));
             }
         } catch (GrafikonException e) {

@@ -2,15 +2,12 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.PartFactory;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
 import net.parostroj.timetable.model.ls.LSException;
@@ -63,14 +60,13 @@ public class LSTrackConnector {
         this.switches = switches;
     }
 
-    public TrackConnector createConnector(PartFactory partFactory, Node node,
-            Function<String, ObjectWithId> mapping) throws LSException {
-        Attributes attrs = attributes.createAttributes(mapping);
-        TrackConnector conn = partFactory.createConnector(id, node);
+    public TrackConnector createConnector(LSContext context, Node node) throws LSException {
+        Attributes attrs = attributes.createAttributes(context);
+        TrackConnector conn = context.getPartFactory().createConnector(id, node);
         conn.getAttributes().add(attrs);
         if (this.switches != null) {
             for (LSTrackConnectorSwitch s : this.switches) {
-                conn.getSwitches().add(s.createSwitch(conn, node::getTrackById));
+                conn.getSwitches().add(s.createSwitch(conn, context.overrideMapping(node::getTrackById)));
             }
         }
         return conn;

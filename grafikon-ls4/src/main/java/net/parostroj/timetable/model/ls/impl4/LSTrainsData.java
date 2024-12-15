@@ -5,8 +5,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TextTemplate;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainsData;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train types.
@@ -70,16 +70,15 @@ public class LSTrainsData {
         this.runningTimeScript = runningTimeScript;
     }
 
-    public void updateTrainsData(TrainsData trainsData) throws LSException {
-        trainsData.setTrainNameTemplate(
-                trainNameTemplate.createTextTemplate(
-                        LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
-        trainsData.setTrainCompleteNameTemplate(
-                trainCompleteNameTemplate.createTextTemplate(
-                        LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE));
+    public void updateTrainsData(LSContext context) {
+        TrainsData trainsData = context.getDiagram().getTrainsData();
+        TextTemplate name = trainNameTemplate.createTextTemplate(context);
+        trainsData.setTrainNameTemplate(name != null ? name : TrainType.getDefaultTrainNameTemplate());
+        TextTemplate completeName = trainCompleteNameTemplate.createTextTemplate(context);
+        trainsData.setTrainCompleteNameTemplate(completeName != null ? completeName : TrainType.getDefaultTrainCompleteNameTemplate());
         trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
         if (runningTimeScript != null) {
-            trainsData.setRunningTimeScript(runningTimeScript.createScript());
+            trainsData.setRunningTimeScript(runningTimeScript.createScript(context));
         }
     }
 }

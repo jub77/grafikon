@@ -7,8 +7,17 @@ package net.parostroj.timetable.model;
  */
 public class LibraryPartFactory implements PartFactory {
 
+    private final TrainDiagramType type;
+
+    public LibraryPartFactory(TrainDiagramType type) {
+        this.type = type;
+    }
+
     @Override
     public OutputTemplate createOutputTemplate(String id) {
+        if (type == TrainDiagramType.NORMAL) {
+            throw new GrafikonException("Not allowed for type");
+        }
         return new OutputTemplate(id, null);
     }
 
@@ -37,5 +46,10 @@ public class LibraryPartFactory implements PartFactory {
     @Override
     public TrackConnector createConnector(String id, Node node) {
         return new TrackConnectorImpl(id, node);
+    }
+
+    @Override
+    public TrainDiagramType getType() {
+        return type;
     }
 }

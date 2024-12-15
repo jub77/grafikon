@@ -129,7 +129,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
     }
 
     public Script getScript() throws GrafikonException {
-        return Script.createScript(getScriptText(), getScriptLanguage());
+        return Script.create(getScriptText(), getScriptLanguage());
     }
 
     public void setScript(Script script) {

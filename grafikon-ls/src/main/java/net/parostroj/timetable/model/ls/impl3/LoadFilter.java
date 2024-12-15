@@ -35,7 +35,7 @@ public class LoadFilter {
             String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
             if (routeInfo != null) {
                 try {
-                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
+                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getType()));
                 } catch (GrafikonException e) {
                     log.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
@@ -76,7 +76,7 @@ public class LoadFilter {
         }
     }
 
-    private TextTemplate convert(String routeInfo) throws GrafikonException {
+    private TextTemplate convert(String routeInfo, TrainDiagramType type) throws GrafikonException {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < routeInfo.length(); i++) {
             char ch = routeInfo.charAt(i);
@@ -99,7 +99,7 @@ public class LoadFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
+        return type.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
     }
 
     private void convertToLocalizedStrings(TrainDiagram diagram) {
@@ -129,11 +129,7 @@ public class LoadFilter {
 
     private TextTemplate convertForAbbreviation(TextTemplate template) {
         if (template != null && template.getTemplate().contains(".abbr")) {
-            try {
-                template = TextTemplate.createTextTemplate(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
-            } catch (GrafikonException e) {
-                log.warn("Problem replacing abbreviation in template: {}", template.getTemplate());
-            }
+            template = TextTemplate.create(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
         }
         return template;
     }

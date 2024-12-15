@@ -57,7 +57,7 @@ class ScriptActionImpl implements ScriptAction {
             String sLoc = location + "/" + desc.getLocation();
             String src = ScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
-                cachedScript = Script.createScript(src, desc.getLanguage());
+                cachedScript = Script.create(src, desc.getLanguage());
             } catch (GrafikonException e) {
                 log.error("Couldn't create script.", e);
             }

@@ -6,13 +6,7 @@ import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainTypeCategory;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.library.LibraryBuilder;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
@@ -95,6 +89,17 @@ public class LSLibraryItem {
     public LibraryItem createLibraryItem(LibraryBuilder libraryBuilder) throws LSException {
         LibraryItemType type = LibraryItemType.valueOf(getType());
         ObjectWithId object = null;
+        LSContext context = new LSContext() {
+            @Override
+            public ObjectWithId mapId(String id) {
+                return libraryBuilder.getObjectById(id);
+            }
+
+            @Override
+            public PartFactory getPartFactory() {
+                return libraryBuilder.getPartFactory();
+            }
+        };
         switch (type) {
             case ENGINE_CLASS:
                 object = ((LSEngineClass) getObject()).createEngineClass(id -> {
@@ -106,24 +111,20 @@ public class LSLibraryItem {
                 object = ((LSLineClass) getObject()).createLineClass();
                 break;
             case NODE:
-                object = ((LSNode) getObject()).createNode(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById);
+                object = ((LSNode) getObject()).createNode(context);
                 break;
             case OUTPUT_TEMPLATE:
-                object = ((LSOutputTemplate) getObject()).createOutputTemplate(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById);
+                object = ((LSOutputTemplate) getObject()).createOutputTemplate(context);
                 break;
             case TRAIN_TYPE:
-                object = ((LSTrainType) getObject()).createTrainType(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById,
-                        id -> {
-                            ObjectWithId foundObject = libraryBuilder.getObjectById(id);
-                            return foundObject instanceof TrainTypeCategory ? (TrainTypeCategory) foundObject : null;
-                        });
+                object = ((LSTrainType) getObject()).createTrainType(context);
                 break;
             case TRAIN_TYPE_CATEGORY:
                 object = ((LSTrainTypeCategory) getObject()).createTrainTypeCategory();
                 break;
         }
         LibraryItem item = libraryBuilder.addObject(object);
-        item.getAttributes().add(this.getAttributes().createAttributes(libraryBuilder::getObjectById));
+        item.getAttributes().add(this.getAttributes().createAttributes(context));
         return item;
     }
 }

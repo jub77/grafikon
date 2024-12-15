@@ -50,6 +50,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public static final String ATTR_SAVE_USER = "save.user";
     public static final String ATTR_CHANGE_DIRECTION_STOP = "change.direction.stop";
     public static final String ATTR_VERSION = "version";
+    public static final String ATTR_TYPE = "type";
 
     /** Id. */
     private final String id;
@@ -95,6 +96,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ListenerSupport listenerSupportAll;
     private final RuntimeInfo runtimeInfo;
     private TimeConverter timeConverter;
+
+    private TrainDiagramType type;
 
     private final Iterable<ItemWithIdIterable<?>> itemLists;
 
@@ -155,7 +158,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new OutputValidator(this));
         this.validators.add(new PreviousNextTrainValidator());
         this.itemLists = List.of(routes, images, engineClasses, textItems, outputTemplates,
-                groups, companies, trainTypes, trains, cycleTypes, outputs);
+                groups, companies, trainTypes, trains, cycleTypes, outputs, trainTypeCategories);
+        // NORMAL type is default
+        this.setType(TrainDiagramType.NORMAL);
     }
 
     /**
@@ -314,6 +319,18 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     @Override
     public ModelVersion getVersion() {
         return getAttribute(ATTR_VERSION, ModelVersion.class, ModelVersion.initialModelVersion());
+    }
+
+    public TrainDiagramType getType() {
+        return type;
+    }
+
+    public void setType(TrainDiagramType type) {
+        if (!Objects.equals(type, this.type)) {
+            TrainDiagramType oldType = this.type;
+            this.type = type;
+            this.fireEvent(new AttributeChange(ATTR_TYPE, oldType, type));
+        }
     }
 
     public int getSaveVersion() {

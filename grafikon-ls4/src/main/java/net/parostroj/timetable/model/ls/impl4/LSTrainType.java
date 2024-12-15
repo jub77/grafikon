@@ -1,19 +1,15 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 
 import java.awt.Color;
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.PartFactory;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
 
@@ -26,9 +22,6 @@ import net.parostroj.timetable.utils.Conversions;
 @XmlType(propOrder = {"id", "abbr", "desc", "color", "categoryId", "platform", "trainNameTemplate",
         "trainCompleteNameTemplate", "attributes"})
 public class LSTrainType {
-
-    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}";
-    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}";
 
     private String id;
     // not used anymore for serialization - backward compatibility
@@ -133,9 +126,8 @@ public class LSTrainType {
         this.attributes = attributes;
     }
 
-    public TrainType createTrainType(PartFactory partFactory, Function<String, ObjectWithId> mapping,
-            Function<String, TrainTypeCategory> categoryMapping) throws LSException {
-        TrainType type = partFactory.createTrainType(id);
+    public TrainType createTrainType(LSContext context) throws LSException {
+        TrainType type = context.getPartFactory().createTrainType(id);
         if (abbr != null) {
             type.setAbbr(LocalizedString.fromString(abbr));
         }
@@ -144,13 +136,15 @@ public class LSTrainType {
             type.setDesc(LocalizedString.fromString(desc));
         }
         type.setPlatform(platform);
-        type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-            trainCompleteNameTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
-        type.setTrainNameTemplate(trainNameTemplate != null ?
-            trainNameTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
-        type.setCategory(categoryMapping.apply(categoryId));
+        if (trainNameTemplate != null) {
+            type.setTrainNameTemplate(trainNameTemplate.createTextTemplate(context));
+        }
+        if (trainCompleteNameTemplate != null) {
+            type.setTrainCompleteNameTemplate(trainCompleteNameTemplate.createTextTemplate(context));
+        }
+        type.setCategory((TrainTypeCategory) context.mapId(categoryId));
         if (attributes != null) {
-            type.getAttributes().add(attributes.createAttributes(mapping));
+            type.getAttributes().add(attributes.createAttributes(context));
         }
         return type;
     }

@@ -2,10 +2,6 @@ package net.parostroj.timetable.model;
 
 import java.util.Map;
 
-import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Script.
  *
@@ -14,7 +10,16 @@ import org.slf4j.LoggerFactory;
 public interface Script {
 
     enum Language {
-        GROOVY
+        GROOVY;
+
+        public static Language fromString(String str) {
+            for (Language language : values()) {
+                if (language.name().equals(str)) {
+                    return language;
+                }
+            }
+            return null;
+        }
     }
 
     String getSourceCode();
@@ -27,7 +32,7 @@ public interface Script {
         return evaluate(binding);
     }
 
-    static Script createScript(String sourceCode, Language language) throws GrafikonException {
+    static Script create(String sourceCode, Language language) {
         if (language == Language.GROOVY) {
             return new ScriptEngineScript(sourceCode, language);
         }

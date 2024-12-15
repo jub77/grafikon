@@ -3,17 +3,13 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Attachment;
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.PartFactory;
-import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -118,23 +114,23 @@ public class LSOutputTemplate {
         this.attributes = attributes;
     }
 
-    public OutputTemplate createOutputTemplate(PartFactory partFactory, Function<String, ObjectWithId> mapping) throws LSException {
-        return this.createOutputTemplate(partFactory, mapping, null);
+    public OutputTemplate createOutputTemplate(LSContext context) throws LSException {
+        return this.createOutputTemplate(context, null);
     }
 
-    public OutputTemplate createOutputTemplate(PartFactory partFactory, Function<String, ObjectWithId> mapping, FileLoadSaveAttachments flsAttachments) throws LSException {
-        OutputTemplate outputTemplate = partFactory.createOutputTemplate(id);
+    public OutputTemplate createOutputTemplate(LSContext context, FileLoadSaveAttachments flsAttachments) throws LSException {
+        OutputTemplate outputTemplate = context.getPartFactory().createOutputTemplate(id);
         if (name != null) {
             // name mapped to key
             outputTemplate.setKey(name);
         }
         if (this.template != null) {
-            outputTemplate.setTemplate(this.template.createTextTemplate("", TextTemplate.Language.SIMPLE));
+            outputTemplate.setTemplate(this.template.createTextTemplate(context));
         }
         if (this.script != null) {
-            outputTemplate.setScript(this.script.createScript());
+            outputTemplate.setScript(this.script.createScript(context));
         }
-        outputTemplate.getAttributes().add(attributes.createAttributes(mapping));
+        outputTemplate.getAttributes().add(attributes.createAttributes(context));
         // process attachments
         if (attachments != null) {
             for (LSAttachment attachment : attachments) {

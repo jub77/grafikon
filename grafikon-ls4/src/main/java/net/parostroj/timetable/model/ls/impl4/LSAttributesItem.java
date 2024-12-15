@@ -185,7 +185,7 @@ public class LSAttributesItem {
         this.category = category;
     }
 
-    public Object convertValue(Function<String, ObjectWithId> mapping) throws LSException {
+    public Object convertValue(LSContext context) throws LSException {
         if (SET_KEY.equals(type) || LIST_KEY.equals(type)) {
             Collection<Object> result = null;
             if (type.equals(SET_KEY)) {
@@ -194,7 +194,7 @@ public class LSAttributesItem {
                 result = new ArrayList<>();
             }
             for (LSAttributesValue lsValue : getValues()) {
-                Object value = convertSimpleValue(mapping, lsValue.getValue(), lsValue.getType());
+                Object value = convertSimpleValue(context, lsValue.getValue(), lsValue.getType());
                 if (value != null) {
                     result.add(value);
                 } else {
@@ -205,15 +205,15 @@ public class LSAttributesItem {
         } else if (MAP_KEY.equals(type)) {
             Map<Object, Object> result = new HashMap<>();
             for (Tuple<LSAttributesValue> t : CollectionUtils.tuples(getValues())) {
-                Object key = convertSimpleValue(mapping, t.first.getValue(), t.first.getType());
-                Object value = convertSimpleValue(mapping, t.second.getValue(), t.second.getType());
+                Object key = convertSimpleValue(context, t.first.getValue(), t.first.getType());
+                Object value = convertSimpleValue(context, t.second.getValue(), t.second.getType());
                 result.put(key, value);
             }
             return result;
         } else if (LOCALIZED_STRING_KEY.equals(type)) {
             LocalizedString.Builder builder = LocalizedString.newBuilder();
             for (LSAttributesValue value : getValues()) {
-                Object lString = convertSimpleValue(mapping, value.getValue(), value.getType());
+                Object lString = convertSimpleValue(context, value.getValue(), value.getType());
                 if (lString instanceof String) {
                     builder.setDefaultString((String) lString);
                 } else if (lString instanceof StringWithLocale) {
@@ -223,11 +223,11 @@ public class LSAttributesItem {
             return builder.build();
         } else {
             LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
-            return value == null ? null : convertSimpleValue(mapping, value.getValue(), value.getType() == null ? type : value.getType());
+            return value == null ? null : convertSimpleValue(context, value.getValue(), value.getType() == null ? type : value.getType());
         }
     }
 
-    private Object convertSimpleValue(Function<String, ObjectWithId> mapping, String value, String valueType) throws LSException {
+    private Object convertSimpleValue(LSContext context, String value, String valueType) throws LSException {
         if (valueType == null) {
             return null;
         } else if (valueType.equals("string")) {
@@ -253,11 +253,11 @@ public class LSAttributesItem {
         } else if (valueType.equals("locale")) {
             return Locale.forLanguageTag(value);
         } else if (valueType.startsWith(TEXT_TEMPLATE_KEY_PREFIX)) {
-            return this.convertTextTemplate(value, valueType);
+            return this.convertTextTemplate(context, value, valueType);
         } else if (valueType.startsWith(SCRIPT_KEY_PREFIX)) {
-            return this.convertScript(value, valueType);
+            return this.convertScript(context, value, valueType);
         } else if (valueType.startsWith("model.")) {
-            return this.convertModelValue(mapping, value, valueType);
+            return this.convertModelValue(context::mapId, value, valueType);
         } else if (valueType.startsWith("string.")) {
             return this.convertToStringWithLocale(value, valueType);
         } else if (valueType.equals("location")) {
@@ -296,24 +296,23 @@ public class LSAttributesItem {
         return LocalizedString.newStringWithLocale(value, Locale.forLanguageTag(languageTag));
     }
 
-    private Object convertTextTemplate(String value, String valueType) throws LSException {
+    private Object convertTextTemplate(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(TEXT_TEMPLATE_KEY_PREFIX.length());
         TextTemplate.Language language = TextTemplate.Language.fromString(languageStr);
-        try {
-            return TextTemplate.createTextTemplate(language == null ? "" : value,
-                    language == null ? TextTemplate.Language.SIMPLE : language);
-        } catch (GrafikonException e) {
-            throw new LSException("Cannot convert template: " + e.getMessage(), e);
+        if (language != null && context.getPartFactory().getType().isAllowed(language)) {
+            return context.getPartFactory().getType().createTextTemplate(value, language);
+        } else {
+            return null;
         }
     }
 
-    private Object convertScript(String value, String valueType) throws LSException {
+    private Object convertScript(LSContext context, String value, String valueType) throws LSException {
         String languageStr = valueType.substring(SCRIPT_KEY_PREFIX.length());
         Script.Language language = Script.Language.valueOf(languageStr);
-        try {
-            return Script.createScript(value, language);
-        } catch (GrafikonException e) {
-            throw new LSException("Cannot convert script: " + e.getMessage(), e);
+        if (context.getPartFactory().getType().isAllowed(language)) {
+            return Script.create(value, language);
+        } else {
+            return null;
         }
     }
 

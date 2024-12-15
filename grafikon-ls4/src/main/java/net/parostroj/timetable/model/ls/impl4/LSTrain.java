@@ -154,7 +154,8 @@ public class LSTrain {
         this.start = start;
     }
 
-    public DelayedAttributes<Train> createTrain(TrainDiagram diagram) throws LSException {
+    public DelayedAttributes<Train> createTrain(LSContext context) throws LSException {
+        TrainDiagram diagram = context.getDiagram();
         Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
         train.setDescription(desc);
@@ -169,14 +170,14 @@ public class LSTrain {
                     Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
                     NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
                     builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(),
-                            nodePart.getAttributes().createAttributes(diagram::getObjectById));
+                            nodePart.getAttributes().createAttributes(context));
                 } else {
                     LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
                     Line line = diagram.getNet().getLineById(linePart.getLineId());
                     LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
                     builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(),
                             linePart.getAddedTime() != null ? linePart.getAddedTime() : 0,
-                            linePart.getAttributes().createAttributes(diagram::getObjectById));
+                            linePart.getAttributes().createAttributes(context));
                 }
             }
         }
@@ -184,6 +185,6 @@ public class LSTrain {
         // set technological time
         train.setTimeBefore(this.timeBefore);
         train.setTimeAfter(this.timeAfter);
-        return new DelayedAttributes<>(train, attributes, diagram::getObjectById);
+        return new DelayedAttributes<>(train, attributes);
     }
 }

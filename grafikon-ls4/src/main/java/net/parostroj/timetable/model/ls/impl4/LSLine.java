@@ -122,7 +122,8 @@ public class LSLine {
         this.version = version;
     }
 
-    public Line createLine(TrainDiagram diagram) throws LSException {
+    public void createLine(LSContext context) throws LSException {
+        TrainDiagram diagram = context.getDiagram();
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
@@ -134,12 +135,11 @@ public class LSLine {
             line.setLength(length);
             line.setTopSpeed(speed);
         }
-        line.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        line.getAttributes().add(attributes.createAttributes(context));
         // tracks
         if (this.tracks != null) {
             for (LSLineTrack lsLineTrack : this.tracks) {
-                LineTrack lineTrack = lsLineTrack.createLineTrack(line, fromNode, toNode,
-                        diagram::getObjectById);
+                LineTrack lineTrack = lsLineTrack.createLineTrack(line, fromNode, toNode, context);
                 NodeTrack fromStraight = fromNode.getTrackById(lsLineTrack.getFromStraightTrack());
                 NodeTrack toStraight = toNode.getTrackById(lsLineTrack.getToStraightTrack());
                 line.getTracks().add(lineTrack);
@@ -150,7 +150,6 @@ public class LSLine {
             }
         }
         diagram.getNet().addLine(line, fromNode, toNode);
-        return line;
     }
 
     private void createConnectors(TrainDiagram diagram, Node fromNode, Node toNode,

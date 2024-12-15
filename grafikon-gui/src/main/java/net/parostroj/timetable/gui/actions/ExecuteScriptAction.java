@@ -153,7 +153,7 @@ public class ExecuteScriptAction extends AbstractAction {
         Language lang = Language.valueOf(scriptStr.substring(0, location));
         String scriptSource = scriptStr.substring(location + 1);
         try {
-            lastScript = Script.createScript(scriptSource, lang);
+            lastScript = Script.create(scriptSource, lang);
         } catch (GrafikonException e) {
             log.error("Error converting script.", e);
         }

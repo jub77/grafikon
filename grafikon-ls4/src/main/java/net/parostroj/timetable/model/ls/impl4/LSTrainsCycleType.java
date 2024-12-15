@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -61,14 +60,14 @@ public class LSTrainsCycleType {
         this.key = key;
     }
 
-    public TrainsCycleType createTrainsCycleType(TrainDiagram diagram) throws LSException {
-        TrainsCycleType type = new TrainsCycleType(id, diagram);
+    public TrainsCycleType createTrainsCycleType(LSContext context) throws LSException {
+        TrainsCycleType type = new TrainsCycleType(id, context.getDiagram());
         type.setKey(key);
         if (name != null) {
             type.setKey(name);
             type.setName(LocalizedString.fromString(name));
         }
-        type.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        type.getAttributes().add(attributes.createAttributes(context));
         return type;
     }
 }

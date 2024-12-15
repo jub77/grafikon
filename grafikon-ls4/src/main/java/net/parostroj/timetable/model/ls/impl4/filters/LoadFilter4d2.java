@@ -1,13 +1,10 @@
 package net.parostroj.timetable.model.ls.impl4.filters;
 
+import net.parostroj.timetable.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.ls.impl4.LoadFilter;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -33,7 +30,7 @@ public class LoadFilter4d2 implements LoadFilter {
                 String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
                 if (routeInfo != null) {
                     try {
-                        train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
+                        train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getType()));
                     } catch (GrafikonException e) {
                         log.warn("Couldn't convert route info to template: {}", e.getMessage());
                     }
@@ -43,7 +40,7 @@ public class LoadFilter4d2 implements LoadFilter {
         }
     }
 
-    private TextTemplate convert(String routeInfo) throws GrafikonException {
+    private TextTemplate convert(String routeInfo, TrainDiagramType type) throws GrafikonException {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < routeInfo.length(); i++) {
             char ch = routeInfo.charAt(i);
@@ -66,6 +63,6 @@ public class LoadFilter4d2 implements LoadFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
+        return type.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
     }
 }

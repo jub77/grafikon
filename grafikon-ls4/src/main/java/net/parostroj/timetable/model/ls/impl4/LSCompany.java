@@ -1,9 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import jakarta.xml.bind.annotation.XmlType;
-
 import net.parostroj.timetable.model.Company;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -41,9 +39,9 @@ public class LSCompany {
         this.attributes = attributes;
     }
 
-    public Company createCompany(TrainDiagram diagram) throws LSException {
-        Company company = diagram.getPartFactory().createCompany(id);
-        company.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+    public Company createCompany(LSContext context) throws LSException {
+        Company company = context.getDiagram().getPartFactory().createCompany(id);
+        company.getAttributes().add(attributes.createAttributes(context));
         return company;
     }
 }

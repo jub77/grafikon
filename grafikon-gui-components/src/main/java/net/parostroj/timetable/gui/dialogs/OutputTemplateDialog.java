@@ -337,9 +337,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
                 if (isScript) {
                     extensionTextField.setText(null);
                     try {
-                        scriptEditBox.setScript(Script.createScript(DEFAULT_OUTPUT_SCRIPT, Script.Language.GROOVY));
+                        scriptEditBox.setScript(Script.create(DEFAULT_OUTPUT_SCRIPT, Script.Language.GROOVY));
                     } catch (GrafikonException e1) {
-                        log.error("Error creating script.", e);
+                        log.error("Error creating script.", e1);
                     }
                 } else {
                     scriptEditBox.setScript(null);

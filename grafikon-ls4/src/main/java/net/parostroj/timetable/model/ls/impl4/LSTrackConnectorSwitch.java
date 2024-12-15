@@ -1,10 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.function.Function;
-
 import jakarta.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
 import net.parostroj.timetable.model.ls.LSException;
@@ -42,11 +39,10 @@ public class LSTrackConnectorSwitch {
         this.attributes = attributes;
     }
 
-    public TrackConnectorSwitch createSwitch(TrackConnector connector,
-            Function<String, ObjectWithId> mapping) throws LSException {
+    public TrackConnectorSwitch createSwitch(TrackConnector connector, LSContext context) throws LSException {
         TrackConnectorSwitch sw = connector.createSwitch(id);
         if (this.attributes != null) {
-            sw.getAttributes().add(this.attributes.createAttributes(mapping));
+            sw.getAttributes().add(this.attributes.createAttributes(context));
         }
         return sw;
     }

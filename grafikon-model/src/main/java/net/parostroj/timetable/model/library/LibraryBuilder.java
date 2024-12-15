@@ -5,21 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 
-import net.parostroj.timetable.model.CopyFactory;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LibraryPartFactory;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.PartFactory;
-import net.parostroj.timetable.model.TrackConnector;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.model.WeightTableRow;
+import net.parostroj.timetable.model.*;
 
 public class LibraryBuilder {
 
@@ -27,6 +13,7 @@ public class LibraryBuilder {
 
         private boolean addMissing;
         private LibraryFactory libraryFactory;
+        private TrainDiagramType type = TrainDiagramType.NORMAL;
 
         public Config setAddMissing(boolean addMissing) {
             this.addMissing = addMissing;
@@ -38,12 +25,21 @@ public class LibraryBuilder {
             return this;
         }
 
+        public Config setType(TrainDiagramType type) {
+            this.type = type;
+            return this;
+        }
+
         private LibraryFactory getLibraryFactory() {
             return libraryFactory == null ? LibraryFactory.getInstance() : libraryFactory;
         }
 
         public boolean isAddMissing() {
             return addMissing;
+        }
+
+        public TrainDiagramType getType() {
+            return type;
         }
     }
 
@@ -53,14 +49,10 @@ public class LibraryBuilder {
     private final CopyFactory copyFactory;
     private final Map<String, LibraryItem> items;
 
-    public LibraryBuilder() {
-        this(new Config());
-    }
-
     public LibraryBuilder(Config config) {
         this.config = config;
         this.addHandler = new LibraryAddHandler();
-        this.factory = new LibraryPartFactory();
+        this.factory = new LibraryPartFactory(config.getType());
         this.copyFactory = new CopyFactory(factory);
         this.items = new LinkedHashMap<>();
     }
@@ -208,6 +200,10 @@ public class LibraryBuilder {
 
     public PartFactory getPartFactory() {
         return factory;
+    }
+
+    public static Config newConfig() {
+        return new Config();
     }
 
     public Library build() {

@@ -122,9 +122,9 @@ public class LSTrainType {
         type.setCategory(this.convertToCategory(diagram));
         try {
             type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE): null);
+                TextTemplate.create(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE): null);
             type.setTrainNameTemplate(trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
+                TextTemplate.create(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
         } catch (GrafikonException e) {
             throw new LSException(e);
         }

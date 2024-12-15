@@ -3,8 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -63,11 +61,11 @@ public class LSTextItem {
         this.attributes = attributes;
     }
 
-    public TextItem createTextItem(TrainDiagram diagram) throws LSException {
-        TextItem item = new TextItem(id, diagram);
-        item.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+    public TextItem createTextItem(LSContext context) throws LSException {
+        TextItem item = new TextItem(id, context.getDiagram());
+        item.getAttributes().add(attributes.createAttributes(context));
         if (template != null) {
-            item.setTemplate(template.createTextTemplate("", TextTemplate.Language.SIMPLE));
+            item.setTemplate(template.createTextTemplate(context));
         }
         item.setName(name);
         return item;

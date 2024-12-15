@@ -62,9 +62,8 @@ public class LSFreightNet {
         this.attributes = attributes;
     }
 
-    public FreightNet createFreightNet(TrainDiagram diagram) throws LSException {
-        FreightNet net = diagram.getFreightNet();
-        net.getAttributes().add(this.getAttributes().createAttributes(diagram::getObjectById));
-        return net;
+    public void createFreightNet(LSContext context) throws LSException {
+        FreightNet net = context.getDiagram().getFreightNet();
+        net.getAttributes().add(this.getAttributes().createAttributes(context));
     }
 }

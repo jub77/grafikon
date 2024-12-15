@@ -8,25 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
-import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.FNConnection;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TimetableImage;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainDiagramFactory;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -36,6 +18,7 @@ import net.parostroj.timetable.model.ls.LSException;
  */
 public class TrainDiagramBuilder {
 
+    private final LSContext context;
     private TrainDiagram diagram;
     private final boolean trackChanges;
     private final Map<String, String> circulationSequenceMap;
@@ -47,22 +30,38 @@ public class TrainDiagramBuilder {
         circulationSequenceMap = new HashMap<>();
         // trains data
         this.diagram = new TrainDiagram(lsDiagram.getId());
-        lsDiagram.getTrainsData().updateTrainsData(this.diagram.getTrainsData());
+        this.context = new LSContext() {
+            @Override
+            public ObjectWithId mapId(String id) {
+                return diagram.getObjectById(id);
+            }
+
+            @Override
+            public PartFactory getPartFactory() {
+                return diagram.getPartFactory();
+            }
+
+            @Override
+            public TrainDiagram getDiagram() {
+                return diagram;
+            }
+        };
+        lsDiagram.getTrainsData().updateTrainsData(context);
         // attributes
-        Attributes attributes = lsDiagram.getAttributes().createAttributes(diagram::getObjectById);
+        Attributes attributes = lsDiagram.getAttributes().createAttributes(context);
         this.diagram.getAttributes().add(attributes);
         trackChanges = lsDiagram.isChangesTracking();
         // circulation types
         for (LSTrainsCycleType cType : lsDiagram.getCycleTypes()) {
-            this.diagram.getCycleTypes().add(cType.createTrainsCycleType(diagram));
+            this.diagram.getCycleTypes().add(cType.createTrainsCycleType(context));
         }
         // groups
         for (LSGroup lsGroup : lsDiagram.getGroups()) {
-            this.diagram.getGroups().add(lsGroup.createGroup(diagram));
+            this.diagram.getGroups().add(lsGroup.createGroup(context));
         }
         // companies
         for (LSCompany lsCompany : lsDiagram.getCompanies()) {
-            this.diagram.getCompanies().add(lsCompany.createCompany(diagram));
+            this.diagram.getCompanies().add(lsCompany.createCompany(context));
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
@@ -76,8 +75,8 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setTrainsData(LSTrainsData lsData) throws LSException {
-        lsData.updateTrainsData(this.diagram.getTrainsData());
+    public void setTrainsData(LSTrainsData lsData) {
+        lsData.updateTrainsData(context);
     }
 
     public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) throws LSException {
@@ -95,12 +94,12 @@ public class TrainDiagramBuilder {
         if (lsNet.getRegions() != null) {
             Collection<DelayedAttributes<Region>> regions = new ArrayList<>();
             for (LSRegion lsRegion : lsNet.getRegions()) {
-                DelayedAttributes<Region> daRegion = lsRegion.createRegion(diagram);
+                DelayedAttributes<Region> daRegion = lsRegion.createRegion(context);
                 net.getRegions().add(daRegion.getObject());
                 regions.add(daRegion);
             }
             for (DelayedAttributes<Region> daRegion : regions) {
-                daRegion.addAttributes();
+                daRegion.addAttributes(context);
             }
         }
         // add line classes
@@ -112,27 +111,27 @@ public class TrainDiagramBuilder {
         // create nodes ...
         if (lsNet.getNodes() != null) {
             for (LSNode lsNode : lsNet.getNodes()) {
-                Node node = lsNode.createNode(diagram.getPartFactory(), diagram::getObjectById);
+                Node node = lsNode.createNode(context);
                 net.addNode(node);
             }
         }
         // create lines ...
         if (lsNet.getLines() != null) {
             for (LSLine lsLine : lsNet.getLines()) {
-                lsLine.createLine(diagram);
+                lsLine.createLine(context);
             }
         }
     }
 
     public void setFreightNet(LSFreightNet lsFreightNet) throws LSException {
-        lsFreightNet.createFreightNet(diagram);
+        lsFreightNet.createFreightNet(context);
         for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
             Train from = diagram.getTrains().getById(lsConnection.getTrainFrom());
             Train to = diagram.getTrains().getById(lsConnection.getTrainTo());
             TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
             TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
             FNConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
-            connection.merge(lsConnection.getAttributes().createAttributes(diagram::getObjectById));
+            connection.merge(lsConnection.getAttributes().createAttributes(context));
         }
     }
 
@@ -146,7 +145,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrainType(LSTrainType lsType) throws LSException {
-        TrainType type = lsType.createTrainType(diagram.getPartFactory(), diagram::getObjectById, diagram.getTrainTypeCategories()::getById);
+        TrainType type = lsType.createTrainType(context);
         TrainType foundTrainType = null;
         if ((foundTrainType = diagram.getTrainTypes().getById(type.getId())) != null) {
             diagram.getTrainTypes().remove(foundTrainType);
@@ -155,17 +154,19 @@ public class TrainDiagramBuilder {
     }
 
     public void setTextItem(LSTextItem lsTextItem) throws LSException {
-        TextItem item = lsTextItem.createTextItem(diagram);
+        TextItem item = lsTextItem.createTextItem(context);
         diagram.getTextItems().add(item);
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
-        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram.getPartFactory(), diagram::getObjectById, flsAttachments);
-        diagram.getOutputTemplates().add(template);
+        if (context.getPartFactory().getType().isOutputTemplateAllowed()) {
+            OutputTemplate template = lsOutputTemplate.createOutputTemplate(context, flsAttachments);
+            diagram.getOutputTemplates().add(template);
+        }
     }
 
     public void setOutput(LSOutput lsOutput) throws LSException {
-        Output output = lsOutput.createOutput(diagram);
+        Output output = lsOutput.createOutput(context);
         diagram.getOutputs().add(output);
     }
 
@@ -177,7 +178,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrain(LSTrain lsTrain) throws LSException {
-        DelayedAttributes<Train> delayedAttributes = lsTrain.createTrain(diagram);
+        DelayedAttributes<Train> delayedAttributes = lsTrain.createTrain(context);
         delayedAttributesList.add(delayedAttributes);
         Train train = delayedAttributes.getObject();
         Train foundTrain = null;
@@ -197,7 +198,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
-        TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
+        TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(context);
         TrainsCycle foundCycle = null;
         if ((foundCycle = diagram.getCycleById(cycle.getId())) != null) {
             foundCycle.getType().getCycles().remove(foundCycle);
@@ -244,7 +245,7 @@ public class TrainDiagramBuilder {
 
     private void finishDelaydObjectWithIds() throws LSException {
         for (DelayedAttributes<?> delayedAttributes : delayedAttributesList) {
-            delayedAttributes.addAttributes();
+            delayedAttributes.addAttributes(context);
         }
     }
 

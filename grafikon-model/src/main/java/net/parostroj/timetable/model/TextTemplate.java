@@ -50,7 +50,7 @@ public interface TextTemplate {
 
     Language getLanguage();
 
-    static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
+    static TextTemplate create(String template, Language language) {
         return switch (language) {
             case GROOVY -> new TextTemplateGroovy(template);
             case PLAIN -> new TextTemplatePlain(template);

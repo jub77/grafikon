@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Group;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -51,11 +50,11 @@ public class LSGroup {
         this.attributes = attributes;
     }
 
-    public Group createGroup(TrainDiagram diagram) throws LSException {
-        Group group = diagram.getPartFactory().createGroup(id);
+    public Group createGroup(LSContext context) throws LSException {
+        Group group = context.getDiagram().getPartFactory().createGroup(id);
         // expected value -> null (for compatibility before version 4.18.2)
         group.setName(name);
-        group.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        group.getAttributes().add(attributes.createAttributes(context));
         return group;
     }
 }

@@ -3,8 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for line class.
@@ -51,10 +49,10 @@ public class LSRegion {
         this.attributes = attributes;
     }
 
-    public DelayedAttributes<Region> createRegion(TrainDiagram diagram) throws LSException {
-        Region region = diagram.getPartFactory().createRegion(id);
+    public DelayedAttributes<Region> createRegion(LSContext context) {
+        Region region = context.getDiagram().getPartFactory().createRegion(id);
         // expected value -> null (for compatibility before version 4.18.2)
         region.setName(name);
-        return new DelayedAttributes<>(region, attributes, diagram::getObjectById);
+        return new DelayedAttributes<>(region, attributes);
     }
 }

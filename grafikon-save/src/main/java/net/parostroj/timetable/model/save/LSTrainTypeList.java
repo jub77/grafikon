@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
 
-import static net.parostroj.timetable.model.save.LSTrainType.DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE;
-import static net.parostroj.timetable.model.save.LSTrainType.DEFAULT_TRAIN_NAME_TEMPLATE;
-
 /**
  * List of train types.
  *
@@ -57,22 +54,20 @@ public class LSTrainTypeList {
         return trainTypeList;
     }
 
-    public TrainsDataDto getTrainsData() {
+    public TrainsDataDto getTrainsData(TrainDiagramType diagramType) {
         if (data == null)
-            createData();
+            createData(diagramType);
         return data;
     }
 
-    private void createData() {
-        try {
-            data = new TrainsDataDto(
-                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE),
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE),
+    private void createData(TrainDiagramType diagramType) {
+        TextTemplate trainName = trainNameTemplate != null ? diagramType.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null;
+        TextTemplate trainCompleteName = trainCompleteNameTemplate != null ? diagramType.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.GROOVY) : null;
+        data = new TrainsDataDto(
+                trainName != null ? trainName : TrainType.getDefaultTrainNameTemplate(),
+                trainCompleteName != null ? trainCompleteName : TrainType.getDefaultTrainCompleteNameTemplate(),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
                 null);
-        } catch (GrafikonException e) {
-            log.error("Couldn't create trains data." ,e);
-        }
     }
 
     public TrainType getTrainType(String key) {

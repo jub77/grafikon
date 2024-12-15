@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -43,9 +42,9 @@ public class LSOutput {
         this.attributes = attributes;
     }
 
-    public Output createOutput(TrainDiagram diagram) throws LSException {
-        Output output = diagram.getPartFactory().createOutput(id);
-        output.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+    public Output createOutput(LSContext context) throws LSException {
+        Output output = context.getDiagram().getPartFactory().createOutput(id);
+        output.getAttributes().add(attributes.createAttributes(context));
         return output;
     }
 }

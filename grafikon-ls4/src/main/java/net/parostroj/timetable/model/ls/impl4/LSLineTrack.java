@@ -6,11 +6,7 @@ import java.util.function.Function;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.TrackConnector;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -73,9 +69,9 @@ public class LSLineTrack extends LSTrack {
     }
 
     public LineTrack createLineTrack(Line line, Node fromNode, Node toNode,
-            Function<String, ObjectWithId> mapping) throws LSException {
+            LSContext context) throws LSException {
         LineTrack lineTrack = new LineTrack(this.getId(), line);
-        this.addValuesTrack(mapping, lineTrack);
+        this.addValuesTrack(context, lineTrack);
         if (fromConnector != null) {
             TrackConnector fromC = fromNode.getConnectors().getById(fromConnector);
             fromC.setLineTrack(Optional.ofNullable(lineTrack));

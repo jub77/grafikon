@@ -143,8 +143,8 @@ public class LSNode {
         this.version = version;
     }
 
-    public Node createNode(PartFactory partFactory, Function<String, ObjectWithId> mapping) throws LSException {
-        Node node = partFactory.createNode(id);
+    public Node createNode(LSContext context) throws LSException {
+        Node node = context.getPartFactory().createNode(id);
         // if version < 1 - use deprecated properties
         if (version < 1) {
             node.setType(NodeType.fromString(type));
@@ -152,16 +152,16 @@ public class LSNode {
             node.setAbbr(abbr);
             node.setLocation(new Location(x, y));
         }
-        node.getAttributes().add(attributes.createAttributes(mapping));
+        node.getAttributes().add(attributes.createAttributes(context));
         // tracks
         if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
-                node.getTracks().add(track.createNodeTrack(node, mapping));
+                node.getTracks().add(track.createNodeTrack(node, context));
             }
         }
         if (this.connectors != null) {
             for (LSTrackConnector lsConn : this.connectors) {
-                TrackConnector conn = lsConn.createConnector(partFactory, node, mapping);
+                TrackConnector conn = lsConn.createConnector(context, node);
                 node.getConnectors().add(conn);
             }
         }

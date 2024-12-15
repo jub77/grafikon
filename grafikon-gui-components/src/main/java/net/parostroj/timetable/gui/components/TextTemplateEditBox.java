@@ -62,7 +62,7 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         Language lang = (Language) languageComboBox.getSelectedItem();
         if (lang == null)
             throw new GrafikonException("No language selected.");
-        return TextTemplate.createTextTemplate(str, lang);
+        return TextTemplate.create(str, lang);
     }
 
     public TextTemplate getTemplateEmpty() throws GrafikonException {
@@ -73,7 +73,7 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         if (str == null) {
             return null;
         } else {
-            return TextTemplate.createTextTemplate(str, lang);
+            return TextTemplate.create(str, lang);
         }
     }
 

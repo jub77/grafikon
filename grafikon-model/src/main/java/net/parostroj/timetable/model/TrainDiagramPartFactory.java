@@ -60,7 +60,7 @@ public class TrainDiagramPartFactory implements PartFactory {
      * Creates default connector connected to all tracks with optional straight
      * track.
      *
-     * @see #createConnector(String, Node) 
+     * @see #createConnector(String, Node)
      */
     public TrackConnector createDefaultConnector(String id, Node node, String number,
             Node.Side orientation, Optional<NodeTrack> straightTrack) {
@@ -151,6 +151,9 @@ public class TrainDiagramPartFactory implements PartFactory {
      */
     @Override
     public OutputTemplate createOutputTemplate(String id) {
+        if (!getType().isOutputTemplateAllowed()) {
+            throw new GrafikonException("Output template forbidden");
+        }
         return new OutputTemplate(id, diagram);
     }
 
@@ -170,6 +173,11 @@ public class TrainDiagramPartFactory implements PartFactory {
      * @return script for default time computation
      */
     public Script createDefaultTimeScript() {
-        return Script.createScript(TrainDiagramFactory.getDefaultTimeScript(), Script.Language.GROOVY);
+        return Script.create(TrainDiagramFactory.getDefaultTimeScript(), Script.Language.GROOVY);
+    }
+
+    @Override
+    public TrainDiagramType getType() {
+        return diagram.getType();
     }
 }

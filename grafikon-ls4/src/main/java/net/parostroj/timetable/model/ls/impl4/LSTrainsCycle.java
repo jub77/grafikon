@@ -105,7 +105,8 @@ public class LSTrainsCycle {
         this.items = items;
     }
 
-    public TrainsCycle createTrainsCycle(TrainDiagram diagram) throws LSException {
+    public TrainsCycle createTrainsCycle(LSContext context) throws LSException {
+        TrainDiagram diagram = context.getDiagram();
         TrainsCycleType cycleType = diagram.getCycleTypes().getById(type);
         if (cycleType == null) {
             // fallback to name
@@ -116,10 +117,10 @@ public class LSTrainsCycle {
             }
         }
         TrainsCycle cycle = new TrainsCycle(id, diagram, name, description, cycleType);
-        cycle.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        cycle.getAttributes().add(attributes.createAttributes(context));
         if (this.items != null) {
             for (LSTrainsCycleItem item : this.items) {
-                cycle.addItem(item.createTrainsCycleItem(cycle, diagram));
+                cycle.addItem(item.createTrainsCycleItem(cycle, context));
             }
         }
         return cycle;

@@ -141,8 +141,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         // tool tips
         ToolTipManager.sharedInstance().registerComponent(this);
         try {
-            toolTipTemplateLine = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.line"), TextTemplate.Language.GROOVY);
-            toolTipTemplateNode = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.node"), TextTemplate.Language.GROOVY);
+            toolTipTemplateLine = TextTemplate.create(ResourceLoader.getString("gt.desc.interval.line"), TextTemplate.Language.GROOVY);
+            toolTipTemplateNode = TextTemplate.create(ResourceLoader.getString("gt.desc.interval.node"), TextTemplate.Language.GROOVY);
         } catch (GrafikonException e) {
             log.error("Error creating template for time interval.", e);
         }

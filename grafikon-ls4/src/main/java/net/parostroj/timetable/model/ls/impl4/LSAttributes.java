@@ -1,13 +1,11 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.*;
-import java.util.function.Function;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.ls.LSException;
 
 import org.slf4j.Logger;
@@ -69,15 +67,15 @@ public class LSAttributes {
         return this.createAttributes(null);
     }
 
-    public Attributes createAttributes(Function<String, ObjectWithId> mapping) throws LSException {
+    public Attributes createAttributes(LSContext context) throws LSException {
         Attributes lAttributes = new Attributes();
         if (this.attributes != null) {
             for (LSAttributesItem lItem : this.attributes) {
-                Object value = lItem.convertValue(mapping);
+                Object value = lItem.convertValue(context);
                 if (value != null) {
                     lAttributes.set(lItem.getCategory(), lItem.getKey(), value);
                 } else {
-                    log.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
+                    log.debug("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
                 }
             }
         }

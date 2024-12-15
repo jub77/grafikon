@@ -57,9 +57,12 @@ public class FileLoadSaveAttachments {
     public void load(ZipInputStream zipInput, ZipEntry entry) throws IOException {
         String ref = entry.getName().substring(location.length());
         Pair<LSAttachment, OutputTemplate> pair = templateMap.get(ref);
-        byte[] bytes = ByteStreams.toByteArray(zipInput);
-        Attachment attachment = getAttachment(pair, bytes);
-        pair.second.getAttachments().add(attachment);
+        // ignore if template does not exist
+        if (pair != null) {
+            byte[] bytes = ByteStreams.toByteArray(zipInput);
+            Attachment attachment = getAttachment(pair, bytes);
+            pair.second.getAttachments().add(attachment);
+        }
     }
 
     private byte[] getBytes(Attachment attachment) {

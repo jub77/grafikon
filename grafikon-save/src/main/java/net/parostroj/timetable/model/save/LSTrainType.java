@@ -17,9 +17,6 @@ public class LSTrainType {
 
     private static final Logger log = LoggerFactory.getLogger(LSTrainType.class);
 
-    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}";
-    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}";
-
     private String key;
     private String abbr;
     private String desc;
@@ -110,24 +107,17 @@ public class LSTrainType {
 
     public TrainType convertToTrainType(TrainDiagram diagram) {
         TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TrainDiagramType diagramType = factory.getType();
         TrainType type =factory.createTrainType(factory.createId());
         type.setAbbr(LocalizedString.fromString(this.abbr));
         type.setColor(Conversions.convertTextToColor(this.color));
         type.setDesc(LocalizedString.fromString(this.desc));
         type.setPlatform(this.platform);
         type.setCategory(this.getCategory(diagram));
-        try {
-            type.setTrainNameTemplate(this.trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
-        } catch (GrafikonException e) {
-            log.error("Couldn't create train name template.", e);
-        }
-        try {
-            type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
-        } catch (GrafikonException e) {
-            log.error("Couldn't create complete train name template.", e);
-        }
+        type.setTrainNameTemplate(this.trainNameTemplate != null ?
+                diagramType.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null);
+        type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
+                diagramType.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.SIMPLE) : null);
         return type;
     }
 

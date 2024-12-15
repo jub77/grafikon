@@ -17,6 +17,13 @@ import net.parostroj.timetable.visitors.Visitable;
 public class TrainType implements ObjectWithId, Visitable, AttributesHolder, ObservableObject,
         TrainDiagramPart, ObjectWithVersion {
 
+    private static final TextTemplate DEFAULT_TRAIN_NAME_TEMPLATE = TextTemplate.create(
+            "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}",
+            TextTemplate.Language.SIMPLE);
+    private static final TextTemplate DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = TextTemplate.create(
+            "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}",
+            TextTemplate.Language.SIMPLE);
+
     public static final String ATTR_SHOW_WEIGHT_INFO = "weight.info";
     public static final String ATTR_ABBR = "abbr";
     public static final String ATTR_COLOR = "color";
@@ -277,5 +284,13 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
     public LineType getLineType() {
         return LineType.valueOf(
                 attributes.get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
+    }
+
+    public static TextTemplate getDefaultTrainCompleteNameTemplate() {
+        return DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE;
+    }
+
+    public static TextTemplate getDefaultTrainNameTemplate() {
+        return DEFAULT_TRAIN_NAME_TEMPLATE;
     }
 }

@@ -87,7 +87,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
         try {
             ZipEntry entry = null;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
-            LibraryBuilder libraryBuilder = new LibraryBuilder();
+            LibraryBuilder libraryBuilder = new LibraryBuilder(LibraryBuilder.newConfig());
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
