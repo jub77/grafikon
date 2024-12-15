@@ -5,6 +5,7 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -33,12 +34,7 @@ import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ItemEvent;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,7 +57,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private boolean recalculate;
     private TrainDiagram diagram;
 
-    private DecimalFormat format;
+    private final DecimalFormat format;
 
     /** Creates new form SettingsDialog */
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
@@ -142,7 +138,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
             // sorting
             TrainsData trainsData = diagram.getTrainsData();
-            SortPatternGroup firstGroup = trainsData.getTrainSortPattern().getGroups().get(0);
+            SortPatternGroup firstGroup = trainsData.getTrainSortPattern().getGroups().getFirst();
             sortComboBox.setSelectedIndex(firstGroup.getType() == SortPatternGroup.Type.NUMBER ? 0 : 1);
             roundingComboBox.setSelectedIndex(diagram.getTimeConverter().getRounding().ordinal());
             cNameTemplateEditBox.setTemplate(trainsData.getTrainCompleteNameTemplate());
@@ -220,7 +216,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         if (fromTime.equals(toTime)) {
             toTime += TimeInterval.DAY;
         }
-        // check range (a least an hour)
+        // check range (at least an hour)
         if ((toTime - fromTime) < 3600) {
             toTime = fromTime + 3600;
         }
@@ -293,11 +289,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             boolean isScript = scriptCheckBox.isSelected();
             scriptEditBox.setEnabled(isScript);
             if (isScript) {
-                try {
-                    scriptEditBox.setScript(diagram.getPartFactory().createDefaultTimeScript());
-                } catch (GrafikonException e1) {
-                    log.error("Error creating script", e);
-                }
+                scriptEditBox.setScript(diagram.getPartFactory().createDefaultTimeScript());
             } else {
                 scriptEditBox.setScript(null);
             }
@@ -305,8 +297,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         FlowLayout flowLayout = (FlowLayout) buttonPanel.getLayout();
         flowLayout.setAlignment(FlowLayout.RIGHT);
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -437,9 +429,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         changeDirectionCheckBox = new JCheckBox(ResourceLoader.getString("modelinfo.change.direction")); // NOI18N
         changeDirectionCheckBox.setBorder(BorderFactory.createEmptyBorder());
-        changeDirectionCheckBox.addItemListener(evt -> {
-            changeDirectionTextField.setEnabled(changeDirectionCheckBox.isSelected());
-        });
+        changeDirectionCheckBox.addItemListener(evt -> changeDirectionTextField.setEnabled(changeDirectionCheckBox.isSelected()));
         changeDirectionPanel.add(changeDirectionCheckBox);
 
         changeDirectionTextField = new JTextField();
@@ -541,7 +531,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         fromTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                timeTextFieldFocusLost(evt);
+                timeTextFieldFocusLost();
             }
         });
         timeRangePanel.add(fromTimeTextField);
@@ -553,7 +543,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         toTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                timeTextFieldFocusLost(evt);
+                timeTextFieldFocusLost();
             }
         });
         timeRangePanel.add(toTimeTextField);
@@ -620,7 +610,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         });
 
         filterScriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
-        filterScriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        filterScriptEditBox.setScriptFont(new java.awt.Font("Monospaced", Font.PLAIN, 12)); // NOI18N
         // allow only groovy script language for the filter
         filterScriptEditBox.setScriptLanguage(Script.Language.GROOVY);
         filterScriptEditBox.setLanguageChange(false);
@@ -639,7 +629,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         scriptPanel.add(jLabel11, gridBagConstraints);
 
         scriptEditBox.setRows(8);
-        scriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        scriptEditBox.setScriptFont(new java.awt.Font("Monospaced", Font.PLAIN, 12)); // NOI18N
         GridBagConstraints gridBagConstraints_6 = new java.awt.GridBagConstraints();
         gridBagConstraints_6.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_6.gridx = 0;
@@ -652,11 +642,11 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         scriptPanel.add(scriptEditBox, gridBagConstraints_6);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
+        okButton.addActionListener(this::okButtonActionPerformed);
         buttonPanel.add(okButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
         buttonPanel.add(cancelButton);
 
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -669,8 +659,8 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         // get templates values
         TrainsData trainsData = diagram.getTrainsData();
-        TextTemplate completeName = null;
-        TextTemplate name = null;
+        TextTemplate completeName;
+        TextTemplate name;
         try {
             completeName = cNameTemplateEditBox.getTemplate();
             name = nameTemplateEditBox.getTemplate();
@@ -684,7 +674,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         // set scale
         Scale s = (Scale)scaleComboBox.getSelectedItem();
         // set ratio
-        double sp = 1.0;
+        double sp;
         try {
             sp = format.parse((String) ratioComboBox.getSelectedItem()).doubleValue();
         } catch (ParseException ex) {
@@ -697,7 +687,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
             recalculateUpate = true;
         }
-        if (sp != diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue()) {
+        if (sp != diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class)) {
             diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
             recalculateUpate = true;
         }
@@ -711,7 +701,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         }
 
         // set sorting
-        SortPattern sPattern = null;
+        SortPattern sPattern;
         if (sortComboBox.getSelectedIndex() == 0) {
             sPattern = new SortPattern("(\\d*)(.*)");
             sPattern.getGroups().add(new SortPatternGroup(1, SortPatternGroup.Type.NUMBER));
@@ -732,7 +722,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         // set transfer time
         try {
             Integer difference = Integer.valueOf(stationTransferTextField.getText());
-            if (difference != null && !difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Object.class)))
+            if (!difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Object.class)))
                 diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, difference);
         } catch (NumberFormatException e) {
             log.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
@@ -811,16 +801,14 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
         diagram.getFreightNet().setConnectionStrategyType(strategyTypeModel.getSelectedObject());
         Script script = filterScriptEditBox.getScript();
-        if (ObjectsUtil.isEmpty(script.getSourceCode())) {
-            script = null;
-        } else {
+        if (!ObjectsUtil.isEmpty(script.getSourceCode())) {
             // check script
             try {
                 FreightConnectionStrategy.create(strategyTypeModel.getSelectedObject(), diagram, script);
                 diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, script);
             } catch (GrafikonException e) {
                 // log and fallback
-                log.warn("Error using script for strategy: " + e.getMessage());
+                log.warn("Error using script for strategy: {}", e.getMessage());
                 diagram.getFreightNet().setConnectionStrategyType(ConnectionStrategyType.BASE);
                 diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, null);
             }
@@ -847,7 +835,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         this.setVisible(false);
     }
 
-    private void timeTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+    private void timeTextFieldFocusLost() {
         // focus lost - check time information
         Tuple<Integer> timeRange = this.getTimeRange();
         this.setTimeRange(timeRange.first, timeRange.second);
@@ -859,7 +847,6 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     }
 
     private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox changesTrackingCheckBox;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox emptyWeightEditBox;
     private javax.swing.JTextField fromTimeTextField;
@@ -867,7 +854,6 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private javax.swing.JComboBox<LengthUnit> lengthUnitComboBox;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox loadedWeightEditBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
-    private javax.swing.JButton okButton;
     private javax.swing.JComboBox<String> ratioComboBox;
     private javax.swing.JComboBox<String> roundingComboBox;
     private NumberTextField rlRatioTextField;
