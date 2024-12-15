@@ -103,7 +103,7 @@ public class LSLine {
         this.to = to;
     }
 
-    public Line createLine(TrainDiagram diagram) {
+    public void createLine(TrainDiagram diagram) {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
@@ -121,7 +121,6 @@ public class LSLine {
             this.createConnectors(diagram, fromNode, toNode, fromStraight, toStraight, lineTrack);
         }
         diagram.getNet().addLine(line, fromNode, toNode);
-        return line;
     }
 
     private void createConnectors(TrainDiagram diagram, Node fromNode, Node toNode,

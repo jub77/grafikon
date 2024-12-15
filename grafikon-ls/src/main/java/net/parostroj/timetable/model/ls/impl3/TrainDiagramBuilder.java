@@ -66,7 +66,7 @@ public class TrainDiagramBuilder {
 
     public void setRoute(LSRoute lsRoute) throws LSException {
         Route route = lsRoute.createRoute(diagram.getNet());
-        Route foundRoute = null;
+        Route foundRoute;
         if ((foundRoute = diagram.getRoutes().getById(route.getId())) != null) {
             diagram.getRoutes().remove(foundRoute);
         }
@@ -75,7 +75,7 @@ public class TrainDiagramBuilder {
 
     public void setTrainType(LSTrainType lsType) throws LSException {
         TrainType type = lsType.createTrainType(diagram);
-        TrainType foundTrainType = null;
+        TrainType foundTrainType;
         if ((foundTrainType = diagram.getTrainTypes().getById(type.getId())) != null) {
             diagram.getTrainTypes().remove(foundTrainType);
         }
@@ -84,7 +84,7 @@ public class TrainDiagramBuilder {
 
     public void setTrain(LSTrain lsTrain) {
         Train train = lsTrain.createTrain(diagram);
-        Train foundTrain = null;
+        Train foundTrain;
         if ((foundTrain = diagram.getTrains().getById(train.getId())) != null) {
             diagram.getTrains().remove(foundTrain);
         }
@@ -93,7 +93,7 @@ public class TrainDiagramBuilder {
 
     public void setEngineClass(LSEngineClass lsEngineClass) {
         EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet());
-        EngineClass foundEc = null;
+        EngineClass foundEc;
         if ((foundEc = diagram.getEngineClasses().getById(ec.getId())) != null) {
             diagram.getEngineClasses().remove(foundEc);
         }
@@ -102,7 +102,7 @@ public class TrainDiagramBuilder {
 
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
-        TrainsCycle foundCycle = null;
+        TrainsCycle foundCycle;
         if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType())) != null) {
             foundCycle.getType().getCycles().remove(foundCycle);
         }

@@ -85,7 +85,7 @@ public class LSRoute {
         // create segments
         boolean node = true;
         for (String segment : getSegments()) {
-            NetSegment<?> routeSegment = null;
+            NetSegment<?> routeSegment;
             if (node) {
                 routeSegment = net.getNodeById(segment);
             } else {

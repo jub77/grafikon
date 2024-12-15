@@ -32,27 +32,33 @@ public class LSAttributesItem {
 
     public LSAttributesItem(String key, Object value) {
         this.key = key;
-        if (value instanceof String) {
-            this.value = (String) value;
-            this.type = "string";
-        } else if (value instanceof Boolean) {
-            this.value = value.toString();
-            this.type = "boolean";
-        } else if (value instanceof Integer) {
-            this.value = value.toString();
-            this.type = "integer";
-        } else if (value instanceof Double) {
-            this.value = value.toString();
-            this.type = "double";
-        } else if (value instanceof Scale) {
-            this.value = value.toString();
-            this.type = "scale";
-        } else if (value instanceof ObjectWithId) {
-            Pair<String, String> pair = this.convertToId((ObjectWithId) value);
-            this.type = pair.first;
-            this.value = pair.second;
-        } else {
-            log.warn("Cannot convert value to string: {}", key);
+        switch (value) {
+            case String s -> {
+                this.value = s;
+                this.type = "string";
+            }
+            case Boolean b -> {
+                this.value = b.toString();
+                this.type = "boolean";
+            }
+            case Integer i -> {
+                this.value = i.toString();
+                this.type = "integer";
+            }
+            case Double v -> {
+                this.value = v.toString();
+                this.type = "double";
+            }
+            case Scale scale -> {
+                this.value = scale.toString();
+                this.type = "scale";
+            }
+            case ObjectWithId objectWithId -> {
+                Pair<String, String> pair = this.convertToId(objectWithId);
+                this.type = pair.first;
+                this.value = pair.second;
+            }
+            case null, default -> log.warn("Cannot convert value to string: {}", key);
         }
     }
 
@@ -97,7 +103,7 @@ public class LSAttributesItem {
             return this.convertModelValue(diagram);
         } else {
             // it didn't recognize the type
-            log.warn("Not recognized type: ", type);
+            log.warn("Not recognized type: {}", type);
             return null;
         }
     }
@@ -112,7 +118,7 @@ public class LSAttributesItem {
             } else if (type.equals("model.line.class")) {
                 return diagram.getNet().getLineClasses().getById(value);
             } else {
-                log.warn("Not recognized model type: ", type);
+                log.warn("Not recognized model type: {}", type);
                 return null;
             }
         }
@@ -130,7 +136,7 @@ public class LSAttributesItem {
         } else {
             log.warn("Not recognized class: {}", object.getClass().getName());
         }
-        return new Pair<String, String>(lKey, lValue);
+        return new Pair<>(lKey, lValue);
     }
 
     @Override

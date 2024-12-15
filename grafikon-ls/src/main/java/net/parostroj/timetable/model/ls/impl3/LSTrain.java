@@ -54,7 +54,7 @@ public class LSTrain {
         // create route parts ...
         route = new LinkedList<>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
-            Object part = null;
+            Object part;
             if (interval.isLineOwner()) {
                 part = new LSTrainRoutePartLine(interval);
             } else {
@@ -159,8 +159,7 @@ public class LSTrain {
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(train, start);
         for (Object routePart : getRoute()) {
-            if (routePart instanceof LSTrainRoutePartNode) {
-                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
+            if (routePart instanceof LSTrainRoutePartNode nodePart) {
                 Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
                 NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
                 builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes());

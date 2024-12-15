@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -55,7 +56,7 @@ public class LSPenaltyTableHelper {
         TrainTypeCategory fCat = createCategory("freight");
         categories.add(pCat);
         categories.add(fCat);
-        for (LSPenaltyTableItem item : getLSPenaltyTable().getItemList()) {
+        for (LSPenaltyTableItem item : Objects.requireNonNull(getLSPenaltyTable()).getItemList()) {
             TrainTypeCategory cat = item.getType() == LSSBType.FREIGHT ? fCat : pCat;
             // upper limit decreased by one - backward compatibility with new implementation
             cat.addRow(cat.createPenaltyTableRow(item.getUpperLimit() - 1, item.getSpeedingPenalty(), item.getBrakingPenalty()));

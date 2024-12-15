@@ -84,21 +84,6 @@ public class LSPenaltyTableItem {
     }
 
     /**
-     * @param lowerLimit
-     * @param upperLimit
-     * @param type
-     * @param brakingPenalty
-     * @param speedingPenalty
-     */
-    public LSPenaltyTableItem(int lowerLimit, int upperLimit, LSSBType type, int brakingPenalty, int speedingPenalty) {
-        this.lowerLimit = lowerLimit;
-        this.upperLimit = upperLimit;
-        this.type = type;
-        this.brakingPenalty = brakingPenalty;
-        this.speedingPenalty = speedingPenalty;
-    }
-
-    /**
      * Default constructor.
      */
     public LSPenaltyTableItem() {

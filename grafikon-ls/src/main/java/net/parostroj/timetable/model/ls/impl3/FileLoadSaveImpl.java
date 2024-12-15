@@ -1,12 +1,7 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSFile;
@@ -35,7 +30,9 @@ public class FileLoadSaveImpl implements LSFile {
     private static final List<ModelVersion> VERSIONS;
 
     static {
-        VERSIONS = Collections.unmodifiableList(Arrays.asList(new ModelVersion(3, 0), new ModelVersion(3, 1)));
+        VERSIONS = List.of(
+                new ModelVersion(3, 0),
+                new ModelVersion(3, 1));
     }
 
     private final Map<String, Object> properties;
@@ -68,8 +65,8 @@ public class FileLoadSaveImpl implements LSFile {
         lss.save(zipOutput, saved);
     }
 
-    private String createEntryName(String prefix, String suffix, int cnt) {
-        return String.format("%s%06d.%s", prefix, cnt, suffix);
+    private String createEntryName(String prefix, int cnt) {
+        return String.format("%s%06d.%s", prefix, cnt, "xml");
     }
 
     private Properties createMetadata() {
@@ -82,7 +79,7 @@ public class FileLoadSaveImpl implements LSFile {
         ModelVersion current = ModelVersion.parseModelVersion(METADATA_MODEL_VERSION);
         ModelVersion loaded = ModelVersion.parseModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
         if (current.compareTo(loaded) < 0) {
-            throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
+            throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current, loaded));
         }
         return loaded;
     }
@@ -90,7 +87,7 @@ public class FileLoadSaveImpl implements LSFile {
     @Override
     public TrainDiagram load(ZipInputStream zipInput) throws LSException {
         try {
-            ZipEntry entry = null;
+            ZipEntry entry;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
@@ -126,11 +123,11 @@ public class FileLoadSaveImpl implements LSFile {
                     if (entry.getName().endsWith(".xml")) {
                         builder.addImage(lss.load(zipInput, LSImage.class));
                     } else {
-                        builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput, entry));
+                        builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput));
                     }
                 }
             }
-            TrainDiagram trainDiagram = builder.getTrainDiagram();
+            TrainDiagram trainDiagram = Objects.requireNonNull(builder).getTrainDiagram();
             new LoadFilter().checkDiagram(trainDiagram, version);
             trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, version);
             return trainDiagram;
@@ -153,34 +150,34 @@ public class FileLoadSaveImpl implements LSFile {
             int cnt = 0;
             // save routes
             for (Route route : diagram.getRoutes()) {
-                this.save(zipOutput, this.createEntryName(DATA_ROUTES, "xml", cnt++), new LSRoute(route));
+                this.save(zipOutput, this.createEntryName(DATA_ROUTES, cnt++), new LSRoute(route));
             }
             cnt = 0;
             // save train types
             for (TrainType trainType : diagram.getTrainTypes()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPES, "xml", cnt++), new LSTrainType(trainType));
+                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPES, cnt++), new LSTrainType(trainType));
             }
             cnt = 0;
             // save trains
             for (Train train : diagram.getTrains()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS, "xml", cnt++), new LSTrain(train));
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS, cnt++), new LSTrain(train));
             }
             cnt = 0;
             // save engine classes
             for (EngineClass engineClass : diagram.getEngineClasses()) {
-                this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, "xml", cnt++), new LSEngineClass(engineClass));
+                this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, cnt++), new LSEngineClass(engineClass));
             }
             cnt = 0;
             // save trains cycles
             for (TrainsCycle cycle : diagram.getCycles()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, cnt++), new LSTrainsCycle(cycle));
             }
 
             // save images
             cnt = 0;
             FileLoadSaveImages saveImages = new FileLoadSaveImages(DATA_IMAGES);
             for (TimetableImage image : diagram.getImages()) {
-                this.save(zipOutput, createEntryName(DATA_IMAGES, "xml", cnt++), new LSImage(image));
+                this.save(zipOutput, createEntryName(DATA_IMAGES, cnt++), new LSImage(image));
                 saveImages.saveTimetableImage(image, zipOutput);
             }
 

@@ -35,7 +35,7 @@ public class LSTrainsCycle {
         this.description = cycle.getDescription();
         this.type = cycle.getType().getKey();
         this.attributes = new LSAttributes(cycle.getAttributes());
-        this.items = new LinkedList<LSTrainsCycleItem>();
+        this.items = new LinkedList<>();
         for (TrainsCycleItem item : cycle) {
             items.add(new LSTrainsCycleItem(item));
         }

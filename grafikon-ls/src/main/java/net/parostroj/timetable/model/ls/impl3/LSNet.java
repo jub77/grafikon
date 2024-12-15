@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.Node;
 
 /**
  * Class for storing net.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "net")
@@ -25,15 +25,15 @@ public class LSNet {
     private List<LSLineClass> lineClasses;
 
     public LSNet(Net net) {
-        this.nodes = new LinkedList<LSNode>();
+        this.nodes = new LinkedList<>();
         for (Node node : net.getNodes()) {
             this.nodes.add(new LSNode(node));
         }
-        this.lines = new LinkedList<LSLine>();
+        this.lines = new LinkedList<>();
         for (Line line : net.getLines()) {
             this.lines.add(new LSLine(line));
         }
-        this.lineClasses = new LinkedList<LSLineClass>();
+        this.lineClasses = new LinkedList<>();
         for (LineClass lineClass : net.getLineClasses()) {
             this.lineClasses.add(new LSLineClass(lineClass));
         }

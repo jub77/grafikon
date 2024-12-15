@@ -67,10 +67,10 @@ public class LoadFilter {
                     .find(c -> c.getOrientation() == Node.Side.LEFT);
             Optional<TrackConnector> right = node.getConnectors()
                     .find(c -> c.getOrientation() == Node.Side.RIGHT);
-            if (!left.isPresent()) {
+            if (left.isEmpty()) {
                 this.addConnector(diagram.getPartFactory(), node, "1", Node.Side.LEFT);
             }
-            if (!right.isPresent()) {
+            if (right.isEmpty()) {
                 this.addConnector(diagram.getPartFactory(), node, "2", Node.Side.RIGHT);
             }
         }

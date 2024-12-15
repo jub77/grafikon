@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Storage class for attributes.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "attributes")
@@ -27,7 +27,7 @@ public class LSAttributes {
     }
 
     public LSAttributes(Attributes attributes) {
-        this.attributes = new LinkedList<LSAttributesItem>();
+        this.attributes = new LinkedList<>();
         for (Map.Entry<String, Object> entry : attributes.getAttributesMap().entrySet()) {
             if (entry.getValue() != null) {
                 LSAttributesItem lItem = new LSAttributesItem(entry.getKey(), entry.getValue());
