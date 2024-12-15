@@ -6,20 +6,20 @@ import java.io.Reader;
 /**
  * Helper class, that skips close action on reader (needed when dealing
  * with JAXB and stream from zip file).
- * 
+ *
  * @author jub
  */
 public class NoCloseAllowedReader extends Reader {
-    
-    private Reader reader;
-    
+
+    private final Reader reader;
+
     public NoCloseAllowedReader(Reader reader) {
         super(reader);
         this.reader = reader;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         // close is not propagated
     }
 

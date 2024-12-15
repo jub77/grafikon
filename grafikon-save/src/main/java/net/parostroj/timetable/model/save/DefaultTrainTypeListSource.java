@@ -4,7 +4,7 @@ import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.Pair;
@@ -21,12 +21,8 @@ public class DefaultTrainTypeListSource {
     }
 
     public static Pair<TrainsDataDto, List<TrainType>> getDefaultTypeList(TrainDiagramType diagramType) throws LSException {
-        try {
-            LSTrainTypeSerializer serializer = LSTrainTypeSerializer.getLSTrainTypeSerializer(LSSerializer.getLatestVersion());
-            LSTrainTypeList lsList = serializer.load(new InputStreamReader(DefaultTrainTypeListSource.getDefaultTypesInputStream(), "utf-8"));
-            return new Pair<TrainsDataDto, List<TrainType>>(lsList.getTrainsData(diagramType), lsList.getTrainTypeList());
-        } catch (UnsupportedEncodingException e) {
-            throw new LSException("Cannot load default train type list.", e);
-        }
+        LSTrainTypeSerializer serializer = LSTrainTypeSerializer.getLSTrainTypeSerializer();
+        LSTrainTypeList lsList = serializer.load(new InputStreamReader(DefaultTrainTypeListSource.getDefaultTypesInputStream(), StandardCharsets.UTF_8));
+        return new Pair<>(lsList.getTrainsData(diagramType), lsList.getTrainTypeList());
     }
 }

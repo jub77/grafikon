@@ -4,7 +4,6 @@ import net.parostroj.timetable.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 public class LocalizationFilter implements TrainDiagramFilter {
@@ -12,7 +11,7 @@ public class LocalizationFilter implements TrainDiagramFilter {
     private static final Logger log = LoggerFactory.getLogger(LocalizationFilter.class);
 
     @Override
-    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
+    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) {
         log.debug("Loaded version: {}", version);
         this.convertToLocalizedStrings(diagram);
 

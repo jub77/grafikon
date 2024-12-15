@@ -5,17 +5,17 @@ import net.parostroj.timetable.model.SortPatternGroup;
 
 /**
  * Sort pattern.
- * 
+ *
  * @author jub
  */
 public class LSSortPattern {
-    
+
     private String pattern;
-    
+
     private LSSortPatternGroup[] rule;
-    
+
     public LSSortPattern() {}
-    
+
     public LSSortPattern(SortPattern sPattern) {
         pattern = sPattern.getPattern();
         rule = new LSSortPatternGroup[sPattern.getGroups().size()];
@@ -40,7 +40,7 @@ public class LSSortPattern {
     public void setRule(LSSortPatternGroup[] rule) {
         this.rule = rule;
     }
-    
+
     public SortPattern getSortPattern() {
         SortPattern sPattern = new SortPattern(pattern);
         // no rules, no pattern

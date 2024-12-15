@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.save;
 
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
@@ -13,7 +12,7 @@ import net.parostroj.timetable.model.ls.ModelVersion;
 public class RecalculateFilter implements TrainDiagramFilter {
 
     @Override
-    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
+    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) {
         for (Train train : diagram.getTrains()) {
             train.recalculate();
         }

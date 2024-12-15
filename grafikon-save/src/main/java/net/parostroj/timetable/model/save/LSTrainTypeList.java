@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.parostroj.timetable.model.*;
 
 /**
@@ -18,8 +15,6 @@ import net.parostroj.timetable.model.*;
  */
 @XmlRootElement
 public class LSTrainTypeList {
-
-    private static final Logger log = LoggerFactory.getLogger(LSTrainTypeList.class);
 
     private final Map<TrainType, LSTrainType> mapping;
     private final Map<String, TrainType> mappingByKey;
@@ -31,9 +26,9 @@ public class LSTrainTypeList {
     private LSTrainType[] trainType;
 
     public LSTrainTypeList() {
-        mapping = new HashMap<TrainType, LSTrainType>();
-        mappingByKey = new HashMap<String, TrainType>();
-        trainTypeList = new LinkedList<TrainType>();
+        mapping = new HashMap<>();
+        mappingByKey = new HashMap<>();
+        trainTypeList = new LinkedList<>();
     }
 
     public LSTrainTypeList(List<TrainType> list, TrainsData data) {

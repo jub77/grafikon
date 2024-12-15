@@ -33,7 +33,7 @@ public class LSTrainDiagram {
 
     public LSTrainDiagram(TrainDiagram diagram, LSTransformationData data) {
         // stations and route splits
-        List<LSNode> lNodes = new LinkedList<LSNode>();
+        List<LSNode> lNodes = new LinkedList<>();
         for (Node station : diagram.getNet().getNodes()) {
             LSNode lsStation = new LSNode(station, data);
             lNodes.add(lsStation);
@@ -81,8 +81,6 @@ public class LSTrainDiagram {
             LSImage lsImage = new LSImage(image);
             images[i++] = lsImage;
         }
-
-        i = 0;
     }
 
     public LSTrainDiagram() {

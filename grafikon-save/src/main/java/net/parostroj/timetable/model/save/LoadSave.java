@@ -5,13 +5,11 @@
  */
 package net.parostroj.timetable.model.save;
 
-import java.util.zip.ZipException;
+import java.nio.charset.StandardCharsets;
 import net.parostroj.timetable.model.RuntimeInfo;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -38,14 +36,18 @@ public class LoadSave implements LSFile {
     private static final List<ModelVersion> VERSIONS;
 
     static {
-        VERSIONS = Collections.unmodifiableList(Arrays.asList(new ModelVersion(1, 0), new ModelVersion(2, 0), new ModelVersion(2, 1), new ModelVersion(2, 2)));
+        VERSIONS = List.of(
+                new ModelVersion(1, 0),
+                new ModelVersion(2, 0),
+                new ModelVersion(2, 1),
+                new ModelVersion(2, 2));
     }
 
     private final List<TrainDiagramFilter> loadFilters;
     private final List<TrainDiagramFilter> saveFilters;
 
     public LoadSave() {
-        loadFilters = new LinkedList<TrainDiagramFilter>();
+        loadFilters = new LinkedList<>();
         loadFilters.add(new TrainsNamesLoadFilter());
         loadFilters.add(new LineTypeLoadFilter());
         loadFilters.add(new WeightFilter());
@@ -53,13 +55,13 @@ public class LoadSave implements LSFile {
         loadFilters.add(new LocalizationFilter());
         loadFilters.add(new RecalculateFilter());
         loadFilters.add(new NodeFilter());
-        saveFilters = new LinkedList<TrainDiagramFilter>();
+        saveFilters = List.of();
     }
 
     @Override
     public TrainDiagram load(File file) throws LSException {
         try (ZipFile zip = new ZipFile(file)) {
-            TrainDiagram diagram = null;
+            TrainDiagram diagram;
 
             // load metadata
             ZipEntry entry = zip.getEntry(METADATA);
@@ -70,7 +72,7 @@ public class LoadSave implements LSFile {
             }
 
             // set model version
-            ModelVersion modelVersion = null;
+            ModelVersion modelVersion;
             if (metadata.getProperty(METADATA_KEY_MODEL_VERSION) == null) {
                 modelVersion = ModelVersion.parseModelVersion("1.0");
             } else {
@@ -83,21 +85,21 @@ public class LoadSave implements LSFile {
             }
             // load train types
             entry = zip.getEntry(TRAIN_TYPES_NAME);
-            InputStream isTypes = null;
+            InputStream isTypes;
             if (entry == null) {
                 isTypes = DefaultTrainTypeListSource.getDefaultTypesInputStream();
             } else {
                 isTypes = zip.getInputStream(entry);
             }
-            LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer(modelVersion);
-            LSTrainTypeList trainTypeList = tts.load(new InputStreamReader(isTypes, "utf-8"));
+            LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer();
+            LSTrainTypeList trainTypeList = tts.load(new InputStreamReader(isTypes, StandardCharsets.UTF_8));
 
             // load model
             entry = zip.getEntry(TRAIN_DIAGRAM_NAME);
             if (entry == null) {
                 throw new LSException("Model not found.");
             }
-            diagram = this.loadTrainDiagram(modelVersion, metadata, new InputStreamReader(zip.getInputStream(entry), "utf-8"), trainTypeList);
+            diagram = this.loadTrainDiagram(modelVersion, new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8), trainTypeList);
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, modelVersion);
 
             // load images
@@ -105,8 +107,6 @@ public class LoadSave implements LSFile {
             lsImages.loadTimetableImages(diagram, zip);
 
             return diagram;
-        } catch (ZipException ex) {
-            throw new LSException(ex);
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -122,12 +122,12 @@ public class LoadSave implements LSFile {
             // save train types
             LSTrainTypeList trainTypeList = new LSTrainTypeList(diagram.getTrainTypes(), diagram.getTrainsData());
             zipOutput.putNextEntry(new ZipEntry(TRAIN_TYPES_NAME));
-            LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer(LSSerializer.getLatestVersion());
-            tts.save(new OutputStreamWriter(zipOutput, "utf-8"), trainTypeList);
+            LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer();
+            tts.save(new OutputStreamWriter(zipOutput, StandardCharsets.UTF_8), trainTypeList);
 
             // save diagram
             zipOutput.putNextEntry(new ZipEntry(TRAIN_DIAGRAM_NAME));
-            this.saveTrainDiagram(new OutputStreamWriter(zipOutput, "utf-8"), diagram, trainTypeList);
+            this.saveTrainDiagram(new OutputStreamWriter(zipOutput, StandardCharsets.UTF_8), diagram, trainTypeList);
 
             // save images
             LoadSaveImages lsImages = new LoadSaveImages();
@@ -143,8 +143,11 @@ public class LoadSave implements LSFile {
         return metadata;
     }
 
-    private TrainDiagram loadTrainDiagram(ModelVersion modelVersion, Properties metadata, Reader reader, LSTrainTypeList types) throws LSException, IOException {
+    private TrainDiagram loadTrainDiagram(ModelVersion modelVersion, Reader reader, LSTrainTypeList types) throws LSException, IOException {
         LSSerializer serializer = LSSerializer.getLSSerializer(modelVersion);
+        if (serializer == null) {
+            throw new LSException("Serializer not initialized");
+        }
         TrainDiagram diagram = serializer.load(reader, types);
         for (TrainDiagramFilter filter : loadFilters) {
             diagram = filter.filter(diagram, modelVersion);
@@ -164,7 +167,7 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream is) throws LSException {
+    public TrainDiagram load(ZipInputStream is) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

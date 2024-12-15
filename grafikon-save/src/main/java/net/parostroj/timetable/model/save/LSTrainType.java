@@ -2,9 +2,6 @@ package net.parostroj.timetable.model.save;
 
 import java.awt.Color;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Conversions;
 
@@ -14,8 +11,6 @@ import net.parostroj.timetable.utils.Conversions;
  * @author jub
  */
 public class LSTrainType {
-
-    private static final Logger log = LoggerFactory.getLogger(LSTrainType.class);
 
     private String key;
     private String abbr;

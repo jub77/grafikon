@@ -6,9 +6,9 @@ import net.parostroj.timetable.model.*;
 
 /**
  * Filter for train diagram.
- * 
+ *
  * @author jub
  */
 public interface TrainDiagramFilter {
-    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException;
+    TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException;
 }

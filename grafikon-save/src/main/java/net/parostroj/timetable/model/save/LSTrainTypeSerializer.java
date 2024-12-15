@@ -1,30 +1,31 @@
 package net.parostroj.timetable.model.save;
 
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 import jakarta.xml.bind.*;
 
 /**
  * Train types serializer.
- * 
+ *
  * @author jub
  */
 public class LSTrainTypeSerializer {
-    
+
     private static JAXBContext context_i;
 
-    private Marshaller marshaller;
+    private final Marshaller marshaller;
 
-    private Unmarshaller unmarshaller;
-    
+    private final Unmarshaller unmarshaller;
+
     private synchronized static JAXBContext getContext() throws JAXBException {
         if (context_i == null)
-            context_i = JAXBContext.newInstance(new Class[]{LSTrainTypeList.class});
+            context_i = JAXBContext.newInstance(LSTrainTypeList.class);
         return context_i;
     }
 
-    protected LSTrainTypeSerializer(ModelVersion version) throws LSException {
+    protected LSTrainTypeSerializer() throws LSException {
         try {
             JAXBContext context = getContext();
             marshaller = context.createMarshaller();
@@ -33,20 +34,19 @@ public class LSTrainTypeSerializer {
             throw new LSException("Cannot initialize JAXB context.", e);
         }
     }
-    
-    public static LSTrainTypeSerializer getLSTrainTypeSerializer(ModelVersion version) throws LSException {
-        return new LSTrainTypeSerializer(version);
+
+    public static LSTrainTypeSerializer getLSTrainTypeSerializer() throws LSException {
+        return new LSTrainTypeSerializer();
     }
 
     public LSTrainTypeList load(Reader reader) throws LSException {
         try {
-            LSTrainTypeList list = (LSTrainTypeList) unmarshaller.unmarshal(new NoCloseAllowedReader(reader));
-            return list;
+            return (LSTrainTypeList) unmarshaller.unmarshal(new NoCloseAllowedReader(reader));
         } catch (JAXBException e) {
             throw new LSException("Cannot load list of train types.", e);
         }
     }
-    
+
     public void save(Writer writer, LSTrainTypeList trainTypeList) throws LSException {
         try {
             marshaller.marshal(trainTypeList, writer);
@@ -54,12 +54,8 @@ public class LSTrainTypeSerializer {
             throw new LSException("Cannot save list of train types.", e);
         }
     }
-    
+
     public void save(OutputStream os, LSTrainTypeList trainTypeList) throws LSException {
-        try {
-            this.save(new OutputStreamWriter(os, "utf-8"), trainTypeList);
-        } catch (UnsupportedEncodingException e) {
-            throw new LSException("Cannot save list of train types.", e);
-        }
+        this.save(new OutputStreamWriter(os, StandardCharsets.UTF_8), trainTypeList);
     }
 }

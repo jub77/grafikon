@@ -35,9 +35,9 @@ public class LSPenaltyTable {
     /**
      * returns braking time penalty (in model seconds).
      *
-     * @param type
-     * @param velocity
-     * @param timeScale
+     * @param type type
+     * @param velocity velocity
+     * @param timeScale timescale
      * @return braking time penalty
      */
     public int getBrakingTimePenalty(LSSBType type, int velocity, double timeScale) {
@@ -48,9 +48,9 @@ public class LSPenaltyTable {
     /**
      * returns speeding time penalty (in model seconds).
      *
-     * @param type
-     * @param velocity
-     * @param timeScale
+     * @param type type
+     * @param velocity velocity
+     * @param timeScale timescale
      * @return speeding time penalty
      */
     public int getSpeedingTimePenalty(LSSBType type, int velocity, double timeScale) {

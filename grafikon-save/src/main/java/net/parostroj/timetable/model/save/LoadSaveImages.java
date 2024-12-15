@@ -26,7 +26,6 @@ public class LoadSaveImages {
      *
      * @param diagram train diagram
      * @param os zip output stream
-     * @throws java.io.IOException
      */
     public void saveTimetableImages(TrainDiagram diagram, ZipOutputStream os) throws IOException {
         for (TimetableImage image : diagram.getImages()) {
@@ -51,7 +50,6 @@ public class LoadSaveImages {
      *
      * @param diagram train diagram
      * @param zipFile zip file
-     * @throws java.io.IOException
      */
     public void loadTimetableImages(TrainDiagram diagram, ZipFile zipFile) throws IOException {
         for (TimetableImage image : diagram.getImages()) {

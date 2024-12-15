@@ -6,5 +6,5 @@ package net.parostroj.timetable.model.save;
  * @author jub
  */
 public enum LSSBType {
-    PASSENGER, FREIGHT;
+    PASSENGER, FREIGHT
 }

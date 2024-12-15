@@ -14,20 +14,20 @@ import net.parostroj.timetable.model.save.NoCloseAllowedReader;
 
 /**
  * Implementation of LSSerializer for version 1.0.
- * 
+ *
  * @author jub
  */
 public class LSSerializerImpl1 extends LSSerializer {
 
     private static JAXBContext context_i;
 
-    private Marshaller marshaller;
+    private final Marshaller marshaller;
 
-    private Unmarshaller unmarshaller;
-    
+    private final Unmarshaller unmarshaller;
+
     private synchronized static JAXBContext getContext() throws JAXBException {
         if (context_i == null)
-            context_i = JAXBContext.newInstance(new Class[]{LSTrainDiagram.class});
+            context_i = JAXBContext.newInstance(LSTrainDiagram.class);
         return context_i;
     }
 
@@ -40,7 +40,7 @@ public class LSSerializerImpl1 extends LSSerializer {
             throw new LSException("Cannot initialize JAXB context.", e);
         }
     }
-    
+
     @Override
     public TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList) throws LSException {
         try {

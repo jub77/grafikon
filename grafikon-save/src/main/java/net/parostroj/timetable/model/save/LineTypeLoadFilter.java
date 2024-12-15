@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.save;
 
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.*;
 
@@ -12,7 +11,7 @@ import net.parostroj.timetable.model.*;
 public class LineTypeLoadFilter implements TrainDiagramFilter {
 
     @Override
-    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
+    public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) {
         if (version.getMajorVersion() <= 2) {
             for (Line line : diagram.getNet().getLines()) {
                 line.setAttribute(Line.ATTR_CONTROLLED, "D3".equals(line.getAttribute("line.type", String.class)));

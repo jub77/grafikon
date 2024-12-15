@@ -112,7 +112,7 @@ public class LSVisitorBuilder implements LSVisitor {
                 "2",
                 Node.Side.RIGHT,
                 Optional.ofNullable(fromNt));
-        fromConn.setLineTrack(Optional.ofNullable(lt));
+        fromConn.setLineTrack(Optional.of(lt));
         from.getConnectors().add(fromConn);
         TrackConnector toConn = diagram.getPartFactory().createDefaultConnector(
                 IdGenerator.getInstance().getId(),
@@ -120,7 +120,7 @@ public class LSVisitorBuilder implements LSVisitor {
                 "1",
                 Node.Side.LEFT,
                 Optional.ofNullable(toNt));
-        toConn.setLineTrack(Optional.ofNullable(lt));
+        toConn.setLineTrack(Optional.of(lt));
         to.getConnectors().add(toConn);
     }
 
@@ -156,7 +156,7 @@ public class LSVisitorBuilder implements LSVisitor {
         // add to the last train
         NetSegment<?> part = (NetSegment<?>) ids.get(lsInterval.getRoutePartId());
         TimeInterval interval = new TimeInterval(createId(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track, 0);
-        if (lsInterval.getComment() != null && !lsInterval.getComment().equals(""))
+        if (lsInterval.getComment() != null && !lsInterval.getComment().isEmpty())
             interval.setAttribute(TimeInterval.ATTR_COMMENT, lsInterval.getComment());
 
         // add interval to train
@@ -164,7 +164,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
         // add backward compactibility - owner is a line - add first track from line
         if (part instanceof Line) {
-            interval.setTrack(((Line) part).getTracks().get(0));
+            interval.setTrack(((Line) part).getTracks().getFirst());
         }
     }
 
@@ -172,7 +172,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSModelInfo lsInfo) {
         if (lsInfo != null) {
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, Scale.fromString(lsInfo.getScale()));
-            diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.valueOf(lsInfo.getTimeScale()));
+            diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, lsInfo.getTimeScale());
         }
     }
 

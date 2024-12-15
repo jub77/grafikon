@@ -84,11 +84,11 @@ public class LSPenaltyTableItem {
     }
 
     /**
-     * @param lowerLimit
-     * @param upperLimit
-     * @param type
-     * @param brakingPenalty
-     * @param speedingPenalty
+     * @param lowerLimit lower limit
+     * @param upperLimit upper limnit
+     * @param type type
+     * @param brakingPenalty breaking penalty
+     * @param speedingPenalty speeding penalty
      */
     public LSPenaltyTableItem(int lowerLimit, int upperLimit, LSSBType type, int brakingPenalty, int speedingPenalty) {
         this.lowerLimit = lowerLimit;

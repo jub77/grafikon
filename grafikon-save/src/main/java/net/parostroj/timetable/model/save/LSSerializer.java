@@ -4,8 +4,9 @@ import net.parostroj.timetable.model.ls.LSException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.save.version01.LSSerializerImpl1;
@@ -33,7 +34,6 @@ public abstract class LSSerializer {
      *
      * @param version version
      * @return serializer
-     * @throws net.parostroj.timetable.model.save.LSException
      */
     public static LSSerializer getLSSerializer(ModelVersion version) throws LSException {
         if (version == null || version.getMajorVersion() == 1) {
@@ -49,7 +49,6 @@ public abstract class LSSerializer {
      * returns serializer for current version.
      *
      * @return serializer
-     * @throws net.parostroj.timetable.model.save.LSException
      */
     public static LSSerializer getLatestLSSerializer() throws LSException {
         return getLSSerializer(getLatestVersion());
@@ -61,7 +60,6 @@ public abstract class LSSerializer {
      * @param reader reader
      * @param trainTypeList list
      * @return train diagram
-     * @throws net.parostroj.timetable.model.save.LSException
      */
     public abstract TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList) throws LSException;
 
@@ -71,7 +69,6 @@ public abstract class LSSerializer {
      * @param writer the writer
      * @param diagram train diagram to be saved
      * @param trainTypeList list
-     * @throws net.parostroj.timetable.model.save.LSException
      */
     public abstract void save(Writer writer, TrainDiagram diagram, LSTrainTypeList trainTypeList) throws LSException;
 
@@ -81,13 +78,8 @@ public abstract class LSSerializer {
      * @param out output stream
      * @param diagram train diagram
      * @param trainTypeList list
-     * @throws net.parostroj.timetable.model.save.LSException
      */
     public void save(OutputStream out, TrainDiagram diagram, LSTrainTypeList trainTypeList) throws LSException {
-        try {
-            this.save(new OutputStreamWriter(out,"utf-8"), diagram, trainTypeList);
-        } catch (UnsupportedEncodingException e) {
-            throw new LSException(e);
-        }
+        this.save(new OutputStreamWriter(out, StandardCharsets.UTF_8), diagram, trainTypeList);
     }
 }
