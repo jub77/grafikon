@@ -31,7 +31,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSTrainDiagram lsDiagram) {
         // create empty net
         diagram = new TrainDiagram(IdGenerator.getInstance().getId());
-        trainTypeList.getTrainsData(diagram.getType()).copyValuesTo(diagram.getTrainsData());
+        trainTypeList.getTrainsData(diagram.getRuntimeInfo().getDiagramType()).copyValuesTo(diagram.getTrainsData());
 
         LSPenaltyTableHelper.fillPenaltyTable(diagram.getTrainTypeCategories());
         trainTypeList.updateMapping(diagram);

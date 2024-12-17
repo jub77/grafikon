@@ -10,5 +10,5 @@ public interface PartFactory {
 
     TrackConnector createConnector(String id, Node node);
 
-    TrainDiagramType getType();
+    TrainDiagramType getDiagramType();
 }

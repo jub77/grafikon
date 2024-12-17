@@ -42,7 +42,7 @@ public class LSScript {
 
     public Script createScript(LSContext context) {
         Script.Language lng = Script.Language.fromString(language);
-        if (lng != null && context.getPartFactory().getType().isAllowed(lng)) {
+        if (lng != null && context.getDiagramType().isAllowed(lng)) {
             return Script.create(sourceCode, lng);
         } else {
             return null;

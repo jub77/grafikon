@@ -23,8 +23,7 @@ public class OutputTemplateRemoveValidator implements TrainDiagramValidator {
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
-                && event.getObject() instanceof OutputTemplate) {
-            OutputTemplate outputTemplate = (OutputTemplate) event.getObject();
+                && event.getObject() instanceof OutputTemplate outputTemplate) {
             removeOutputsForTemplate(outputTemplate);
             return true;
         }

@@ -38,6 +38,7 @@ public class LSAttributesItem {
     private static final String ENGINE_CLASS_KEY = "model.engine.class";
     private static final String LINE_CLASS_KEY = "model.line.class";
     private static final String MODEL_OBJECT_KEY = "model.object";
+    private static final String OBJECT_REFERENCE_KEY = "object.reference";
 
     private static final String TEXT_TEMPLATE_KEY_PREFIX = "text.template.";
     private static final String SCRIPT_KEY_PREFIX = "script.";
@@ -113,6 +114,7 @@ public class LSAttributesItem {
                 Pair<String, String> pair = this.convertToId(objectWithId);
                 cValue = new LSAttributesValue(pair.second, pair.first);
             }
+            case ObjectReference ref -> cValue = new LSAttributesValue(ref.getRefId(), OBJECT_REFERENCE_KEY);
             case StringWithLocale stringWithLocale -> cValue = new LSAttributesValue(
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());
@@ -251,6 +253,8 @@ public class LSAttributesItem {
             return this.convertLocation(value);
         } else if (valueType.startsWith("enum.")) {
             return this.convertEnumValue(value, valueType);
+        } else if (valueType.equals(OBJECT_REFERENCE_KEY)) {
+            return this.convertObjectRef(value);
         } else {
             // it didn't recognize the type
             log.warn("Not recognized type: {}", valueType);
@@ -278,6 +282,10 @@ public class LSAttributesItem {
         return null;
     }
 
+    private Object convertObjectRef(String value) {
+        return ObjectReference.create(value);
+    }
+
     private Object convertToStringWithLocale(String value, String valueType) {
         String languageTag = valueType.substring("string.".length());
         return LocalizedString.newStringWithLocale(value, Locale.forLanguageTag(languageTag));
@@ -286,8 +294,8 @@ public class LSAttributesItem {
     private Object convertTextTemplate(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(TEXT_TEMPLATE_KEY_PREFIX.length());
         TextTemplate.Language language = TextTemplate.Language.fromString(languageStr);
-        if (language != null && context.getPartFactory().getType().isAllowed(language)) {
-            return context.getPartFactory().getType().createTextTemplate(value, language);
+        if (language != null && context.getDiagramType().isAllowed(language)) {
+            return context.getDiagramType().createTextTemplate(value, language);
         } else {
             return null;
         }
@@ -296,7 +304,7 @@ public class LSAttributesItem {
     private Object convertScript(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(SCRIPT_KEY_PREFIX.length());
         Script.Language language = Script.Language.valueOf(languageStr);
-        if (context.getPartFactory().getType().isAllowed(language)) {
+        if (context.getDiagramType().isAllowed(language)) {
             return Script.create(value, language);
         } else {
             return null;

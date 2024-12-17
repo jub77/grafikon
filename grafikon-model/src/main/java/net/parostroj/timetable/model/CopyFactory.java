@@ -19,13 +19,13 @@ public class CopyFactory {
     }
 
     public OutputTemplate copy(OutputTemplate template, String id) {
-        if (partFactory.getType() == TrainDiagramType.NORMAL) {
+        if (partFactory.getDiagramType() == TrainDiagramType.NORMAL) {
             throw new GrafikonException("Not allowed for type");
         }
         OutputTemplate copy = partFactory.createOutputTemplate(id);
         try {
             if (template.getTemplate() != null) {
-                copy.setTemplate(partFactory.getType().createTextTemplate(template.getTemplate().getTemplate(),
+                copy.setTemplate(partFactory.getDiagramType().createTextTemplate(template.getTemplate().getTemplate(),
                         template.getTemplate().getLanguage()));
             }
         } catch (GrafikonException e) {

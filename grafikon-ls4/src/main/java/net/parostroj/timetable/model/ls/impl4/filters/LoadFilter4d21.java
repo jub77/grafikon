@@ -25,7 +25,7 @@ public class LoadFilter4d21 implements LoadFilter {
             }
         }
         if (version.compareTo(new ModelVersion(4, 21, 1)) <= 0) {
-            TrainDiagramType diagramType = diagram.getType();
+            TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
             // convert train name templates (common)
             diagram.getTrainsData()
                     .setTrainNameTemplate(convertForAbbreviation(diagram.getTrainsData().getTrainNameTemplate(), diagramType));

@@ -102,7 +102,7 @@ public class LSTrainType {
 
     public TrainType convertToTrainType(TrainDiagram diagram) {
         TrainDiagramPartFactory factory = diagram.getPartFactory();
-        TrainDiagramType diagramType = factory.getType();
+        TrainDiagramType diagramType = factory.getDiagramType();
         TrainType type =factory.createTrainType(factory.createId());
         type.setAbbr(LocalizedString.fromString(this.abbr));
         type.setColor(Conversions.convertTextToColor(this.color));

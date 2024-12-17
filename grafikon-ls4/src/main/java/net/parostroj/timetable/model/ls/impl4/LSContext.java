@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.ls.impl4;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.PartFactory;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
 
 import java.util.function.Function;
 
@@ -14,6 +15,10 @@ public interface LSContext {
 
     default TrainDiagram getDiagram() {
         return null;
+    }
+
+    default TrainDiagramType getDiagramType() {
+        return getPartFactory().getDiagramType();
     }
 
     default LSContext overrideMapping(Function<String, ObjectWithId> mapping) {

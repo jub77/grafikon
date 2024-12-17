@@ -35,7 +35,7 @@ public class LoadFilter {
             String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
             if (routeInfo != null) {
                 try {
-                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getType()));
+                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getRuntimeInfo().getDiagramType()));
                 } catch (GrafikonException e) {
                     log.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }

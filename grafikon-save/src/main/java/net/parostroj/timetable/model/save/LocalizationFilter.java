@@ -15,7 +15,7 @@ public class LocalizationFilter implements TrainDiagramFilter {
         log.debug("Loaded version: {}", version);
         this.convertToLocalizedStrings(diagram);
 
-        TrainDiagramType diagramType = diagram.getType();
+        TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
         // convert train name templates (common)
         diagram.getTrainsData()
                 .setTrainNameTemplate(convertForAbbreviation(diagram.getTrainsData().getTrainNameTemplate(), diagramType));

@@ -16,10 +16,11 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Output implements ObjectWithId, AttributesHolder, ObservableObject, Visitable {
+public class Output implements ObjectWithId, AttributesHolder, ObservableObject, Visitable, TrainDiagramPart {
 
     public static final String ATTR_NAME = "name";
     public static final String ATTR_TEMPLATE = "template";
+    public static final String ATTR_TEMPLATE_REFERENCE = "template.reference";
     public static final String ATTR_SELECTION = "selection";
     public static final String ATTR_LOCALE = "locale";
     public static final String ATTR_KEY = "key";
@@ -27,12 +28,14 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
     public static final String CATEGORY_SETTINGS = "settings";
 
     private final String id;
+    private final TrainDiagram diagram;
 
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
 
-    Output(String id) {
+    Output(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
         this.listenerSupport = new ListenerSupport();
         this.attributes = new Attributes((attrs, change) -> listenerSupport.fireEvent(new Event(Output.this, change)));
     }
@@ -40,6 +43,11 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     @Override
@@ -52,7 +60,29 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
     }
 
     public void setTemplate(OutputTemplate template) {
+        attributes.remove(ATTR_TEMPLATE_REFERENCE);
         attributes.setRemove(ATTR_TEMPLATE, template);
+    }
+
+    @SuppressWarnings("unchecked")
+    public ObjectReference<OutputTemplate> getTemplateRef() {
+        return attributes.get(ATTR_TEMPLATE_REFERENCE, ObjectReference.class);
+    }
+
+    public void setAttrTemplateRef(ObjectReference<OutputTemplate> templateRef) {
+        attributes.remove(ATTR_TEMPLATE);
+        attributes.setRemove(ATTR_TEMPLATE_REFERENCE, templateRef);
+    }
+
+    public OutputTemplate getOutputTemplate() {
+        OutputTemplate template = getTemplate();
+        if (template == null) {
+            ObjectReference<OutputTemplate> templateRef = getTemplateRef();
+            if (templateRef != null) {
+                template = templateRef.getObject(diagram.getRuntimeInfo().getTemplateStorage());
+            }
+        }
+        return template;
     }
 
     public LocalizedString getName() {
@@ -107,7 +137,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
      */
     public void setSettings(Attributes combinedAttributes) {
         OutputTemplate ot = getTemplate();
-        // if there is not template ignore all values
+        // if there is no template ignore all values
         if (ot != null) {
             Attributes templateAttributes = ot.getAttributes();
             for (Entry<String, Object> entry : combinedAttributes.getAttributesMap(CATEGORY_SETTINGS).entrySet()) {

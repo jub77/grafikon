@@ -75,10 +75,6 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setTrainsData(LSTrainsData lsData) {
-        lsData.updateTrainsData(context);
-    }
-
     public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) throws LSException {
         List<TrainTypeCategory> categories = lSPenaltyTable.createPenaltyTable();
         diagram.getTrainTypeCategories().addAll(categories);
@@ -159,7 +155,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
-        if (context.getPartFactory().getType().isOutputTemplateAllowed()) {
+        if (context.getDiagramType().isOutputTemplateAllowed()) {
             OutputTemplate template = lsOutputTemplate.createOutputTemplate(context, flsAttachments);
             diagram.getOutputTemplates().add(template);
         }
@@ -167,7 +163,9 @@ public class TrainDiagramBuilder {
 
     public void setOutput(LSOutput lsOutput) throws LSException {
         Output output = lsOutput.createOutput(context);
-        diagram.getOutputs().add(output);
+        if (context.getDiagramType().isOutputTemplateAllowed() || output.getTemplateRef() != null) {
+            diagram.getOutputs().add(output);
+        }
     }
 
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {

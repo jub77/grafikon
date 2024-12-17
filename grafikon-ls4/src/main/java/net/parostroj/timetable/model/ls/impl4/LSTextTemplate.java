@@ -39,8 +39,8 @@ public class LSTextTemplate {
 
     public TextTemplate createTextTemplate(LSContext context) {
         TextTemplate.Language lng = TextTemplate.Language.fromString(language);
-        if (lng != null && context.getPartFactory().getType().isAllowed(lng)) {
-            return context.getPartFactory().getType().createTextTemplate(template, lng);
+        if (lng != null && context.getDiagramType().isAllowed(lng)) {
+            return context.getDiagramType().createTextTemplate(template, lng);
         } else {
             return null;
         }

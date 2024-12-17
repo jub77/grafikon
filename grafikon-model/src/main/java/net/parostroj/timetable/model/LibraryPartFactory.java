@@ -49,7 +49,7 @@ public class LibraryPartFactory implements PartFactory {
     }
 
     @Override
-    public TrainDiagramType getType() {
+    public TrainDiagramType getDiagramType() {
         return type;
     }
 }

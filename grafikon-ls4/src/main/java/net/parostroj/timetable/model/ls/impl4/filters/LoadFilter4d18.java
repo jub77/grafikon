@@ -12,7 +12,7 @@ public class LoadFilter4d18 implements LoadFilter {
     @Override
     public void checkDiagram(TrainDiagram diagram, ModelVersion version) {
         if (version.compareTo(new ModelVersion(4, 18, 3)) <= 0) {
-            TrainDiagramType diagramType = diagram.getType();
+            TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
             // adjust complete name templates
             TextTemplate template = diagram.getTrainsData().getTrainCompleteNameTemplate();
             diagram.getTrainsData().setTrainCompleteNameTemplate(this.adjustDescription(template, diagramType));
