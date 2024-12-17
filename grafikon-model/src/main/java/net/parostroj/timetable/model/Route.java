@@ -49,19 +49,15 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
         this.segments = Lists.newLinkedList(segments);
     }
 
-    @SafeVarargs
     public Route(String id, TrainDiagram diagram, RouteSegment... segments) {
         this(id, diagram);
         this.segments = new LinkedList<>(Arrays.asList(segments));
     }
 
-    @SafeVarargs
     public Route(String id, TrainDiagram diagram, String name, RouteSegment... segments) {
         this(id, diagram, segments);
         this.setName(name);
     }
-
-
 
     public List<RouteSegment> getSegments() {
         return segments;
@@ -113,7 +109,7 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
      */
     public void add(Route route) {
         List<RouteSegment> addSegments = route.getSegments();
-        if (!segments.isEmpty() && (addSegments.get(0) != segments.get(segments.size() - 1))) {
+        if (!segments.isEmpty() && (addSegments.getFirst() != segments.getLast())) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
         }
         ListIterator<RouteSegment> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
@@ -169,11 +165,11 @@ public class Route implements ObjectWithId, Visitable, AttributesHolder, Iterabl
     }
 
     public Node getLast() {
-        return (Node) segments.get(segments.size() - 1);
+        return (Node) segments.getLast();
     }
 
     public Node getFirst() {
-        return (Node) segments.get(0);
+        return (Node) segments.getFirst();
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
- * Transport for freight connection (via other connection or directly via exact train.
+ * Transport for freight connection (via other connection or directly via exact train).
  *
  * @author jub
  */

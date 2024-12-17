@@ -9,47 +9,47 @@ import net.parostroj.timetable.model.*;
  */
 public interface TrainDiagramVisitor {
 
-    public void visit(TrainDiagram diagram);
+    void visit(TrainDiagram diagram);
 
-    public void visit(Net net);
+    void visit(Net net);
 
-    public void visit(Train train);
+    void visit(Train train);
 
-    public void visit(Node node);
+    void visit(Node node);
 
-    public void visit(Line line);
+    void visit(Line line);
 
-    public void visit(LineTrack track);
+    void visit(LineTrack track);
 
-    public void visit(NodeTrack track);
+    void visit(NodeTrack track);
 
-    public void visit(TrainType type);
+    void visit(TrainType type);
 
-    public void visit(Route route);
+    void visit(Route route);
 
-    public void visit(EngineClass engineClass);
+    void visit(EngineClass engineClass);
 
-    public void visit(TrainsCycle cycle);
+    void visit(TrainsCycle cycle);
 
-    public void visit(TextItem item);
+    void visit(TextItem item);
 
-    public void visit(TimetableImage image);
+    void visit(TimetableImage image);
 
-    public void visit(LineClass lineClass);
+    void visit(LineClass lineClass);
 
-    public void visit(OutputTemplate template);
+    void visit(OutputTemplate template);
 
-    public void visit(TrainsCycleType type);
+    void visit(TrainsCycleType type);
 
-    public void visit(Group group);
+    void visit(Group group);
 
-    public void visit(FreightNet net);
+    void visit(FreightNet net);
 
-    public void visit(Region region);
+    void visit(Region region);
 
-    public void visit(Company company);
+    void visit(Company company);
 
-    public void visit(Output output);
+    void visit(Output output);
 
-    public void visit(TrackConnector connector);
+    void visit(TrackConnector connector);
 }

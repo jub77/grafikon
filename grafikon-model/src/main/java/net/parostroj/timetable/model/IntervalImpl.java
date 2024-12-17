@@ -117,9 +117,8 @@ public abstract class IntervalImpl implements Interval {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Interval))
+        if (!(obj instanceof Interval other))
             return false;
-        Interval other = (Interval) obj;
         if (getEnd() != other.getEnd())
             return false;
         return getStart() == other.getStart();

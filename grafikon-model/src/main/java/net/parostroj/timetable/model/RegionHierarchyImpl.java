@@ -27,7 +27,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
     @Override
     public Region getFirstSuperRegion() {
         Set<Region> regions = getRegions();
-        // all regions has to have the same super region
+        // all regions have to have the same super region
         return regions.isEmpty() ? null : regions.iterator().next().getSuperRegion();
     }
 
@@ -66,7 +66,7 @@ public abstract class RegionHierarchyImpl implements RegionHierarchy {
 
     @Override
     public void apply(Consumer<Region> consumer) {
-        getRegions().stream().forEach(consumer);
+        getRegions().forEach(consumer);
         Region current = getFirstSuperRegion();
         while (current != null) {
             consumer.accept(current);

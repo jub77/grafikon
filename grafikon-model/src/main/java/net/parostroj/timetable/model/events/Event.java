@@ -12,11 +12,11 @@ public class Event {
 
         private final boolean list;
 
-        private Type(boolean list) {
+        Type(boolean list) {
             this.list = list;
         }
 
-        private Type() {
+        Type() {
             this(false);
         }
 

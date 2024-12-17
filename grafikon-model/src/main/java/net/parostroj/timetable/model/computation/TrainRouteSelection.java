@@ -101,7 +101,7 @@ public class TrainRouteSelection {
      * @return true if the train has valid track connections
      */
     public boolean isTrainTracksValid(Train train) {
-        return !getFirstTrainInvalidTrack(train).isPresent();
+        return getFirstTrainInvalidTrack(train).isEmpty();
     }
 
     /**
@@ -127,13 +127,11 @@ public class TrainRouteSelection {
 
     private boolean isConnection(Track fromTrack, Track toTrack) {
         boolean isConnection = false;
-        if (fromTrack.getOwner() instanceof Node) {
-            Node fromNode = (Node) fromTrack.getOwner();
+        if (fromTrack.getOwner() instanceof Node fromNode) {
             Optional<TrackConnector> connector = fromNode.getConnectors().getForLineTrack((LineTrack) toTrack);
             isConnection = connector.filter(c -> c.getSwitches().containsNodeTrack((NodeTrack) fromTrack)).isPresent();
         }
-        if (toTrack.getOwner() instanceof Node) {
-            Node toNode = (Node) toTrack.getOwner();
+        if (toTrack.getOwner() instanceof Node toNode) {
             Optional<TrackConnector> connector = toNode.getConnectors().getForLineTrack((LineTrack) fromTrack);
             isConnection = connector.filter(c -> c.getSwitches().containsNodeTrack((NodeTrack) toTrack)).isPresent();
         }

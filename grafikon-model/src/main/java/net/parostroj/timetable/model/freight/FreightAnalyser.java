@@ -68,7 +68,7 @@ public class FreightAnalyser {
                         new TransportImpl(null, e.getValue())))
                 .collect(toSet());
 
-        // depending if the node is center of regions or not
+        // depending on if the node is center of regions or not
         Collection<NodeConnectionNodes> centerConnections = strategy.getRegionConnectionNodes();
         Stream<FreightConnectionVia> conns;
         if (node.isCenterOfRegions()) {
@@ -139,10 +139,10 @@ public class FreightAnalyser {
         if (!toRegions.getRegions().isEmpty() && !fromRegions.getRegions().isEmpty()) {
             if (fromSuper == null && toSuper != null) {
                 result = Collections.singleton(toRegions.getTopSuperRegion());
-            } else if (toSuper != null && !fromRegions.findInSuperRegions(r -> r == toSuper).isPresent()) {
+            } else if (toSuper != null && fromRegions.findInSuperRegions(r -> r == toSuper).isEmpty()) {
                 Region dest = toSuper;
                 while (dest.getSuperRegion() != null
-                        && !fromRegions.findInSuperRegions(Predicate.isEqual(dest.getSuperRegion())).isPresent()) {
+                        && fromRegions.findInSuperRegions(Predicate.isEqual(dest.getSuperRegion())).isEmpty()) {
                     dest = dest.getSuperRegion();
                 }
                 result = Collections.singleton(dest);

@@ -44,7 +44,7 @@ public class ObjectsUtil {
         String checkedStr = str;
         if (checkedStr != null) {
             checkedStr = checkedStr.trim();
-            if ("".equals(checkedStr)) {
+            if (checkedStr.isEmpty()) {
                 checkedStr = null;
             }
         }

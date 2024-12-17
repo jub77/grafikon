@@ -7,5 +7,5 @@ package net.parostroj.timetable.visitors;
  */
 public interface Visitable {
 
-    public void accept(TrainDiagramVisitor visitor);
+    void accept(TrainDiagramVisitor visitor);
 }

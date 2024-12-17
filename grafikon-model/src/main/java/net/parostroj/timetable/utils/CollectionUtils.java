@@ -120,7 +120,7 @@ public final class CollectionUtils {
      * @return iterator with window
      */
     public static <T> Iterator<List<T>> slidingWindow(final Iterator<T> iterator, final int count) {
-        return new AbstractIterator<List<T>>() {
+        return new AbstractIterator<>() {
 
             private final LinkedList<T> window = new LinkedList<>();
             private int cnt = 0;
@@ -160,7 +160,7 @@ public final class CollectionUtils {
      * @return iterator with tuples
      */
     public static <T> Iterator<Tuple<T>> tuples(final Iterator<T> iterator) {
-        return new AbstractIterator<Tuple<T>>() {
+        return new AbstractIterator<>() {
 
             @Override
             protected Tuple<T> computeNext() {

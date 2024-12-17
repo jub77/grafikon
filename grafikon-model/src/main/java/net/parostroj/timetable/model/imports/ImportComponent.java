@@ -26,16 +26,16 @@ public enum ImportComponent {
     TRAINS_CYCLES("cycles", TrainsCycle.class, true),
     OUTPUT_TEMPLATES("output_templates", OutputTemplate.class, true, LibraryItemType.OUTPUT_TEMPLATE);
 
-    private String key;
-    private Class<?> clazz;
-    private boolean sorted;
-    private LibraryItemType libraryItemType;
+    private final String key;
+    private final Class<?> clazz;
+    private final boolean sorted;
+    private final LibraryItemType libraryItemType;
 
-    private ImportComponent(String key, Class<?> clazz, boolean sorted) {
+    ImportComponent(String key, Class<?> clazz, boolean sorted) {
         this(key, clazz, sorted, null);
     }
 
-    private ImportComponent(String key, Class<?> clazz, boolean sorted, LibraryItemType libraryItemType) {
+    ImportComponent(String key, Class<?> clazz, boolean sorted, LibraryItemType libraryItemType) {
         this.key = key;
         this.clazz = clazz;
         this.libraryItemType = libraryItemType;

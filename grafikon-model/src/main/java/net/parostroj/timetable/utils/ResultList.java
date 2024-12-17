@@ -31,7 +31,7 @@ public class ResultList<T> {
 
     public List<T> get() {
         List<T> result = multipleValues != null ? multipleValues
-                : (singleValue != null ? Collections.singletonList(singleValue) : Collections.<T>emptyList());
+                : (singleValue != null ? Collections.singletonList(singleValue) : List.of());
         singleValue = null;
         multipleValues = null;
         return result;

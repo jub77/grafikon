@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model.validators;
 
-import static java.util.stream.Collectors.toList;
-
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
@@ -25,7 +23,7 @@ public class TrackConnectorValidator implements TrainDiagramValidator {
                 sw.getNodeTrack().getTimeIntervalList().stream()
                         .map(TimeInterval::getTrain)
                         .distinct()
-                        .collect(toList())
+                        .toList()
                         .forEach(Train::recalculate);
             } else if (event.getType() == Type.ATTRIBUTE
                     && event.getAttributeChange().checkName(TrackConnector.ATTR_ORIENTATION)) {
@@ -33,7 +31,7 @@ public class TrackConnectorValidator implements TrainDiagramValidator {
                 connector.getLineTrack().ifPresent(lt -> lt.getTimeIntervalList().stream()
                         .map(TimeInterval::getTrain)
                         .distinct()
-                        .collect(toList())
+                        .toList()
                         .forEach(Train::recalculate));
             }
         }

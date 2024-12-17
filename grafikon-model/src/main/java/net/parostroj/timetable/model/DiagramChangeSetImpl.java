@@ -70,27 +70,18 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
 
     private boolean shouldAdd(DiagramChange added, DiagramChange existing) {
         Action existingAction = existing.getAction();
-        switch (added.getAction()) {
-            case ADDED:
-                return true;
-            case MODIFIED:
-            case REMOVED:
-            case MOVED:
-                return existingAction != DiagramChange.Action.ADDED;
-        }
-        return false;
+        return switch (added.getAction()) {
+            case ADDED -> true;
+            case MODIFIED, REMOVED, MOVED -> existingAction != Action.ADDED;
+        };
     }
 
     private boolean shouldRemove(DiagramChange added, DiagramChange existing) {
         Action addedAction = added.getAction();
-        switch (existing.getAction()) {
-            case ADDED:
-            case MODIFIED:
-                return addedAction == DiagramChange.Action.REMOVED;
-            default:
-                break;
-        }
-        return false;
+        return switch (existing.getAction()) {
+            case ADDED, MODIFIED -> addedAction == Action.REMOVED;
+            default -> false;
+        };
     }
 
     private List<DiagramChange> getChangesForId(String id) {

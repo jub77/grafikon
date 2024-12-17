@@ -58,8 +58,7 @@ class LocalizedStringImpl implements LocalizedString {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LocalizedStringImpl)) return false;
-        LocalizedStringImpl ls = (LocalizedStringImpl) obj;
+        if (!(obj instanceof LocalizedStringImpl ls)) return false;
         if (!defaultString.equals(ls.defaultString)) return false;
         Iterator<StringWithLocale> i = localizedStrings.iterator();
         Iterator<StringWithLocale> li = ls.localizedStrings.iterator();
@@ -96,8 +95,7 @@ class LocalizedStringImpl implements LocalizedString {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof StringWithLocale)) return false;
-            StringWithLocale str = (StringWithLocale) obj;
+            if (!(obj instanceof StringWithLocale str)) return false;
             return locale.equals(str.getLocale()) && string.equals(str.getString());
         }
     }

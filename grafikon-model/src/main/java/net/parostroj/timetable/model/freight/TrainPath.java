@@ -55,11 +55,12 @@ public interface TrainPath extends List<TrainConnection> {
             }
 
             Iterator<TimeInterval> i = tConn.getTrain().getTimeIntervalList().iterator();
-            // skip to relevant intervals
-            while (i.hasNext() && i.next() != tConn.getFrom()) {}
+            while (i.hasNext() && i.next() != tConn.getFrom()) {
+                // skip to relevant intervals
+            }
 
             // check open interval (end points are handled differently)
-            TimeInterval currentInterval = null;
+            TimeInterval currentInterval;
             while (i.hasNext() && (currentInterval = i.next()) != tConn.getTo()) {
                 if (currentInterval.isLineOwner()) {
                     continue;

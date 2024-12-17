@@ -15,7 +15,7 @@ public interface TrackConnectors extends ItemWithIdSet<TrackConnector> {
     }
 
     default Set<TrackConnector> getWithoutLineTrack() {
-        return this.findAll(conn -> !conn.getLineTrack().isPresent());
+        return this.findAll(conn -> conn.getLineTrack().isEmpty());
     }
 
     default Set<TrackConnector> getForSideAndNodeTrack(Node.Side side, NodeTrack nodeTrack) {

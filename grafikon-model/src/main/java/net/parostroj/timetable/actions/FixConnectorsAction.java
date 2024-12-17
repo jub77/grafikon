@@ -47,7 +47,7 @@ public class FixConnectorsAction {
     private int checkConnectors(Map<Line, List<TrackConnector>> map) {
         int count = map.size();
         int leftCount = (int) map.values().stream()
-                .filter(c -> c.get(0).getOrientation() == Node.Side.LEFT).count();
+                .filter(c -> c.getFirst().getOrientation() == Node.Side.LEFT).count();
         if (leftCount == 0) {
             return 1;
         } else if (leftCount == count) {

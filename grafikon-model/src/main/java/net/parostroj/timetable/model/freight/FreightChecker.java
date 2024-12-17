@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.freight;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
@@ -66,7 +65,7 @@ public class FreightChecker {
         // get list on nodes in the center
         Stream<Node> nodes = getNodesOfTheCenter(center, skipTypes);
 
-        List<FreightConnectionPath> connections = getConnectionsFrom(center).collect(toList());
+        List<FreightConnectionPath> connections = getConnectionsFrom(center).toList();
 
         nodes = nodes.filter(n -> connections.stream().noneMatch(c -> c.getTo().isNodeDestination() && c.getTo().getNode() == n));
 
@@ -101,7 +100,7 @@ public class FreightChecker {
     private Collection<Tuple<Node>> getCenterPermutation(Net net) {
         List<Node> centers = net.getNodes().stream()
                 .filter(Node::isCenterOfRegions)
-                .collect(toList());
+                .toList();
 
         return centers.stream()
                 .flatMap(n -> centers.stream()
@@ -114,7 +113,7 @@ public class FreightChecker {
         // filter nodes
         List<Node> nodes = net.getNodes().stream()
                 .filter(n -> !skipTypes.contains(n.getType()))
-                .collect(toList());
+                .toList();
 
         return nodes.stream()
                 .flatMap(n -> nodes.stream()

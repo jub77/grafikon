@@ -10,7 +10,7 @@ public class GrafikonException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
 	public enum Type {
-        TEXT_TEMPLATE, SCRIPT, ATTRIBUTE;
+        TEXT_TEMPLATE, SCRIPT, ATTRIBUTE
     }
 
     private final Type type;

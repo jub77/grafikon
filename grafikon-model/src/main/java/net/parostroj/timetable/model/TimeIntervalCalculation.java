@@ -120,7 +120,7 @@ public class TimeIntervalCalculation {
     /**
      * computes running time.
      *
-     * @param usedSpeed speed on line
+     * @param usedSpeed speed on the line
      * @return pair running time and speed
      */
     public int computeRunningTime(int usedSpeed) {

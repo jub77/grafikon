@@ -55,19 +55,15 @@ public final class ModelPredicates {
     }
 
     public static Predicate<Train> getTrainsByType(PredefinedTrainTypes types) {
-        switch (types) {
-            case FREIGHT:
-                return train -> {
-                    TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
-                    return category != null && category.getKey().equals(PredefinedTrainTypes.FREIGHT.getKey());
-                };
-            case PASSENGER:
-                return train -> {
-                    TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
-                    return category != null && category.getKey().equals(PredefinedTrainTypes.PASSENGER.getKey());
-                };
-            default:
-                throw new IllegalArgumentException("Unexpected train types: " + types);
-        }
+        return switch (types) {
+            case FREIGHT -> train -> {
+                TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
+                return category != null && category.getKey().equals(PredefinedTrainTypes.FREIGHT.getKey());
+            };
+            case PASSENGER -> train -> {
+                TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
+                return category != null && category.getKey().equals(PredefinedTrainTypes.PASSENGER.getKey());
+            };
+        };
     }
 }

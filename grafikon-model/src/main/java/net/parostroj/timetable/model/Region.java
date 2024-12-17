@@ -36,7 +36,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, TrainD
     private final String id;
     private final Attributes attributes;
 
-    // only dynamic view on sub regions
+    // only dynamic view on subregions
     private final Set<Region> subRegions;
     // dynamic view on nodes directly in this region
     private final Set<Node> nodes;

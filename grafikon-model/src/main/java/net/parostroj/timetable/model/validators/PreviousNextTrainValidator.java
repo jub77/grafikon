@@ -21,8 +21,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     @Override
     public boolean validate(Event event) {
         checkRemovedTrain(event);
-        if (event.getSource() instanceof Train) {
-            Train currentTrain = (Train) event.getSource();
+        if (event.getSource() instanceof Train currentTrain) {
             checkTrainAttributes(event, currentTrain);
             checkTrainIntervals(event, currentTrain);
             return true;
@@ -32,8 +31,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
 
     private void checkRemovedTrain(Event event) {
         if (event.getSource() instanceof TrainDiagram
-                && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
-            Train currentTrain = (Train) event.getObject();
+                && event.getType() == Type.REMOVED && event.getObject() instanceof Train currentTrain) {
             if (currentTrain.getPreviousJoinedTrain() != null) {
                 currentTrain.getPreviousJoinedTrain().setNextJoinedTrain(null);
             }
@@ -69,8 +67,7 @@ public class PreviousNextTrainValidator implements TrainDiagramValidator {
     }
 
     private void checkTrainIntervals(Event event, Train currentTrain) {
-        if (event.getType() == Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
-            SpecialTrainTimeIntervalList list = (SpecialTrainTimeIntervalList) event.getData();
+        if (event.getType() == Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList list) {
             if (list.getType() == SpecialTrainTimeIntervalList.Type.TRACK) {
                 int changed = list.getChanged();
                 if (currentTrain.getPreviousJoinedTrain() != null && changed == 0) {

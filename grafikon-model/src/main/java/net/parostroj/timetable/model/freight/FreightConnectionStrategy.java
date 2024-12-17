@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.freight;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TimeInterval;
@@ -57,38 +58,26 @@ public interface FreightConnectionStrategy {
      * @return strategy
      */
     static FreightConnectionStrategy create(ConnectionStrategyType type, TrainDiagram diagram) {
-        FreightConnectionStrategy strategy = null;
-        switch (type) {
-            case BASE:
-                strategy = new BaseConnectionStrategy(diagram);
-                break;
-            case REGION:
-                strategy = new RegionToConnectionStrategy(diagram);
-                break;
-            case CUSTOM_CONNECTION_FILTER:
-                strategy = new CustomNetFilterConnectionStrategy(diagram);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported type: " + type);
-        }
-        return strategy;
+        return switch (type) {
+            case BASE -> new BaseConnectionStrategy(diagram);
+            case REGION -> new RegionToConnectionStrategy(diagram);
+            case CUSTOM_CONNECTION_FILTER -> new CustomNetFilterConnectionStrategy(diagram);
+        };
     }
 
     static FreightConnectionStrategy create(ConnectionStrategyType type, TrainDiagram diagram, Script script) {
-        FreightConnectionStrategy strategy = null;
-        switch (type) {
-            case CUSTOM_CONNECTION_FILTER:
-                strategy = new CustomNetFilterConnectionStrategy(diagram, script);
-                break;
-            default:
-                throw new IllegalArgumentException("Type " + type + " does not have script");
+        FreightConnectionStrategy strategy;
+        if (Objects.requireNonNull(type) == ConnectionStrategyType.CUSTOM_CONNECTION_FILTER) {
+            strategy = new CustomNetFilterConnectionStrategy(diagram, script);
+        } else {
+            throw new IllegalArgumentException("Type " + type + " does not have script");
         }
         return strategy;
     }
 
     /**
      * Creates wrapper around original strategy which caches the values from original strategy. The values in the cache
-     * are not refreshed when the diagram changes. So it is useful only in the mean time until next diagram change,
+     * are not refreshed when the diagram changes. So it is useful only in the meantime until next diagram change,
      *
      * @param strategy original strategy
      * @return cached strategy

@@ -93,13 +93,7 @@ public class ModelVersion implements Comparable<ModelVersion> {
     public int compareTo(ModelVersion o) {
         if (this.majorVersion == o.majorVersion) {
             if (this.minorVersion == o.minorVersion) {
-                if (this.patchVersion == o.patchVersion) {
-                    return 0;
-                } else if (this.patchVersion < o.patchVersion) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return Integer.compare(this.patchVersion, o.patchVersion);
             }
             else if (this.minorVersion < o.minorVersion) {
                 return -1;

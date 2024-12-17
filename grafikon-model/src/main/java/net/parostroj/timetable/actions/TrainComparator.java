@@ -51,7 +51,7 @@ public class TrainComparator implements Comparator<Train> {
         for (SortPatternGroup group : sortPattern.getGroups()) {
             String s1 = m1.group(group.getGroup());
             String s2 = m2.group(group.getGroup());
-            int res = 0;
+            int res;
             switch (group.getType()) {
                 case STRING:
                     res = s1.compareTo(s2);
@@ -59,8 +59,8 @@ public class TrainComparator implements Comparator<Train> {
                         return res;
                     break;
                 case NUMBER:
-                    Integer tn1 = ObjectsUtil.isEmpty(s1) ? Integer.MAX_VALUE : Integer.valueOf(s1);
-                    Integer tn2 = ObjectsUtil.isEmpty(s2) ? Integer.MAX_VALUE : Integer.valueOf(s2);
+                    Integer tn1 = ObjectsUtil.isEmpty(s1) ? Integer.MAX_VALUE : Integer.parseInt(s1);
+                    Integer tn2 = ObjectsUtil.isEmpty(s2) ? Integer.MAX_VALUE : Integer.parseInt(s2);
                     res = tn1.compareTo(tn2);
                     if (res != 0)
                         return res;

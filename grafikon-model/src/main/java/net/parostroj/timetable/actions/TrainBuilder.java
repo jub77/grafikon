@@ -118,7 +118,7 @@ public class TrainBuilder {
 
         // create time intervals
         for (TimeInterval originalInterval : reverseIntervals) {
-            TimeInterval interval = null;
+            TimeInterval interval;
             if (originalInterval.isNodeOwner()) {
                 interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
                         currentTime, currentTime + originalInterval.getLength(), null);
@@ -165,10 +165,9 @@ public class TrainBuilder {
         int currentTime = time;
 
         for (Pair<RouteSegment, Integer> pair : data) {
-            TimeInterval interval = null;
-            if (pair.first instanceof Node) {
+            TimeInterval interval;
+            if (pair.first instanceof Node node) {
                 // handle node
-                Node node = (Node)pair.first;
                 interval = new TimeInterval(IdGenerator.getInstance().getId(), train, node, currentTime,
                         currentTime + pair.second, null);
                 lastNode = node;
@@ -206,9 +205,8 @@ public class TrainBuilder {
         int i = 0;
         for (Pair<RouteSegment,Integer> pair : data) {
             i++;
-            if (pair.first instanceof Node) {
+            if (pair.first instanceof Node node) {
                 // node
-                Node node = (Node) pair.first;
                 if (i != 1 && i != size && node.getType() != NodeType.ROUTE_SPLIT && node.getType() != NodeType.SIGNAL) {
                     // set default stop
                     pair.second = defaultStop;

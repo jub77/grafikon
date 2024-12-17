@@ -8,7 +8,7 @@ import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Builder for creating routes. It uses Dijkstra algorithm for finding
- * shortest path in the graph.
+ * the shortest path in the graph.
  *
  * @author jub
  */

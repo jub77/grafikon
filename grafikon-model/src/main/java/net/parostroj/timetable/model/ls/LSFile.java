@@ -13,8 +13,8 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public interface LSFile extends LSVersions, LSConfigurable {
 
-    public static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    public static final String METADATA = "metadata.properties";
+    String METADATA_KEY_MODEL_VERSION = "model.version";
+    String METADATA = "metadata.properties";
 
     TrainDiagram load(File file) throws LSException;
 

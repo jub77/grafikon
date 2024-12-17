@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.events.ObservableObject;
  */
 abstract class NetSegmentImpl<T extends Track> implements NetSegment<T>, ObservableObject {
 
-    /** Id of an object. */
+    /** The id of an object. */
     private final String id;
     /** List of tracks. */
     protected final ItemList<T> tracks;

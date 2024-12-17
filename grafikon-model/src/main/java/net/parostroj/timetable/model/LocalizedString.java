@@ -79,7 +79,7 @@ public interface LocalizedString extends TranslatedString {
     /**
      * Builder for localized string.
      */
-    static class Builder {
+    class Builder {
 
         private String defaultString;
         private List<StringWithLocale> strings;
@@ -137,7 +137,7 @@ public interface LocalizedString extends TranslatedString {
             if (strings == null) {
                 return Collections.emptyList();
             } else {
-                Collections.sort(strings, (s1, s2) -> s1.getLocale().toLanguageTag().compareTo(s2.getLocale().toLanguageTag()));
+                strings.sort((s1, s2) -> s1.getLocale().toLanguageTag().compareTo(s2.getLocale().toLanguageTag()));
                 return strings;
             }
         }
@@ -177,7 +177,7 @@ public interface LocalizedString extends TranslatedString {
     }
 
     static Locale getOnlyLanguageLocale(Locale locale) {
-        if (locale.getCountry() == null) {
+        if (locale.getCountry().isEmpty()) {
             return locale;
         } else {
             return Locale.forLanguageTag(locale.getLanguage());

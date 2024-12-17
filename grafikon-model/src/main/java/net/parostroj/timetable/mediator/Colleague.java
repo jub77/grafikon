@@ -8,6 +8,6 @@ package net.parostroj.timetable.mediator;
 @FunctionalInterface
 public interface Colleague {
 
-    public void receiveMessage(Object message);
+    void receiveMessage(Object message);
 
 }

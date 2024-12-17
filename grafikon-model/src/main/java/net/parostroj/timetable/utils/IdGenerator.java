@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class IdGenerator {
     /** Instance for singletone. */
-    private static IdGenerator instance = new IdGenerator();
+    private static final IdGenerator instance = new IdGenerator();
 
     /**
      * @return singleton instance

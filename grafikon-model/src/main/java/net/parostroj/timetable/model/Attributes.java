@@ -69,6 +69,7 @@ public class Attributes implements Map<String, Object> {
             valuesWithCategory.put(category, new LinkedHashMap<>(attributes.getMapForCategory(category)));
         }
         this.checker = EMPTY;
+        this.skipListeners = false;
     }
 
     public void setRemove(String name, Object value) {
@@ -124,7 +125,7 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Object get(String name) {
-        return this.get((String) null, name);
+        return this.get(null, name);
     }
 
     public <T> T get(String category, String name, Class<T> clazz) {
@@ -410,7 +411,7 @@ public class Attributes implements Map<String, Object> {
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends Object> m) {
+    public void putAll(Map<? extends String, ?> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -446,7 +447,7 @@ public class Attributes implements Map<String, Object> {
     }
 
     private void printAttributes(String category, Map<String, Object> attrs, StringBuilder builder) {
-        if (builder.length() != 0) {
+        if (!builder.isEmpty()) {
             builder.append('\n');
         }
         builder.append(category).append(':');

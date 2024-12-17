@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.ls.ModelVersion;
@@ -13,7 +10,7 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 /**
- * Node that can consist of several tracks. Each tracks provides its own list
+ * Node that can consist of several tracks. Each track provides its own list
  * of time intervals.
  *
  * @author jub
@@ -192,11 +189,7 @@ public class Node extends NetSegmentImpl<NodeTrack> implements Visitable, TrainD
                 }
             }
         }
-        if (out == null) {
-            return Collections.emptySet();
-        } else {
-            return out;
-        }
+        return Objects.requireNonNullElse(out, Set.of());
     }
 
     public Integer getNotStraightSpeed() {

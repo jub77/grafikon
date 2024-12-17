@@ -16,7 +16,7 @@ import net.parostroj.timetable.model.library.LibraryItem;
  */
 class LSLibraryWrapper implements LSLibrary {
 
-    private LSLibrary impl;
+    private final LSLibrary impl;
 
     public LSLibraryWrapper(LSLibrary impl) {
         this.impl = impl;

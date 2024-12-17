@@ -170,7 +170,7 @@ class FreightConnectionAnalysis {
     }
 
     enum Stage {
-        START, TO_NODE, TO_CENTER, BETWEEN_CENTERS, CONNECTION, NO_CONNECTION;
+        START, TO_NODE, TO_CENTER, BETWEEN_CENTERS, CONNECTION, NO_CONNECTION
     }
 
     class Context {

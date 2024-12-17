@@ -97,7 +97,7 @@ public class TrackSelectionComputation {
                 .filter(nt -> fromTrack == null
                         || tcc.getConnectedNodeTracks(Collections.singletonList(fromTrack), node).contains(nt))
                 .filter(restrictedTracks::contains)
-                .collect(Collectors.toList());
+                .toList();
         NodeTrack selectedTrack = this.checkNodeSelection(preselectedTrack, interval);
         if (selectedTrack != null && !toTracks.contains(selectedTrack)) {
             selectedTrack = null;
@@ -126,7 +126,7 @@ public class TrackSelectionComputation {
         }
         if (selectedTrack == null) {
             // set first one
-            selectedTrack = toTracks.get(0);
+            selectedTrack = toTracks.getFirst();
         }
         return selectedTrack;
     }

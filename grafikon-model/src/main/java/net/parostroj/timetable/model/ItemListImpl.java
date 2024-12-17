@@ -63,7 +63,7 @@ class ItemListImpl<T> extends AbstractList<T> implements ItemList<T> {
     @Override
     public Iterator<T> iterator() {
         final Iterator<T> iter = items.iterator();
-        return new Iterator<T>() {
+        return new Iterator<>() {
 
             private T last;
             private int index = -1;

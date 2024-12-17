@@ -28,7 +28,6 @@ public class TrainTimetableWriter {
         str.append(train.getDefaultCompleteName()).append('\n');
         for (TimeInterval time : train.getNodeIntervals()) {
             Node node = time.getOwnerAsNode();
-            @SuppressWarnings("resource")
             Formatter f = new Formatter(str);
             f.format("%1$-20s", node.getName());
             if (time.isFirst() || !time.isStop()) {

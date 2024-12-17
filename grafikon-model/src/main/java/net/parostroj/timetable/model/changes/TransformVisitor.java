@@ -116,8 +116,7 @@ public class TransformVisitor implements EventVisitor {
         change.setObject(train.getDefaultName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
-        if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
-            SpecialTrainTimeIntervalList special = (SpecialTrainTimeIntervalList) event.getData();
+        if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList special) {
             String desc = converter.getTilDesc(special.getType());
             DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
             switch (special.getType()) {

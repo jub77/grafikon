@@ -20,7 +20,7 @@ public interface TranslatedString {
      */
     default boolean isDefaultStringEmpty() {
         String defaultString = getDefaultString();
-        return defaultString == null || defaultString.equals("");
+        return defaultString == null || defaultString.isEmpty();
     }
 
     default TranslatedString getNullIfEmpty() {

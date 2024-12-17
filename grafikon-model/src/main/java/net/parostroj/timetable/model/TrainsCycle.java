@@ -232,11 +232,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public TrainsCycleItem getFirstItem() {
-        return items.isEmpty() ? null : items.get(0);
+        return items.isEmpty() ? null : items.getFirst();
     }
 
     public TrainsCycleItem getLastItem() {
-        return items.isEmpty() ? null : items.get(items.size() - 1);
+        return items.isEmpty() ? null : items.getLast();
     }
 
     public TrainsCycleItem getNextItem(TrainsCycleItem item) {

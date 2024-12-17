@@ -45,7 +45,7 @@ public class TrainRouteTracksComputation {
             Collection<? extends Track> fromTracks,
             Collection<? extends Track> toTracks) {
         boolean isPath = false;
-        TimeInterval first = intervals.get(0);
+        TimeInterval first = intervals.getFirst();
         Context context = new Context(toTracks, intervals);
         for (Track fromTrack : fromTracks) {
             boolean is = this.isPath(first, fromTrack, context);

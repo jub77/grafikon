@@ -10,33 +10,35 @@ import java.util.List;
  */
 public interface ChangesTracker {
 
-    public void addListener(ChangesTrackerListener listener);
+    void addListener(ChangesTrackerListener listener);
 
-    public void removeAllListeners();
+    void removeAllListeners();
 
-    public void removeListener(ChangesTrackerListener listener);
+    void removeListener(ChangesTrackerListener listener);
 
-    public List<String> getVersions();
+    List<String> getVersions();
 
-    public List<DiagramChangeSet> getChangeSets();
+    List<DiagramChangeSet> getChangeSets();
 
-    public DiagramChangeSet getChangeSet(String version);
+    DiagramChangeSet getChangeSet(String version);
 
-    public DiagramChangeSet addVersion(String version, String author, Calendar date);
+    DiagramChangeSet addVersion(String version, String author, Calendar date);
 
-    public DiagramChangeSet updateCurrentChangeSet(String version, String author, Calendar date);
+    DiagramChangeSet updateCurrentChangeSet(String version, String author, Calendar date);
 
-    public String getCurrentVersion();
+    String getCurrentVersion();
 
-    public DiagramChangeSet getCurrentChangeSet();
+    DiagramChangeSet getCurrentChangeSet();
 
-    public DiagramChangeSet setLastAsCurrent();
+    DiagramChangeSet setLastAsCurrent();
 
-    public void addChange(DiagramChange change);
+    void addChange(DiagramChange change);
 
-    public DiagramChangeSet removeCurrentChangeSet(boolean delete);
+    DiagramChangeSet removeCurrentChangeSet(boolean delete);
 
-    public void setTrackingEnabled(boolean enabled);
+    void setTrackingEnabled(boolean enabled);
 
-    public boolean isTrackingEnabled();
+    boolean isTrackingEnabled();
+
+    void clear();
 }

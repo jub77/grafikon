@@ -23,7 +23,7 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 /**
- * Managed freight data. Id is shared with train diagram.
+ * Managed freight data. The id is shared with train diagram.
  *
  * @author jub
  */

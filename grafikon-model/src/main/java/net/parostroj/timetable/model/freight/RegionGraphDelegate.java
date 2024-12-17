@@ -113,8 +113,8 @@ class RegionGraphDelegate {
 
     static class NodeConnectionNodesImpl implements NodeConnectionNodes {
 
-        private NodeConnection connection;
-        private List<Node> nodes;
+        private final NodeConnection connection;
+        private final List<Node> nodes;
 
         public NodeConnectionNodesImpl(NodeConnection connection, List<Node> nodes) {
             this.connection = connection;
@@ -144,8 +144,8 @@ class RegionGraphDelegate {
 
     static class NodeConnectionEdgesImpl implements NodeConnectionEdges {
 
-        private NodeConnection connection;
-        private List<DirectNodeConnection> edges;
+        private final NodeConnection connection;
+        private final List<DirectNodeConnection> edges;
 
         public NodeConnectionEdgesImpl(NodeConnection connection, List<DirectNodeConnection> edges) {
             this.connection = connection;
@@ -237,8 +237,8 @@ class RegionGraphDelegate {
             int weight = Integer.MAX_VALUE;
             for (List<TrainConnection> connection : connections) {
                 // adding an hour -> simulates penalty for further transfer
-                int time = connection.get(connection.size() - 1).getTo().getStart()
-                        - connection.get(0).getFrom().getEnd() + TimeInterval.HOUR;
+                int time = connection.getLast().getTo().getStart()
+                        - connection.getFirst().getFrom().getEnd() + TimeInterval.HOUR;
                 if (time < weight) {
                     weight = time;
                 }

@@ -15,8 +15,8 @@ import net.parostroj.timetable.model.library.LibraryItem;
  */
 public interface LSLibrary extends LSVersions, LSConfigurable {
 
-    public static final String METADATA_KEY_LIBRARY_VERSION = "library.version";
-    public static final String METADATA = "metadata.properties";
+    String METADATA_KEY_LIBRARY_VERSION = "library.version";
+    String METADATA = "metadata.properties";
 
     void saveItem(LibraryItem item, OutputStream os) throws LSException;
 

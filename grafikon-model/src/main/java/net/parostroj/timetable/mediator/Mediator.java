@@ -21,7 +21,7 @@ public class Mediator {
     }
 
     public void addColleague(Colleague colleague, Class<?> clazz) {
-        if (colleagues.keySet().contains(colleague))
+        if (colleagues.containsKey(colleague))
             throw new IllegalStateException("Mediator already contains colleague.");
         if (colleague instanceof ColleagueWithBackReference)
             ((ColleagueWithBackReference)colleague).setMediator(this);
@@ -30,7 +30,7 @@ public class Mediator {
     }
 
     public void removeColleague(Colleague collegue) {
-        if (!colleagues.keySet().contains(collegue))
+        if (!colleagues.containsKey(collegue))
             throw new IllegalStateException("Mediator doesn't contain colleague.");
         if (collegue instanceof ColleagueWithBackReference)
             ((ColleagueWithBackReference)collegue).setMediator(null);

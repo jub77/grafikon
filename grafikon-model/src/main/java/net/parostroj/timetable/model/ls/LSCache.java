@@ -111,7 +111,7 @@ class LSCache<T extends LSVersions> {
 
     private T createInstanceForLoad(Properties metadata) throws LSException {
         // set model version
-        ModelVersion modelVersion = null;
+        ModelVersion modelVersion;
         if (metadata.getProperty(versionKey) == null) {
             modelVersion = ModelVersion.parseModelVersion("1.0");
         } else {
@@ -141,9 +141,9 @@ class LSCache<T extends LSVersions> {
 
     private void logVersions(ModelVersion modelVersion, List<ModelVersion> versions) {
         if (versions.size() == 1) {
-            log.debug("Getting LS for version: {} [{}]", modelVersion, versions.get(0));
+            log.debug("Getting LS for version: {} [{}]", modelVersion, versions.getFirst());
         } else {
-            log.debug("Getting LS for version: {} [{}-{}]", modelVersion, versions.get(0), versions.get(versions.size() - 1));
+            log.debug("Getting LS for version: {} [{}-{}]", modelVersion, versions.getFirst(), versions.getLast());
         }
     }
 }

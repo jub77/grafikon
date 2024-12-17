@@ -21,8 +21,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof Train) {
-            Train train = (Train) event.getSource();
+        if (event.getSource() instanceof Train train) {
             if (event.getType() == Type.ATTRIBUTE
                     && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
                 if (!Boolean.TRUE.equals(event.getAttributeChange().getNewValue())) {
@@ -34,8 +33,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
                 checkTrainWithManagedFreight(event, train);
                 return true;
             }
-        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
-            Train train = (Train) event.getObject();
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Train train) {
             if (train.isManagedFreight()) {
                 diagram.getFreightNet().removeTrain(train);
                 return true;

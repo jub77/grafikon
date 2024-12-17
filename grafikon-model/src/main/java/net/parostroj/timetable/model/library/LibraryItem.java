@@ -35,15 +35,14 @@ public class LibraryItem implements AttributesHolder {
     }
 
     public String getName() {
-        switch (type) {
-            case NODE: return ((Node) object).getName();
-            case OUTPUT_TEMPLATE: return ((OutputTemplate) object).getKey();
-            case ENGINE_CLASS: return ((EngineClass) object).getName();
-            case TRAIN_TYPE: return ((TrainType) object).getDefaultAbbr();
-            case LINE_CLASS: return ((LineClass) object).getName();
-            case TRAIN_TYPE_CATEGORY: return ((TrainTypeCategory) object).getKey();
-        }
-        return null;
+        return switch (type) {
+            case NODE -> ((Node) object).getName();
+            case OUTPUT_TEMPLATE -> ((OutputTemplate) object).getKey();
+            case ENGINE_CLASS -> ((EngineClass) object).getName();
+            case TRAIN_TYPE -> ((TrainType) object).getDefaultAbbr();
+            case LINE_CLASS -> ((LineClass) object).getName();
+            case TRAIN_TYPE_CATEGORY -> ((TrainTypeCategory) object).getKey();
+        };
     }
 
     public LocalizedString getDescription() {

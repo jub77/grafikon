@@ -10,7 +10,7 @@ public enum ConnectionStrategyType {
 
     private final String key;
 
-    private ConnectionStrategyType(String key) {
+    ConnectionStrategyType(String key) {
         this.key = key;
     }
 

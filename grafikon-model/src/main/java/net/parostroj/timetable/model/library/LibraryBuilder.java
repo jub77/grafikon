@@ -63,17 +63,14 @@ public class LibraryBuilder {
 
     public LibraryItem importObject(ObjectWithId object) {
         LibraryItemType type = LibraryItemType.getByItemClass(object.getClass());
-        LibraryItem item = null;
-        switch (type) {
-            case ENGINE_CLASS: item = this.importEngineClass((EngineClass) object); break;
-            case LINE_CLASS: item = this.importLineClass((LineClass) object); break;
-            case NODE: item = this.importNode((Node) object); break;
-            case OUTPUT_TEMPLATE: item = this.importOutputTemplate((OutputTemplate) object); break;
-            case TRAIN_TYPE: item = this.importTrainType((TrainType) object); break;
-            case TRAIN_TYPE_CATEGORY: item = this.importTrainTypeCategory((TrainTypeCategory) object); break;
-            default: throw new IllegalArgumentException("Unknown type of the object: " + object);
-        }
-        return item;
+        return switch (type) {
+            case ENGINE_CLASS -> this.importEngineClass((EngineClass) object);
+            case LINE_CLASS -> this.importLineClass((LineClass) object);
+            case NODE -> this.importNode((Node) object);
+            case OUTPUT_TEMPLATE -> this.importOutputTemplate((OutputTemplate) object);
+            case TRAIN_TYPE -> this.importTrainType((TrainType) object);
+            case TRAIN_TYPE_CATEGORY -> this.importTrainTypeCategory((TrainTypeCategory) object);
+        };
     }
 
     public LibraryItem importOutputTemplate(OutputTemplate template) {

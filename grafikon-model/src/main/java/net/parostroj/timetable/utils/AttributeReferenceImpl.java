@@ -68,8 +68,7 @@ class AttributeReferenceImpl<T> implements AttributeReference<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AttributeReferenceImpl)) return false;
-        AttributeReferenceImpl<?> ref = (AttributeReferenceImpl<?>) obj;
+        if (!(obj instanceof AttributeReferenceImpl<?> ref)) return false;
         return Objects.equals(category, ref.category) && Objects.equals(name, ref.name) && holder.equals(ref.holder);
     }
 }

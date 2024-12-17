@@ -1,14 +1,9 @@
 package net.parostroj.timetable.model.freight;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.Node;
@@ -88,7 +83,7 @@ public class FreightConnectionAnalyser {
 
             @Override
             public List<DirectNodeConnection> getSteps() {
-                return ctx.steps.stream().collect(toList());
+                return new ArrayList<>(ctx.steps);
             }
 
             @Override
@@ -101,7 +96,7 @@ public class FreightConnectionAnalyser {
                 if (weight == null) {
                     weight = isComplete() ? getLengthOfPath(ctx.steps) : Integer.MAX_VALUE;
                 }
-                return weight.intValue();
+                return weight;
             }
 
             private int getLengthOfPath(List<StepImpl> steps) {
@@ -169,7 +164,7 @@ public class FreightConnectionAnalyser {
         }
 
         /**
-         * @return train which is closest the the time specified
+         * @return train which is closest the time specified
          */
         private Optional<TrainPath> getClosest(int time, DirectNodeConnection dnc) {
             return dnc.getConnections().stream()

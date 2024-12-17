@@ -131,7 +131,7 @@ class TrainNameDelegate {
 
     private final class TranslatedStringTrain implements TranslatedString {
 
-        private NameType nameType;
+        private final NameType nameType;
 
         public TranslatedStringTrain(NameType nameType) {
             this.nameType = nameType;

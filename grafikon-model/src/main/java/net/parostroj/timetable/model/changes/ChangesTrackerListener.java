@@ -6,5 +6,5 @@ package net.parostroj.timetable.model.changes;
  * @author jub
  */
 public interface ChangesTrackerListener {
-    public void trackerChanged(ChangesTrackerEvent event);
+    void trackerChanged(ChangesTrackerEvent event);
 }

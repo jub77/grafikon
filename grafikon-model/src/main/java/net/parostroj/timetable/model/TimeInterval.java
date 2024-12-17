@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -224,7 +225,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param speed the speed to set
      */
     public void setSpeedLimit(Integer speed) {
-        if (this.speedLimit != speed) {
+        if (!Objects.equals(this.speedLimit, speed)) {
             this.speedLimit = speed;
             this.setChanged();
         }
@@ -235,7 +236,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     public void setSpeed(Integer usedSpeed) {
-        if (this.usedSpeed != usedSpeed) {
+        if (!Objects.equals(this.usedSpeed, usedSpeed)) {
             this.usedSpeed = usedSpeed;
             this.setChanged();
         }

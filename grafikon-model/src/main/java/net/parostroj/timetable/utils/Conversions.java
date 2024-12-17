@@ -26,7 +26,7 @@ public final class Conversions {
     public static String loadFile(final InputStream is) throws IOException {
         return new ByteSource() {
             @Override
-            public InputStream openStream() throws IOException {
+            public InputStream openStream() {
                 return is;
             }
         }.asCharSource(StandardCharsets.UTF_8).read();

@@ -64,7 +64,7 @@ public final class TransformUtil {
             if (maxSegmentsLength > 0
                     && (builder.length() + previousLength + lastLength + threeDotsLength) > maxSegmentsLength
                     && !(node == lastNode && (builder.length() + previousLength + lastLength <= maxSegmentsLength))) {
-                if (builder.length() == 0) {
+                if (builder.isEmpty()) {
                     addText(builder, separator, transformStation(route.getFirst()));
                 }
                 if (len > 2) {
@@ -86,7 +86,7 @@ public final class TransformUtil {
         for (Node node : route.getNodes()) {
             cnt--;
             if (removedSegments > 0 && cnt <= removedSegments) {
-                if (builder.length() == 0) {
+                if (builder.isEmpty()) {
                     addText(builder, separator, transformStation(route.getFirst()));
                 }
                 addText(builder, separator, THREE_DOTS);
@@ -99,7 +99,7 @@ public final class TransformUtil {
 
     private static void addText(StringBuilder builder, String separator, String str) {
         if (str != null) {
-            if (builder.length() != 0) {
+            if (!builder.isEmpty()) {
                 builder.append(separator);
             }
             builder.append(str);

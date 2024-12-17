@@ -13,10 +13,10 @@ public enum FreightColor {
 
     RED(1, "red"), BLUE(2, "blue"), BLACK(3, "black"), BROWN(4, "brown"), ORANGE(5, "orange"), YELLOW(6, "yellow"), GREEN(7, "green");
 
-    private int intKey;
-    private String key;
+    private final int intKey;
+    private final String key;
 
-    private FreightColor(int intKey, String key) {
+    FreightColor(int intKey, String key) {
         this.key = key;
         this.intKey = intKey;
     }

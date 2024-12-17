@@ -7,9 +7,9 @@ package net.parostroj.timetable.mediator;
  */
 public interface ColleagueWithBackReference extends Colleague {
 
-    public void setMediator(Mediator mediator);
+    void setMediator(Mediator mediator);
 
-    public Mediator getMediator();
+    Mediator getMediator();
 
-    public void sendMessage(Object message);
+    void sendMessage(Object message);
 }

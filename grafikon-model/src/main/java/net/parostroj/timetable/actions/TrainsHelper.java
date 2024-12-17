@@ -46,7 +46,7 @@ public final class TrainsHelper {
     }
 
     /**
-     * returns weight for specified time interval based on line and engine class.
+     * returns weight for specified time interval based on engine and line class.
      * It returns <code>null</code> if the weight is not specified.
      *
      * @param interval time interval
@@ -115,7 +115,7 @@ public final class TrainsHelper {
 
     /**
      * returns weight and train cycle items for specified time interval based
-     * on line and engine class. It returns <code>null</code> if the weight is
+     * on engine and line class. It returns <code>null</code> if the weight is
      * not specified.
      *
      * @param interval time interval
@@ -239,7 +239,7 @@ public final class TrainsHelper {
         List<TimeInterval> intervals = item.getIntervals();
         int length = intervals.size();
         for (TimeInterval interval : intervals) {
-            // check only line intervals (first and last node intervals overlap and it is enough
+            // check only line intervals (first and last node intervals overlap, and it is enough
             // to check line intervals)
             if (interval.isNodeOwner()) {
                 continue;
@@ -421,16 +421,13 @@ public final class TrainsHelper {
         }
         Node node = interval.getOwnerAsNode();
         if (interval.isStop()) {
-            switch (type) {
-                case BRANCH_STATION:
-                    return node.getType() == NodeType.STATION_BRANCH;
-                case FIRST_STATION:
-                    return node.getType().isStation();
-                default:
-                    break;
-            }
-            // last station is always true regardless of the type (including LAST_STATION type)
-            return interval.isLast();
+            return switch (type) {
+                case BRANCH_STATION -> node.getType() == NodeType.STATION_BRANCH;
+                case FIRST_STATION -> node.getType().isStation();
+                default ->
+                    // last station is always true regardless of the type (including LAST_STATION type)
+                        interval.isLast();
+            };
         }
         return false;
     }

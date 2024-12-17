@@ -74,7 +74,7 @@ public class NodeImport extends Import {
                 TrackConnectorSwitch sw = connector.createSwitch(this.getId(importedSw));
                 String switchTrackId = importedSw.getNodeTrack().getId();
                 Attributes swAttr = new Attributes(importedSw.getAttributes());
-                // node track is done afterwards
+                // node track is done after wards
                 swAttr.remove(TrackConnectorSwitch.ATTR_TRACK);
                 sw.getAttributes().add(this.importAttributes(swAttr));
                 sw.setNodeTrack(trackMap.get(switchTrackId));

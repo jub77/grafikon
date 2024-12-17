@@ -12,7 +12,7 @@ public interface NodeConnectionNodes extends NodeConnection {
 
     default Node getFirstIntermediateNode() {
         List<Node> nodes = getIntermediateNodes();
-        return nodes.isEmpty() ? null : nodes.get(0);
+        return nodes.isEmpty() ? null : nodes.getFirst();
     }
 
     default Node getNextNode() {

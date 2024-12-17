@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public final class Scale {
@@ -9,7 +7,7 @@ public final class Scale {
     private static final List<Scale> predefined;
 
     static {
-        predefined = Collections.unmodifiableList(Arrays.asList(new Scale("H0", 87), new Scale("TT", 120), new Scale("N", 160), new Scale("1:1", 1)));
+        predefined = List.of(new Scale("H0", 87), new Scale("TT", 120), new Scale("N", 160), new Scale("1:1", 1));
     }
     private final int ratio;
     private final String name;

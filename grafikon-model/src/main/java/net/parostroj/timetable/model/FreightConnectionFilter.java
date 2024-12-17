@@ -54,22 +54,12 @@ public interface FreightConnectionFilter {
          * @return combined result
          */
         public FilterResult combine(FilterResult previous) {
-            FilterResult result = OK;
-            switch (previous) {
-                case OK:
-                    result = this;
-                    break;
-                case IGNORE:
-                    result = this.isStop() ? STOP_EXCLUDE : IGNORE;
-                    break;
-                case STOP_EXCLUDE:
-                    result = STOP_EXCLUDE;
-                    break;
-                case STOP_INCLUDE:
-                    result = !this.isIncluded() ? STOP_EXCLUDE : STOP_INCLUDE;
-                    break;
-            }
-            return result;
+            return switch (previous) {
+                case OK -> this;
+                case IGNORE -> this.isStop() ? STOP_EXCLUDE : IGNORE;
+                case STOP_EXCLUDE -> STOP_EXCLUDE;
+                case STOP_INCLUDE -> !this.isIncluded() ? STOP_EXCLUDE : STOP_INCLUDE;
+            };
         }
     }
 

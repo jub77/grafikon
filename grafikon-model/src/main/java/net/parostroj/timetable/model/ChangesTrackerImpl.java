@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class tracks changes in the model in order to provides a list
+ * This class tracks changes in the model in order to provide a list
  * of changed objects for network communication.
  *
  * @author jub
@@ -168,7 +168,7 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
         String lastVersion = null;
         List<String> versions = getVersions();
         if (!versions.isEmpty()) {
-            lastVersion = versions.get(versions.size() - 1);
+            lastVersion = versions.getLast();
         }
         if (lastVersion == null) {
             lastVersion = "0";
@@ -190,7 +190,7 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
             currentChangeSet = null;
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         } else {
-            currentChangeSet = sets.get(sets.size() - 1);
+            currentChangeSet = sets.getLast();
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED, currentChangeSet));
         }
         return currentChangeSet;
@@ -198,7 +198,7 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     @Override
     public List<DiagramChangeSet> getChangeSets() {
-        return Collections.<DiagramChangeSet>unmodifiableList(sets);
+        return Collections.unmodifiableList(sets);
     }
 
     @Override
@@ -210,5 +210,13 @@ class ChangesTrackerImpl implements Listener, ChangesTracker {
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_MODIFIED, currentChangeSet));
         }
         return currentChangeSet;
+    }
+
+    @Override
+    public void clear() {
+        while (!sets.isEmpty()) {
+            this.removeCurrentChangeSet(true);
+            this.setLastAsCurrent();
+        }
     }
 }

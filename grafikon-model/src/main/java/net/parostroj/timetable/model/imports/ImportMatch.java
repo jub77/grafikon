@@ -4,9 +4,9 @@ public enum ImportMatch {
 
     NAME("import.match.name"),
     ID("import.match.id");
-    private String key;
+    private final String key;
 
-    private ImportMatch(String key) {
+    ImportMatch(String key) {
         this.key = key;
     }
 

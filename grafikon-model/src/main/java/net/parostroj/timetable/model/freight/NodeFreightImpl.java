@@ -69,7 +69,7 @@ class NodeFreightImpl implements NodeFreight {
     private FreightConnectionVia merge(List<? extends FreightConnectionVia> connections,
             Function<FreightConnection, FreightDestination> destinationCreation) {
         if (connections.size() == 1) {
-            return connections.get(0);
+            return connections.getFirst();
         } else {
             // merge
             FreightDestination destination = connections.stream()

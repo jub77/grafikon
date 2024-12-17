@@ -12,9 +12,6 @@ import net.parostroj.timetable.model.events.Event.Type;
 
 public class TrainCycleTypeRemoveValidator implements TrainDiagramValidator {
 
-    public TrainCycleTypeRemoveValidator(TrainDiagram diagram) {
-    }
-
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED

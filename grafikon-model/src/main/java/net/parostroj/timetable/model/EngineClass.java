@@ -103,9 +103,7 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
     }
 
     public WeightTableRow getWeightTableRowForSpeed(int speed) {
-        ListIterator<WeightTableRow> i = weightTable.listIterator();
-        while (i.hasNext()) {
-            WeightTableRow row = i.next();
+        for (WeightTableRow row : weightTable) {
             if (speed <= row.getSpeed()) {
                 return row;
             }
@@ -115,9 +113,7 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
     }
 
     public WeightTableRow getWeightTableRowForSpeedExact(int speed) {
-        ListIterator<WeightTableRow> i = weightTable.listIterator();
-        while (i.hasNext()) {
-            WeightTableRow row = i.next();
+        for (WeightTableRow row : weightTable) {
             if (speed == row.getSpeed()) {
                 return row;
             }
@@ -131,7 +127,7 @@ public class EngineClass implements AttributesHolder, ObjectWithId, Visitable, O
             return null;
         else
             // return last row (one with max speed)
-            return weightTable.get(weightTable.size() - 1);
+            return weightTable.getLast();
     }
 
     public List<WeightTableRow> getWeightTable() {

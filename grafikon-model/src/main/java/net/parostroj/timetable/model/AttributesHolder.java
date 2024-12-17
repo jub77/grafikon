@@ -110,10 +110,9 @@ public interface AttributesHolder {
         }
         Object current = this;
         for (String name : names) {
-            if (!(current instanceof AttributesHolder)) {
+            if (!(current instanceof AttributesHolder holder)) {
                 return null;
             }
-            AttributesHolder holder = (AttributesHolder) current;
             current = holder.getAttribute(name, Object.class);
         }
         return current;

@@ -30,7 +30,7 @@ public class NodeTimetableByTracksWriter {
         List<NodeTrack> tracks = node.getTracks();
 
         for (NodeTrack track : tracks) {
-            str.append("Track: " + track.getNumber()).append('\n');
+            str.append("Track: ").append(track.getNumber()).append('\n');
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 try (Formatter f = new Formatter(str)) {
                     f.format("%1$-20s", interval.getTrain().getDefaultCompleteName());

@@ -110,22 +110,11 @@ public class TimeConverter {
      * implementation of rounding with optional parameter.
      */
     public static int round(int time, Rounding r) {
-        int roundedTime;
-        switch (r) {
-            case MINUTE:
-                roundedTime = (time + 30) / 60 * 60;
-                break;
-            case HALF_MINUTE:
-                roundedTime = (time + 15) / 30 * 30;
-                break;
-            case TENTH_OF_MINUTE:
-                roundedTime = (time + 3) / 6 * 6;
-                break;
-            default:
-                roundedTime = time;
-                break;
-        }
-        return roundedTime;
+        return switch (r) {
+            case MINUTE -> (time + 30) / 60 * 60;
+            case HALF_MINUTE -> (time + 15) / 30 * 30;
+            case TENTH_OF_MINUTE -> (time + 3) / 6 * 6;
+        };
     }
 
     /**
@@ -183,7 +172,7 @@ public class TimeConverter {
     private String convertIntToTextImpl(int time, boolean fixed, DateTimeFormatter shortFormat,
             DateTimeFormatter longFormat) {
         LocalTime localTime = this.getLocalTime(time);
-        String timeStr = null;
+        String timeStr;
         if (localTime.getSecondOfMinute() == 0 && !fixed) {
             timeStr = localTime.toString(shortFormat);
         } else {
@@ -245,7 +234,6 @@ public class TimeConverter {
      *
      * @param text text
      * @return time in seconds
-     * @throws ParseException
      */
     public int convertMinutesTextToInt(String text) throws ParseException {
     	Number number = duration.parse(text);
@@ -288,7 +276,7 @@ public class TimeConverter {
                 if (hm && size < 4) {
                     values[size++] = Character.digit(ch, 10);
                 } else if (!hm) {
-                    if (decimalBuilder.length() == 0)
+                    if (decimalBuilder.isEmpty())
                         decimalBuilder.append(separator);
                     decimalBuilder.append(ch);
                 }
@@ -297,27 +285,16 @@ public class TimeConverter {
 
         int time = -1;
         // convert to time
-        Tuple<Integer> thm;
-        switch (size) {
-            case 1:
-                thm = this.normalizeNumber(0, values[0], 0, 0);
-                break;
-            case 2:
-                thm = this.normalizeNumber(values[0], values[1], 0, 0);
-                break;
-            case 3:
-                thm = this.normalizeNumber(0, values[0], values[1], values[2]);
-                break;
-            case 4:
-                thm = this.normalizeNumber(values[0], values[1], values[2], values[3]);
-                break;
-            default:
-                thm = null;
-                break;
-        }
+        Tuple<Integer> thm = switch (size) {
+            case 1 -> this.normalizeNumber(0, values[0], 0, 0);
+            case 2 -> this.normalizeNumber(values[0], values[1], 0, 0);
+            case 3 -> this.normalizeNumber(0, values[0], values[1], values[2]);
+            case 4 -> this.normalizeNumber(values[0], values[1], values[2], values[3]);
+            default -> null;
+        };
 
         if (thm != null) {
-            time = this.parse(String.format("%d:%d%s", thm.first, thm.second, decimalBuilder.toString()));
+            time = this.parse(String.format("%d:%d%s", thm.first, thm.second, decimalBuilder));
         }
 
         // normalize time before return

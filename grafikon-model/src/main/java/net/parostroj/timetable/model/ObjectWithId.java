@@ -7,5 +7,5 @@ package net.parostroj.timetable.model;
  */
 public interface ObjectWithId {
 
-    public String getId();
+    String getId();
 }

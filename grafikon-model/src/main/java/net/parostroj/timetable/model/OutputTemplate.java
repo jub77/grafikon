@@ -49,17 +49,11 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(OutputTemplate.this, change)));
         this.attachments = new ItemSetImpl<>((type, item) -> {
-            AttributeChange change = null;
-            switch (type) {
-                case ADDED:
-                    change = new AttributeChange(ATTR_ATTACHMENT, null, item);
-                    break;
-                case REMOVED:
-                    change = new AttributeChange(ATTR_ATTACHMENT, item, null);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported type: " + type);
-            }
+            AttributeChange change = switch (type) {
+                case ADDED -> new AttributeChange(ATTR_ATTACHMENT, null, item);
+                case REMOVED -> new AttributeChange(ATTR_ATTACHMENT, item, null);
+                default -> throw new IllegalArgumentException("Unsupported type: " + type);
+            };
             listenerSupport.fireEvent(new Event(OutputTemplate.this, change));
         });
     }

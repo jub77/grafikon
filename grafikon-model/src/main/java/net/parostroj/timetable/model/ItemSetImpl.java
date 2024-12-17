@@ -55,7 +55,7 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
     @Override
     public Iterator<T> iterator() {
         final Iterator<T> iter = items.iterator();
-        return new Iterator<T>() {
+        return new Iterator<>() {
 
             private T last;
 

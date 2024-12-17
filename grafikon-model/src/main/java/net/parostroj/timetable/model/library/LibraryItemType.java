@@ -17,9 +17,9 @@ public enum LibraryItemType {
     TRAIN_TYPE_CATEGORY(TrainTypeCategory.class), TRAIN_TYPE(TrainType.class),
     NODE(Node.class), OUTPUT_TEMPLATE(OutputTemplate.class);
 
-    private Class<?> clazz;
+    private final Class<?> clazz;
 
-    private LibraryItemType(Class<?> clazz) {
+    LibraryItemType(Class<?> clazz) {
         this.clazz = clazz;
     }
 

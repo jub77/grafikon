@@ -5,6 +5,8 @@ import net.parostroj.timetable.model.Track;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
 
+import java.util.Objects;
+
 /**
  * Visitor that checks if the event belongs to tracked events.
  *
@@ -22,22 +24,12 @@ public class TrackedCheckVisitor implements EventVisitor {
 
     @Override
     public void visitDiagramEvent(Event event) {
-        switch (event.getType()) {
-            case MOVED:
-                tracked = false;
-                break;
-            default:
-                tracked = true;
-        }
+        tracked = Objects.requireNonNull(event.getType()) != Event.Type.MOVED;
     }
 
     @Override
     public void visitNetEvent(Event event) {
-        if (event.getType() == Event.Type.MOVED) {
-            tracked = false;
-        } else {
-            tracked = true;
-        }
+        tracked = event.getType() != Event.Type.MOVED;
     }
 
     @Override

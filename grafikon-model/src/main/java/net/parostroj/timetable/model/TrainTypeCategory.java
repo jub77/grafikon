@@ -116,9 +116,7 @@ public class TrainTypeCategory implements ObjectWithId, ObservableObject, Attrib
         if (speed == 0)
             return PenaltyTableRow.ZERO_ROW;
         // other rows
-        ListIterator<PenaltyTableRow> i = penaltyRows.listIterator();
-        while (i.hasNext()) {
-            PenaltyTableRow row = i.next();
+        for (PenaltyTableRow row : penaltyRows) {
             if (speed <= row.getSpeed()) {
                 return row;
             }
@@ -128,9 +126,7 @@ public class TrainTypeCategory implements ObjectWithId, ObservableObject, Attrib
     }
 
     public PenaltyTableRow getRowForSpeedExact(int speed) {
-        ListIterator<PenaltyTableRow> i = penaltyRows.listIterator();
-        while (i.hasNext()) {
-            PenaltyTableRow row = i.next();
+        for (PenaltyTableRow row : penaltyRows) {
             if (speed == row.getSpeed()) {
                 return row;
             }
