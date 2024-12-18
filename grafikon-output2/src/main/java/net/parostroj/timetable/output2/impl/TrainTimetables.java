@@ -25,6 +25,8 @@ public class TrainTimetables {
     private String validity;
     private DriverCycle cycle;
     private List<TrainTimetable> trainTimetables;
+    // compatibility - deprecated
+    private final List<String> texts = List.of();
 
     public TrainTimetables() {
     }
@@ -92,5 +94,9 @@ public class TrainTimetables {
 
     public void setCycle(DriverCycle cycle) {
         this.cycle = cycle;
+    }
+
+    public List<String> getTexts() {
+        return texts;
     }
 }
