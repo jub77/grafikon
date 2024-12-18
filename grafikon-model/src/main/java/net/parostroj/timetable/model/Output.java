@@ -122,7 +122,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
      */
     public Attributes getSettings() {
         Attributes combinedAttributes = new Attributes();
-        OutputTemplate ot = getTemplate();
+        OutputTemplate ot = getOutputTemplate();
         if (ot != null) {
             combinedAttributes.addAttributesMap(ot.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS),
                     CATEGORY_SETTINGS);
@@ -136,7 +136,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
      *                  and removed)
      */
     public void setSettings(Attributes combinedAttributes) {
-        OutputTemplate ot = getTemplate();
+        OutputTemplate ot = getOutputTemplate();
         // if there is no template ignore all values
         if (ot != null) {
             Attributes templateAttributes = ot.getAttributes();

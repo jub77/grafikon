@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.ImportModelAction;
 import net.parostroj.timetable.gui.actions.impl.CopyTemplatesToOutputsModelAction;
 import net.parostroj.timetable.gui.actions.impl.LoadLibraryUrlModelAction;
 import net.parostroj.timetable.gui.actions.impl.OutputTemplateSelectionModelAction;
@@ -44,7 +43,6 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
         handler.execute(new LoadLibraryUrlModelAction(context, TrainDiagramType.RAW));
         handler.execute(new OutputTemplateSelectionModelAction(context));
-        handler.execute(new ImportModelAction(context));
         handler.execute(new CopyTemplatesToOutputsModelAction(context, model));
     }
 }

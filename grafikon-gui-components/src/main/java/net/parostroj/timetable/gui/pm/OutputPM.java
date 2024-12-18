@@ -46,7 +46,7 @@ public class OutputPM extends AbstractPM {
     private WeakReference<Output> outputRef;
     private Output newOutput;
     private Collection<? extends ObjectWithId> selectionItems;
-    private Collection<Locale> modelLocales;
+    private final Collection<Locale> modelLocales;
 
     public OutputPM(Collection<Locale> locales, Collection<Locale> modelLocales) {
         key = new TextPM();
@@ -114,7 +114,7 @@ public class OutputPM extends AbstractPM {
             templates.addValue(wrapper.getElement(), wrapper.toString());
         }
         if (!wrappers.isEmpty()) {
-            templates.setValue(wrappers.get(0).getElement());
+            templates.setValue(wrappers.getFirst().getElement());
         }
         locale.setValue(null);
     }
@@ -124,10 +124,11 @@ public class OutputPM extends AbstractPM {
         outputRef = new WeakReference<>(output);
         templates.getOptions().clear();
         name.init(output.getName(), modelLocales);
+        OutputTemplate template = output.getOutputTemplate();
         attributes.init(output.getSettings(),
                 Output.CATEGORY_SETTINGS,
-                new AttributesNameTranslation(output.getTemplate().getAttributes(), OutputTemplate.CATEGORY_I18N));
-        if (output.getTemplate().getSelectionType() == null) {
+                new AttributesNameTranslation(template.getAttributes(), OutputTemplate.CATEGORY_I18N));
+        if (template.getSelectionType() == null) {
             this.selection.setText("");
             this.selectionEnabled.setBoolean(false);
         } else {
@@ -198,6 +199,6 @@ public class OutputPM extends AbstractPM {
     }
 
     public void setOperationEditSelection(ExecutionMethod executionMethod) {
-        editSelection.setExecutionMethods(Collections.<ExecutionMethod>singletonList(executionMethod));
+        editSelection.setExecutionMethods(Collections.singletonList(executionMethod));
     }
 }

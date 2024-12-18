@@ -260,6 +260,6 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     @Override
     protected Wrapper<Output> createWrapper(Output item) {
         return Wrapper.getWrapper(item, new WrapperDelegateAdapter<>(element -> String.format("%s: %s",
-                OutputTypeUtil.convertOutputType(element.getTemplate()), element.getName().translate())));
+                OutputTypeUtil.convertOutputType(element.getOutputTemplate()), element.getName().translate())));
     }
 }

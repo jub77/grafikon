@@ -7,6 +7,7 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
+import net.parostroj.timetable.model.OutputTemplateStorage;
 import net.parostroj.timetable.model.TrainDiagramType;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
@@ -60,6 +61,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final LanguageLoader languageLoader;
     private final Version currentVersion;
     private final VersionInfo versionInfo;
+    private final OutputTemplateStorage templateStorage;
 
     private final Instant startTime;
 
@@ -93,6 +95,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         lookAndFeel = new EnumeratedValuesPM<>(lookAndFeelMap);
         PMManager.setup(this);
         startTime = Instant.now();
+        templateStorage = OutputTemplateStorage.createEmpty();
     }
 
     private Map<String, String> getLookAndFeelMap() {
@@ -149,6 +152,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         this.setSelectedTrain(null);
 
         this.diagram = diagram;
+        if (this.diagram != null) {
+            this.diagram.getRuntimeInfo().setTemplateStorage(templateStorage);
+        }
 
         this.collegue.setTrainDiagram(diagram);
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,this));
@@ -325,6 +331,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public Instant getStartTime() {
         return startTime;
+    }
+
+    public OutputTemplateStorage getTemplateStorage() {
+        return templateStorage;
     }
 
     private String getMajorMinorString(Version version) {
