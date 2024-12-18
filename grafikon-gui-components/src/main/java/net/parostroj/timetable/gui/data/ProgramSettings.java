@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.data;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -15,6 +16,7 @@ public class ProgramSettings {
     private LengthUnit lengthUnit;
     private SpeedUnit speedLengthUnit;
     private boolean debugLogging;
+    private TrainDiagramType diagramType;
 
     public String getUserName() {
         return userName;
@@ -58,5 +60,13 @@ public class ProgramSettings {
 
     public void setDebugLogging(boolean debugLogging) {
         this.debugLogging = debugLogging;
+    }
+
+    public void setDiagramType(TrainDiagramType diagramType) {
+        this.diagramType = diagramType;
+    }
+
+    public TrainDiagramType getDiagramType() {
+        return diagramType;
     }
 }

@@ -2,8 +2,10 @@ package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 
 import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 
@@ -16,6 +18,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
     final IEnumeratedValuesPM<SpeedUnit> speed;
     final IEnumeratedValuesPM<LengthUnit> length;
     final BooleanPM debugLogging = new BooleanPM();
+    final IEnumeratedValuesPM<TrainDiagramType> diagramType;
 
     final OperationPM ok = new OperationPM();
 
@@ -26,6 +29,8 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
                 EnumeratedValuesPM.createValueMap(Arrays.asList(SpeedUnit.KMPH, SpeedUnit.MPH), SpeedUnit::toString));
         length = new EnumeratedValuesPM<>(
                 EnumeratedValuesPM.createValueMap(LengthUnit.getScaleDependent(), LengthUnit::toString));
+        diagramType = new EnumeratedValuesPM<>(
+                EnumeratedValuesPM.createValueMap(List.of(TrainDiagramType.values()), TrainDiagramType::getKey));
         PMManager.setup(this);
     }
 
@@ -36,6 +41,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
         length.setValue(settings.getLengthUnit());
         user.setText(settings.getUserName());
         debugLogging.setBoolean(settings.isDebugLogging());
+        diagramType.setValue(settings.getDiagramType());
     }
 
     private void writeResult() {
@@ -45,6 +51,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
             settings.setSpeedUnit(speed.getValue());
             settings.setLengthUnit(length.getValue());
             settings.setDebugLogging(debugLogging.getBoolean());
+            settings.setDiagramType(diagramType.getValue());
         }
     }
 

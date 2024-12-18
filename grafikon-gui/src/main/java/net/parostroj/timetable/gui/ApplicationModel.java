@@ -7,6 +7,7 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 
@@ -219,6 +220,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         prefs.getSection(DEBUG_SECTION).put(DEBUG_KEY, programSettings.isDebugLogging());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
+        section.put("diagram.type", programSettings.getDiagramType().getKey());
         section.remove(LAST_OPENED_KEY);
         for (File file : this.lastOpenedFiles) {
             section.add(LAST_OPENED_KEY, file.getAbsolutePath());
@@ -237,6 +239,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
         programSettings.setSpeedUnit(speedUnit != null ? speedUnit : SpeedUnit.KMPH);
+        TrainDiagramType diagramType = TrainDiagramType.getByKey(section.get("diagram.type"));
+        programSettings.setDiagramType(diagramType != null ? diagramType : TrainDiagramType.NORMAL);
         List<String> filenames = section.getAll(LAST_OPENED_KEY);
         if (filenames != null) {
             Collections.reverse(filenames);

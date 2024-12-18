@@ -52,6 +52,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         BnTextField nameTextField = new BnTextField();
         javax.swing.JLabel unitLabel = new javax.swing.JLabel();
+        javax.swing.JLabel diagramTypeLabel = new javax.swing.JLabel();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
@@ -110,6 +111,21 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraintsLog.insets = new Insets(0, 5, 0, 5);
         dataPanel.add(debugLoggingCheckBox, gridBagConstraintsLog);
 
+        FlowLayout fDiagramTypePanel = new FlowLayout(FlowLayout.LEFT);
+        javax.swing.JPanel diagramTypePanel = new javax.swing.JPanel(fDiagramTypePanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
+        dataPanel.add(diagramTypePanel, gridBagConstraints);
+
+        diagramTypeLabel.setText(ResourceLoader.getString("program.settings.diagram.type"));
+        diagramTypePanel.add(diagramTypeLabel);
+        BnComboBox diagramTypeComboBox = new BnComboBox();
+        diagramTypePanel.add(diagramTypeComboBox);
+
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
@@ -132,6 +148,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         lengthUnitComboBox.setPath(new Path("length"));
         debugLoggingCheckBox.setModelProvider(provider);
         debugLoggingCheckBox.setPath(new Path("debugLogging"));
+        diagramTypeComboBox.setModelProvider(provider);
+        diagramTypeComboBox.setPath(new Path("diagramType"));
         okButton.setModelProvider(provider);
         okButton.setPath(new Path("ok"));
     }
