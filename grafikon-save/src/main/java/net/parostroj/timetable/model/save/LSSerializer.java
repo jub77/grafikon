@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.save;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -59,9 +60,10 @@ public abstract class LSSerializer {
      *
      * @param reader reader
      * @param trainTypeList list
+     * @param diagramType diagram type
      * @return train diagram
      */
-    public abstract TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList) throws LSException;
+    public abstract TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList, TrainDiagramType diagramType) throws LSException;
 
     /**
      * writes train diagram into the writer.

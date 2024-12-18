@@ -25,11 +25,13 @@ public class TrainDiagramBuilder {
     private final FileLoadSaveAttachments flsAttachments;
     private final Collection<DelayedAttributes<?>> delayedAttributesList = new ArrayList<>();
 
-    public TrainDiagramBuilder(LSTrainDiagram lsDiagram, FileLoadSaveAttachments flsAttachments) throws LSException {
+    public TrainDiagramBuilder(LSTrainDiagram lsDiagram, FileLoadSaveAttachments flsAttachments,
+            TrainDiagramType diagramType) throws LSException {
         this.flsAttachments = flsAttachments;
         circulationSequenceMap = new HashMap<>();
         // trains data
         this.diagram = new TrainDiagram(lsDiagram.getId());
+        this.diagram.getRuntimeInfo().setDiagramType(diagramType);
         this.context = new LSContext() {
             @Override
             public ObjectWithId mapId(String id) {

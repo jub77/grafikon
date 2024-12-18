@@ -7,6 +7,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.save.LSSerializer;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
@@ -14,7 +15,7 @@ import net.parostroj.timetable.model.save.NoCloseAllowedReader;
 
 /**
  * Implementation of LSSerializer for version 2.0.
- * 
+ *
  * @author jub
  */
 public class LSSerializerImpl2 extends LSSerializer {
@@ -24,7 +25,7 @@ public class LSSerializerImpl2 extends LSSerializer {
     private Marshaller marshaller;
 
     private Unmarshaller unmarshaller;
-    
+
     private synchronized static JAXBContext getContext() throws JAXBException {
         if (context_i == null)
             context_i = JAXBContext.newInstance(new Class[]{LSTrainDiagram.class});
@@ -40,12 +41,13 @@ public class LSSerializerImpl2 extends LSSerializer {
             throw new LSException("Cannot initialize JAXB context.", e);
         }
     }
-    
+
     @Override
-    public TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList) throws LSException {
+    public TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList,
+            TrainDiagramType diagramType) throws LSException {
         try {
             LSTrainDiagram lsDiagram = (LSTrainDiagram) unmarshaller.unmarshal(new NoCloseAllowedReader(reader));
-            LSVisitorBuilder builderVisitor = new LSVisitorBuilder(trainTypeList);
+            LSVisitorBuilder builderVisitor = new LSVisitorBuilder(trainTypeList, diagramType);
             lsDiagram.visit(builderVisitor);
             return builderVisitor.getTrainDiagram();
         } catch (JAXBException e) {

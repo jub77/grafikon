@@ -13,22 +13,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import net.parostroj.timetable.model.RuntimeInfo;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.impl4.filters.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TimetableImage;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
@@ -91,9 +80,9 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file) throws LSException {
+    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            TrainDiagram diagram = this.load(inputStream);
+            TrainDiagram diagram = this.load(diagramType, inputStream);
             // set file info
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
             return diagram;
@@ -123,7 +112,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream zipInput) throws LSException {
+    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream zipInput) throws LSException {
         try {
             ZipEntry entry;
             TrainDiagramBuilder builder = null;
@@ -140,7 +129,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
                     LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
-                    builder = new TrainDiagramBuilder(lstd, attachments);
+                    builder = new TrainDiagramBuilder(lstd, attachments, diagramType);
                 }
                 // test diagram
                 if (builder == null) {

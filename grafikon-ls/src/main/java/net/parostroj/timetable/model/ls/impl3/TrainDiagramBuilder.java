@@ -19,11 +19,12 @@ public class TrainDiagramBuilder {
         this.diagram = diagram;
     }
 
-    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
+    public TrainDiagramBuilder(LSTrainDiagram lsDiagram, TrainDiagramType diagramType) throws LSException {
         // trains data
         // attributes
         Attributes attributes = lsDiagram.getAttributes().createAttributes();
         this.diagram = new TrainDiagram(lsDiagram.getId());
+        this.diagram.getRuntimeInfo().setDiagramType(diagramType);
         lsDiagram.getTrainsData().updateTrainsData(this.diagram.getTrainsData());
         this.diagram.getAttributes().add(attributes);
         // fill penalty table with predefined values

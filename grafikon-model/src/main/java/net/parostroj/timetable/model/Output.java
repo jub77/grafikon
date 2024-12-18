@@ -69,7 +69,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
         return attributes.get(ATTR_TEMPLATE_REFERENCE, ObjectReference.class);
     }
 
-    public void setAttrTemplateRef(ObjectReference<OutputTemplate> templateRef) {
+    public void setTemplateRef(ObjectReference<OutputTemplate> templateRef) {
         attributes.remove(ATTR_TEMPLATE);
         attributes.setRemove(ATTR_TEMPLATE_REFERENCE, templateRef);
     }
@@ -79,7 +79,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
         if (template == null) {
             ObjectReference<OutputTemplate> templateRef = getTemplateRef();
             if (templateRef != null) {
-                template = templateRef.getObject(diagram.getRuntimeInfo().getTemplateStorage());
+                template = templateRef.getObject(diagram.getRuntimeInfo().getTemplateStorage()::getTemplateById);
             }
         }
         return template;

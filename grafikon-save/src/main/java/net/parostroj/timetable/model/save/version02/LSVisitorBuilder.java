@@ -17,6 +17,7 @@ public class LSVisitorBuilder implements LSVisitor {
     private TrainDiagram diagram;
     private final Map<Integer, Object> ids = new HashMap<>();
     private final LSTrainTypeList trainTypeList;
+    private final TrainDiagramType diagramType;
     // last node
     private Node lastNode;
     // last train
@@ -25,8 +26,9 @@ public class LSVisitorBuilder implements LSVisitor {
     private Line lastLine;
     private final List<Train> trains;
 
-    public LSVisitorBuilder(LSTrainTypeList list) {
+    public LSVisitorBuilder(LSTrainTypeList list, TrainDiagramType diagramType) {
         this.trainTypeList = list;
+        this.diagramType = diagramType;
         this.trains = new LinkedList<>();
     }
 
@@ -34,6 +36,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSTrainDiagram lsDiagram) {
         // create empty net
         diagram = new TrainDiagram(IdGenerator.getInstance().getId());
+        diagram.getRuntimeInfo().setDiagramType(diagramType);
         trainTypeList.getTrainsData(diagram.getRuntimeInfo().getDiagramType()).copyValuesTo(diagram.getTrainsData());
         LSPenaltyTableHelper.fillPenaltyTable(diagram.getTrainTypeCategories());
         trainTypeList.updateMapping(diagram);

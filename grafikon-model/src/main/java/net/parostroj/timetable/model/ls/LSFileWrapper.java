@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
 
 /**
  * Wrapper that allows only load operation to be called.
@@ -20,13 +21,13 @@ class LSFileWrapper implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file) throws LSException {
-        return impl.load(file);
+    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
+        return impl.load(diagramType, file);
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream is) throws LSException {
-        return impl.load(is);
+    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream is) throws LSException {
+        return impl.load(diagramType, is);
     }
 
     @Override

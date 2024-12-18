@@ -23,6 +23,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
 
 /**
  * Import action.
@@ -54,11 +55,12 @@ public class ImportAction extends AbstractAction {
 
         context.setAttribute("fileType", supportLibrary ? FileChooserFactory.Type.GTM_GTML : FileChooserFactory.Type.GTM);
         context.setAttribute("diagramImport", model.getDiagram());
+        TrainDiagramType diagramType = model.getProgramSettings().getDiagramType();
 
         handler.execute(new OpenFileModelAction(context));
         handler.execute(new SelectLoadAction(context));
-        handler.execute(new LoadDiagramModelAction(context));
-        handler.execute(new LoadLibraryModelAction(context));
+        handler.execute(new LoadDiagramModelAction(context, diagramType));
+        handler.execute(new LoadLibraryModelAction(context, diagramType));
         handler.execute(new EventDispatchModelAction(context) {
 
             @Override

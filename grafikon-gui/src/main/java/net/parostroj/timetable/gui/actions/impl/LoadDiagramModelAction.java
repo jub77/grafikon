@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +19,14 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
 
     private static final Logger log = LoggerFactory.getLogger(LoadDiagramModelAction.class);
 
+    private final TrainDiagramType diagramType;
+
     private String errorMessage;
     private File selectedFile;
 
-    public LoadDiagramModelAction(ActionContext context) {
+    public LoadDiagramModelAction(ActionContext context, TrainDiagramType diagramType) {
         super(context);
+        this.diagramType = diagramType;
     }
 
     @Override
@@ -38,7 +42,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
         try {
             try {
                 LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                context.setAttribute("diagram", ls.load(selectedFile));
+                context.setAttribute("diagram", ls.load(diagramType, selectedFile));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

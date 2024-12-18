@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.zip.ZipInputStream;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +20,14 @@ public class LoadDiagramUrlModelAction extends EventDispatchAfterModelAction {
 
     private static final Logger log = LoggerFactory.getLogger(LoadDiagramUrlModelAction.class);
 
+    private final TrainDiagramType diagramType;
+
     private String errorMessage;
     private String url;
 
-    public LoadDiagramUrlModelAction(ActionContext context) {
+    public LoadDiagramUrlModelAction(ActionContext context, TrainDiagramType diagramType) {
         super(context);
+        this.diagramType = diagramType;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class LoadDiagramUrlModelAction extends EventDispatchAfterModelAction {
         try {
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSFile ls = LSFileFactory.getInstance().createForLoad(is);
-                context.setAttribute("diagram", ls.load(is));
+                context.setAttribute("diagram", ls.load(diagramType, is));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

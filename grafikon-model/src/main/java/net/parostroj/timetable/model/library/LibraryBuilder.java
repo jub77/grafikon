@@ -25,7 +25,7 @@ public class LibraryBuilder {
             return this;
         }
 
-        public Config setType(TrainDiagramType type) {
+        public Config setDiagramType(TrainDiagramType type) {
             this.type = type;
             return this;
         }

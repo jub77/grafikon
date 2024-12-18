@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
         context.setAttribute("libraryUrl", url);
         log.debug("Loading library: {}", url);
 
-        handler.execute(new LoadLibraryUrlModelAction(context));
+        handler.execute(new LoadLibraryUrlModelAction(context, TrainDiagramType.RAW));
         handler.execute(new OutputTemplateSelectionModelAction(context));
         handler.execute(new ImportModelAction(context));
         handler.execute(new CopyTemplatesToOutputsModelAction(context, model));

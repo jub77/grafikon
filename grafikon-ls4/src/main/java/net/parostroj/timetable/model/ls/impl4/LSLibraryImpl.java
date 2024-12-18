@@ -9,6 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.parostroj.timetable.model.TrainDiagramType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public LibraryItem loadItem(InputStream is) {
+    public LibraryItem loadItem(TrainDiagramType diagramType, InputStream is) {
         throw new UnsupportedOperationException();
     }
 
@@ -83,11 +84,11 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public Library load(ZipInputStream is) throws LSException {
+    public Library load(TrainDiagramType diagramType, ZipInputStream is) throws LSException {
         try {
             ZipEntry entry;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
-            LibraryBuilder libraryBuilder = new LibraryBuilder(LibraryBuilder.newConfig());
+            LibraryBuilder libraryBuilder = new LibraryBuilder(LibraryBuilder.newConfig().setDiagramType(diagramType));
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)

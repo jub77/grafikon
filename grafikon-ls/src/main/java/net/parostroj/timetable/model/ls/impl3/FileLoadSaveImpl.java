@@ -43,9 +43,9 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file) throws LSException {
+    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            return this.load(inputStream);
+            return this.load(diagramType, inputStream);
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -85,7 +85,7 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream zipInput) throws LSException {
+    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream zipInput) throws LSException {
         try {
             ZipEntry entry;
             TrainDiagramBuilder builder = null;
@@ -101,7 +101,7 @@ public class FileLoadSaveImpl implements LSFile {
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
                     LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
-                    builder = new TrainDiagramBuilder(lstd);
+                    builder = new TrainDiagramBuilder(lstd, diagramType);
                 }
                 // test diagram
                 if (builder == null) {

@@ -7,6 +7,7 @@ package net.parostroj.timetable.model.save;
 
 import java.nio.charset.StandardCharsets;
 import net.parostroj.timetable.model.RuntimeInfo;
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
@@ -59,7 +60,7 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file) throws LSException {
+    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
         try (ZipFile zip = new ZipFile(file)) {
             TrainDiagram diagram;
 
@@ -99,7 +100,9 @@ public class LoadSave implements LSFile {
             if (entry == null) {
                 throw new LSException("Model not found.");
             }
-            diagram = this.loadTrainDiagram(modelVersion, new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8), trainTypeList);
+            diagram = this.loadTrainDiagram(modelVersion,
+                    new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8),
+                    trainTypeList, diagramType);
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, modelVersion);
 
             // load images
@@ -143,12 +146,13 @@ public class LoadSave implements LSFile {
         return metadata;
     }
 
-    private TrainDiagram loadTrainDiagram(ModelVersion modelVersion, Reader reader, LSTrainTypeList types) throws LSException, IOException {
+    private TrainDiagram loadTrainDiagram(ModelVersion modelVersion, Reader reader, LSTrainTypeList types,
+            TrainDiagramType diagramType) throws LSException, IOException {
         LSSerializer serializer = LSSerializer.getLSSerializer(modelVersion);
         if (serializer == null) {
             throw new LSException("Serializer not initialized");
         }
-        TrainDiagram diagram = serializer.load(reader, types);
+        TrainDiagram diagram = serializer.load(reader, types, diagramType);
         for (TrainDiagramFilter filter : loadFilters) {
             diagram = filter.filter(diagram, modelVersion);
         }
@@ -167,7 +171,7 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream is) {
+    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream is) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

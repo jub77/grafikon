@@ -7,6 +7,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.save.LSSerializer;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
@@ -42,10 +43,10 @@ public class LSSerializerImpl1 extends LSSerializer {
     }
 
     @Override
-    public TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList) throws LSException {
+    public TrainDiagram load(Reader reader, LSTrainTypeList trainTypeList, TrainDiagramType diagramType) throws LSException {
         try {
             LSTrainDiagram lsDiagram = (LSTrainDiagram) unmarshaller.unmarshal(new NoCloseAllowedReader(reader));
-            LSVisitorBuilder builderVisitor = new LSVisitorBuilder(trainTypeList);
+            LSVisitorBuilder builderVisitor = new LSVisitorBuilder(trainTypeList, diagramType);
             lsDiagram.visit(builderVisitor);
             return builderVisitor.getTrainDiagram();
         } catch (JAXBException e) {

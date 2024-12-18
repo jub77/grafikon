@@ -17,8 +17,8 @@ public class RuntimeInfo implements AttributesHolder {
 
         attributes.setSkipListeners(true);
         // NORMAL type is default
-        attributes.set(ATTR_DIAGRAM_TYPE, TrainDiagramType.NORMAL);
-        attributes.set(ATTR_TEMPLATE_STORAGE, ObjectMapping.fromFunction(id -> null));
+        this.setDiagramType(TrainDiagramType.NORMAL);
+        this.setTemplateStorage(OutputTemplateStorage.createEmpty());
         attributes.setSkipListeners(false);
     }
 
@@ -31,8 +31,15 @@ public class RuntimeInfo implements AttributesHolder {
         return attributes.get(ATTR_DIAGRAM_TYPE, TrainDiagramType.class);
     }
 
-    @SuppressWarnings("unchecked")
-    public ObjectMapping<OutputTemplate> getTemplateStorage() {
-        return attributes.get(ATTR_TEMPLATE_STORAGE, ObjectMapping.class);
+    public void setDiagramType(TrainDiagramType diagramType) {
+        attributes.setRemove(ATTR_DIAGRAM_TYPE, diagramType);
+    }
+
+    public OutputTemplateStorage getTemplateStorage() {
+        return attributes.get(ATTR_TEMPLATE_STORAGE, OutputTemplateStorage.class);
+    }
+
+    public void setTemplateStorage(OutputTemplateStorage storage) {
+        attributes.setRemove(ATTR_TEMPLATE_STORAGE, storage);
     }
 }

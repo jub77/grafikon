@@ -116,7 +116,7 @@ public class NewOpenAction extends AbstractAction {
                         model.setOpenedFile(selectedFile);
                         log.info("Loading: {}", selectedFile);
                         LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                        diagram = ls.load(selectedFile);
+                        diagram = ls.load(model.getProgramSettings().getDiagramType(), selectedFile);
                     } catch (LSException e) {
                         log.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
