@@ -12,6 +12,7 @@ import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.model.library.Library;
+import net.parostroj.timetable.model.library.LibraryItem;
 
 public interface ExportImportSelectionSource {
 
@@ -39,7 +40,7 @@ public interface ExportImportSelectionSource {
             }
             @Override
             public Collection<ObjectWithId> getElementsForType(ImportComponent type) {
-                return library.getItems().get(type.getLibraryItemType()).stream().map(item -> item.getObject()).collect(Collectors.toList());
+                return library.getItems().get(type.getLibraryItemType()).stream().map(LibraryItem::getObject).collect(Collectors.toList());
             }
         };
     }

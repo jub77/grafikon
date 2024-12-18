@@ -37,12 +37,12 @@ public class ExportImportSelectionPanel extends JPanel {
         }
     }
 
-    private Map<ImportComponent, Selection> selectionMap;
+    private final Map<ImportComponent, Selection> selectionMap;
     private Selection currentSelection;
-    private ElementSelectionPanel<ObjectWithId> selectionPanel;
-    private JComboBox<Wrapper<ImportComponent>> typeComboBox;
-    private JPanel leftPanel;
-    private JPanel rightPanel;
+    private final ElementSelectionPanel<ObjectWithId> selectionPanel;
+    private final JComboBox<Wrapper<ImportComponent>> typeComboBox;
+    private final JPanel leftPanel;
+    private final JPanel rightPanel;
 
     public ExportImportSelectionPanel() {
         this.selectionPanel = new ElementSelectionPanel<>();
@@ -135,7 +135,7 @@ public class ExportImportSelectionPanel extends JPanel {
         this.writeBackToSelection();
         // return map of collections of objects
         return new ExportImportSelection(Maps.filterValues(
-                Maps.transformValues(selectionMap, value -> Lists.transform(value.selected, item -> item.getElement())),
-                item -> item.size() > 0));
+                Maps.transformValues(selectionMap, value -> Lists.transform(value.selected, Wrapper::getElement)),
+                item -> !item.isEmpty()));
     }
 }

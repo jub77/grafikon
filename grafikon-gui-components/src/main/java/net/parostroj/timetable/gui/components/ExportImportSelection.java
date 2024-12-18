@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.imports.ImportMatch;
 
 public class ExportImportSelection {
 
-    private ListMultimap<ImportComponent, ObjectWithId> objects;
+    private final ListMultimap<ImportComponent, ObjectWithId> objects;
     private boolean importOverwrite;
     private ImportMatch importMatch;
 
@@ -23,7 +23,7 @@ public class ExportImportSelection {
 
     public ExportImportSelection(Map<ImportComponent, Collection<ObjectWithId>> map) {
         this.objects = LinkedListMultimap.create(ImportComponent.values().length);
-        map.entrySet().stream().forEach(entry -> objects.putAll(entry.getKey(), entry.getValue()));
+        map.forEach(objects::putAll);
     }
 
     public Map<ImportComponent, Collection<ObjectWithId>> getObjectMap() {
