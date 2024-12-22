@@ -1,30 +1,17 @@
 package net.parostroj.timetable.model.templates;
 
+import net.parostroj.timetable.loader.DataItemLoader;
+import net.parostroj.timetable.model.TrainDiagram;
+
 import java.net.URL;
 
-import net.parostroj.timetable.model.ls.LSException;
+public interface TemplateLoader {
 
-/**
- * Class for loading model templates. It also returns list of available
- * templates.
- *
- * @author jub
- */
-public interface TemplateLoader<T> {
-
-    public TemplateList getTemplateList() throws LSException;
-
-    public T loadTemplate(Template template) throws LSException;
-
-    public static <T> TemplateLoader<T> getDefault(Class<T> clazz) {
-        return new DefaultTemplateLoader<>(LoadDelegate.createForClass(clazz), clazz);
+    static DataItemLoader<TrainDiagram> getDefault() {
+        return DataItemLoader.getFromResources("/templates", "list.yaml", TrainDiagram.class);
     }
 
-    public static <T> TemplateLoader<T> getFromUrl(URL url, Class<T> clazz) {
-        return new UrlTemplateLoader<>(url, LoadDelegate.createForClass(clazz));
-    }
-
-    public static <T> TemplateLoader<T> getFromUrl(URL url, String templateListFile, Class<T> clazz) {
-        return new UrlTemplateLoader<>(url, templateListFile, LoadDelegate.createForClass(clazz));
+    static DataItemLoader<TrainDiagram> getDefaultFromUrl(URL url) {
+        return DataItemLoader.getFromUrl(url, "templates.yaml", TrainDiagram.class);
     }
 }

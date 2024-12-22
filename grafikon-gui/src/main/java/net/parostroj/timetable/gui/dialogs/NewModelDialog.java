@@ -11,9 +11,9 @@ import java.util.concurrent.Callable;
 import javax.swing.JButton;
 
 import net.parostroj.timetable.gui.pm.NewModelPM;
+import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.ModelProvider;
@@ -37,7 +37,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public Callable<TrainDiagram> showDialog(TemplateLoader<TrainDiagram> templateLoader) throws LSException {
+    public Callable<TrainDiagram> showDialog(DataItemLoader<TrainDiagram> templateLoader) throws LSException {
         NewModelPM newModel = new NewModelPM(templateLoader);
         newModel.init();
         provider.setPresentationModel(newModel);

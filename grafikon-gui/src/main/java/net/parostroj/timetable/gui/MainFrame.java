@@ -42,6 +42,7 @@ import net.parostroj.timetable.gui.views.DriverCycleDelegate;
 import net.parostroj.timetable.gui.views.EngineCycleDelegate;
 import net.parostroj.timetable.gui.views.TrainUnitCycleDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
@@ -339,11 +340,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        TemplateLoader<TrainDiagram> loader = TemplateLoader.getDefault(TrainDiagram.class);
+        DataItemLoader<TrainDiagram> loader = TemplateLoader.getDefault();
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, loader), "new", false, null); // NOI18N
         try {
             this.addMenuItem(fileMenu, "menu.file.new.default.url",
-                    new NewOpenAction(model, TemplateLoader.getFromUrl(URI.create(model.getTemplatesBaseUrl()).toURL(), TrainDiagram.class)),
+                    new NewOpenAction(model, TemplateLoader.getDefaultFromUrl(URI.create(model.getTemplatesBaseUrl()).toURL())),
                     "new", false, null); // NOI18N
         } catch (MalformedURLException mue) {
             log.warn(mue.getMessage(), mue);

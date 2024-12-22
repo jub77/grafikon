@@ -3,11 +3,11 @@ package net.parostroj.timetable.gui.pm;
 import java.math.BigDecimal;
 import java.util.concurrent.Callable;
 
+import net.parostroj.timetable.loader.DataItem;
+import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.Scale;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.templates.Template;
-import net.parostroj.timetable.model.templates.TemplateLoader;
 
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
@@ -24,20 +24,20 @@ public class NewModelPM extends AbstractPM {
     private static final double TIME_SCALE_STEP = 0.5;
 
     final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
-            Scale.getPredefined(), i -> i.getName()));
+            Scale.getPredefined(), Scale::getName));
     final BigDecimalPM timeScale = new BigDecimalPM();
-    final IEnumeratedValuesPM<Template> template;
+    final IEnumeratedValuesPM<DataItem> template;
 
     final OperationPM ok = new OperationPM();
 
     private Callable<TrainDiagram> createTask;
 
-    private TemplateLoader<TrainDiagram> templateLoader;
+    private final DataItemLoader<TrainDiagram> templateLoader;
 
-    public NewModelPM(TemplateLoader<TrainDiagram> templateLoader) throws LSException {
+    public NewModelPM(DataItemLoader<TrainDiagram> templateLoader) throws LSException {
         this.templateLoader = templateLoader;
 
-        // time scale
+        // timescale
         Options<BigDecimal> options = new Options<>();
         IFormat<BigDecimal> format = timeScale.getFormat();
         for (double d = MIN_TIME_SCALE; d <= SELECTION_MAX_TIME_SCALE; d += TIME_SCALE_STEP) {
@@ -53,8 +53,8 @@ public class NewModelPM extends AbstractPM {
         });
         timeScale.setBigDecimal(BigDecimal.valueOf(INIT_TIME_SCALE));
         // templates
-        template = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(templateLoader.getTemplateList().getTemplates(),
-                i -> i.getName().translate()));
+        template = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(templateLoader.loadList().items(),
+                i -> i.name().translate()));
         // setup
         PMManager.setup(this);
     }
@@ -70,19 +70,15 @@ public class NewModelPM extends AbstractPM {
     }
 
     private void create() {
-        final Template templateInstance = template.getValue();
+        final DataItem templateInstance = template.getValue();
         final Scale scaleValue = scale.getValue();
         final double timeScaleValue = timeScale.getBigDecimal().doubleValue();
 
-        this.createTask = new Callable<TrainDiagram>() {
-
-            @Override
-            public TrainDiagram call() throws LSException {
-                TrainDiagram diagram = templateLoader.loadTemplate(templateInstance);
-                diagram.setAttribute(TrainDiagram.ATTR_SCALE, scaleValue);
-                diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, timeScaleValue);
-                return diagram;
-            }
+        this.createTask = () -> {
+            TrainDiagram diagram = templateLoader.loadItem(templateInstance);
+            diagram.setAttribute(TrainDiagram.ATTR_SCALE, scaleValue);
+            diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, timeScaleValue);
+            return diagram;
         };
     }
 
@@ -96,5 +92,4 @@ public class NewModelPM extends AbstractPM {
     public boolean check() {
         return timeScale.isValid();
     }
-
 }

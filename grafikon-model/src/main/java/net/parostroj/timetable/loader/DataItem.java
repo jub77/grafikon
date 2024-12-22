@@ -3,7 +3,6 @@ package net.parostroj.timetable.loader;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.util.Converter;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.ls.ModelVersion;
 

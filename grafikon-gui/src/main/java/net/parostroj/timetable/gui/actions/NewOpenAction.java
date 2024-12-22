@@ -19,11 +19,11 @@ import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -41,14 +41,14 @@ public class NewOpenAction extends AbstractAction {
 	private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
 
     private final transient ApplicationModel model;
-    private final transient TemplateLoader<TrainDiagram> templateLoader;
+    private final transient DataItemLoader<TrainDiagram> templateLoader;
 
     /**
      * creates a new instance
      *
      * @param model application model
      */
-    public NewOpenAction(ApplicationModel model, TemplateLoader<TrainDiagram> templateLoader) {
+    public NewOpenAction(ApplicationModel model, DataItemLoader<TrainDiagram> templateLoader) {
         this.model = model;
         this.templateLoader = templateLoader;
     }
