@@ -1,0 +1,41 @@
+scripts:
+- id: recalculate
+  name: Recalculate
+  language: GROOVY
+  location: recalculate.groovy
+- id: remove_weights
+  name: Remove weights
+  language: GROOVY
+  location: remove_weights.groovy
+- id: hide_length
+  name: Do not show length
+  language: GROOVY
+  location: hide_length.groovy
+- id: show_length
+  name: Show length
+  language: GROOVY
+  location: show_length.groovy
+- id: remove_interval_speed
+  name: Remove interval speed
+  language: GROOVY
+  location: remove_interval_speed.groovy
+- id: copy_engines_to_engineers
+  name: Copy engine to engineers circulations
+  language: GROOVY
+  location: copy_engines_to_engineers.groovy
+- id: add_managed_freight
+  name: Add trains to managed freight
+  language: GROOVY
+  location: add_managed_freight.groovy
+- id: copy_output_templates_to_outputs
+  name: Copy output templates to outputs
+  language: GROOVY
+  location: copy_output_templates_to_outputs.groovy
+- id: fix_connectors
+  name: Fix connector sides
+  language: GROOVY
+  location: fix_connectors.groovy
+- id: fix_train_tracks
+  name: Fix invalid train tracks
+  language: GROOVY
+  location: fix_train_tracks.groovy

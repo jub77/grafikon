@@ -65,6 +65,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter:5.11.4'
 			dependency 'org.hamcrest:hamcrest:3.0'
 			dependency 'io.smallrye.reactive:mutiny:2.7.0'
+			dependency 'com.fasterxml.jackson:jackson-bom:2.18.2'
 		}
 	}
 

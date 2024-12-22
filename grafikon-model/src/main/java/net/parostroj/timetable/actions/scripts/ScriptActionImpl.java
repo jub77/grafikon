@@ -32,7 +32,7 @@ class ScriptActionImpl implements ScriptAction {
 
     @Override
     public String getId() {
-        return desc.getId();
+        return desc.id();
     }
 
     @Override
@@ -48,16 +48,16 @@ class ScriptActionImpl implements ScriptAction {
 
     @Override
     public String getName() {
-        return desc.getName();
+        return desc.name();
     }
 
     @Override
     public Script getScript() {
         if (cachedScript == null) {
-            String sLoc = location + "/" + desc.getLocation();
+            String sLoc = location + "/" + desc.location();
             String src = ScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
-                cachedScript = Script.create(src, desc.getLanguage());
+                cachedScript = Script.create(src, desc.language());
             } catch (GrafikonException e) {
                 log.error("Couldn't create script.", e);
             }

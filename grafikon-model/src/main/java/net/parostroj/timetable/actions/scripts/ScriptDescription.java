@@ -1,7 +1,6 @@
 package net.parostroj.timetable.actions.scripts;
 
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import net.parostroj.timetable.model.Script.Language;
 
 /**
@@ -9,43 +8,5 @@ import net.parostroj.timetable.model.Script.Language;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "language", "location" })
-class ScriptDescription {
-
-    private String id;
-    private String name;
-    private Language language;
-    private String location;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-}
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record ScriptDescription(String id, String name, Language language, String location) {}

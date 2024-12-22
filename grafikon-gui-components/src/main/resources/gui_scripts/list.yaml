@@ -1,0 +1,21 @@
+scripts:
+- id: copy_engines_to_engineers_select
+  name: Copy engine to engineers circulations (selection)
+  language: GROOVY
+  location: copy_engines_to_engineers_select.groovy
+- id: check_duplicate_train_numbers
+  name: Check duplicate train numbers
+  language: GROOVY
+  location: check_duplicate_train_numbers.groovy
+- id: add_managed_freight_select
+  name: Add trains to managed freight (selection)
+  language: GROOVY
+  location: add_managed_freight_select.groovy
+- id: copy_output_templates_to_outputs_select
+  name: Copy output templates to outputs (selection)
+  language: GROOVY
+  location: copy_output_templates_to_outputs_select.groovy
+- id: check_train_tracks
+  name: Check train tracks
+  language: GROOVY
+  location: check_train_tracks.groovy

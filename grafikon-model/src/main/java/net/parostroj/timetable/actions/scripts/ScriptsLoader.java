@@ -1,11 +1,11 @@
 package net.parostroj.timetable.actions.scripts;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.utils.Conversions;
@@ -23,7 +23,7 @@ public class ScriptsLoader {
     private static final Logger log = LoggerFactory.getLogger(ScriptsLoader.class);
 
     private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
-    private static final String LIST = "list.xml";
+    private static final String LIST = "list.yaml";
 
     private final String location;
     private Map<String, ScriptAction> scriptActions;
@@ -46,18 +46,17 @@ public class ScriptsLoader {
     synchronized Map<String, ScriptAction> getScriptActionsMap() {
         if (scriptActions == null) {
             try {
-                JAXBContext context = JAXBContext.newInstance(ScriptList.class);
-                Unmarshaller unmarshaller = context.createUnmarshaller();
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
                 InputStream stream = ScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
-                ScriptList scriptList = (ScriptList) unmarshaller.unmarshal(stream);
-                List<ScriptDescription> sList = scriptList.getScripts();
+                ScriptList scriptList = mapper.readValue(stream, ScriptList.class);
+                List<ScriptDescription> sList = scriptList.scripts();
                 scriptActions = new LinkedHashMap<>(sList.size());
                 for (ScriptDescription d : sList) {
-                    scriptActions.put(d.getId(), new ScriptActionImpl(location, d));
+                    scriptActions.put(d.id(), new ScriptActionImpl(location, d));
                 }
                 keyView = Collections.unmodifiableCollection(scriptActions.keySet());
                 actionsView = Collections.unmodifiableCollection(scriptActions.values());
-            } catch (JAXBException e) {
+            } catch (IOException e) {
                 log.error("Error loading list of scripts.", e);
             }
             if (scriptActions == null)

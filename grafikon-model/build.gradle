@@ -7,7 +7,9 @@ dependencies {
 
 	implementation 'org.slf4j:slf4j-api'
 	implementation 'org.apache.groovy:groovy-templates'
-	implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+	implementation platform('com.fasterxml.jackson:jackson-bom')
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.hamcrest:hamcrest'
