@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 public class ProgramSettingsDialog extends javax.swing.JDialog {
 
     private static final long serialVersionUID = 1L;
+    private static final String PROTOTYPE_BOX = "MMMMM";
 
 	private final ModelProvider provider = new ModelProvider(ProgramSettingsPM.class);
 
@@ -43,6 +44,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         pack();
     }
 
+    @SuppressWarnings("unchecked")
     private void initComponents() {
         ActionListener closeAction = e -> setVisible(false);
 
@@ -95,10 +97,13 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         unitLabel.setText(ResourceLoader.getString("modelinfo.unit")); // NOI18N
         unitsPanel.add(unitLabel);
         BnComboBox lengthUnitComboBox = new BnComboBox();
+        lengthUnitComboBox.setPrototypeDisplayValue(PROTOTYPE_BOX);
+
         unitsPanel.add(lengthUnitComboBox);
         JLabel speedUnitLabel = new JLabel(ResourceLoader.getString("modelinfo.speed.unit")); //$NON-NLS-1$
         unitsPanel.add(speedUnitLabel);
         BnComboBox speedUnitComboBox = new BnComboBox();
+        speedUnitComboBox.setPrototypeDisplayValue(PROTOTYPE_BOX);
         unitsPanel.add(speedUnitComboBox);
 
         debugLoggingCheckBox.setText(ResourceLoader.getString("program.settings.debug.logging")); // NOI18N
@@ -124,6 +129,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         diagramTypeLabel.setText(ResourceLoader.getString("program.settings.diagram.type"));
         diagramTypePanel.add(diagramTypeLabel);
         BnComboBox diagramTypeComboBox = new BnComboBox();
+        diagramTypeComboBox.setPrototypeDisplayValue(PROTOTYPE_BOX);
         diagramTypePanel.add(diagramTypeComboBox);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
