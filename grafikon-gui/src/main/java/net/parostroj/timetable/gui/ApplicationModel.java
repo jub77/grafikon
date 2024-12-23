@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 
 import net.parostroj.timetable.model.OutputTemplateMapping;
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 
@@ -61,7 +62,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final LanguageLoader languageLoader;
     private final Version currentVersion;
     private final VersionInfo versionInfo;
-    private final OutputTemplateMapping templateStorage;
+    private final OutputTemplateStorage templateStorage;
 
     private final Instant startTime;
 
@@ -95,7 +96,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         lookAndFeel = new EnumeratedValuesPM<>(lookAndFeelMap);
         PMManager.setup(this);
         startTime = Instant.now();
-        templateStorage = OutputTemplateMapping.createEmpty();
+        templateStorage = OutputTemplateStorage.createEmpty();
     }
 
     private Map<String, String> getLookAndFeelMap() {
@@ -333,7 +334,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         return startTime;
     }
 
-    public OutputTemplateMapping getTemplateStorage() {
+    public OutputTemplateStorage getTemplateStorage() {
         return templateStorage;
     }
 
