@@ -79,7 +79,7 @@ public class Output implements ObjectWithId, AttributesHolder, ObservableObject,
         if (template == null) {
             ObjectReference<OutputTemplate> templateRef = getTemplateRef();
             if (templateRef != null) {
-                template = templateRef.getObject(diagram.getRuntimeInfo().getTemplateStorage()::getTemplateById);
+                template = templateRef.getObject(diagram.getRuntimeInfo().getTemplateMapping()::getTemplateById);
             }
         }
         return template;

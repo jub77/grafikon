@@ -5,7 +5,7 @@ import net.parostroj.timetable.utils.IdGenerator
 
 def outputs = []
 def outputTemplates = diagram.outputTemplates
-def storage = diagram.runtimeInfo.templateStorage
+def storage = diagram.runtimeInfo.getTemplateMapping
 def fromStorage = false
 if (outputTemplates.empty && storage instanceof OutputTemplateSimpleStorage) {
     outputTemplates =  storage.templates

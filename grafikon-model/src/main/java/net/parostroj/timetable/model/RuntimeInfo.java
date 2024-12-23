@@ -8,7 +8,7 @@ public class RuntimeInfo implements AttributesHolder {
     public static final String ATTR_FILE_VERSION = "file.version";
     public static final String ATTR_FILE = "file";
     public static final String ATTR_DIAGRAM_TYPE = "diagram.type";
-    public static final String ATTR_TEMPLATE_STORAGE = "template.storage";
+    public static final String ATTR_TEMPLATE_MAPPING = "template.mapping";
 
     private final Attributes attributes;
 
@@ -18,7 +18,7 @@ public class RuntimeInfo implements AttributesHolder {
         attributes.setSkipListeners(true);
         // NORMAL type is default
         this.setDiagramType(TrainDiagramType.NORMAL);
-        this.setTemplateStorage(OutputTemplateStorage.createEmpty());
+        this.setTemplateMapping(OutputTemplateMapping.createEmpty());
         attributes.setSkipListeners(false);
     }
 
@@ -35,11 +35,11 @@ public class RuntimeInfo implements AttributesHolder {
         attributes.setRemove(ATTR_DIAGRAM_TYPE, diagramType);
     }
 
-    public OutputTemplateStorage getTemplateStorage() {
-        return attributes.get(ATTR_TEMPLATE_STORAGE, OutputTemplateStorage.class);
+    public OutputTemplateMapping getTemplateMapping() {
+        return attributes.get(ATTR_TEMPLATE_MAPPING, OutputTemplateMapping.class);
     }
 
-    public void setTemplateStorage(OutputTemplateStorage storage) {
-        attributes.setRemove(ATTR_TEMPLATE_STORAGE, storage);
+    public void setTemplateMapping(OutputTemplateMapping storage) {
+        attributes.setRemove(ATTR_TEMPLATE_MAPPING, storage);
     }
 }
