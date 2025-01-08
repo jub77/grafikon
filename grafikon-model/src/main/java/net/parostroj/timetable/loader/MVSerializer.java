@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class MVSerializer extends StdSerializer<ModelVersion> {
 
+    private static final long serialVersionUID = 1L;
+
     public MVSerializer() {
         super(ModelVersion.class);
     }

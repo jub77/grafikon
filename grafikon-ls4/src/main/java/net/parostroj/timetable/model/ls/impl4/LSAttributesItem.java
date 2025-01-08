@@ -114,7 +114,7 @@ public class LSAttributesItem {
                 Pair<String, String> pair = this.convertToId(objectWithId);
                 cValue = new LSAttributesValue(pair.second, pair.first);
             }
-            case ObjectReference ref -> cValue = new LSAttributesValue(ref.getRefId(), OBJECT_REFERENCE_KEY);
+            case ObjectReference<?> ref -> cValue = new LSAttributesValue(ref.getRefId(), OBJECT_REFERENCE_KEY);
             case StringWithLocale stringWithLocale -> cValue = new LSAttributesValue(
                     stringWithLocale.getString(),
                     "string." + stringWithLocale.getLocale().toLanguageTag());

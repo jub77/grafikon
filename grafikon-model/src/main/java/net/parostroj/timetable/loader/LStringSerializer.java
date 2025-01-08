@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class LStringSerializer extends StdSerializer<LocalizedString> {
 
+    private static final long serialVersionUID = 1L;
+
     public LStringSerializer() {
         super(LocalizedString.class);
     }

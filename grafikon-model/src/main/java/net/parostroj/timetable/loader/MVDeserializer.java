@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class MVDeserializer extends StdDeserializer<ModelVersion> {
 
+    private static final long serialVersionUID = 1L;
+
     public MVDeserializer() {
         super(ModelVersion.class);
     }

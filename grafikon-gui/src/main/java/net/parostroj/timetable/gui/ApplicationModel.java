@@ -7,7 +7,6 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
-import net.parostroj.timetable.model.OutputTemplateMapping;
 import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import org.beanfabrics.model.AbstractPM;

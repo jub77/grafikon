@@ -28,19 +28,20 @@ public class TrainTimetableWriter {
         str.append(train.getDefaultCompleteName()).append('\n');
         for (TimeInterval time : train.getNodeIntervals()) {
             Node node = time.getOwnerAsNode();
-            Formatter f = new Formatter(str);
-            f.format("%1$-20s", node.getName());
-            if (time.isFirst() || !time.isStop()) {
-                str.append("      ").append(c.convertIntToText(time.getEnd(), true)).append("\n");
-            } else if (time.isLast()) {
-                str.append(c.convertIntToText(time.getStart(), true)).append("\n");
-            } else if (time.isStop()) {
-                str.append(c.convertIntToText(time.getStart(), true)).append(" ");
-                str.append(c.convertIntToText(time.getEnd(), true)).append("\n");
-            } else {
-                str.append('\n');
+            try (Formatter f = new Formatter(str)) {
+                f.format("%1$-20s", node.getName());
+                if (time.isFirst() || !time.isStop()) {
+                    str.append("      ").append(c.convertIntToText(time.getEnd(), true)).append("\n");
+                } else if (time.isLast()) {
+                    str.append(c.convertIntToText(time.getStart(), true)).append("\n");
+                } else if (time.isStop()) {
+                    str.append(c.convertIntToText(time.getStart(), true)).append(" ");
+                    str.append(c.convertIntToText(time.getEnd(), true)).append("\n");
+                } else {
+                    str.append('\n');
+                }
+                f.flush();
             }
-            f.flush();
         }
     }
 }
