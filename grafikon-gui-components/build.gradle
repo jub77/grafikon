@@ -5,7 +5,9 @@ dependencies {
 
 	api 'io.smallrye.reactive:mutiny'
 	api 'org.beanfabrics:beanfabrics-swing'
+	api 'org.beanfabrics:beanfabrics-core'
 
+	implementation 'org.slf4j:slf4j-api'
 	implementation 'org.swinglabs:jxlayer'
 	implementation 'com.fifesoft:rsyntaxtextarea'
 }
