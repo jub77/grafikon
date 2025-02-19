@@ -8,23 +8,32 @@ import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.BooleanPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
+import org.beanfabrics.support.OnChange;
 
 /**
  * @author jub
  */
 public class NodeTrackPM extends AbstractPM implements IPM<NodeTrack> {
 
+    TextPM trackId;
     TextPM number;
     BooleanPM platform;
 
     private NodeTrack reference;
 
     public NodeTrackPM() {
+        this.trackId = new TextPM();
         this.number = new TextPM();
         this.number.getValidator().add(new EmptySpacesValidationRule(this.number));
         this.number.setMandatory(true);
         this.platform = new BooleanPM();
         PMManager.setup(this);
+        updateTrackId();
+    }
+
+    @OnChange(path = {"number", "platform"})
+    public void updateTrackId() {
+        trackId.setText(platform.getBoolean() ? number.getText() + " [" : number.getText());
     }
 
     @Override

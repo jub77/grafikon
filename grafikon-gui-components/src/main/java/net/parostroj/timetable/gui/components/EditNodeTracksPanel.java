@@ -18,7 +18,7 @@ public class EditNodeTracksPanel extends BaseEditPanel<NodePM> {
     private static final long serialVersionUID = 1L;
 
     public EditNodeTracksPanel() {
-        ItemListEditPanel<NodeTrackPM> tracksPanel = new ItemListEditPanel<>(new Path("number"), 5);
+        ItemListEditPanel<NodeTrackPM> tracksPanel = new ItemListEditPanel<>(new Path("trackId"), 5);
         tracksPanel.setModelProvider(localProvider);
         tracksPanel.setPath(new Path("tracks"));
 
