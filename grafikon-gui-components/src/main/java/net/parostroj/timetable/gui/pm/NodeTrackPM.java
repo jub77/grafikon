@@ -47,6 +47,7 @@ public class NodeTrackPM extends AbstractPM implements IPM<NodeTrack> {
             if (reference == null) {
                 // new (no reference)
                 NodeTrack newTrack = new NodeTrack(IdGenerator.getInstance().getId(), node, number.getText().trim());
+                newTrack.setPlatform(platform.getBoolean());
                 node.getTracks().add(index, newTrack);
                 reference = newTrack;
             } else {
