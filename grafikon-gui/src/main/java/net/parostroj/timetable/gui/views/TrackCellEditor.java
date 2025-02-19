@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.views;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.Collection;
 
 import java.util.Map;
 import java.util.Set;
@@ -61,9 +60,11 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
         Train train = ((TrainTableModel) table.getModel()).getTrain();
         final TimeInterval interval = train.getTimeIntervalList().get(row);
         Map<TimeInterval, Set<Track>> available = comp.getAvailableTracksForTrain(train);
-        Collection<? extends Track> tracks = available.get(interval);
-        for (Track track : tracks) {
-            editor.addItem(track);
+        Set<Track> availableTracks = available.get(interval);
+        for (Track track : interval.getOwner().getTracks()) {
+            if (availableTracks.contains(track)) {
+                editor.addItem(track);
+            }
         }
 
         editor.setSelectedItem(interval.getTrack());
