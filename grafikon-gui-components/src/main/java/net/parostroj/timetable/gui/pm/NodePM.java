@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.pm;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.beans.PropertyChangeEvent;
@@ -61,7 +60,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     private Node reference;
     private Collection<LineTrack> lineTracks = Collections.emptyList();
-    private Supplier<TrackConnectorPM> trackConnectorSupplier;
+    private final Supplier<TrackConnectorPM> trackConnectorSupplier;
     private boolean updateConnsBlock;
 
     public NodePM() {
@@ -88,9 +87,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         trackConnectorSupplier = () -> {
             TrackConnectorPM tc = new TrackConnectorPM();
             tc.number.setText("1");
-            tracks.forEach(track -> {
-                tc.getSwitches().add(new TrackConnectorSwitchPM(track, true, false));
-            });
+            tracks.forEach(track -> tc.getSwitches().add(new TrackConnectorSwitchPM(track, true, false)));
             tc.initLineTrack(reference, lineTracks, Optional.empty());
             return tc;
         };
@@ -102,15 +99,11 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                     .flatMap(NodePM::unwrapCause)
                     .map(BnPropertyChangeEvent.class::cast)
                     .filter(NodePM::checkLineTrackProperty)
-                    .ifPresent(e -> {
-                        updateConnectorsLineTrackChanged((TrackConnectorPM) e.getSource());
-                    });
+                    .ifPresent(e -> updateConnectorsLineTrackChanged((TrackConnectorPM) e.getSource()));
             // ElementsRemovedEvent
             cause.filter(ElementsRemovedEvent.class::isInstance)
                     .map(ElementsRemovedEvent.class::cast)
-                    .ifPresent(e -> {
-                        updateConnectorsCheckAllLineTracks();
-                    });
+                    .ifPresent(e -> updateConnectorsCheckAllLineTracks());
         });
         this.connectors.delete.getValidator().add(() -> {
             Collection<TrackConnectorPM> cs = connectors.getSelection().toCollection();
@@ -166,7 +159,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
         this.telephone.setText(node.getTelephone());
         this.freightCapacity.init(
                 Optional.ofNullable(node.getFreightCapacity()).map(BigDecimal::valueOf),
-                Arrays.asList(LengthUnit.AXLE));
+                List.of(LengthUnit.AXLE));
         LocalizedString freightNote = node.getFreightNote();
         this.freightNote.init(
                 freightNote != null ? freightNote : LocalizedString.fromString(""),
@@ -250,8 +243,8 @@ public class NodePM extends AbstractPM implements IPM<Node> {
     }
 
     private static boolean checkLineTrackProperty(PropertyChangeEvent event) {
-        return event instanceof PropertyChangeEvent
-                && "lineTrack".equals(((PropertyChangeEvent) event).getPropertyName());
+        return event != null
+                && "lineTrack".equals(event.getPropertyName());
     }
 
     private void updateConnectorsLineTrackChanged(TrackConnectorPM src) {
@@ -281,10 +274,10 @@ public class NodePM extends AbstractPM implements IPM<Node> {
                     .filter(lt -> !selectedTracks.contains(lt)).collect(toSet());
             if (!notSelectedTracks.isEmpty()) {
                 List<TrackConnectorPM> emptyConnectors = connectors.toCollection().stream()
-                        .filter(c -> c.getLineTrack().getValue() == null).collect(toList());
+                        .filter(c -> c.getLineTrack().getValue() == null).toList();
                 // add connectors if there is not enough
                 Iterator<TrackConnectorPM> ecIterator = emptyConnectors.iterator();
-                notSelectedTracks.stream()
+                notSelectedTracks
                     .forEach(lt -> {
                         TrackConnectorPM tcPm = ecIterator.hasNext() ? ecIterator.next() : null;
                         if (tcPm == null) {
@@ -301,7 +294,7 @@ public class NodePM extends AbstractPM implements IPM<Node> {
 
     private static class TracksListener extends ListAdapter {
 
-        private IListPM<TrackConnectorPM> connectors;
+        private final IListPM<TrackConnectorPM> connectors;
 
         public TracksListener(IListPM<TrackConnectorPM> connectors) {
             this.connectors = connectors;
