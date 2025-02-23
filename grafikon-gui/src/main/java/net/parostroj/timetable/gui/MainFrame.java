@@ -13,8 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 
@@ -342,13 +340,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         DataItemLoader<TrainDiagram> loader = TemplateLoader.getDefault();
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, loader), "new", false, null); // NOI18N
-        try {
-            this.addMenuItem(fileMenu, "menu.file.new.default.url",
-                    new NewOpenAction(model, TemplateLoader.getDefaultFromUrl(URI.create(model.getTemplatesBaseUrl()).toURL())),
-                    "new", false, null); // NOI18N
-        } catch (MalformedURLException mue) {
-            log.warn(mue.getMessage(), mue);
-        }
 
         fileMenu.add(new javax.swing.JSeparator());
 
@@ -364,8 +355,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addMenuItem(importMenu, "menu.file.exportimport", new ImportAction(model, false, true), null); // NOI18N
         this.addMenuItem(importMenu, "menu.file.exportimport.trains", new ImportAction(model, true, false), null); // NOI18N
-        this.addMenuItem(importMenu, "menu.file.outputs.import.replace", new ImportReplaceOutputTemplatesAction(model), null); // NOI18N
-        this.addMenuItem(importMenu, "menu.file.outputs.import.replace.default.url", new ImportReplaceOutputTemplatesUrlAction(model), null); // NOI18N
+        this.addMenuItem(importMenu, "menu.file.outputs.create.resources", new CreateOutputsResourcesAction(model), null); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.library.export", new ExportAction(model, this), null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());

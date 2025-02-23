@@ -41,6 +41,7 @@ public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
         try {
+            log.debug("Loading library: {}", url);
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
                 context.setAttribute("library", ls.load(diagramType, is));

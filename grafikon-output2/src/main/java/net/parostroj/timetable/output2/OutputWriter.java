@@ -131,7 +131,7 @@ public class OutputWriter {
     }
 
     private List<OutputSettings> createOutputs(net.parostroj.timetable.model.Output modelOutput) throws OutputException {
-        OutputTemplate template = modelOutput.getTemplate();
+        OutputTemplate template = modelOutput.getOutputTemplate();
         List<OutputSettings> result = null;
         if (template.getScript() != null) {
             final List<OutputSettings> out = new ArrayList<>();
@@ -178,11 +178,11 @@ public class OutputWriter {
     }
 
     private String getOutputKey(net.parostroj.timetable.model.Output modelOutput) {
-        return modelOutput.getKey() != null ? modelOutput.getKey() : modelOutput.getTemplate().getKey();
+        return modelOutput.getKey() != null ? modelOutput.getKey() : modelOutput.getOutputTemplate().getKey();
     }
 
     private void generateOutput(net.parostroj.timetable.model.Output modelOutput) throws OutputException {
-        OutputTemplate template = modelOutput.getTemplate();
+        OutputTemplate template = modelOutput.getOutputTemplate();
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
         OutputFactory factory = OutputFactory.newInstance(template.getOutput());
         factory.setParameter("locale", modelOutput.getLocale() != null? modelOutput.getLocale() : settings.getLocale());

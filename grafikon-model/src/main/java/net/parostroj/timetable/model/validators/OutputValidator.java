@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.validators;
 
-import net.parostroj.timetable.model.ModelObjectType;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Event.Type;
 
@@ -35,8 +32,9 @@ public class OutputValidator implements TrainDiagramValidator {
             boolean changed = false;
             Object object = event.getObject();
             for (Output output : diagram.getOutputs()) {
-                if (output.getTemplate() != null && output.getTemplate().getSelectionType() != null) {
-                    if (output.getTemplate().getSelectionType().getType() == object.getClass()
+                OutputTemplate template = output.getOutputTemplate();
+                if (template != null && template.getSelectionType() != null) {
+                    if (template.getSelectionType().getType() == object.getClass()
                             && output.getAttributes().get(Output.ATTR_SELECTION) != null) {
                         Collection<ObjectWithId> selection = output.getSelection();
                         if (selection.stream().anyMatch(i -> i == object)) {

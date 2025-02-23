@@ -16,13 +16,13 @@ import java.util.stream.Stream;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record DataItemList(String id, LocalizedString name, LocalizedString description, List<DataItem> items,
         List<DataItemList> categories) {
-    public Stream<DataItem> toItemsStream() {
+    public Stream<DataItem> toItemStream() {
         return categories == null || categories.isEmpty()
                 ? items.stream()
-                : Stream.concat(items.stream(), categories.stream().flatMap(DataItemList::toItemsStream));
+                : Stream.concat(items.stream(), categories.stream().flatMap(DataItemList::toItemStream));
     }
 
-    public Collection<DataItem> toItemsCollection() {
-        return toItemsStream().collect(Collectors.toList());
+    public Collection<DataItem> toItemCollection() {
+        return toItemStream().collect(Collectors.toList());
     }
 }
