@@ -21,18 +21,20 @@ public class OutputWriter {
     public static final String OUTPUT_TEMPLATE_LOG_NAME = "net.parostroj.timetable.output2.Template";
     public static final String OUTPUT_SCRIPT_LOG_NAME = "net.parostroj.timetable.output2.Script";
 
+    private static final Logger log = LoggerFactory.getLogger(OutputWriter.class);
+
     public interface ProcessListener {
 
-        public void processed(net.parostroj.timetable.model.Output modelOutput);
+        void processed(net.parostroj.timetable.model.Output modelOutput);
     }
 
     public interface OutputCollector {
 
-        public void add(String name, Map<String, Object> context);
+        void add(String name, Map<String, Object> context);
 
-        public void add(String name, Map<String, Object> context, String encoding);
+        void add(String name, Map<String, Object> context, String encoding);
 
-        public OutputSettings create();
+        OutputSettings create();
     }
 
     public static class OutputSettings {
@@ -193,21 +195,21 @@ public class OutputWriter {
         if (outputNames == null) {
             this.generateOutput(
                     output,
-                    this.getFile(null, getOutputKey(modelOutput),
+                    this.getFile(getOutputKey(modelOutput),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
-                    textTemplate, type, null,
+                    textTemplate, null,
                     this.updateContext(modelOutput, template, null), resources, null);
         } else {
             for(OutputSettings outputName : outputNames) {
                 this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate,
-                        type, outputName.params,
+                        outputName.params,
                         this.updateContext(modelOutput, template, outputName.context), resources, outputName.encoding);
             }
         }
     }
 
-    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
+    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate,
             Map<String, Object> parameters, Map<String, Object> context, OutputResources resources, String encoding) throws OutputException {
         OutputParams params = new OutputParams();
 
@@ -252,22 +254,20 @@ public class OutputWriter {
         return new File(dir, filename);
     }
 
-    private File getFile(String directory, String name, String extension, String type) {
+    private File getFile(String name, String extension, String type) {
         String filename = name.replaceAll("[\\\\:/\"?<>|*]", "");
-        File dir = getDir(directory);
+        File dir = getDir(null);
         return new File(dir, filename + "." + (extension == null ? getDefaultExtension(type) : extension));
     }
 
     private String getDefaultExtension(String type) {
-        String extension = null;
-        switch (type) {
-            case "draw": extension = "svg"; break;
-            case "groovy": extension = "html"; break;
-            case "pdf.groovy": extension = "pdf"; break;
-            case "xml": extension = "xml"; break;
-            default: extension = "unknown"; break;
-        }
-        return extension;
+        return switch (type) {
+            case "draw" -> "svg";
+            case "groovy" -> "html";
+            case "pdf.groovy" -> "pdf";
+            case "xml" -> "xml";
+            default -> "unknown";
+        };
     }
 
     private File getDir(String directory) {
