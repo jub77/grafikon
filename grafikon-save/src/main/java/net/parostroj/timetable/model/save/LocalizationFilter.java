@@ -56,7 +56,7 @@ public class LocalizationFilter implements TrainDiagramFilter {
     }
 
     private TextTemplate convertForAbbreviation(TextTemplate template, TrainDiagramType diagramType) {
-        if (template != null && template.getTemplate().contains(".abbr")) {
+        if (template != null && template.getTemplate().contains(".abbr") && template.getLanguage() != TextTemplate.Language.SIMPLE) {
             try {
                 template = diagramType.createTextTemplate(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
             } catch (GrafikonException e) {

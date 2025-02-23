@@ -19,9 +19,6 @@ import net.parostroj.timetable.utils.Conversions;
 @XmlType(propOrder = {"id", "abbr", "desc", "color", "braking", "platform", "trainNameTemplate", "trainCompleteNameTemplate"})
 public class LSTrainType {
 
-    public static final String DEFAULT_TRAIN_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}";
-    public static final String DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}";
-
     private String id;
     private String abbr;
     private String desc;
@@ -122,9 +119,9 @@ public class LSTrainType {
         type.setCategory(this.convertToCategory(diagram));
         try {
             type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-                TextTemplate.create(DEFAULT_TRAIN_NAME_TEMPLATE, TextTemplate.Language.SIMPLE): null);
+                TrainType.getDefaultTrainNameTemplate() : null);
             type.setTrainNameTemplate(trainNameTemplate != null ?
-                TextTemplate.create(DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE, TextTemplate.Language.SIMPLE) : null);
+                TrainType.getDefaultTrainCompleteNameTemplate() : null);
         } catch (GrafikonException e) {
             throw new LSException(e);
         }

@@ -40,7 +40,7 @@ public class LoadFilter4d21 implements LoadFilter {
     }
 
     private TextTemplate convertForAbbreviation(TextTemplate template, TrainDiagramType type) {
-        if (template != null && template.getTemplate().contains(".abbr")) {
+        if (template != null && template.getTemplate().contains(".abbr") && template.getLanguage() != TextTemplate.Language.SIMPLE) {
             try {
                 template = type.createTextTemplate(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
             } catch (GrafikonException e) {

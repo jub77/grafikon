@@ -128,7 +128,7 @@ public class LoadFilter {
     }
 
     private TextTemplate convertForAbbreviation(TextTemplate template) {
-        if (template != null && template.getTemplate().contains(".abbr")) {
+        if (template != null && template.getTemplate().contains(".abbr") && template.getLanguage() != TextTemplate.Language.SIMPLE) {
             template = TextTemplate.create(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
         }
         return template;
