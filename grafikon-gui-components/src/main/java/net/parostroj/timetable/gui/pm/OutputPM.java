@@ -123,6 +123,7 @@ public class OutputPM extends AbstractPM {
         if (!wrappers.isEmpty()) {
             templates.setValue(wrappers.getFirst().getElement());
         }
+        templates.setEditable(true);
         locale.setValue(null);
     }
 
@@ -130,6 +131,10 @@ public class OutputPM extends AbstractPM {
         diagramRef = new WeakReference<>(diagram);
         outputRef = new WeakReference<>(output);
         templates.getOptions().clear();
+        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(output.getOutputTemplate());
+        templates.addValue(wrapper.getElement(), wrapper.toString());
+        templates.setValue(wrapper.getElement());
+        templates.setEditable(false);
         name.init(output.getName(), modelLocales);
         OutputTemplate template = output.getOutputTemplate();
         attributes.init(output.getSettings(),

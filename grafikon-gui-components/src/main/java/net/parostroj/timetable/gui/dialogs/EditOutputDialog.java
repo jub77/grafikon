@@ -116,6 +116,25 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         keyTextField.setModelProvider(provider);
         keyTextField.setPath(new Path("key"));
 
+        JLabel lblTemplateLabel = new JLabel(ResourceLoader.getString("output.template"));
+        GridBagConstraints gbc_lblTemplateLabel = new GridBagConstraints();
+        gbc_lblTemplateLabel.insets = new Insets(0, 5, 5, 5);
+        gbc_lblTemplateLabel.anchor = GridBagConstraints.WEST;
+        gbc_lblTemplateLabel.gridx = 0;
+        gbc_lblTemplateLabel.gridy = 3;
+        contentPanel.add(lblTemplateLabel, gbc_lblTemplateLabel);
+
+        BnComboBox templateComboField = new BnComboBox();
+        GridBagConstraints gbc_templateComboField = new GridBagConstraints();
+        gbc_templateComboField.insets = new Insets(0, 0, 5, 5);
+        gbc_templateComboField.fill = GridBagConstraints.HORIZONTAL;
+        gbc_templateComboField.gridx = 1;
+        gbc_templateComboField.gridy = 3;
+        gbc_templateComboField.gridwidth = 2;
+        contentPanel.add(templateComboField, gbc_templateComboField);
+        templateComboField.setModelProvider(provider);
+        templateComboField.setPath(new Path("templates"));
+
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
         attributesPanel.setShowType(false);
@@ -124,7 +143,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_attributes.insets = new Insets(0, 5, 5, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
-        gbc_attributes.gridy = 3;
+        gbc_attributes.gridy = 4;
         gbc_attributes.weightx = 1.0;
         gbc_attributes.weighty = 1.0;
         contentPanel.add(attributesPanel, gbc_attributes);
@@ -160,7 +179,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_panel.insets = new Insets(0, 5, 0, 5);
         gbc_panel.fill = GridBagConstraints.HORIZONTAL;
         gbc_panel.gridx = 0;
-        gbc_panel.gridy = 4;
+        gbc_panel.gridy = 5;
         contentPanel.add(panel, gbc_panel);
         panel.setLayout(new BorderLayout(0, 0));
 
