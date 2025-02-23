@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 public class ResourcesOutputTemplateStorage implements OutputTemplateStorage {
 
     private static final Logger log = LoggerFactory.getLogger(ResourcesOutputTemplateStorage.class);
+
+    private static final String EMBEDDED_SOURCE = "embedded";
+
     private final Map<String, OutputTemplate> outputTemplates;
 
     public ResourcesOutputTemplateStorage() {
@@ -34,7 +37,14 @@ public class ResourcesOutputTemplateStorage implements OutputTemplateStorage {
             log.warn("Error loading template list", e);
             templates = Map.of();
         }
-        outputTemplates = templates;
+        addSource(templates.values());
+        outputTemplates = Map.copyOf(templates);
+    }
+
+    private static void addSource(Collection<OutputTemplate> templates) {
+        for (OutputTemplate template : templates) {
+            template.setAttribute(OutputTemplate.ATTR_SOURCE, EMBEDDED_SOURCE);
+        }
     }
 
     private static Collection<LibraryItem> getItems(DataItem item) {

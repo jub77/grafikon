@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.function.Consumer;
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 
 public class RuntimeInfo implements AttributesHolder {
 
@@ -41,5 +42,10 @@ public class RuntimeInfo implements AttributesHolder {
 
     public void setTemplateMapping(OutputTemplateMapping storage) {
         attributes.setRemove(ATTR_TEMPLATE_MAPPING, storage);
+    }
+
+    public OutputTemplateStorage getTemplateStorage() {
+        OutputTemplateMapping mapping = attributes.get(ATTR_TEMPLATE_MAPPING, OutputTemplateMapping.class);
+        return mapping instanceof OutputTemplateStorage ? (OutputTemplateStorage) mapping : null;
     }
 }

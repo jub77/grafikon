@@ -10,14 +10,16 @@ import net.parostroj.timetable.model.OutputTemplate;
  */
 public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTemplate> {
 
-    private boolean addType;
+    private final boolean addType;
+    private final boolean addSource;
 
     public OutputTemplateWrapperDelegate() {
-        this(true);
+        this(true, true);
     }
 
-    public OutputTemplateWrapperDelegate(boolean addType) {
+    public OutputTemplateWrapperDelegate(boolean addType, boolean addSource) {
         this.addType = addType;
+        this.addSource = addSource;
     }
 
     private String getTypeInfo(OutputTemplate template) {
@@ -38,8 +40,12 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
         if (element.getName() != null) {
             text = element.getName().translate();
         }
-        return addType ?
-                String.format("%2$s: %1$s", text, getTypeInfo(element)) :
-                text;
+        if (addType) {
+            text = getTypeInfo(element) + ": " + text;
+        }
+        if (addSource && element.getAttribute(OutputTemplate.ATTR_SOURCE, String.class) != null) {
+            text = text + " [" + element.getAttribute(OutputTemplate.ATTR_SOURCE, String.class) + "]";
+        }
+        return text;
     }
 }

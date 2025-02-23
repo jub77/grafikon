@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.BooleanPM;
 import org.beanfabrics.model.ExecutionMethod;
@@ -106,6 +107,12 @@ public class OutputPM extends AbstractPM {
         templates.getOptions().clear();
         name.init(null, null);
         List<Wrapper<OutputTemplate>> wrappers = new ArrayList<>();
+        OutputTemplateStorage templateStorage = diagram.getRuntimeInfo().getTemplateStorage();
+        if (templateStorage != null) {
+            for (OutputTemplate template : templateStorage.getTemplates()) {
+                wrappers.add(Wrapper.getWrapper(template));
+            }
+        }
         for (OutputTemplate template : diagram.getOutputTemplates()) {
             wrappers.add(Wrapper.getWrapper(template));
         }

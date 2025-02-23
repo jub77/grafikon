@@ -25,6 +25,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     public static final String ATTR_ATTACHMENT = "attachment";
     public static final String ATTR_SELECTION_TYPE = "selection.type";
     public static final String ATTR_VERSION = "version";
+    public static final String ATTR_SOURCE = "source";
 
     public static final String CATEGORY_I18N = "localization";
     public static final String CATEGORY_SETTINGS = "settings";
