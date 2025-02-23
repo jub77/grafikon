@@ -42,8 +42,8 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
 
     private static final long serialVersionUID = 1L;
 
-	private Link link = new Link(this);
-    private ModelProvider provider = new ModelProvider();
+    private final Link link = new Link(this);
+    private final ModelProvider provider = new ModelProvider();
 
     public EditOutputDialog(Window window, boolean modal) {
         super(window, modal ? JDialog.DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
@@ -210,7 +210,8 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
             Collection<? extends ObjectWithId> currentSelection = pModel.getSelection();
             ElementSelectionDialog<ObjectWithId> dialog = new ElementSelectionDialog<>(this, true);
             OutputTemplate template = pModel.getEditedOutput().getOutputTemplate();
-            Collection<ObjectWithId> collection = template.getSelectionType().extract(template.getDiagram(),
+            Collection<ObjectWithId> collection = template.getSelectionType().extract(
+                    pModel.getEditedOutput().getDiagram(),
                     ObjectWithId.class);
             dialog.setLocationRelativeTo(this);
             List<ObjectWithId> newSelection = dialog.selectElements(collection, currentSelection);
