@@ -40,6 +40,7 @@ import javax.swing.SwingConstants;
 
 import java.awt.Component;
 import java.awt.event.*;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -56,9 +57,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
 	private static final Logger log = LoggerFactory.getLogger(EditTrainDialog.class);
 
-    private static final String FROM_STATION = "${stations.first}";
-    private static final String TO_STATION = "${stations.last}";
-    private static final String STATION_X = "${stations.get(%d)}";
+    private static final Map<TextTemplate.Language, String> FROM_STATION = Map.of(
+            TextTemplate.Language.GROOVY, "${stations.first}",
+            TextTemplate.Language.SIMPLE, "${index:stations:first}");
+    private static final Map<TextTemplate.Language, String> TO_STATION = Map.of(
+            TextTemplate.Language.GROOVY, "${stations.last}",
+            TextTemplate.Language.SIMPLE, "${index:stations:last}");
+    private static final Map<TextTemplate.Language, String> STATION_X = Map.of(
+            TextTemplate.Language.GROOVY, "${stations.get(%d)}",
+            TextTemplate.Language.SIMPLE, "${index:stations:%d}");
 
     private transient Train train;
 
@@ -651,17 +658,17 @@ public class EditTrainDialog extends javax.swing.JDialog {
     }
 
     private void fromNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        routeEditBox.insertText(FROM_STATION);
+        routeEditBox.insertText(FROM_STATION.get(routeEditBox.getLanguage()));
         routeEditBox.requestFocusForTemplateField();
     }
 
     private void toNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        routeEditBox.insertText(TO_STATION);
+        routeEditBox.insertText(TO_STATION.get(routeEditBox.getLanguage()));
         routeEditBox.requestFocusForTemplateField();
     }
 
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String stationX = String.format(STATION_X, stationsComboBox.getSelectedIndex());
+        String stationX = String.format(STATION_X.get(routeEditBox.getLanguage()), stationsComboBox.getSelectedIndex());
         routeEditBox.insertText(stationX);
         routeEditBox.requestFocusForTemplateField();
     }

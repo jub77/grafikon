@@ -77,6 +77,15 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         }
     }
 
+    public Language getLanguage() {
+        Language lang = (Language) languageComboBox.getSelectedItem();
+        if (lang == null) {
+            throw new GrafikonException("No language selected.");
+        } else {
+            return lang;
+        }
+    }
+
     public void setTemplate(TextTemplate template) {
         if (template != null)
             this.setTemplate(template.getTemplate(), template.getLanguage());

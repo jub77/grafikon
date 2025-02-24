@@ -1,6 +1,7 @@
 package net.parostroj.timetable.utils;
 
 import net.parostroj.timetable.model.AttributesHolder;
+import net.parostroj.timetable.model.Indexed;
 import net.parostroj.timetable.model.TranslatedString;
 
 import java.lang.reflect.InvocationTargetException;
@@ -99,6 +100,7 @@ public class SimpleSubstitutedString implements SubstitutedString {
                     case "prefix" -> prefixModule(module);
                     case "suffix" -> suffixModule(module);
                     case "if" -> ifModule(module);
+                    case "index" -> indexModule(module);
                     default -> binding -> "";
                 };
             } else {
@@ -158,6 +160,29 @@ public class SimpleSubstitutedString implements SubstitutedString {
             };
         }
 
+        private static SubstitutedString indexModule(String[] module) {
+            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
+            return binding -> {
+                Object value = variableAccess.apply(binding);
+                int index = switch (module[2]) {
+                    case "first" -> 0;
+                    case "last" -> -1;
+                    default -> {
+                        try {
+                            yield  Integer.parseInt(module[2]);
+                        } catch (NumberFormatException e) {
+                            yield  0;
+                        }
+                    }
+                };
+                return switch (value) {
+                    case Indexed<?> indexed -> toString(index == -1 ? indexed.getLast() : indexed.get(index));
+                    case List<?> list -> toString(index == -1 ? list.getLast() : list.get(index));
+                    default -> "";
+                };
+            };
+        }
+
         private static String adaptValue(Object value) {
             if (value instanceof TranslatedString ts) {
                 return ts.getDefaultString();
@@ -202,6 +227,10 @@ public class SimpleSubstitutedString implements SubstitutedString {
                 }
             }
             return value;
+        }
+
+        private static String toString(Object object) {
+            return object == null ? "" : object.toString();
         }
     }
 }

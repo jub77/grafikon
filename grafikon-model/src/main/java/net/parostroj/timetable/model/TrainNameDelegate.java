@@ -110,22 +110,30 @@ class TrainNameDelegate {
     /**
      * Wrapper for accessing stations for text templates.
      */
-    public class Stations {
+    public class Stations implements Indexed<Node> {
 
         public Node getAt(int index) {
             return train.getIntervalList().get(index * 2).getOwnerAsNode();
         }
 
+        @Override
         public Node get(int index) {
             return getAt(index);
         }
 
+        @Override
         public Node getFirst() {
             return train.getFirstInterval().getOwnerAsNode();
         }
 
+        @Override
         public Node getLast() {
             return train.getLastInterval().getOwnerAsNode();
+        }
+
+        @Override
+        public int size() {
+            return (train.getIntervalList().size() + 1) / 2;
         }
     }
 
