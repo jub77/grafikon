@@ -270,6 +270,6 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         String source = element.getOutputTemplate().getAttribute(OutputTemplate.ATTR_SOURCE, String.class);
         return source == null
                 ? String.format("%s: %s", type, name)
-                : String.format("%s: %s [%s]", type, name, source);
+                : String.format("%s: %s [%s]", type, name, ResourceLoader.getString("ot." + source));
     }
 }
