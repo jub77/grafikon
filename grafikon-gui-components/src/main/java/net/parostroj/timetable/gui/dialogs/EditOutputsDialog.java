@@ -12,6 +12,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import net.parostroj.timetable.model.OutputTemplate;
 import org.beanfabrics.IModelProvider;
 import org.beanfabrics.Link;
 import org.beanfabrics.ModelProvider;
@@ -259,7 +260,16 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     @Override
     protected Wrapper<Output> createWrapper(Output item) {
-        return Wrapper.getWrapper(item, new WrapperDelegateAdapter<>(element -> String.format("%s: %s",
-                OutputTypeUtil.convertOutputType(element.getOutputTemplate()), element.getName().translate())));
+        return Wrapper.getWrapper(item, new WrapperDelegateAdapter<>(EditOutputsDialog::getOutputText));
+    }
+
+    private static String getOutputText(Output element) {
+
+        String type = OutputTypeUtil.convertOutputType(element.getOutputTemplate());
+        String name = element.getName().translate();
+        String source = element.getOutputTemplate().getAttribute(OutputTemplate.ATTR_SOURCE, String.class);
+        return source == null
+                ? String.format("%s: %s", type, name)
+                : String.format("%s: %s [%s]", type, name, source);
     }
 }
