@@ -1,11 +1,10 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import net.parostroj.timetable.model.ls.LSConfigurable;
 import net.parostroj.timetable.model.ls.LSException;
@@ -40,11 +39,7 @@ public abstract class AbstractLSImpl implements LSConfigurable, LSVersions {
     }
 
     protected static List<ModelVersion> getVersions(String... versions) {
-        List<ModelVersion> versionList = new ArrayList<>(versions.length);
-        for (String version : versions) {
-            versionList.add(ModelVersion.parseModelVersion(version));
-        }
-        return Collections.unmodifiableList(versionList);
+        return Stream.of(versions).map(ModelVersion::parseModelVersion).toList();
     }
 
     protected static ModelVersion getLatestVersion(List<ModelVersion> versions) {
