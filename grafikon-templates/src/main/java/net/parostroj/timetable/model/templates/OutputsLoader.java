@@ -13,6 +13,6 @@ public interface OutputsLoader {
     }
 
     static DataItemLoader<Library> getDefaultFromUrl(URL url) {
-        return DataItemLoader.getFromUrl(TrainDiagramType.RAW, url, "outputs.yaml", Library.class);
+        return DataItemLoader.getFromUrl(TrainDiagramType.RAW, url, "list.yaml", Library.class);
     }
 }

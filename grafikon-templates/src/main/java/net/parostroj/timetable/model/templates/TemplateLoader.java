@@ -13,6 +13,6 @@ public interface TemplateLoader {
     }
 
     static DataItemLoader<TrainDiagram> getDefaultFromUrl(URL url) {
-        return DataItemLoader.getFromUrl(TrainDiagramType.NORMAL, url, "templates.yaml", TrainDiagram.class);
+        return DataItemLoader.getFromUrl(TrainDiagramType.NORMAL, url, "list.yaml", TrainDiagram.class);
     }
 }

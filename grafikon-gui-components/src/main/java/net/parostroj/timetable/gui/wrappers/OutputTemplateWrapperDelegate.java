@@ -45,7 +45,7 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
             text = getTypeInfo(element) + ": " + text;
         }
         if (addSource && element.getAttribute(OutputTemplate.ATTR_SOURCE, String.class) != null) {
-            text = text + " [" + ResourceLoader.getString("ot." + element.getAttribute(OutputTemplate.ATTR_SOURCE, String.class)) + "]";
+            text = text + " [" + ResourceLoader.getString("ot.source." + element.getAttribute(OutputTemplate.ATTR_SOURCE, String.class)) + "]";
         }
         return text;
     }

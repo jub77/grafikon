@@ -2,14 +2,18 @@ package net.parostroj.timetable.gui;
 
 import de.skuzzle.semantic.Version;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.*;
 
 import javax.swing.UIManager;
 
+import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.templates.DataOutputTemplateStorage;
 import net.parostroj.timetable.model.templates.OutputTemplateStorage;
-import net.parostroj.timetable.model.templates.ResourcesOutputTemplateStorage;
+import net.parostroj.timetable.model.templates.OutputsLoader;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 
@@ -46,6 +50,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private static final String DEBUG_SECTION = "debug";
     private static final String DEBUG_KEY = "debug";
     private static final String LAST_OPENED_KEY = "last.opened";
+    private static final String MODEL_SECTION = "model";
+    private static final String WEB_TEMPLATES_KEY = "web.templates";
 
     private final Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
@@ -96,7 +102,22 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         lookAndFeel = new EnumeratedValuesPM<>(lookAndFeelMap);
         PMManager.setup(this);
         startTime = Instant.now();
-        templateStorage = new ResourcesOutputTemplateStorage();
+        DataOutputTemplateStorage storage = new DataOutputTemplateStorage(OutputsLoader.getDefault(), "embedded");
+        storage = loadWebStorage(storage);
+        storage.loadTemplates();
+        templateStorage = storage;
+    }
+
+    private DataOutputTemplateStorage loadWebStorage(DataOutputTemplateStorage storage) {
+        try {
+            if (AppPreferences.getPreferences().getSection(MODEL_SECTION).get(WEB_TEMPLATES_KEY, Boolean.class, false)) {
+                storage = new DataOutputTemplateStorage(
+                        OutputsLoader.getDefaultFromUrl(URI.create(getLibraryBaseUrl()).toURL()), "web", storage);
+            }
+        } catch (IOException e) {
+            // do nothing - ignore inaccessible preferences
+        }
+        return storage;
     }
 
     private Map<String, String> getLookAndFeelMap() {
@@ -222,9 +243,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     @Override
     public IniConfigSection saveToPreferences(IniConfig prefs) {
-        IniConfigSection section = prefs.getSection("model");
+        IniConfigSection section = prefs.getSection(MODEL_SECTION);
         section.put("user.name", programSettings.getUserName());
         prefs.getSection(DEBUG_SECTION).put(DEBUG_KEY, programSettings.isDebugLogging());
+        section.put(WEB_TEMPLATES_KEY, programSettings.isWebTemplates());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
         section.put("diagram.type", programSettings.getDiagramType().getKey());
@@ -239,9 +261,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     @Override
     public IniConfigSection loadFromPreferences(IniConfig prefs) {
         guiContext.loadFromPreferences(prefs);
-        IniConfigSection section = prefs.getSection("model");
+        IniConfigSection section = prefs.getSection(MODEL_SECTION);
         programSettings.setUserName(section.get("user.name"));
         programSettings.setDebugLogging(prefs.getSection(DEBUG_SECTION).get(DEBUG_KEY, Boolean.class, false));
+        programSettings.setWebTemplates(section.get(WEB_TEMPLATES_KEY, Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);

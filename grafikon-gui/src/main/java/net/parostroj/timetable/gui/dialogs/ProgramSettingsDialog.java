@@ -59,6 +59,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
         BnCheckBox debugLoggingCheckBox = new BnCheckBox();
+        BnCheckBox webTemplatesCheckBox = new BnCheckBox();
 
         setTitle(ResourceLoader.getString("program.settings.title")); // NOI18N
         setResizable(false);
@@ -116,11 +117,21 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraintsLog.insets = new Insets(0, 5, 0, 5);
         dataPanel.add(debugLoggingCheckBox, gridBagConstraintsLog);
 
+        webTemplatesCheckBox.setText(ResourceLoader.getString("program.settings.web.templates"));
+        GridBagConstraints gridBagConstraintTemplates = new java.awt.GridBagConstraints();
+        gridBagConstraintTemplates.gridwidth = 4;
+        gridBagConstraintTemplates.gridx = 0;
+        gridBagConstraintTemplates.gridy = 3;
+        gridBagConstraintTemplates.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraintTemplates.weightx = 1.0;
+        gridBagConstraintTemplates.insets = new Insets(0, 5, 0, 5);
+        dataPanel.add(webTemplatesCheckBox, gridBagConstraintTemplates);
+
         FlowLayout fDiagramTypePanel = new FlowLayout(FlowLayout.LEFT);
         javax.swing.JPanel diagramTypePanel = new javax.swing.JPanel(fDiagramTypePanel);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new Insets(0, 5, 0, 5);
@@ -154,6 +165,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         lengthUnitComboBox.setPath(new Path("length"));
         debugLoggingCheckBox.setModelProvider(provider);
         debugLoggingCheckBox.setPath(new Path("debugLogging"));
+        webTemplatesCheckBox.setModelProvider(provider);
+        webTemplatesCheckBox.setPath(new Path("webTemplates"));
         diagramTypeComboBox.setModelProvider(provider);
         diagramTypeComboBox.setPath(new Path("diagramType"));
         okButton.setModelProvider(provider);

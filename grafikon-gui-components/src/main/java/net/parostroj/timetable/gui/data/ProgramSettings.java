@@ -17,6 +17,7 @@ public class ProgramSettings {
     private SpeedUnit speedLengthUnit;
     private boolean debugLogging;
     private TrainDiagramType diagramType;
+    private boolean webTemplates;
 
     public String getUserName() {
         return userName;
@@ -68,5 +69,13 @@ public class ProgramSettings {
 
     public TrainDiagramType getDiagramType() {
         return diagramType;
+    }
+
+    public boolean isWebTemplates() {
+        return webTemplates;
+    }
+
+    public void setWebTemplates(boolean webTemplates) {
+        this.webTemplates = webTemplates;
     }
 }

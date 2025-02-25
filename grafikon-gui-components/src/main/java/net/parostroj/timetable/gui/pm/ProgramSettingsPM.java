@@ -18,6 +18,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
     final IEnumeratedValuesPM<SpeedUnit> speed;
     final IEnumeratedValuesPM<LengthUnit> length;
     final BooleanPM debugLogging = new BooleanPM();
+    final BooleanPM webTemplates = new BooleanPM();
     final IEnumeratedValuesPM<TrainDiagramType> diagramType;
 
     final OperationPM ok = new OperationPM();
@@ -42,6 +43,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
         user.setText(settings.getUserName());
         debugLogging.setBoolean(settings.isDebugLogging());
         diagramType.setValue(settings.getDiagramType());
+        webTemplates.setBoolean(settings.isWebTemplates());
     }
 
     private void writeResult() {
@@ -52,6 +54,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
             settings.setLengthUnit(length.getValue());
             settings.setDebugLogging(debugLogging.getBoolean());
             settings.setDiagramType(diagramType.getValue());
+            settings.setWebTemplates(webTemplates.getBoolean());
         }
     }
 
