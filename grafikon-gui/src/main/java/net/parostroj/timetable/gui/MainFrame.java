@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 
@@ -46,6 +47,8 @@ import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.model.ls.LSLibraryFactory;
+import net.parostroj.timetable.model.templates.DataOutputTemplateStorage;
+import net.parostroj.timetable.model.templates.OutputsLoader;
 import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.Pair;
@@ -338,7 +341,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        DataItemLoader<TrainDiagram> loader = TemplateLoader.getDefault();
+        DataItemLoader<TrainDiagram> loader = getDiagramTemplateLoader();
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, loader), "new", false, null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
@@ -494,6 +497,23 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
         lafBGroup.setModelProvider(provider);
         lafBGroup.setPath(new Path("lookAndFeel"));
+    }
+
+    private DataItemLoader<TrainDiagram> getDiagramTemplateLoader() {
+        DataItemLoader<TrainDiagram> loader = TemplateLoader.getDefault();
+        try {
+            if (AppPreferences.getPreferences().getSection("model").get("web.templates", Boolean.class, false)) {
+                DataItemLoader<TrainDiagram> urlLoader = TemplateLoader.getDefaultFromUrl(
+                        URI.create(model.getTemplatesBaseUrl()).toURL());
+                urlLoader.loadList();
+                loader = urlLoader;
+            }
+        } catch (IOException e) {
+            // do nothing - ignore inaccessible preferences
+        } catch (LSException e) {
+            log.debug("Error loading template list ({})", e.getMessage());
+        }
+        return loader;
     }
 
     private JCheckBoxMenuItem addCheckMenuItem(JMenu menu, String textKey, ActionListener action, String actionCommand, boolean selected) {
