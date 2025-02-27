@@ -6,10 +6,7 @@ import net.parostroj.timetable.model.TranslatedString;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,6 +98,7 @@ public class SimpleSubstitutedString implements SubstitutedString {
                     case "suffix" -> suffixModule(module);
                     case "if" -> ifModule(module);
                     case "index" -> indexModule(module);
+                    case "translate" -> translateModule(module);
                     default -> binding -> "";
                 };
             } else {
@@ -180,6 +178,33 @@ public class SimpleSubstitutedString implements SubstitutedString {
                     case List<?> list -> toString(index == -1 ? list.getLast() : list.get(index));
                     default -> "";
                 };
+            };
+        }
+
+        private static SubstitutedString translateModule(String[] module) {
+            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
+            Function<Map<String, Object>, Object> localeAccess = processVariableObject(module[2]);
+            String langStr = module[2].startsWith("#") ? module[2].substring(1) : null;
+            return binding -> {
+                Object value = variableAccess.apply(binding);
+                if (value instanceof TranslatedString str) {
+                    String result;
+                    if (langStr != null) {
+                        result = str.translateForTag(langStr);
+                    } else {
+                        Object langObject = localeAccess.apply(binding);
+                        if (langObject instanceof String s) {
+                            result = str.translateForTag(s);
+                        } else if (langObject instanceof Locale l) {
+                            result = str.translate(l);
+                        } else {
+                            result = str.getDefaultString();
+                        }
+                    }
+                    return result;
+                } else {
+                    return "";
+                }
             };
         }
 
