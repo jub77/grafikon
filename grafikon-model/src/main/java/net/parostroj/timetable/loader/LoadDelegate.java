@@ -7,7 +7,8 @@ import net.parostroj.timetable.model.ls.*;
 
 import java.util.zip.ZipInputStream;
 
-interface LoadDelegate<T> {
+@FunctionalInterface
+public interface LoadDelegate<T> {
 
     T load(ZipInputStream is) throws LSException;
 
@@ -23,16 +24,5 @@ interface LoadDelegate<T> {
             LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
             return ls.load(type, is);
         };
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T> LoadDelegate<T> createForClass(TrainDiagramType type, Class<T> clazz) {
-        if (TrainDiagram.class.equals(clazz)) {
-            return (LoadDelegate<T>) createForTrainDiagram(type);
-        } else if (Library.class.equals(clazz)) {
-            return (LoadDelegate<T>) createForLibrary(type);
-        } else {
-            throw new IllegalArgumentException("No load delegate defined for class: " + clazz);
-        }
     }
 }
