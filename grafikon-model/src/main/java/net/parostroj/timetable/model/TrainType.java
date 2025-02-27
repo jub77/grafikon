@@ -21,7 +21,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
             "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}",
             TextTemplate.Language.SIMPLE);
     private static final TextTemplate DEFAULT_TRAIN_COMPLETE_NAME_TEMPLATE = TextTemplate.create(
-            "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix: :train.description}",
+            "${if:train.electric:E}${if:train.diesel:M}${type.abbr} ${train.number}${if:train.optional: pp}${prefix:train.description: }",
             TextTemplate.Language.SIMPLE);
 
     public static final String ATTR_SHOW_WEIGHT_INFO = "weight.info";

@@ -123,25 +123,25 @@ public class SimpleSubstitutedString implements SubstitutedString {
         }
 
         private static SubstitutedString prefixModule(String[] module) {
-            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[2]);
+            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
             return binding -> {
                 Object value = variableAccess.apply(binding);
                 if (value == null || ((value instanceof String valueStr) && valueStr.isBlank())) {
                     return "";
                 } else {
-                    return module[1] + adaptValue(value);
+                    return module[2] + adaptValue(value);
                 }
             };
         }
 
         private static SubstitutedString suffixModule(String[] module) {
-            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[2]);
+            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
             return binding -> {
                 Object value = variableAccess.apply(binding);
                 if (value == null || ((value instanceof String valueStr) && valueStr.isBlank())) {
                     return "";
                 } else {
-                    return adaptValue(value) + module[1];
+                    return adaptValue(value) + module[2];
                 }
             };
         }
