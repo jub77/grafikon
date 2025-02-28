@@ -152,7 +152,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.STATION_GAP_X, 15)
                 .set(Key.TYPE, GTDraw.Type.CLASSIC)
                 .set(Key.VIEW_SIZE, 4)
-                .set(Key.TRAIN_COLORS, GTDraw.TrainColors.BY_TYPE)
                 .set(Key.TRAIN_NAMES, Boolean.TRUE)
                 .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)

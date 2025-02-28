@@ -17,7 +17,6 @@ import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.output2.gt.GTDraw.TrainColors;
 import net.parostroj.timetable.output2.gt.*;
 
 import org.slf4j.Logger;
@@ -37,12 +36,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private transient TCDelegate delegate;
     private String key;
 
-    private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColorChooser, TCDelegate.Listener {
+    private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColors, TCDelegate.Listener {
 
-        private final TrainColorChooser chooserDelegate;
+        private final TrainColors chooserDelegate;
         private final RegionSelector<TimeInterval> selectorDelegate;
 
-        public HighligterAndSelector(TrainColorChooser chooser, RegionSelector<TimeInterval> selector) {
+        public HighligterAndSelector(TrainColors chooser, RegionSelector<TimeInterval> selector) {
             this.chooserDelegate = chooser;
             this.selectorDelegate = selector;
         }
@@ -114,14 +113,13 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
     }
 
-    public void setModel(TCDelegate delegate, TrainColorChooser chooser) {
+    public void setModel(TCDelegate delegate, TrainColors chooser) {
         this.delegate = delegate;
         HighligterAndSelector hts = new HighligterAndSelector(chooser, trainListView);
         GTViewSettings settings = graphicalTimetableView.getSettings();
-        settings.set(GTViewSettings.Key.TRAIN_COLORS, TrainColors.BY_COLOR_CHOOSER);
         graphicalTimetableView.setSettings(settings);
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
-        graphicalTimetableView.setParameter(GTDraw.TRAIN_COLOR_CHOOSER, hts);
+        graphicalTimetableView.setParameter(GTDraw.TRAIN_COLORS, hts);
         delegate.addListener(hts);
         delegate.addListener(this);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);

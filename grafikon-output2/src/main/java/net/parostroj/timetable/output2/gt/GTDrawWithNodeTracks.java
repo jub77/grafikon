@@ -42,7 +42,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     private Map<Track,Integer> trackPositions;
 
     public GTDrawWithNodeTracks(GTDrawSettings config, Route route, TrainRegionCollector collector,
-            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+            Predicate<TimeInterval> intervalFilter, net.parostroj.timetable.output2.gt.TrainColors chooser, HighlightedTrains highlightedTrains) {
         super(config ,route, collector, intervalFilter, chooser, highlightedTrains);
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStrokeCache = new TrainStrokeCache(TRAIN_STROKE_WIDTH, zoom, 10f);
@@ -82,12 +82,11 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
             if (segment instanceof Line) {
                 position = position + ((Line) segment).getLength() * step;
             }
-            if (segment instanceof Node) {
-                Node node = (Node) segment;
+            if (segment instanceof Node node) {
                 stations.add(node);
                 int tracks = node.getTracks().size();
                 positions.put(node, (int)position + (((tracks - 1) * trackGap) / 2));
-                trackPositions.put(node.getTracks().get(0),(int)position);
+                trackPositions.put(node.getTracks().getFirst(), (int)position);
                 for (int i = 1; i < tracks; i++) {
                     position = position + trackGap;
                     trackPositions.put(node.getTracks().get(i), (int)position);

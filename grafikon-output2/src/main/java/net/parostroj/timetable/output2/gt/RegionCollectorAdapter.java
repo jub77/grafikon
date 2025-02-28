@@ -37,14 +37,12 @@ public abstract class RegionCollectorAdapter<T> extends RegionCollector<T> {
         Rectangle rectangle = null;
         for (T item : items) {
             Collection<Shape> shapes = regions.get(item);
-            if (shapes != null) {
-                for (Shape shape : shapes) {
-                    Rectangle bounds = shape.getBounds();
-                    if (rectangle == null) {
-                        rectangle = bounds;
-                    } else {
-                        rectangle = rectangle.union(bounds);
-                    }
+            for (Shape shape : shapes) {
+                Rectangle bounds = shape.getBounds();
+                if (rectangle == null) {
+                    rectangle = bounds;
+                } else {
+                    rectangle = rectangle.union(bounds);
                 }
             }
         }

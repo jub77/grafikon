@@ -4,12 +4,12 @@ import java.awt.Color;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
- * Train color chooser interface - for GTDraw.
+ * Train colors interface - for GTDraw.
  *
  * @author jub
  */
 @FunctionalInterface
-public interface TrainColorChooser {
+public interface TrainColors {
 
-    public Color getIntervalColor(TimeInterval interval);
+    Color getIntervalColor(TimeInterval interval);
 }

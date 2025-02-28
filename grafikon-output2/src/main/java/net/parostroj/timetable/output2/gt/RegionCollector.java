@@ -36,7 +36,7 @@ public abstract class RegionCollector<T> {
 
     public void deselectItems() {
         if (this.selector != null) {
-            this.selectImpl(Collections.<T>emptyList());
+            this.selectImpl(Collections.emptyList());
         }
     }
 

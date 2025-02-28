@@ -16,7 +16,7 @@ import net.parostroj.timetable.output2.gt.GTOrientation;
  */
 public class GTViewSettings {
 
-    public static enum Key {
+    public enum Key {
         ARRIVAL_DEPARTURE_DIGITS(Boolean.class, GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS),
         EXTENDED_LINES(Boolean.class, GTDrawSettings.Key.EXTENDED_LINES),
         TRAIN_NAMES(Boolean.class, GTDrawSettings.Key.TRAIN_NAMES),
@@ -26,7 +26,6 @@ public class GTViewSettings {
         VIEW_SIZE(Integer.class, null),
         STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_NAME_WIDTH),
         TYPE(GTDraw.Type.class, null),
-        TRAIN_COLORS(GTDraw.TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
         IGNORE_TIME_LIMITS(Boolean.class, null),
         DISABLE_STATION_NAMES(Boolean.class, GTDrawSettings.Key.DISABLE_STATION_NAMES),
         ZOOM(Float.class, GTDrawSettings.Key.ZOOM),
@@ -37,10 +36,10 @@ public class GTViewSettings {
         TRAIN_ENDS(Boolean.class, GTDrawSettings.Key.TRAIN_ENDS),
         TYPE_LIST(List.class, null);
 
-        private Class<?> valueClass;
-        private GTDrawSettings.Key drawKey;
+        private final Class<?> valueClass;
+        private final GTDrawSettings.Key drawKey;
 
-        private Key(Class<?> valueClass, GTDrawSettings.Key drawKey) {
+        Key(Class<?> valueClass, GTDrawSettings.Key drawKey) {
             this.valueClass = valueClass;
             this.drawKey = drawKey;
         }
@@ -97,9 +96,7 @@ public class GTViewSettings {
     }
 
     public GTViewSettings merge(GTViewSettings merged) {
-        for (Map.Entry<Key, Object> pair : merged.preferences.entrySet()) {
-            preferences.put(pair.getKey(), pair.getValue());
-        }
+        preferences.putAll(merged.preferences);
         return this;
     }
 
@@ -162,12 +159,13 @@ public class GTViewSettings {
         GTViewSettings settings = new GTViewSettings();
         if (str != null) {
             String[] split = str.split(",");
-            settings.set(Key.TYPE, GTDraw.Type.valueOf(split[0]));
-            settings.set(Key.VIEW_SIZE, Integer.parseInt(split[1]));
-            settings.setOption(Key.TRAIN_NAMES, Boolean.parseBoolean(split[2]));
-            settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]));
-            settings.setOption(Key.EXTENDED_LINES, Boolean.parseBoolean(split[4]));
-            settings.setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
+            settings
+                .set(Key.TYPE, GTDraw.Type.valueOf(split[0]))
+                .set(Key.VIEW_SIZE, Integer.parseInt(split[1]))
+                .setOption(Key.TRAIN_NAMES, Boolean.parseBoolean(split[2]))
+                .setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]))
+                .setOption(Key.EXTENDED_LINES, Boolean.parseBoolean(split[4]))
+                .setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
             if (split.length > 6) {
                 settings.setOption(Key.IGNORE_TIME_LIMITS, Boolean.parseBoolean(split[6]));
             }
@@ -175,8 +173,9 @@ public class GTViewSettings {
                 settings.set(Key.ZOOM, Float.parseFloat(split[7]));
             }
             if (split.length > 8) {
-                settings.setOption(Key.TO_TRAIN_SCROLL, Boolean.parseBoolean(split[8]));
-                settings.setOption(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.parseBoolean(split[9]));
+                settings
+                    .setOption(Key.TO_TRAIN_SCROLL, Boolean.parseBoolean(split[8]))
+                    .setOption(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.parseBoolean(split[9]));
             }
             if (split.length > 10) {
                 settings.set(Key.ORIENTATION, GTOrientation.valueOf(split[10]));

@@ -55,8 +55,7 @@ public abstract class GTDrawBase implements GTDraw {
     protected final float minimalSpace;
     protected final float fontSize;
 
-    private final TrainColors colors;
-    private final TrainColorChooser trainColorChooser;
+    private final TrainColors trainColors;
     private final TrainRegionCollector trainRegionCollector;
 
     protected Point start;
@@ -89,12 +88,13 @@ public abstract class GTDrawBase implements GTDraw {
     private final Map<Node, String> nodeStrings = new HashMap<>();
 
     GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
-            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+            Predicate<TimeInterval> intervalFilter, TrainColors trainColors, HighlightedTrains highlightedTrains) {
         this.locale = config.get(Key.LOCALE, Locale.class);
         this.route = route;
         this.intervalFilter = intervalFilter;
-        this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, TrainColors.class);
-        this.trainColorChooser = chooser;
+        this.trainColors = trainColors != null
+                ? trainColors
+                : interval -> interval.getTrain().getType() != null ? interval.getTrain().getType().getColor() : Color.black;
         this.hTrains = highlightedTrains;
         this.trainRegionCollector = collector;
         this.listeners = new ArrayList<>(1);
@@ -183,8 +183,7 @@ public abstract class GTDrawBase implements GTDraw {
         if (!snWidthFixed) {
             int max = 0;
             for (RouteSegment seg : getRoute().getSegments()) {
-                if (seg instanceof Node) {
-                    Node n = (Node) seg;
+                if (seg instanceof Node n) {
                     String name = TransformUtil.transformStation(n).trim();
                     int nameWidth = DrawUtils.getStringWidth(g, name);
                     int w = (int) (nameWidth + lmSize.getWidth());
@@ -259,14 +258,12 @@ public abstract class GTDrawBase implements GTDraw {
         int y = this.borderY + fi.height;
 
         Object titleObject = config.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
-        String text = null;
-        if (titleObject == null) {
-            text = new RouteStringSupplier(route).get(g, width);
-        } else if (titleObject instanceof LimitedStringSupplier) {
-            text = ((LimitedStringSupplier) titleObject).get(g, width);
-        } else if (titleObject instanceof String) {
-            text = DrawUtils.getStringForWidth(g, (String) titleObject, width);
-        }
+        String text = switch (titleObject) {
+            case null -> new RouteStringSupplier(route).get(g, width);
+            case LimitedStringSupplier limitedStringSupplier -> limitedStringSupplier.get(g, width);
+            case String s -> DrawUtils.getStringForWidth(g, s, width);
+            default -> null;
+        };
         int textWidth = DrawUtils.getStringWidth(g, text);
         int shiftX = (width - textWidth) / 2;
         int shiftY = fi.descent;
@@ -641,14 +638,7 @@ public abstract class GTDrawBase implements GTDraw {
         if (hTrains != null && hTrains.isHighlighedInterval(interval)) {
             return hTrains.getColor(interval);
         }
-        switch (colors) {
-        case BY_TYPE:
-            return interval.getTrain().getType() != null ? interval.getTrain().getType().getColor() : Color.black;
-        case BY_COLOR_CHOOSER:
-            return trainColorChooser.getIntervalColor(interval);
-        default:
-            return Color.black;
-        }
+        return trainColors.getIntervalColor(interval);
     }
 
     protected void addShapeToCollector(TimeInterval interval, Shape shape) {

@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import net.parostroj.timetable.model.TimeInterval;
 
@@ -25,7 +24,6 @@ public class GTDrawSettings {
         BORDER_Y(Float.class),
         SIZE(Dimension.class),
         STATION_NAME_WIDTH(Integer.class),
-        TRAIN_COLORS(GTDraw.TrainColors.class),
         START_TIME(Integer.class),
         END_TIME(Integer.class),
         DISABLE_STATION_NAMES(Boolean.class),
@@ -113,7 +111,6 @@ public class GTDrawSettings {
             .set(Key.BORDER_X, 1.5f)
             .set(Key.BORDER_Y, 1.5f)
             .set(Key.STATION_NAME_WIDTH, 15)
-            .set(Key.TRAIN_COLORS, GTDraw.TrainColors.BY_TYPE)
             .set(Key.TRAIN_NAMES, Boolean.TRUE)
             .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
             .set(Key.EXTENDED_LINES, Boolean.FALSE)
@@ -129,9 +126,7 @@ public class GTDrawSettings {
 
     public static GTDrawSettings copy(GTDrawSettings settings) {
         GTDrawSettings copiedSettings = new GTDrawSettings();
-        for (Entry<Key, Object> entry : settings.preferences.entrySet()) {
-            copiedSettings.preferences.put(entry.getKey(), entry.getValue());
-        }
+        copiedSettings.preferences.putAll(settings.preferences);
         return copiedSettings;
     }
 

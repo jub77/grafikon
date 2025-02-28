@@ -190,7 +190,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private Point getLocation(TimeInterval interval, Line2D line, int dir) {
         Node node = interval.getOwnerAsNode();
         List<NodeTrack> tracks = node.getTracks();
-        NodeTrack track = dir > 0 ? node.getTracks().get(0) : tracks.get(tracks.size() - 1);
+        NodeTrack track = dir > 0 ? node.getTracks().getFirst() : tracks.getLast();
         int y = draw.getY(node, track);
         int x = (int) ((line.getX1() + line.getX2()) / 2);
 

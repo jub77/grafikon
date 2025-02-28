@@ -16,12 +16,8 @@ public interface GTDraw {
         void afterTrainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
     }
 
-    String TRAIN_COLOR_CHOOSER = "gt.chooser";
+    String TRAIN_COLORS = "gt.colors";
     String HIGHLIGHTED_TRAINS = "gt.highlight";
-
-    enum TrainColors {
-        BY_TYPE, BY_COLOR_CHOOSER
-    }
 
     enum Type {
         CLASSIC("classic"), WITH_TRACKS("tracks"), CLASSIC_STATION_STOPS("stops");
@@ -34,15 +30,6 @@ public interface GTDraw {
 
         public String getKey() {
             return key;
-        }
-
-        public static Type fromKey(String key) {
-            for (Type type : values()) {
-                if (type.key.equals(key)) {
-                    return type;
-                }
-            }
-            return null;
         }
     }
 

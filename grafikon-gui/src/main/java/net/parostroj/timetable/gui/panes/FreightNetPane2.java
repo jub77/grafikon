@@ -127,7 +127,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 }
                 if (interval.isFreightFrom()) {
                     List<FreightConnectionPath> cargoDst = strategy.getFreightToNodes(interval);
-                    if (!cargoDst.isEmpty() && result.length() > 0) {
+                    if (!cargoDst.isEmpty() && !result.isEmpty()) {
                         result.append(' ');
                     }
                     result.append(freightUtil.freightListToString(cargoDst, Locale.getDefault()));

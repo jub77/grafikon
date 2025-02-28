@@ -26,7 +26,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     private final int inStationGap;
 
     public GTDrawClassicStationStops(GTDrawSettings config, Route route, TrainRegionCollector collector,
-            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+            Predicate<TimeInterval> intervalFilter, net.parostroj.timetable.output2.gt.TrainColors chooser, HighlightedTrains highlightedTrains) {
         super(config, route, collector, intervalFilter, chooser, highlightedTrains);
         nodeIntervalLists = new HashMap<>();
         locationMap = new HashMap<>();
