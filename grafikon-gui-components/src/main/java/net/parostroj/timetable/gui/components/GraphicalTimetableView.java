@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -65,9 +63,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     public interface GTViewListener {
-        public void routeSelected(Route route);
-        public void diagramChanged(TrainDiagram diagram);
-        public void settingsChanged(GTViewSettings settings);
+        void routeSelected(Route route);
+        void diagramChanged(TrainDiagram diagram);
+        void settingsChanged(GTViewSettings settings);
     }
 
     public interface MouseOverHandler {
@@ -75,21 +73,21 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     private interface ToolTipHelper {
-        public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
-        public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
-        public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        public Collection<String> getFreight(TimeInterval interval);
-        public Map<Train, List<String>> getPassedFreight(TimeInterval interval);
+        Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
+        Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
+        Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
+        Collection<String> getFreight(TimeInterval interval);
+        Map<Train, List<String>> getPassedFreight(TimeInterval interval);
     }
 
-    private List<GTViewListener> listeners;
+    private final List<GTViewListener> listeners;
 
     private TextTemplate toolTipTemplateLine;
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
     private final Map<String, Object> toolTipformattingMap = new HashMap<>();
 
-    private OutputFreightUtil freightUtil = new OutputFreightUtil();
+    private final OutputFreightUtil freightUtil = new OutputFreightUtil();
 
     public GraphicalTimetableView() {
         this.initComponents();
@@ -131,7 +129,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
                     return diagram.getFreightNet().getConnectionStrategy().getFreightPassedInNode(interval).entrySet().stream()
-                            .collect(Collectors.toMap(e -> e.getKey(),
+                            .collect(Collectors.toMap(Map.Entry::getKey,
                                     e -> freightUtil.freightListToString(e.getValue(), Locale.getDefault())));
                 } else {
                     return Collections.emptyMap();
@@ -149,17 +147,13 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         // routes menu
         routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes.select"));
         routesMenu.add(routesMenuItem);
-        routesMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // show list of routes
-                RouteSelectionDialog dialog = new RouteSelectionDialog((Window) GraphicalTimetableView.this.getTopLevelAncestor(), true);
-                dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
-                dialog.setListValues(diagram.getRoutes(), getRoute());
-                dialog.setListener(route -> setRoute(route));
-                dialog.setVisible(true);
-            }
+        routesMenuItem.addActionListener(e -> {
+            // show list of routes
+            RouteSelectionDialog dialog = new RouteSelectionDialog((Window) GraphicalTimetableView.this.getTopLevelAncestor(), true);
+            dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
+            dialog.setListValues(diagram.getRoutes(), getRoute());
+            dialog.setListener(this::setRoute);
+            dialog.setVisible(true);
         });
     }
 
@@ -174,7 +168,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty()) {
-                lastToolTipInterval = intervals.get(0);
+                lastToolTipInterval = intervals.getFirst();
             }
         } else {
             lastToolTipInterval = null;
@@ -199,7 +193,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         // sort routes
         List<Route> routes = new ArrayList<>(routesCollection);
         Collator collator = Collator.getInstance();
-        Collections.sort(routes, (o1, o2) -> collator.compare(o1.toString(), o2.toString()));
+        routes.sort((o1, o2) -> collator.compare(o1.toString(), o2.toString()));
         int i = 0;
         for (Route lRoute : routes) {
             if (i++ >= ROUTE_COUNT) {
@@ -255,9 +249,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     @Override
     public void setTrainDiagram(TrainDiagram diagram) {
         super.setTrainDiagram(diagram);
-        if (diagram == null) {
-            // do nothing
-        } else {
+        if (diagram != null) {
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
         }
@@ -334,7 +326,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         popupMenu.add(preferencesMenu);
 
-        routesMenu.addListener(route -> setRoute(route));
+        routesMenu.addListener(this::setRoute);
 
         javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom"));
         zoomMenuItem.addActionListener(e -> {

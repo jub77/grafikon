@@ -2,7 +2,7 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -38,7 +38,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         popupMenu.add(new JSeparator());
         popupMenu.add(saveMenuItem);
         // action
-        saveMenuItem.addActionListener(e -> saveMenuItemActionPerformed(e));
+        saveMenuItem.addActionListener(this::saveMenuItemActionPerformed);
     }
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -78,12 +78,14 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                         OutputFactory factory = OutputFactory.newInstance("draw");
                         Output output = factory.createOutput("diagram");
 
-                        output.write(output.getAvailableParams().setParam(Output.PARAM_OUTPUT_FILE, dialog.getSaveFile())
-                                .setParam(Output.PARAM_TRAIN_DIAGRAM, diagram).setParam(DrawParams.GT_DRAWS, Arrays.asList(draw))
+                        output.write(output.getAvailableParams()
+                                .setParam(Output.PARAM_OUTPUT_FILE, dialog.getSaveFile())
+                                .setParam(Output.PARAM_TRAIN_DIAGRAM, diagram)
+                                .setParam(DrawParams.GT_DRAWS, List.of(draw))
                                 .setParam(DrawParams.OUTPUT_TYPE,
                                         dialog.getImageType() == SaveImageDialog.Type.PNG ? FileOutputType.PNG : FileOutputType.SVG));
                     } catch (OutputException e) {
-                        log.warn("Error saving file: " + dialog.getSaveFile(), e);
+                        log.warn("Error saving file: {}", dialog.getSaveFile(), e);
                         error = true;
                     }
                 } finally {

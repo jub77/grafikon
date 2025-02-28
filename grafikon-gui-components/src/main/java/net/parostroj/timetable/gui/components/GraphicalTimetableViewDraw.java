@@ -127,10 +127,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                         case REPAINT:
                             repaint();
                             break;
-                        case RECREATE:
-                            recreateDraw();
-                            break;
-                        case RECREATE_WITH_TIME:
+                        case RECREATE, RECREATE_WITH_TIME:
                             recreateDraw();
                             break;
                         default:
@@ -149,7 +146,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     }
 
     protected GTViewSettings getDefaultViewSettings() {
-        GTViewSettings config = (new GTViewSettings())
+        return (new GTViewSettings())
                 .set(Key.BORDER_X, 1.5f)
                 .set(Key.BORDER_Y, 1.5f)
                 .set(Key.STATION_GAP_X, 15)
@@ -167,7 +164,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT)
                 .set(Key.ORIENTATION_MENU, Boolean.TRUE)
                 .set(Key.TRAIN_ENDS, Boolean.TRUE);
-        return config;
     }
 
     protected void routesChanged(Event event) {
@@ -187,8 +183,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     private Route getFirstRoute() {
         Collator collator = Collator.getInstance();
         return diagram.getRoutes().stream()
-                .sorted((o1, o2) -> collator.compare(o1.toString(), o2.toString()))
-                .findFirst()
+                .min((o1, o2) -> collator.compare(o1.toString(), o2.toString()))
                 .orElse(null);
     }
 
@@ -292,15 +287,10 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
         newWidth = (int) (newWidth * ratio);
         int newHeight = newWidth / WIDTH_TO_HEIGHT_RATIO;
-        Dimension newSize = null;
-        switch (config.get(Key.ORIENTATION, GTOrientation.class)) {
-            case LEFT_RIGHT:
-                newSize = new Dimension(newWidth, newHeight);
-                break;
-            case TOP_DOWN:
-                newSize = new Dimension(newHeight, newWidth);
-                break;
-        }
+        Dimension newSize = switch (config.get(Key.ORIENTATION, GTOrientation.class)) {
+            case LEFT_RIGHT -> new Dimension(newWidth, newHeight);
+            case TOP_DOWN -> new Dimension(newHeight, newWidth);
+        };
         if (!newSize.equals(preferredSize)) {
             preferredSize = newSize;
             this.revalidate();
@@ -394,7 +384,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             // draw information about context menu
             g.drawString(ResourceLoader.getString("gt.contextmenu.info"), 20, 20);
         }
-        log.trace("Finished paint in {}ms", Long.toString(System.currentTimeMillis() - time));
+        log.trace("Finished paint in {}ms", System.currentTimeMillis() - time);
     }
 
     public GTDraw getGtDraw() {
@@ -408,8 +398,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     @Override
     public Dimension getPreferredSize() {
         Dimension pSize = new Dimension(preferredSize);
-        if (getParent() instanceof JViewport) {
-            JViewport viewport = (JViewport) getParent();
+        if (getParent() instanceof JViewport viewport) {
             Dimension eSize = viewport.getExtentSize();
             GTOrientation orientation = settings.get(Key.ORIENTATION, GTOrientation.class);
             switch (orientation) {
@@ -437,7 +426,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-        int value = 0;
+        int value;
         if (orientation == SwingConstants.VERTICAL) {
             value = visibleRect.height / 10;
         } else {
@@ -448,7 +437,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-        int value = 0;
+        int value;
         if (orientation == SwingConstants.VERTICAL) {
             value = visibleRect.height;
         } else {
@@ -471,9 +460,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         // only for trains with TimeIntervals handled by TrainRegionCollector...
         if (clazz.equals(TimeInterval.class) && !items.isEmpty()) {
             RegionCollector<T> collector = gtStorage.getCollector(clazz);
-            if (collector instanceof TrainRegionCollector) {
-                TrainRegionCollector trainRegionCollector = (TrainRegionCollector) collector;
-                Train selectedTrain = ((TimeInterval) items.get(0)).getTrain();
+            if (collector instanceof TrainRegionCollector trainRegionCollector) {
+                Train selectedTrain = ((TimeInterval) items.getFirst()).getTrain();
                 if (selectedTrain != null) {
                     if (!trainRegionCollector.containsTrain(selectedTrain) &&
                             settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE)) {
