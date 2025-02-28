@@ -82,8 +82,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                                 .setParam(Output.PARAM_OUTPUT_FILE, dialog.getSaveFile())
                                 .setParam(Output.PARAM_TRAIN_DIAGRAM, diagram)
                                 .setParam(DrawParams.GT_DRAWS, List.of(draw))
-                                .setParam(DrawParams.OUTPUT_TYPE,
-                                        dialog.getImageType() == SaveImageDialog.Type.PNG ? FileOutputType.PNG : FileOutputType.SVG));
+                                .setParam(DrawParams.OUTPUT_TYPE, getOutputType()));
                     } catch (OutputException e) {
                         log.warn("Error saving file: {}", dialog.getSaveFile(), e);
                         error = true;
@@ -92,6 +91,14 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
+            }
+
+            private FileOutputType getOutputType() {
+                return switch (dialog.getImageType()) {
+                    case PNG -> FileOutputType.PNG;
+                    case PDF -> FileOutputType.PDF;
+                    case SVG -> FileOutputType.SVG;
+                };
             }
 
             @Override

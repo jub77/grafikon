@@ -18,15 +18,16 @@ public class SaveImageDialog extends javax.swing.JDialog {
 
     private static final long serialVersionUID = 1L;
 
-	public static enum Type {
-        PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"), SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg");
+	public enum Type {
+        PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"),
+        SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg"),
+        PDF("save.gt.pdf",new FileNameExtensionFilter("PDF", "pdf"),"pdf");
 
-        private String name;
-        private String description;
-        private FileNameExtensionFilter filter;
-        private String extension;
+        private final String name;
+        private final FileNameExtensionFilter filter;
+        private final String extension;
 
-        private Type(String name, FileNameExtensionFilter filter,String extension) {
+        Type(String name, FileNameExtensionFilter filter, String extension) {
             this.name = name;
             this.filter = filter;
             this.extension = extension;
@@ -37,13 +38,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         }
 
         public String getDescription() {
-            if (description == null)
-                this.setDescription();
-            return description;
-        }
-
-        private void setDescription() {
-            description = ResourceLoader.getString(name);
+            return ResourceLoader.getString(name);
         }
 
         public FileNameExtensionFilter getFilter() {
@@ -92,9 +87,6 @@ public class SaveImageDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form SaveGTDialog.
-     *
-     * @param parent
-     * @param modal
      */
     public SaveImageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -109,10 +101,10 @@ public class SaveImageDialog extends javax.swing.JDialog {
     }
 
     private void init() {
-        xTextField.setValue(Integer.valueOf(DEFAULT_WIDTH));
-        yTextField.setValue(Integer.valueOf(DEFAULT_HEIGHT));
+        xTextField.setValue(DEFAULT_WIDTH);
+        yTextField.setValue(DEFAULT_HEIGHT);
 
-        typeComboBox.setModel(new DefaultComboBoxModel<Type>(Type.values()));
+        typeComboBox.setModel(new DefaultComboBoxModel<>(Type.values()));
 
         // preload file chooser
         getFileChooser();
@@ -166,13 +158,13 @@ public class SaveImageDialog extends javax.swing.JDialog {
 
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        buttonsPanel = new javax.swing.JPanel();
-        saveButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
+        javax.swing.JButton saveButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         xTextField = new javax.swing.JFormattedTextField();
         yTextField = new javax.swing.JFormattedTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox<Type>();
+        typeComboBox = new javax.swing.JComboBox<>();
 
         setTitle(ResourceLoader.getString("save.gt.title")); // NOI18N
         setResizable(false);
@@ -193,21 +185,11 @@ public class SaveImageDialog extends javax.swing.JDialog {
         getContentPane().add(jLabel2, gridBagConstraints);
 
         saveButton.setText(ResourceLoader.getString("save.gt.save")); // NOI18N
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
+        saveButton.addActionListener(this::saveButtonActionPerformed);
         buttonsPanel.add(saveButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
         buttonsPanel.add(cancelButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -281,9 +263,6 @@ public class SaveImageDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }
 
-    private javax.swing.JPanel buttonsPanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton saveButton;
     private javax.swing.JComboBox<Type> typeComboBox;
     private javax.swing.JFormattedTextField xTextField;
     private javax.swing.JFormattedTextField yTextField;

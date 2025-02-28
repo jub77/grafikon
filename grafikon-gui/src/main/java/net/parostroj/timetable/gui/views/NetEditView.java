@@ -7,17 +7,11 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.*;
@@ -33,18 +27,18 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.output2.DrawParams;
+import net.parostroj.timetable.output2.Output;
+import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.OutputFactory;
+import net.parostroj.timetable.output2.gt.FileOutputType;
 import net.parostroj.timetable.output2.net.LineToStringBasic;
 import net.parostroj.timetable.output2.net.NetGraphAdapter;
 import net.parostroj.timetable.output2.net.NodeToTextBasic;
 import net.parostroj.timetable.utils.*;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
@@ -139,14 +133,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             if (!objects.isEmpty()) {
                 Object selected = objects.iterator().next();
                 // edit line
-                if (selected instanceof Line) {
-                    Line selectedLine = (Line) selected;
+                if (selected instanceof Line selectedLine) {
                     editLineDialog.setLocationRelativeTo(NetEditView.this);
                     editLineDialog.showDialog(selectedLine, model.getProgramSettings().getLengthUnit());
                 }
                 // edit node
-                if (selected instanceof Node) {
-                    Node selectedNode = (Node) selected;
+                if (selected instanceof Node selectedNode) {
                     editNodeDialog.setLocationRelativeTo(NetEditView.this);
                     editNodeDialog.showDialog(selectedNode,
                             model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()),
@@ -228,8 +220,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             dialog.setSaveSize(new Dimension(graphSize.width + 10, graphSize.height + 10));
             saveDialog.setVisible(true);
 
-            if (!dialog.isSave())
+            if (!dialog.isSave()) {
                 return;
+            }
 
             ActionContext actionContext = new ActionContext(NetEditView.this);
             ModelAction action = new EventDispatchAfterModelAction(actionContext) {
@@ -242,50 +235,31 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     setWaitMessage(ResourceLoader.getString("wait.message.image.save"));
                     long time = System.currentTimeMillis();
                     try {
-                        Dimension saveSize = dialog.getSaveSize();
+                        try {
+                            OutputFactory factory = OutputFactory.newInstance("draw");
+                            Output output = factory.createOutput("net");
 
-                        if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
-                            BufferedImage img = new BufferedImage(saveSize.width, saveSize.height,
-                                    BufferedImage.TYPE_INT_RGB);
-                            Graphics2D g2d = img.createGraphics();
-                            g2d.setColor(Color.white);
-                            g2d.fillRect(0, 0, saveSize.width, saveSize.height);
-
-                            graphComponent.getViewport().getView().paint(g2d);
-
-                            try {
-                                ImageIO.write(img, "png", dialog.getSaveFile());
-                            } catch (Exception e) {
-                                log.warn("Error saving file: " + dialog.getSaveFile(), e);
-                                error = true;
-                            }
-                        } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
-                            DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-
-                            // Create an instance of org.w3c.dom.Document.
-                            String svgNS = "http://www.w3.org/2000/svg";
-                            Document document = domImpl.createDocument(svgNS, "svg", null);
-
-                            SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
-                            SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-
-                            g2d.setSVGCanvasSize(saveSize);
-
-                            graphComponent.getViewport().getView().paint(g2d);
-
-                            // write to ouput - do not use css style
-                            try {
-                                Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), StandardCharsets.UTF_8);
-                                g2d.stream(out, false);
-                            } catch (Exception e) {
-                                log.warn("Error saving file: " + dialog.getSaveFile(), e);
-                                error = true;
-                            }
+                            output.write(output.getAvailableParams()
+                                    .setParam("zoom", graphComponent.getGraph().getView().getScale())
+                                    .setParam(Output.PARAM_OUTPUT_FILE, dialog.getSaveFile())
+                                    .setParam(Output.PARAM_TRAIN_DIAGRAM, model.getDiagram())
+                                    .setParam(DrawParams.OUTPUT_TYPE, getOutputType()));
+                        } catch (OutputException e) {
+                            log.warn("Error saving file: {}", dialog.getSaveFile(), e);
+                            error = true;
                         }
                     } finally {
                         log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
                         setWaitDialogVisible(false);
                     }
+                }
+
+                private FileOutputType getOutputType() {
+                    return switch (dialog.getImageType()) {
+                        case PNG -> FileOutputType.PNG;
+                        case PDF -> FileOutputType.PDF;
+                        case SVG -> FileOutputType.SVG;
+                    };
                 }
 
                 @Override
@@ -389,8 +363,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 switch (event.getType()) {
                     case ADDED:
                     case REMOVED:
-                        if (event.getObject() instanceof Route) {
-                            Route route = (Route) event.getObject();
+                        if (event.getObject() instanceof Route route) {
                             for (RouteSegment seg : route.getSegments()) {
                                 if (seg instanceof Line) {
                                     updateLine((Line) seg);
@@ -742,10 +715,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             @Override
             public Object stop(boolean commit, MouseEvent e) {
                 Object result = super.stop(commit, e);
-                if (commit && result instanceof mxCell && ((mxCell) result).isEdge()) {
+                if (commit && result instanceof mxCell cell && cell.isEdge()) {
                     // remove the added cell for edge and create new line,
                     // creating new edge by callback
-                    mxCell cell = (mxCell) result;
                     Node srcNode = (Node) cell.getSource().getValue();
                     Node dstNode = (Node) cell.getTarget().getValue();
                     TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
@@ -767,7 +739,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             private void addToConnector(Node srcNode, TrainDiagramPartFactory factory,
                     LineTrack track, Node.Side side, String name) {
                 Optional<TrackConnector> connWithoutLineTrack = srcNode.getConnectors()
-                        .find(c -> !c.getLineTrack().isPresent());
+                        .find(c -> c.getLineTrack().isEmpty());
                 connWithoutLineTrack.orElseGet(() -> {
                     TrackConnector connector = factory.createDefaultConnector(
                             IdGenerator.getInstance().getId(), srcNode, name, side,
@@ -801,9 +773,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             if (cells != null) {
                 for (Object cell : cells) {
                     mxCell mxCell = (mxCell) cell;
-                    if (mxCell.getValue() instanceof Node) {
-                        Node node = (Node) mxCell.getValue();
-
+                    if (mxCell.getValue() instanceof Node node) {
                         int x = (int) (mxCell.getGeometry().getX());
                         int y = (int) (mxCell.getGeometry().getY());
 
