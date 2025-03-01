@@ -7,18 +7,7 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
-public class IntervalSelectionMessage {
-
-    private final TimeInterval interval;
-
-    public IntervalSelectionMessage(TimeInterval interval) {
-        this.interval = interval;
-    }
-
-    public TimeInterval getInterval() {
-        return interval;
-    }
-
+public record IntervalSelectionMessage(TimeInterval interval) {
     @Override
     public String toString() {
         return interval != null ?

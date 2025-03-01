@@ -10,11 +10,11 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.EventProcessing;
 import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
  * Class for collecting regions of the trains from graphical timetable.
@@ -101,15 +101,13 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
         Rectangle result = null;
         for (Train train : uniqueTrains) {
             Collection<Pair<Shape, TimeInterval>> shapes = regions.get(train);
-            if (shapes != null) {
-                for (Pair<Shape, TimeInterval> pair : shapes) {
-                    Shape shape = pair.first;
-                    Rectangle bounds = shape.getBounds();
-                    if (result == null) {
-                        result = bounds;
-                    } else {
-                        result = result.union(bounds);
-                    }
+            for (Pair<Shape, TimeInterval> pair : shapes) {
+                Shape shape = pair.first;
+                Rectangle bounds = shape.getBounds();
+                if (result == null) {
+                    result = bounds;
+                } else {
+                    result = result.union(bounds);
                 }
             }
         }
@@ -122,7 +120,7 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
     @Override
     public void processEvent(Event event) {
-        AbstractEventVisitor visitor = new AbstractEventVisitor() {
+        EventVisitor visitor = new EventVisitor() {
             @Override
             public void visitDiagramEvent(Event event) {
                 switch (event.getType()) {

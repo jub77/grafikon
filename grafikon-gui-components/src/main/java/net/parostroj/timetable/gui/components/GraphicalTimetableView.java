@@ -73,11 +73,11 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     private interface ToolTipHelper {
-        Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
-        Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
-        Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
-        Collection<String> getFreight(TimeInterval interval);
-        Map<Train, List<String>> getPassedFreight(TimeInterval interval);
+        default Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval) { return List.of(); }
+        default Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) { return List.of(); }
+        default Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval) { return List.of(); }
+        default Collection<String> getFreight(TimeInterval interval) { return List.of(); }
+        default Map<Train, List<String>> getPassedFreight(TimeInterval interval) { return Map.of(); }
     }
 
     private final List<GTViewListener> listeners;

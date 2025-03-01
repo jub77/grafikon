@@ -21,6 +21,7 @@ import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.visitors.EventVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,6 @@ import net.parostroj.timetable.output2.gt.RegionCollectorAdapter;
 import net.parostroj.timetable.output2.gt.RegionSelector;
 import net.parostroj.timetable.output2.gt.SelectorUtils;
 import net.parostroj.timetable.utils.Tuple;
-import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
@@ -267,22 +267,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory());
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.HIGHLIGHT_KEY, selector);
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.FREIGHT_KEY, new FreightDataImpl());
-        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<>() {
-            @Override
-            public void processEvent(Event event) {
-                AbstractEventVisitor visitor = new AbstractEventVisitor() {
-                    @Override
-                    public void visitFreightNetEvent(Event event) {
-                        if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
-                                getSelector().getSelected().contains((FNConnection) event.getObject())) {
-                            getSelector().regionsSelected(Collections.emptyList());
-                        }
-                    }
-                };
-                EventProcessing.visit(event, visitor);
-            }
-        };
-        collector.setSelector(selector);
+        RegionCollectorAdapter<FNConnection> collector = createFnConnectionCollector();
         graphicalTimetableView.addRegionCollector(FNConnection.class, collector);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
         // change cursor to hand if the stop interval can be selected
@@ -379,6 +364,27 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         editTypeComboBox.setSelectedItem(Wrapper.getWrapper(EditType.CONNECTIONS));
 
         infoTextField.setColumns(35);
+    }
+
+    private RegionCollectorAdapter<FNConnection> createFnConnectionCollector() {
+        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<>() {
+            private final EventVisitor visitor = new EventVisitor() {
+                @Override
+                public void visitFreightNetEvent(Event event) {
+                    if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
+                            getSelector().getSelected().contains((FNConnection) event.getObject())) {
+                        getSelector().regionsSelected(Collections.emptyList());
+                    }
+                }
+            };
+
+            @Override
+            public void processEvent(Event event) {
+                EventProcessing.visit(event, visitor);
+            }
+        };
+        collector.setSelector(selector);
+        return collector;
     }
 
     private void configureEditTypeComboBox() {

@@ -9,11 +9,11 @@ import net.parostroj.timetable.model.*;
  */
 public interface TrainDiagramTraversalVisitor extends TrainDiagramVisitor {
 
-    void visitAfter(TrainDiagram diagram);
+    default void visitAfter(TrainDiagram diagram) {}
 
-    void visitAfter(Net net);
+    default void visitAfter(Net net) {}
 
-    void visitAfter(Node node);
+    default void visitAfter(Node node) {}
 
-    void visitAfter(Line line);
+    default void visitAfter(Line line) {}
 }

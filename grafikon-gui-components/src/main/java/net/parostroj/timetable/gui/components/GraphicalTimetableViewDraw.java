@@ -21,8 +21,8 @@ import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.output2.gt.GTDraw.Refresh;
 import net.parostroj.timetable.utils.Tuple;
-import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
+import net.parostroj.timetable.visitors.EventVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +94,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             this.setRoute(null);
         } else {
             this.diagram = diagram;
-            this.currentListener = new VisitEventListener(new AbstractEventVisitor() {
+            this.currentListener = new VisitEventListener(new EventVisitor() {
 
                 @Override
                 public void visitDiagramEvent(Event event) {

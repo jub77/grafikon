@@ -124,8 +124,8 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.model.addListener(this);
         model.getMediator().addColleague(message -> {
             IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
-            if (ism.getInterval() != null) {
-                TimeInterval interval = ism.getInterval();
+            if (ism.interval() != null) {
+                TimeInterval interval = ism.interval();
                 Train trainForInterval = interval.getTrain();
                 if (trainForInterval.getTimeIntervalBefore() == interval) {
                     interval = trainForInterval.getFirstInterval();

@@ -759,16 +759,12 @@ public abstract class GTDrawBase implements GTDraw {
 
             @Override
             public void visitNodeEvent(Event event) {
-                switch (event.getType()) {
-                case ATTRIBUTE:
+                if (Objects.requireNonNull(event.getType()) == Event.Type.ATTRIBUTE) {
                     if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
                         stringBounds.remove(((Node) event.getSource()).getName());
-                        nodeStrings.remove(event.getSource());
+                        nodeStrings.remove((Node) event.getSource());
                         setRefresh(Refresh.REPAINT);
                     }
-                    break;
-                default:
-                    break;
                 }
             }
 
@@ -794,16 +790,12 @@ public abstract class GTDrawBase implements GTDraw {
 
             @Override
             public void visitTrainTypeEvent(Event event) {
-                switch (event.getType()) {
-                case ATTRIBUTE:
+                if (Objects.requireNonNull(event.getType()) == Event.Type.ATTRIBUTE) {
                     if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR, TrainType.ATTR_LINE_TYPE,
                             TrainType.ATTR_LINE_WIDTH, TrainType.ATTR_LINE_LENGTH)) {
                         getTrainStrokeCache().clear();
                         setRefresh(Refresh.REPAINT);
                     }
-                    break;
-                default:
-                    break;
                 }
             }
         };

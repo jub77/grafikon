@@ -61,12 +61,11 @@ public class NetItemInfo implements NetSelectionListener {
     }
 
     private void updateItemImpl(Object item) {
-        if (item == null) {
-            text.setText(null);
-        } else if (item instanceof Node) {
-            this.setTextImpl(this.createText((Node) item));
-        } else if (item instanceof Line) {
-            this.setTextImpl(this.createText((Line) item));
+        switch (item) {
+            case null -> text.setText(null);
+            case Node timeIntervals -> this.setTextImpl(this.createText(timeIntervals));
+            case Line timeIntervals -> this.setTextImpl(this.createText(timeIntervals));
+            default -> {}
         }
     }
 

@@ -9,47 +9,47 @@ import net.parostroj.timetable.model.*;
  */
 public interface TrainDiagramVisitor {
 
-    void visit(TrainDiagram diagram);
+    default void visit(TrainDiagram diagram) {}
 
-    void visit(Net net);
+    default void visit(Net net) {}
 
-    void visit(Train train);
+    default void visit(Train train) {}
 
-    void visit(Node node);
+    default void visit(Node node) {}
 
-    void visit(Line line);
+    default void visit(Line line) {}
 
-    void visit(LineTrack track);
+    default void visit(LineTrack track) {}
 
-    void visit(NodeTrack track);
+    default void visit(NodeTrack track) {}
 
-    void visit(TrainType type);
+    default void visit(TrainType type) {}
 
-    void visit(Route route);
+    default void visit(Route route) {}
 
-    void visit(EngineClass engineClass);
+    default void visit(EngineClass engineClass) {}
 
-    void visit(TrainsCycle cycle);
+    default void visit(TrainsCycle cycle) {}
 
-    void visit(TextItem item);
+    default void visit(TextItem item) {}
 
-    void visit(TimetableImage image);
+    default void visit(TimetableImage image) {}
 
-    void visit(LineClass lineClass);
+    default void visit(LineClass lineClass) {}
 
-    void visit(OutputTemplate template);
+    default void visit(OutputTemplate template) {}
 
-    void visit(TrainsCycleType type);
+    default void visit(TrainsCycleType type) {}
 
-    void visit(Group group);
+    default void visit(Group group) {}
 
-    void visit(FreightNet net);
+    default void visit(FreightNet net) {}
 
-    void visit(Region region);
+    default void visit(Region region) {}
 
-    void visit(Company company);
+    default void visit(Company company) {}
 
-    void visit(Output output);
+    default void visit(Output output) {}
 
-    void visit(TrackConnector connector);
+    default void visit(TrackConnector connector) {}
 }
