@@ -253,7 +253,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final transient AtomicReference<HighlightSelection> intervalSelector = new AtomicReference<>();
     private transient EditType editType = EditType.CONNECTIONS;
 
-    public FreightNetPane2() {
+    public FreightNetPane2(ApplicationModel appModel) {
         setLayout(new BorderLayout());
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
         graphicalTimetableView
@@ -286,7 +286,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
         newButton.addActionListener(e -> {
-            FreightNet fn = model.getDiagram().getFreightNet();
+            FreightNet fn = appModel.getDiagram().getFreightNet();
             FNConnection newOrExistingCconnection = fn.getConnection(connection.first, connection.second);
             if (newOrExistingCconnection == null) {
                 newOrExistingCconnection =  fn.addConnection(connection.first, connection.second);
@@ -303,7 +303,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         deleteButton.addActionListener(e -> {
             FNConnection toBeDeleted = selector.getSelectedConnection();
             selector.setSelected(null);
-            model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
+            appModel.getDiagram().getFreightNet().removeConnection(toBeDeleted);
         });
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         editButton.setEnabled(false);
@@ -311,7 +311,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             EditFNConnetionDialog dialog = new EditFNConnetionDialog(
                     GuiComponentUtils.getWindow(FreightNetPane2.this),
                     true);
-            dialog.edit(FreightNetPane2.this, selector.selected, model.getDiagram());
+            dialog.edit(FreightNetPane2.this, selector.selected, appModel.getDiagram());
         });
 
         upButton = GuiComponentUtils.createButton(GuiIcon.ARROW_UP, 2);
@@ -364,6 +364,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         editTypeComboBox.setSelectedItem(Wrapper.getWrapper(EditType.CONNECTIONS));
 
         infoTextField.setColumns(35);
+        this.initModel(appModel);
     }
 
     private RegionCollectorAdapter<FNConnection> createFnConnectionCollector() {
@@ -470,7 +471,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 converter.convertIntToText(first ? interval.getStart() : interval.getEnd()));
     }
 
-    public void setModel(ApplicationModel model) {
+    private void initModel(ApplicationModel model) {
         this.model = model;
         HighlightSelection hts = new HighlightSelection();
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);

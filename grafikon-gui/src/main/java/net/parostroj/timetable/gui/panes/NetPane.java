@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.BorderLayout;
 
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.views.NetEditView;
 
 /**
  * Net editing pane.
@@ -19,19 +20,9 @@ public class NetPane extends javax.swing.JPanel {
     private static final long serialVersionUID = 1L;
 
 	/** Creates new form NetPane */
-    public NetPane() {
-        initComponents();
-    }
-
-    public void setModel(ApplicationModel model) {
-        netEditView.setModel(model);
-    }
-
-    private void initComponents() {
-        netEditView = new net.parostroj.timetable.gui.views.NetEditView();
+    public NetPane(ApplicationModel model) {
+        NetEditView netEditView = new NetEditView(model);
         this.setLayout(new BorderLayout());
         this.add(netEditView);
     }
-
-    private net.parostroj.timetable.gui.views.NetEditView netEditView;
 }

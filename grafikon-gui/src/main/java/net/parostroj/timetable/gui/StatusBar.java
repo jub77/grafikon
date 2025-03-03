@@ -41,16 +41,17 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     private final transient DateTimeFormatter format = DateTimeFormat.mediumDateTime();
 
     /** Creates new form StatusBar */
-    public StatusBar() {
+    public StatusBar(ApplicationModel model) {
         initComponents();
         updateLeft("");
         updateCenter("");
         updateRight("");
         timer = new Timer(TIMEOUT, e -> updateCenter(""));
         timer.setRepeats(false);
+        this.initModel(model);
     }
 
-    public void setModel(ApplicationModel model) {
+    private void initModel(ApplicationModel model) {
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
 
             private final TrackedCheckVisitor tcv = new TrackedCheckVisitor();

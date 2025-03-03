@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.util.*;
 
 import java.util.List;
+import java.util.function.Function;
 import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
@@ -47,10 +48,9 @@ import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.model.ls.LSLibraryFactory;
-import net.parostroj.timetable.model.templates.DataOutputTemplateStorage;
-import net.parostroj.timetable.model.templates.OutputsLoader;
 import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
+import net.parostroj.timetable.output2.gt.TrainColors;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -157,38 +157,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addWindowListener(new MainFrameWindowListener(model, this));
 
-        trainsPane.setModel(model);
-        engineCyclesPane.setModel(new EngineCycleDelegate(model), interval -> {
-            TrainsCycleType type = interval.getTrain().getDiagram().getEngineCycleType();
-            if (!interval.getTrain().isCovered(type, interval)) {
-                return Color.black;
-            } else {
-                return Color.gray;
-            }
-        });
-        trainUnitCyclesPane.setModel(new TrainUnitCycleDelegate(model), interval -> {
-            TrainsCycleType type = interval.getTrain().getDiagram().getTrainUnitCycleType();
-            if (!interval.getTrain().isCovered(type, interval)) {
-                return Color.black;
-            } else {
-                return Color.gray;
-            }
-        });
-        driverCyclesPane.setModel(new DriverCycleDelegate(model), interval -> {
-            TrainsCycleType type = interval.getTrain().getDiagram().getDriverCycleType();
-            if (!interval.getTrain().isCovered(type, interval)) {
-                return Color.black;
-            } else {
-                return Color.gray;
-            }
-        });
-        circulationPane.setModel(model);
-        freightNetPane2.setModel(model);
-
         model.addListener(this);
         model.addListener(statusBar);
-
-        netPane.setModel(model);
 
         this.updateView();
 
@@ -210,8 +180,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActions()) {
             addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX, scriptsMenuGui);
         }
-
-        statusBar.setModel(model);
     }
 
     private void addScriptAction(ScriptAction sd, String type, JMenu sMenu) {
@@ -298,14 +266,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void initComponents() {
         javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
-        trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
-        engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
-        trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
-        driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
-        netPane = new net.parostroj.timetable.gui.panes.NetPane();
-        circulationPane = new net.parostroj.timetable.gui.panes.CirculationPane();
-        freightNetPane2 = new net.parostroj.timetable.gui.panes.FreightNetPane2();
-        statusBar = new net.parostroj.timetable.gui.StatusBar();
+        trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane(model);
+        engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
+                new EngineCycleDelegate(model),
+                trainColorsforType(TrainDiagram::getEngineCycleType));
+        trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
+                new TrainUnitCycleDelegate(model),
+                trainColorsforType(TrainDiagram::getTrainUnitCycleType));
+        driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
+                new DriverCycleDelegate(model),
+                trainColorsforType(TrainDiagram::getDriverCycleType));
+        netPane = new net.parostroj.timetable.gui.panes.NetPane(model);
+        circulationPane = new net.parostroj.timetable.gui.panes.CirculationPane(model);
+        freightNetPane2 = new net.parostroj.timetable.gui.panes.FreightNetPane2(model);
+        statusBar = new net.parostroj.timetable.gui.StatusBar(model);
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         javax.swing.JMenu languageMenu = new javax.swing.JMenu();
@@ -497,6 +471,17 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
         lafBGroup.setModelProvider(provider);
         lafBGroup.setPath(new Path("lookAndFeel"));
+    }
+
+    private TrainColors trainColorsforType(Function<TrainDiagram, TrainsCycleType> typeGetter) {
+        return interval -> {
+            TrainsCycleType type = typeGetter.apply(interval.getTrain().getDiagram());
+            if (!interval.getTrain().isCovered(type, interval)) {
+                return Color.black;
+            } else {
+                return Color.gray;
+            }
+        };
     }
 
     private DataItemLoader<TrainDiagram> getDiagramTemplateLoader() {

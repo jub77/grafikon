@@ -40,11 +40,51 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
 	private transient TrainsCycleType type;
     private transient TrainDiagram diagram;
-    private transient TCDelegate delegate;
+    private final transient TCDelegate delegate;
 
     /** Creates new form CirculationView */
-    public CirculationPane() {
+    public CirculationPane(ApplicationModel model) {
+        this.delegate = new TCDelegate(model) {
+
+            private TCDetailsViewDialog editDialog;
+
+            @Override
+            public void showEditDialog(JComponent component) {
+                if (editDialog == null) {
+                    editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
+                }
+                editDialog.setLocationRelativeTo(component);
+                editDialog.updateValues(this, diagram);
+                editDialog.setVisible(true);
+            }
+
+            @Override
+            public TrainsCycleType getType() {
+                return type;
+            }
+
+            @Override
+            public void handleEvent(Action action, TrainsCycle cycle, Train train) {
+                if (action == Action.DIAGRAM_CHANGE) {
+                    diagram = delegate.getTrainDiagram();
+                    updateTypes();
+                    this.fireEvent(Action.REFRESH, null);
+                }
+            }
+        };
         initComponents();
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
+            @Override
+            public void processTrainDiagramEvent(Event event) {
+                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof TrainsCycleType) {
+                    Wrapper<TrainsCycleType> wrapper = new Wrapper<>((TrainsCycleType) event.getObject());
+                    typesComboBox.addItem(wrapper);
+                    typesComboBox.setSelectedItem(wrapper);
+                } else if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof TrainsCycleType) {
+                    typesComboBox.removeItem(new Wrapper<>((TrainsCycleType) event.getObject()));
+                }
+            }
+        });
         createButton.setEnabled(false);
     }
 
@@ -55,7 +95,14 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        trainsCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
+        trainsCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(this.delegate,
+                interval -> {
+                    if (!interval.getTrain().isCovered(type, interval)) {
+                        return Color.black;
+                    } else {
+                        return Color.gray;
+                    }
+                });
         trainsCyclesPane.setKey("cycles.custom");
 
         setLayout(new java.awt.BorderLayout());
@@ -136,56 +183,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         }
         deleteButton.setEnabled(type != null);
         editButton.setEnabled(type != null);
-    }
-
-    public void setModel(ApplicationModel model) {
-        this.delegate = new TCDelegate(model) {
-
-            private TCDetailsViewDialog editDialog;
-
-            @Override
-            public void showEditDialog(JComponent component) {
-                if (editDialog == null) {
-                    editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
-                }
-                editDialog.setLocationRelativeTo(component);
-                editDialog.updateValues(this, diagram);
-                editDialog.setVisible(true);
-            }
-
-            @Override
-            public TrainsCycleType getType() {
-                return type;
-            }
-
-            @Override
-            public void handleEvent(Action action, TrainsCycle cycle, Train train) {
-                if (action == Action.DIAGRAM_CHANGE) {
-                    diagram = delegate.getTrainDiagram();
-                    updateTypes();
-                    this.fireEvent(Action.REFRESH, null);
-                }
-            }
-        };
-        trainsCyclesPane.setModel(this.delegate, interval -> {
-            if (!interval.getTrain().isCovered(type, interval)) {
-                return Color.black;
-            } else {
-                return Color.gray;
-            }
-        });
-        model.getMediator().addColleague(new GTEventsReceiverColleague() {
-            @Override
-            public void processTrainDiagramEvent(Event event) {
-                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof TrainsCycleType) {
-                    Wrapper<TrainsCycleType> wrapper = new Wrapper<>((TrainsCycleType) event.getObject());
-                    typesComboBox.addItem(wrapper);
-                    typesComboBox.setSelectedItem(wrapper);
-                } else if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof TrainsCycleType) {
-                    typesComboBox.removeItem(new Wrapper<>((TrainsCycleType) event.getObject()));
-                }
-            }
-        });
     }
 
     private void updateTypes() {

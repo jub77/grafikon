@@ -317,8 +317,7 @@ public class FloatingWindowsFactory {
     }
 
     private static FloatingWindow createNetView(Frame frame, ApplicationModel model) {
-        NetEditView netEditView = new NetEditView();
-        netEditView.setModel(model);
+        NetEditView netEditView = new NetEditView(model);
         return new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view");
     }
 

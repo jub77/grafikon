@@ -282,7 +282,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     /** Creates new form NetEditView */
-    public NetEditView() {
+    public NetEditView(ApplicationModel model) {
         newNodeAction = new NewNodeAction();
         editAction = new EditAction();
         editAction.setEnabled(false);
@@ -313,6 +313,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         initComponents();
         initializeListeners();
+        initModel(model);
     }
 
     private void initializeListeners() {
@@ -333,7 +334,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
      * @param model
      *            model to be set
      */
-    public void setModel(ApplicationModel model) {
+    private void initModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
         updateActions(model);
@@ -410,8 +411,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
             @Override
             public void processNetEvent(Event event) {
-                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof Node) {
-                    Node node = (Node) event.getObject();
+                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof Node node) {
                     updateNodeLocation(node);
                 }
             }

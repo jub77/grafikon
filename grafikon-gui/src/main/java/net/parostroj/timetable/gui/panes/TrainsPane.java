@@ -33,9 +33,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
 	private static final Logger log = LoggerFactory.getLogger(TrainsPane.class);
 
-    /** Creates new form TrainsPane */
-    public TrainsPane() {
-        initComponents();
+    public TrainsPane(ApplicationModel model) {
+        initComponents(model);
     }
 
     public void resizeColumns() {
@@ -44,19 +43,6 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
     public void sortColumns() {
         trainView.sortColumns();
-    }
-
-    /**
-     * sets model.
-     *
-     * @param model application model
-     */
-    public void setModel(final ApplicationModel model) {
-        trainListView.setModel(model);
-        trainView.setModel(model);
-        NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
-        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
-        graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
     }
 
     @Override
@@ -114,13 +100,16 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         trainView.editColumns();
     }
 
-    private void initComponents() {
+    private void initComponents(ApplicationModel model) {
         splitPane = new javax.swing.JSplitPane();
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
+        NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
+        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
+        graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
         trainsSplitPane = new javax.swing.JSplitPane();
-        trainListView = new net.parostroj.timetable.gui.views.TrainListView();
-        trainView = new net.parostroj.timetable.gui.views.TrainView();
+        trainListView = new net.parostroj.timetable.gui.views.TrainListView(model);
+        trainView = new net.parostroj.timetable.gui.views.TrainView(model);
 
         splitPane.setDividerLocation(350);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);

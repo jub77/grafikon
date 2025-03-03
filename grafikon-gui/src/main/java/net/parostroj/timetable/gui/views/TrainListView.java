@@ -102,7 +102,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     /**
      * Creates new form TrainListView.
      */
-    public TrainListView() {
+    public TrainListView(ApplicationModel model) {
         setLayout(new BorderLayout(0, 0));
 
         treePopupMenu = new javax.swing.JPopupMenu();
@@ -226,6 +226,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 }
             }
         });
+        this.initModel(model);
     }
 
     private EditTrainDialog getEditTrainDialog() {
@@ -305,7 +306,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         groupsMenu.getItem(0).setSelected(true);
     }
 
-    public void setModel(final ApplicationModel model) {
+    private void initModel(final ApplicationModel model) {
         this.model = model;
         javax.swing.JMenuItem groupsMenuItem = new javax.swing.JMenuItem();
         groupsMenuItem.setAction(new EditGroupsAction(model));

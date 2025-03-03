@@ -66,9 +66,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     /**
      * Creates new form TrainView.
      */
-    public TrainView() {
+    public TrainView(ApplicationModel model) {
         initComponents();
         columns = new TrainViewColumns(trainTable);
+        this.initModel(model);
     }
 
     public void editColumns() {
@@ -118,7 +119,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         }
     }
 
-    public void setModel(final ApplicationModel model) {
+    private void initModel(final ApplicationModel model) {
         this.model = model;
         this.updateView(model.getSelectedTrain());
         this.model.addListener(this);
@@ -229,7 +230,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private String getConflicts(TimeInterval interval) {
         StringBuilder builder = new StringBuilder();
         for (TimeInterval overlap : interval.getOverlappingIntervals()) {
-            if (builder.length() != 0) {
+            if (!builder.isEmpty()) {
                 builder.append(", ");
             }
             builder.append(overlap.getTrain().getDefaultName());

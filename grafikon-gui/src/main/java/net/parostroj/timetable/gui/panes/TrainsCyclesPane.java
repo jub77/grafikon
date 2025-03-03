@@ -33,7 +33,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
 	private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
 
-    private transient TCDelegate delegate;
+    private final transient TCDelegate delegate;
     private String key;
 
     private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColors, TCDelegate.Listener {
@@ -99,23 +99,13 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     }
 
     /** Creates new form TrainsCyclesPane */
-    public TrainsCyclesPane() {
+    public TrainsCyclesPane(TCDelegate delegate, TrainColors trainColors) {
         initComponents();
         graphicalTimetableView = new GraphicalTimetableViewWithSave();
         GTLayeredPane scrollPane = new GTLayeredPane(graphicalTimetableView);
         splitPane.setBottomComponent(scrollPane);
-    }
-
-    @Override
-    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
-        if (action == Action.DIAGRAM_CHANGE) {
-            graphicalTimetableView.setTrainDiagram(delegate.getTrainDiagram());
-        }
-    }
-
-    public void setModel(TCDelegate delegate, TrainColors chooser) {
         this.delegate = delegate;
-        HighligterAndSelector hts = new HighligterAndSelector(chooser, trainListView);
+        HighligterAndSelector hts = new HighligterAndSelector(trainColors, trainListView);
         GTViewSettings settings = graphicalTimetableView.getSettings();
         graphicalTimetableView.setSettings(settings);
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
@@ -126,6 +116,13 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         trainListView.setModel(delegate);
         listView.setModel(delegate);
         detailsView.setModel(delegate);
+    }
+
+    @Override
+    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+        if (action == Action.DIAGRAM_CHANGE) {
+            graphicalTimetableView.setTrainDiagram(delegate.getTrainDiagram());
+        }
     }
 
     public void setKey(String key) {
