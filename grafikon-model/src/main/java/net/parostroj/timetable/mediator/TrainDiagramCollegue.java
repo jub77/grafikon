@@ -8,14 +8,13 @@ import net.parostroj.timetable.model.events.*;
  *
  * @author jub
  */
-public class TrainDiagramCollegue extends AbstractColleague implements Listener {
+public class TrainDiagramCollegue implements Listener, Colleague {
 
+    private final Mediator mediator;
     private TrainDiagram diagram;
 
-    public TrainDiagramCollegue() {}
-
-    public TrainDiagramCollegue(TrainDiagram diagram) {
-        this.setTrainDiagram(diagram);
+    public TrainDiagramCollegue(Mediator mediator) {
+        this.mediator = mediator;
     }
 
     public void setTrainDiagram(TrainDiagram diagram) {
@@ -37,6 +36,6 @@ public class TrainDiagramCollegue extends AbstractColleague implements Listener 
     @Override
     public void changed(Event event) {
         // process and distribute all events
-        this.sendMessage(event);
+        mediator.sendMessage(event);
     }
 }

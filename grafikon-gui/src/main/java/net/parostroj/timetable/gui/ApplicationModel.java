@@ -87,9 +87,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         languageLoader = LanguageLoader.getInstance();
         listeners = new HashSet<>();
         mediator = new Mediator();
-        collegue = new TrainDiagramCollegue();
+        collegue = new TrainDiagramCollegue(mediator);
         mediator.addColleague(collegue);
-        mediator.addColleague(new ApplicationModelColleague(this));
+        mediator.addColleague(new ApplicationModelColleague(this, mediator));
         programSettings = new ProgramSettings();
         outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<>();

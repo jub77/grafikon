@@ -12,7 +12,6 @@ import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.NetEditView;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.mediator.AbstractColleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
@@ -241,15 +240,11 @@ public class FloatingWindowsFactory {
             }
         };
 
-        mediator.addColleague(new AbstractColleague() {
-
-            @Override
-            public void receiveMessage(Object message) {
-                // do not process messages when the dialog is not visible ...
-                if (!dialog.isVisible())
-                    return;
-                panel.addEvent(message);
-            }
+        mediator.addColleague(message -> {
+            // do not process messages when the dialog is not visible ...
+            if (!dialog.isVisible())
+                return;
+            panel.addEvent(message);
         });
         return dialog;
     }

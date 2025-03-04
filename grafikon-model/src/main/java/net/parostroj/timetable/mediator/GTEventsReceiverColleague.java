@@ -8,7 +8,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
  *
  * @author jub
  */
-public class GTEventsReceiverColleague extends AbstractColleague {
+public class GTEventsReceiverColleague implements Colleague {
 
     private final EventVisitor visitor;
 

@@ -1,19 +1,22 @@
 package net.parostroj.timetable.gui;
 
-import net.parostroj.timetable.mediator.AbstractColleague;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.mediator.Colleague;
+import net.parostroj.timetable.mediator.Mediator;
+import net.parostroj.timetable.model.events.Event;
 
 /**
  * Colleague for application model.
  *
  * @author jub
  */
-public class ApplicationModelColleague extends AbstractColleague implements ApplicationModelListener {
+public class ApplicationModelColleague implements ApplicationModelListener, Colleague {
 
     private final ApplicationModel model;
+    private final Mediator mediator;
 
-    public ApplicationModelColleague(ApplicationModel model) {
+    public ApplicationModelColleague(ApplicationModel model, Mediator mediator) {
         this.model = model;
+        this.mediator = mediator;
         model.addListener(this);
     }
 
@@ -27,6 +30,6 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
-        this.sendMessage(event);
+        mediator.sendMessage(event);
     }
 }

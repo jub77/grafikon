@@ -23,8 +23,6 @@ public class Mediator {
     public void addColleague(Colleague colleague, Class<?> clazz) {
         if (colleagues.containsKey(colleague))
             throw new IllegalStateException("Mediator already contains colleague.");
-        if (colleague instanceof ColleagueWithBackReference)
-            ((ColleagueWithBackReference)colleague).setMediator(this);
         colleagues.put(colleague, clazz);
         this.colleaguesForClass.put(clazz, colleague);
     }
@@ -32,8 +30,6 @@ public class Mediator {
     public void removeColleague(Colleague collegue) {
         if (!colleagues.containsKey(collegue))
             throw new IllegalStateException("Mediator doesn't contain colleague.");
-        if (collegue instanceof ColleagueWithBackReference)
-            ((ColleagueWithBackReference)collegue).setMediator(null);
         Class<?> clazz = colleagues.remove(collegue);
         this.colleaguesForClass.remove(clazz, collegue);
     }
@@ -60,7 +56,7 @@ public class Mediator {
             return;
         // distribute per class
         for (Class<?> cls : colleaguesForClass.keySet()) {
-            if (cls.equals(Object.class) || cls.isAssignableFrom(message.getClass())) {
+            if (cls.isAssignableFrom(message.getClass())) {
                 distributeMessage(message, colleaguesForClass.get(cls));
             }
         }
