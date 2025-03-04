@@ -12,7 +12,7 @@ import com.google.common.collect.SetMultimap;
  */
 public class Mediator {
 
-    private final Map<Colleague, Class<?>> colleagues = new HashMap<>();
+    private final Map<Colleague, List<Class<?>>> colleagues = new HashMap<>();
 
     private final SetMultimap<Class<?>, Colleague> colleaguesForClass = HashMultimap.create();
 
@@ -20,34 +20,21 @@ public class Mediator {
         this.addColleague(collegue, Object.class);
     }
 
-    public void addColleague(Colleague colleague, Class<?> clazz) {
-        if (colleagues.containsKey(colleague))
+    public void addColleague(Colleague colleague, Class<?>... clazz) {
+        if (colleagues.containsKey(colleague)) {
             throw new IllegalStateException("Mediator already contains colleague.");
-        colleagues.put(colleague, clazz);
-        this.colleaguesForClass.put(clazz, colleague);
+        }
+        List<Class<?>> classes = List.of(clazz);
+        colleagues.put(colleague, classes);
+        classes.forEach(cls -> this.colleaguesForClass.put(cls, colleague));
     }
 
     public void removeColleague(Colleague collegue) {
-        if (!colleagues.containsKey(collegue))
+        if (!colleagues.containsKey(collegue)) {
             throw new IllegalStateException("Mediator doesn't contain colleague.");
-        Class<?> clazz = colleagues.remove(collegue);
-        this.colleaguesForClass.remove(clazz, collegue);
-    }
-
-    public Set<Colleague> getColleagues() {
-        return Collections.unmodifiableSet(colleagues.keySet());
-    }
-
-    public Class<?> getClassForColleague(Colleague colleague) {
-        return colleagues.get(colleague);
-    }
-
-    public Set<Colleague> getColleaguesForClass(Class<?> clazz) {
-        if (colleaguesForClass.containsKey(clazz)) {
-            return Collections.unmodifiableSet(colleaguesForClass.get(clazz));
-        } else {
-            return Collections.emptySet();
         }
+        List<Class<?>> classes = colleagues.remove(collegue);
+        classes.forEach(cls -> this.colleaguesForClass.remove(cls, collegue));
     }
 
     public void sendMessage(Object message) {

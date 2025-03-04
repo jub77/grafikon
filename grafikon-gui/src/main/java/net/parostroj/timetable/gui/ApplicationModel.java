@@ -9,6 +9,8 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
+import net.parostroj.timetable.gui.events.TrainSelectionMessage;
 import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.templates.DataOutputTemplateStorage;
@@ -90,6 +92,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         collegue = new TrainDiagramCollegue(mediator);
         mediator.addColleague(collegue);
         mediator.addColleague(new ApplicationModelColleague(this, mediator));
+        mediator.addColleague(
+                message -> setSelectedTrain(((TrainSelectionMessage) message).train(), false),
+                TrainSelectionMessage.class);
         programSettings = new ProgramSettings();
         outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<>();
@@ -146,10 +151,17 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      * @param selectedTrain train
      */
     public void setSelectedTrain(Train selectedTrain) {
+        this.setSelectedTrain(selectedTrain, true);
+    }
+
+    private void setSelectedTrain(Train selectedTrain, boolean message) {
         if (this.selectedTrain != selectedTrain) {
             this.selectedTrain = selectedTrain;
 
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_TRAIN_CHANGED,this,selectedTrain));
+            if (message) {
+                this.mediator.sendMessage(new TrainSelectionMessage(selectedTrain));
+            }
         }
     }
 
@@ -180,6 +192,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
         this.collegue.setTrainDiagram(diagram);
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,this));
+        this.mediator.sendMessage(new DiagramChangeMessage(diagram));
     }
 
     /**

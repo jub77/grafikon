@@ -27,6 +27,7 @@ import net.parostroj.timetable.gui.commands.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.events.EditTrainMessage;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.tree2.*;
@@ -312,6 +313,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         groupsMenuItem.setAction(new EditGroupsAction(model));
         groupsMenuItem.setText(ResourceLoader.getString("menu.groups"));
         treePopupMenu.add(groupsMenuItem);
+        this.model.getMediator().addColleague(message -> {
+            if (!selecting && model.getSelectedTrain() != null) {
+                editAction();
+            }
+        }, EditTrainMessage.class);
         this.model.getMediator().addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
@@ -323,11 +329,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     case SELECTED_TRAIN_CHANGED:
                         if (!selecting) {
                             selectTrain((Train) event.getObject());
-                        }
-                        break;
-                    case EDIT_SELECTED_TRAIN:
-                        if (!selecting && model.getSelectedTrain() != null) {
-                            editAction();
                         }
                         break;
                     default:

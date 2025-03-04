@@ -103,7 +103,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     private void initComponents(ApplicationModel model) {
         splitPane = new javax.swing.JSplitPane();
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
+        NormalHTS hts = new NormalHTS(model.getMediator(), Color.GREEN, graphicalTimetableView);
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
