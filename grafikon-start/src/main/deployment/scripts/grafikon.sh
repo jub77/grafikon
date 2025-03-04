@@ -1,3 +1,3 @@
 #!/bin/sh
 
-java -jar grafikon.jar $*
+java -jar $(dirname $0)/grafikon.jar $*
