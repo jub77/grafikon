@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
+import net.parostroj.timetable.gui.events.IntervalSelectionMessage;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.output2.gt.*;

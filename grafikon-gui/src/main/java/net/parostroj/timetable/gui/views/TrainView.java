@@ -19,7 +19,7 @@ import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
+import net.parostroj.timetable.gui.events.IntervalSelectionMessage;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
