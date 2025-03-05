@@ -31,6 +31,15 @@ public interface GTDraw {
         public String getKey() {
             return key;
         }
+
+        public static Type fromKey(String key) {
+            for (Type type : values()) {
+                if (type.key.equals(key)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
     enum Refresh {
