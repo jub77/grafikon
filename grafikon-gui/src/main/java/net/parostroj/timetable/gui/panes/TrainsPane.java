@@ -6,18 +6,14 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
+import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
-import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.output2.gt.GTDraw;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,11 +98,11 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
     private void initComponents(ApplicationModel model) {
         splitPane = new javax.swing.JSplitPane();
-        graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        NormalHTS hts = new NormalHTS(model.getMediator(), Color.GREEN, graphicalTimetableView);
-        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
-        graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
-        scrollPane = new GTLayeredPane2(graphicalTimetableView);
+        graphicalTimetableView = GraphicalTimetableView.newBuilder()
+                .withSave()
+                .forTrains(model.getMediator())
+                .build();
+        scrollPane = graphicalTimetableView.newScrollPaneWithButtons();
         trainsSplitPane = new javax.swing.JSplitPane();
         trainListView = new net.parostroj.timetable.gui.views.TrainListView(model);
         trainView = new net.parostroj.timetable.gui.views.TrainView(model);
@@ -124,9 +120,9 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         add(splitPane);
     }
 
-    private net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave graphicalTimetableView;
+    private net.parostroj.timetable.gui.components.GraphicalTimetableView graphicalTimetableView;
     private javax.swing.JSplitPane trainsSplitPane;
-    private GTLayeredPane2 scrollPane;
+    private javax.swing.JComponent scrollPane;
     private javax.swing.JSplitPane splitPane;
     private net.parostroj.timetable.gui.views.TrainListView trainListView;
     private net.parostroj.timetable.gui.views.TrainView trainView;

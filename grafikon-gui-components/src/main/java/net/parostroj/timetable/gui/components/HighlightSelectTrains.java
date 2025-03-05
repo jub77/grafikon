@@ -1,10 +1,9 @@
-package net.parostroj.timetable.gui.utils;
+package net.parostroj.timetable.gui.components;
 
 import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.events.EditTrainMessage;
 import net.parostroj.timetable.gui.events.IntervalSelectionMessage;
@@ -19,7 +18,7 @@ import net.parostroj.timetable.output2.gt.*;
  *
  * @author jub
  */
-public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval> {
+public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<TimeInterval> {
 
     private Set<Train> set = Set.of();
     private final Color selectionColor;
@@ -30,7 +29,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     private boolean selection;
     private boolean isEvent;
 
-    public NormalHTS(Mediator mediator, Color selectionColor,
+    public HighlightSelectTrains(Mediator mediator, Color selectionColor,
             final GraphicalTimetableView view) {
         this.selectionColor = selectionColor;
         this.view = view;

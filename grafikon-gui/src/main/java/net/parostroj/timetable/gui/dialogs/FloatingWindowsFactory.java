@@ -1,22 +1,19 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.Color;
 import java.awt.Frame;
 
-import javax.swing.JList;
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
-import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.NetEditView;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.output2.gt.GTDraw;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,12 +277,10 @@ public class FloatingWindowsFactory {
     }
 
     private static FloatingWindow createGTViewDialog(Frame frame, ApplicationModel model) {
-        final GraphicalTimetableView gtView = new GraphicalTimetableView();
-        final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
-        NormalHTS hts = new NormalHTS(model.getMediator(), Color.GREEN, gtView);
-        gtView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
-        gtView.setRegionSelector(hts, TimeInterval.class);
-
+        final GraphicalTimetableView gtView = GraphicalTimetableView.newBuilder()
+                .forTrains(model.getMediator())
+                .build();
+        final JComponent scrollPane = gtView.newScrollPaneWithButtons();
         return new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 
             private static final long serialVersionUID = 1L;

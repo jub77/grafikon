@@ -12,9 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +86,18 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private final Map<String, Object> toolTipformattingMap = new HashMap<>();
 
     private final OutputFreightUtil freightUtil = new OutputFreightUtil();
+
+    public static GraphicalTimetableViewBuilder newBuilder() {
+        return new GraphicalTimetableViewBuilder();
+    }
+
+    public JComponent newScrollPaneWithButtons() {
+        return new GTLayeredPane2(this);
+    }
+
+    public JComponent newScrollPane() {
+        return new JScrollPane(this);
+    }
 
     public GraphicalTimetableView() {
         this.initComponents();
