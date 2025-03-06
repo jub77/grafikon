@@ -6,15 +6,11 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Train;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JButton;
-import javax.swing.event.ListSelectionListener;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.util.function.Consumer;
 
 /**
  * Panel for showing changed trains.
@@ -25,12 +21,20 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final WrapperListModel<Train> listModel = new WrapperListModel<Train>(false);
+    private final WrapperListModel<Train> listModel = new WrapperListModel<>(false);
     private long limit = 0;
 
-    /** Creates new form TrainsWithConflictsPanel */
-    public ChangedTrainsPanel() {
+    public ChangedTrainsPanel(Consumer<Train> trainSelection) {
         initComponents();
+        trainsList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                JList<?> list = (JList<?>) e.getSource();
+                Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
+                if (wrapper != null) {
+                    trainSelection.accept((Train) wrapper.getElement());
+                }
+            }
+        });
     }
 
     public void clearTrainList() {
@@ -55,8 +59,8 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
     }
 
     private void initComponents() {
-        scrollPane = new javax.swing.JScrollPane();
-        trainsList = new javax.swing.JList<Wrapper<Train>>();
+        JScrollPane scrollPane = new JScrollPane();
+        trainsList = new javax.swing.JList<>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -70,31 +74,25 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
 
         JButton clearButton = new JButton(ResourceLoader.getString("eventsviewer.button.clear"));
-        clearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                listModel.clear();
-            }
-        });
+        clearButton.addActionListener(e -> listModel.clear());
         buttonPanel.add(clearButton);
 
         limitTextField = new javax.swing.JFormattedTextField();
         limitTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         limitTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         limitTextField.setColumns(4);
-        limitTextField.setValue(0l);
+        limitTextField.setValue(0L);
         buttonPanel.add(limitTextField);
 
         JButton limitButton = new JButton(ResourceLoader.getString("eventsviewer.button.limit"));
-        limitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Long value = (Long) limitTextField.getValue();
-                if (value >= 0) {
-                    limit = value;
-                    limitTrains(limit);
-                } else {
-                    limit = 0;
-                    limitTextField.setValue(0l);
-                }
+        limitButton.addActionListener(e -> {
+            Long value = (Long) limitTextField.getValue();
+            if (value >= 0) {
+                limit = value;
+                limitTrains(limit);
+            } else {
+                limit = 0;
+                limitTextField.setValue(0L);
             }
         });
         buttonPanel.add(limitButton);
@@ -112,13 +110,6 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
         }
     }
 
-    public void addTrainSelectionListener(ListSelectionListener listSelectionListener) {
-        trainsList.addListSelectionListener(listSelectionListener);
-    }
-
-
-
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList<Wrapper<Train>> trainsList;
     private javax.swing.JFormattedTextField limitTextField;
 

@@ -19,10 +19,12 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.NetItemInfo;
 import net.parostroj.timetable.gui.views.graph.*;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -337,9 +339,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private void initModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
-        updateActions(model);
-        setNet(model);
-        model.getMediator().addColleague(new ApplicationGTEventColleague() {
+        updateActions(model.getDiagram());
+        setNet(model.getDiagram());
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processNodeEvent(Event event) {
                 if (event.getType() == Event.Type.ATTRIBUTE) {
@@ -415,23 +417,13 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     updateNodeLocation(node);
                 }
             }
-
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                switch (event.getType()) {
-                    case SET_DIAGRAM_CHANGED:
-                        netEditModel.clearSelection();
-                        updateActions(event.getModel());
-                        if (event.getModel().getDiagram() != null) {
-                            setNet(event.getModel());
-
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        }, Event.class);
+        model.getMediator().addColleague(message -> {
+            TrainDiagram diagram = ((DiagramChangeMessage) message).diagram();
+            netEditModel.clearSelection();
+            updateActions(diagram);
+            setNet(diagram);
+        }, DiagramChangeMessage.class);
     }
 
     private void initComponents() {
@@ -581,9 +573,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         netItemInfo.updateItem(getIfSingleSelected());
     }
 
-    private void setNet(ApplicationModel model) {
-        if (model.getDiagram() != null) {
-            this.setNet(model.getDiagram().getNet());
+    private void setNet(TrainDiagram diagram) {
+        if (diagram != null) {
+            this.setNet(diagram.getNet());
         } else {
             this.setNet((Net) null);
         }
@@ -761,8 +753,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         validate();
     }
 
-    private void updateActions(ApplicationModel model) {
-        boolean isDiagram = model != null && model.getDiagram() != null;
+    private void updateActions(TrainDiagram diagram) {
+        boolean isDiagram = diagram != null;
         newNodeAction.setEnabled(isDiagram);
         saveNetImageAction.setEnabled(isDiagram);
     }

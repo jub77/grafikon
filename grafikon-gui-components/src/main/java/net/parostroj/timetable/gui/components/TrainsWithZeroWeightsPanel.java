@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
-import javax.swing.event.ListSelectionListener;
+import javax.swing.*;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
@@ -8,6 +8,8 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+
+import java.util.function.Consumer;
 
 /**
  * Panel for showing trains with zero weights.
@@ -18,12 +20,22 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
 
     private static final long serialVersionUID = 1L;
 
-	private final WrapperListModel<Train> listModel = new WrapperListModel<Train>();
+	private final WrapperListModel<Train> listModel = new WrapperListModel<>();
+    private boolean selection;
 
     /** Creates new form TrainsWithConflictsPanel */
-    public TrainsWithZeroWeightsPanel() {
+    public TrainsWithZeroWeightsPanel(Consumer<Train> trainSelection) {
         initComponents();
         listModel.initializeSet();
+        trainsList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                JList<?> list = (JList<?>) e.getSource();
+                Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
+                if (!selection && wrapper != null) {
+                    trainSelection.accept((Train) wrapper.getElement());
+                }
+            }
+        });
     }
 
     private Train getSelectedTrain() {
@@ -36,22 +48,28 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
         if (listModel.getSetOfObjects().contains(train))
             return;
         // add to list
-        listModel.addWrapper(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram().getTrainsData().getTrainComparator())));
+        listModel.addWrapper(new Wrapper<>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram().getTrainsData().getTrainComparator())));
     }
 
     public void updateSelectedTrain(Train train) {
-        Train selectedTrain = this.getSelectedTrain();
-        if (train == selectedTrain)
-            return;
-        else if (train == null) {
-            trainsList.getSelectionModel().clearSelection();
-        } else {
-            int index = listModel.getIndexOfObject(train);
-            if (index >= 0) {
-                trainsList.setSelectedIndex(index);
-                trainsList.scrollRectToVisible(trainsList.getCellBounds(index, index));
-            } else
+        selection = true;
+        try {
+            Train selectedTrain = this.getSelectedTrain();
+            if (train == selectedTrain) {
+                return;
+            }
+            if (train == null) {
                 trainsList.getSelectionModel().clearSelection();
+            } else {
+                int index = listModel.getIndexOfObject(train);
+                if (index >= 0) {
+                    trainsList.setSelectedIndex(index);
+                    trainsList.scrollRectToVisible(trainsList.getCellBounds(index, index));
+                } else
+                    trainsList.getSelectionModel().clearSelection();
+            }
+        } finally {
+            selection = false;
         }
     }
 
@@ -89,24 +107,16 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
     private boolean hasZeroWeight(Train train) {
         for (TimeInterval i : train.getLineIntervals()) {
             Integer weight = TrainsHelper.getWeight(i);
-            if (weight != null && weight.intValue() == 0) {
+            if (weight != null && weight == 0) {
                 return true;
             }
         }
         return false;
     }
 
-    public void addTrainSelectionListener(ListSelectionListener listener) {
-        trainsList.addListSelectionListener(listener);
-    }
-
-    public void removeTrainSelectionListener(ListSelectionListener listener) {
-        trainsList.removeListSelectionListener(listener);
-    }
-
     private void initComponents() {
-        scrollPane = new javax.swing.JScrollPane();
-        trainsList = new javax.swing.JList<Wrapper<Train>>();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
+        trainsList = new javax.swing.JList<>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -117,6 +127,5 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
         add(scrollPane, java.awt.BorderLayout.CENTER);
     }
 
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList<Wrapper<Train>> trainsList;
 }

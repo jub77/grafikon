@@ -27,10 +27,13 @@ import net.parostroj.timetable.gui.commands.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.events.EditTrainMessage;
+import net.parostroj.timetable.gui.events.TrainSelectionMessage;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.tree2.*;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -318,25 +321,16 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 editAction();
             }
         }, EditTrainMessage.class);
-        this.model.getMediator().addColleague(new ApplicationGTEventColleague() {
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                switch (event.getType()) {
-                    case SET_DIAGRAM_CHANGED:
-                        buildGroupsMenu();
-                        updateViewDiagramChanged();
-                        break;
-                    case SELECTED_TRAIN_CHANGED:
-                        if (!selecting) {
-                            selectTrain((Train) event.getObject());
-                        }
-                        break;
-                    default:
-                        // do nothing
-                        break;
-                }
+        this.model.getMediator().addColleague(message -> {
+            buildGroupsMenu();
+            updateViewDiagramChanged();
+        }, DiagramChangeMessage.class);
+        this.model.getMediator().addColleague(message -> {
+            if (!selecting) {
+                selectTrain(((TrainSelectionMessage) message).train());
             }
-
+        }, TrainSelectionMessage.class);
+        this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainDiagramEvent(Event event) {
                 if (event.getType().isList()) {
@@ -375,7 +369,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     }
                 }
             }
-        });
+        }, Event.class);
         this.buildGroupsMenu();
         this.updateViewDiagramChanged();
     }

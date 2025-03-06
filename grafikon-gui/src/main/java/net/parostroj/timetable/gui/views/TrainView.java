@@ -15,6 +15,8 @@ import javax.swing.table.TableColumnModel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
+import net.parostroj.timetable.gui.events.TrainSelectionMessage;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
@@ -40,7 +42,7 @@ import javax.swing.SwingConstants;
  *
  * @author  jub
  */
-public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
+public class TrainView extends javax.swing.JPanel implements StorableGuiData {
 
     private static final long serialVersionUID = 1L;
 
@@ -122,7 +124,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private void initModel(final ApplicationModel model) {
         this.model = model;
         this.updateView(model.getSelectedTrain());
-        this.model.addListener(this);
         model.getMediator().addColleague(message -> {
             IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
             if (ism.interval() != null) {
@@ -157,15 +158,14 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                 }
             }
         }, Event.class);
+        model.getMediator().addColleague(
+                message -> updateView(null),
+                DiagramChangeMessage.class);
+        model.getMediator().addColleague(
+                message -> updateView(((TrainSelectionMessage) message).train()),
+                TrainSelectionMessage.class);
     }
 
-
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED || event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            this.updateView(model.getSelectedTrain());
-        }
-    }
 
     private void updateView(Train train) {
         if (train == null) {

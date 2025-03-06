@@ -157,8 +157,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private void setSelectedTrain(Train selectedTrain, boolean message) {
         if (this.selectedTrain != selectedTrain) {
             this.selectedTrain = selectedTrain;
-
-            this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_TRAIN_CHANGED,this,selectedTrain));
             if (message) {
                 this.mediator.sendMessage(new TrainSelectionMessage(selectedTrain));
             }

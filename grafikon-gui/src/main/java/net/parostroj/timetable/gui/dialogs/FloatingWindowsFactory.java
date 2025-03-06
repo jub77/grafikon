@@ -6,10 +6,11 @@ import javax.swing.*;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
+import net.parostroj.timetable.gui.events.TrainSelectionMessage;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.views.NetEditView;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
@@ -30,19 +31,9 @@ public class FloatingWindowsFactory {
     private FloatingWindowsFactory() {}
 
     private static FloatingWindow createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
-        final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
-        panel.addTrainSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                JList<?> list = (JList<?>) e.getSource();
-                Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
-                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
-                    model.setSelectedTrain((Train) wrapper.getElement());
-                }
-            }
-        });
+        final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel(model::setSelectedTrain);
         final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainconflicts.title", "train.conflicts");
-        mediator.addColleague(new ApplicationGTEventColleague(){
-
+        mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainEvent(Event event) {
                 switch (event.getType()) {
@@ -81,38 +72,20 @@ public class FloatingWindowsFactory {
                         break;
                 }
             }
+        }, Event.class);
 
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                switch (event.getType()) {
-                    case SELECTED_TRAIN_CHANGED:
-                        panel.updateSelectedTrain((Train)event.getObject());
-                        break;
-                    case SET_DIAGRAM_CHANGED:
-                        panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-
-        });
+        mediator.addColleague(message -> {
+            TrainDiagram diagram = ((DiagramChangeMessage) message).diagram();
+            panel.updateAllTrains(diagram != null ? diagram.getTrains() : null);
+        }, DiagramChangeMessage.class);
+        mediator.addColleague(message ->
+                panel.updateSelectedTrain(((TrainSelectionMessage) message).train()), TrainSelectionMessage.class);
 
         return dialog;
     }
 
     private static FloatingWindow createTrainsWithZeroWeightsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
-        final TrainsWithZeroWeightsPanel panel = new TrainsWithZeroWeightsPanel();
-        panel.addTrainSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                JList<?> list = (JList<?>) e.getSource();
-                Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
-                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
-                    model.setSelectedTrain((Train) wrapper.getElement());
-                }
-            }
-        });
+        final TrainsWithZeroWeightsPanel panel = new TrainsWithZeroWeightsPanel(model::setSelectedTrain);
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainzeroweights.title", "train.zero.weights") {
 
             private static final long serialVersionUID = 1L;
@@ -127,8 +100,7 @@ public class FloatingWindowsFactory {
                 super.setVisible(b);
             }
         };
-        mediator.addColleague(new ApplicationGTEventColleague() {
-
+        mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
             public void receiveMessage(Object message) {
                 // do not check if the dialog is not visible
@@ -159,6 +131,18 @@ public class FloatingWindowsFactory {
             }
 
             @Override
+            public void processLineEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE
+                        && event.getAttributeChange().checkName(Line.ATTR_CLASS, Line.ATTR_CLASS_BACK)) {
+                    ((Line) event.getSource()).getTracks().stream()
+                            .flatMap(track -> track.getTimeIntervalList().stream())
+                            .map(TimeInterval::getTrain)
+                            .distinct()
+                            .forEach(panel::updateTrain);
+                }
+            }
+
+            @Override
             public void processTrainsCycleEvent(Event event) {
                 if (TrainsCycleType.isEngineType(((TrainsCycle) event.getSource()).getType())) {
                     TrainsCycle cycle = (TrainsCycle) event.getSource();
@@ -185,23 +169,13 @@ public class FloatingWindowsFactory {
                         break;
                 }
             }
-
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                switch (event.getType()) {
-                    case SELECTED_TRAIN_CHANGED:
-                        panel.updateSelectedTrain((Train)event.getObject());
-                        break;
-                    case SET_DIAGRAM_CHANGED:
-                        panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-
-        });
+        }, Event.class);
+        mediator.addColleague(message -> {
+            TrainDiagram diagram = ((DiagramChangeMessage) message).diagram();
+            panel.updateAllTrains(diagram != null ? diagram.getTrains() : null);
+        }, DiagramChangeMessage.class);
+        mediator.addColleague(message ->
+                panel.updateSelectedTrain(((TrainSelectionMessage) message).train()), TrainSelectionMessage.class);
 
         return dialog;
     }
@@ -248,10 +222,8 @@ public class FloatingWindowsFactory {
 
     private static FloatingWindow createChangesTrackedDialog(Frame frame, ApplicationModel model) {
         final ChangesTrackerPanel panel = new ChangesTrackerPanel();
-        model.addListener(event -> {
-            if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
-                panel.setTrainDiagram(event.getModel().getDiagram());
-        });
+        model.getMediator().addColleague(message ->
+                panel.setTrainDiagram(((DiagramChangeMessage) message).diagram()), DiagramChangeMessage.class);
         return new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
             private static final long serialVersionUID = 1L;
@@ -314,26 +286,16 @@ public class FloatingWindowsFactory {
     private static FloatingWindow createFreightDestinationView(Frame frame, Mediator mediator) {
         final FreightPanel panel = new FreightPanel();
         FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.freightdestination.title", "freight.destination");
-        mediator.addColleague(new ApplicationGTEventColleague() {
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    panel.setDiagram(event.getModel().get());
-                }
-            }
-        }, ApplicationModelEvent.class);
+        mediator.addColleague(message -> panel.setDiagram(((DiagramChangeMessage) message).diagram()),
+                DiagramChangeMessage.class);
         return dialog;
     }
 
     private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator) {
         final CirculationViewPanel panel = new CirculationViewPanel();
-        mediator.addColleague(new ApplicationGTEventColleague() {
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
-                    panel.setDiagram(event.getModel().getDiagram());
-            }
-
+        mediator.addColleague(message -> panel.setDiagram(((DiagramChangeMessage) message).diagram()),
+                DiagramChangeMessage.class);
+        mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainDiagramEvent(Event event) {
                 switch (event.getType()) {
@@ -366,7 +328,7 @@ public class FloatingWindowsFactory {
             public void processTrainsCycleEvent(Event event) {
                 panel.circulationUpdated((TrainsCycle) event.getSource());
             }
-        });
+        }, Event.class);
         return new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
             private static final long serialVersionUID = 1L;
 
@@ -391,16 +353,7 @@ public class FloatingWindowsFactory {
     }
 
     private static FloatingWindow createTimeIntervalsTrainsChanged(final Frame frame, final Mediator mediator, final ApplicationModel model) {
-        final ChangedTrainsPanel panel = new ChangedTrainsPanel();
-        panel.addTrainSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                JList<?> list = (JList<?>) e.getSource();
-                Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
-                if (wrapper != null && wrapper.getElement() != model.getSelectedTrain()) {
-                    model.setSelectedTrain((Train) wrapper.getElement());
-                }
-            }
-        });
+        final ChangedTrainsPanel panel = new ChangedTrainsPanel(model::setSelectedTrain);
         final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainchanged.title", "changed.trains");
         mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
@@ -412,14 +365,7 @@ public class FloatingWindowsFactory {
                 }
             }
         }, Event.class);
-        mediator.addColleague(new ApplicationGTEventColleague() {
-            @Override
-            public void processApplicationEvent(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    panel.clearTrainList();
-                }
-            }
-        }, ApplicationModelEvent.class);
+        mediator.addColleague(message -> panel.clearTrainList(), DiagramChangeMessage.class);
         return dialog;
     }
 
