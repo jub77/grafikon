@@ -22,12 +22,14 @@ import net.parostroj.timetable.output2.gt.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
 /**
  * TrainsCyclePane.
  *
  * @author jub
  */
-public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData, TCDelegate.Listener {
+public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData {
 
     private static final long serialVersionUID = 1L;
 
@@ -101,25 +103,24 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     /** Creates new form TrainsCyclesPane */
     public TrainsCyclesPane(TCDelegate delegate, TrainColors trainColors) {
         initComponents();
-        graphicalTimetableView = new GraphicalTimetableViewWithSave();
-        GTLayeredPane scrollPane = new GTLayeredPane(graphicalTimetableView);
+        graphicalTimetableView = GraphicalTimetableView.newBuilder()
+                .withSave()
+                .build();
+        JComponent scrollPane = graphicalTimetableView.newScrollPaneWithButtons();
         splitPane.setBottomComponent(scrollPane);
         this.delegate = delegate;
         HighligterAndSelector hts = new HighligterAndSelector(trainColors, trainListView);
-        GTViewSettings settings = graphicalTimetableView.getSettings();
-        graphicalTimetableView.setSettings(settings);
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setParameter(GTDraw.TRAIN_COLORS, hts);
         delegate.addListener(hts);
-        delegate.addListener(this);
+        delegate.addListener(this::processTcEvent);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         trainListView.setModel(delegate);
         listView.setModel(delegate);
         detailsView.setModel(delegate);
     }
 
-    @Override
-    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+    private void processTcEvent(Action action, TrainsCycle cycle, Train train) {
         if (action == Action.DIAGRAM_CHANGE) {
             graphicalTimetableView.setTrainDiagram(delegate.getTrainDiagram());
         }
@@ -191,5 +192,5 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private javax.swing.JSplitPane splitPane;
     private net.parostroj.timetable.gui.views.TCTrainListView trainListView;
 
-    private final GraphicalTimetableViewWithSave graphicalTimetableView;
+    private final GraphicalTimetableView graphicalTimetableView;
 }

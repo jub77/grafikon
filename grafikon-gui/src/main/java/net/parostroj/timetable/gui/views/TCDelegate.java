@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.views;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -15,11 +14,9 @@ import javax.swing.JComponent;
 import net.parostroj.timetable.actions.TrainsCycleChecker;
 import net.parostroj.timetable.actions.TrainsCycleChecker.Conflict;
 import net.parostroj.timetable.actions.TrainsCycleChecker.ConflictType;
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
+import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -35,30 +32,29 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public abstract class TCDelegate implements ApplicationModelListener {
+public abstract class TCDelegate {
 
     public enum Action {
         NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE, REFRESH_TRAIN_NAME
     }
-
     public interface Listener {
+
         void tcEvent(Action action, TrainsCycle cycle, Train train);
     }
 
     private TrainsCycle selected;
     private final Set<TCDelegate.Listener> listeners;
-    protected ApplicationModel model;
-    protected TrainsCycleChecker checker;
+    protected final TrainsCycleChecker checker;
+    protected TrainDiagram diagram;
 
-    protected TCDelegate(ApplicationModel model) {
-        this(model, TrainsCycleChecker.forVehicleType());
+    protected TCDelegate(Mediator mediator) {
+        this(mediator, TrainsCycleChecker.forVehicleType());
     }
 
-    protected TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
+    protected TCDelegate(Mediator mediator, TrainsCycleChecker checker) {
         this.checker = checker;
-        this.model = model;
-        this.model.addListener(this);
-        this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
+        mediator.addColleague(this::modelChanged, DiagramChangeMessage.class);
+        mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainsCycleEvent(Event event) {
                 if (event.getSource() == selected) {
@@ -205,15 +201,13 @@ public abstract class TCDelegate implements ApplicationModelListener {
         return true;
     }
 
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        if (Objects.requireNonNull(event.getType()) == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            this.fireEvent(Action.DIAGRAM_CHANGE, null);
-        }
+    public void modelChanged(Object message) {
+        diagram = ((DiagramChangeMessage) message).diagram();
+        this.fireEvent(Action.DIAGRAM_CHANGE, null);
     }
 
     public TrainDiagram getTrainDiagram() {
-        return model.getDiagram();
+        return diagram;
     }
 
     public void handleEvent(Action action, TrainsCycle cycle, Train train) {

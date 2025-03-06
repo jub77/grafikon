@@ -44,7 +44,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     /** Creates new form CirculationView */
     public CirculationPane(ApplicationModel model) {
-        this.delegate = new TCDelegate(model) {
+        this.delegate = new TCDelegate(model.getMediator()) {
 
             private TCDetailsViewDialog editDialog;
 

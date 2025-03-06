@@ -13,11 +13,10 @@ import javax.swing.JComponent;
 
 import net.parostroj.timetable.actions.TrainsCycleChecker;
 import net.parostroj.timetable.actions.TrainsCycleChecker.ConflictType;
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TrainsCycleType;
@@ -32,13 +31,12 @@ public class DriverCycleDelegate extends TCDelegate {
 
     private TCDetailsViewDialog editDialog;
 
-    public DriverCycleDelegate(ApplicationModel model) {
-        super(model, TrainsCycleChecker.forDriverType());
+    public DriverCycleDelegate(Mediator mediator) {
+        super(mediator, TrainsCycleChecker.forDriverType());
     }
 
     @Override
     public String getTrainCycleErrors(TrainsCycle cycle) {
-        TrainDiagram diagram = model.getDiagram();
         TimeConverter c = diagram.getTimeConverter();
         StringBuilder result = new StringBuilder();
         List<TrainsCycleChecker.Conflict> conflicts = checker.checkConflicts(cycle);
@@ -83,12 +81,12 @@ public class DriverCycleDelegate extends TCDelegate {
             editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
         }
         editDialog.setLocationRelativeTo(component);
-        editDialog.updateValues(this, model.get());
+        editDialog.updateValues(this, diagram);
         editDialog.setVisible(true);
     }
 
     @Override
     public TrainsCycleType getType() {
-        return model.getDiagram() != null ? model.getDiagram().getDriverCycleType() : null;
+        return diagram != null ? diagram.getDriverCycleType() : null;
     }
 }

@@ -5,12 +5,12 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import javax.swing.JComponent;
-
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.TrainsCycleType;
+
+import javax.swing.*;
 
 /**
  * Implementation of the interface for train unit cycle.
@@ -21,8 +21,8 @@ public class TrainUnitCycleDelegate extends TCDelegate {
 
     private TCDetailsViewDialog editDialog;
 
-    public TrainUnitCycleDelegate(ApplicationModel model) {
-        super(model);
+    public TrainUnitCycleDelegate(Mediator mediator) {
+        super(mediator);
     }
 
     @Override
@@ -31,12 +31,12 @@ public class TrainUnitCycleDelegate extends TCDelegate {
             editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
         }
         editDialog.setLocationRelativeTo(component);
-        editDialog.updateValues(this, model.get());
+        editDialog.updateValues(this, diagram);
         editDialog.setVisible(true);
     }
 
     @Override
     public TrainsCycleType getType() {
-        return model.getDiagram() != null ? model.getDiagram().getTrainUnitCycleType() : null;
+        return diagram != null ? diagram.getTrainUnitCycleType() : null;
     }
 }

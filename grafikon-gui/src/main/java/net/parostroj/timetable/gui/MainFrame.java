@@ -268,13 +268,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane(model);
         engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
-                new EngineCycleDelegate(model),
+                new EngineCycleDelegate(model.getMediator()),
                 trainColorsforType(TrainDiagram::getEngineCycleType));
         trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
-                new TrainUnitCycleDelegate(model),
+                new TrainUnitCycleDelegate(model.getMediator()),
                 trainColorsforType(TrainDiagram::getTrainUnitCycleType));
         driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane(
-                new DriverCycleDelegate(model),
+                new DriverCycleDelegate(model.getMediator()),
                 trainColorsforType(TrainDiagram::getDriverCycleType));
         netPane = new net.parostroj.timetable.gui.panes.NetPane(model);
         circulationPane = new net.parostroj.timetable.gui.panes.CirculationPane(model);
