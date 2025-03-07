@@ -56,8 +56,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     /** Creates new form TrainGraphicalTimetableView */
     public GraphicalTimetableViewDraw() {
-        initComponents();
-
         this.drawFactory = new NormalGTDrawFactory();
         this.settings = this.getDefaultViewSettings();
 
@@ -346,13 +344,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         return new GTViewSettings(settings);
     }
 
-    /**
-     * @return settings
-     */
-    GTViewSettings getSettingsInternal() {
-        return settings;
-    }
-
     public void setSettings(GTViewSettings settings) {
         if (settings == null) {
             return;
@@ -361,10 +352,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         this.settings = settings;
 
         this.recreateDraw();
-    }
-
-
-    private void initComponents() {
     }
 
     @Override

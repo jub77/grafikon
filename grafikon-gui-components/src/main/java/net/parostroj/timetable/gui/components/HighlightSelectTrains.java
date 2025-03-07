@@ -52,7 +52,8 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
     }
 
     private void diagramChanged(Object message) {
-        view.setTrainDiagram(((DiagramChangeMessage) message).diagram());
+        selectedTrain = null;
+        selectedTimeInterval = null;
     }
 
     @Override
