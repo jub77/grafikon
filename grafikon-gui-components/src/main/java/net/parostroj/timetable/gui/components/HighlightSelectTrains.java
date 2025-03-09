@@ -82,7 +82,7 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
                 if (trainChange) {
                     mediator.sendMessage(new TrainSelectionMessage(selectedTrain));
                 }
-                if (intervalChange) {
+                if (intervalChange && interval != null) {
                     mediator.sendMessage(new IntervalSelectionMessage(interval));
                 }
             }

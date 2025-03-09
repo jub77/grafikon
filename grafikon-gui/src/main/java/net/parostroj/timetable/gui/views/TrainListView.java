@@ -58,7 +58,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private transient GroupSelect groupSelect;
     private transient TrainTreeHandler trainTreeHandler;
     private TreeType treeType = TreeType.TYPES;
-    private boolean selecting = false;
+    private boolean selecting;
+    private boolean processing;
 
     public enum TreeType {
         FLAT, TYPES, GROUPS_AND_TYPES, GROUPS
@@ -266,8 +267,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private GroupMenuItem findByGroup(Group group) {
         for (MenuElement e : groupsMenu.getPopupMenu().getSubElements()) {
-            if (e instanceof GroupMenuItem) {
-                GroupMenuItem item = (GroupMenuItem) e;
+            if (e instanceof GroupMenuItem item) {
                 if (group.equals(item.getGroupSelect().getGroup())) {
                     return item;
                 }
@@ -326,9 +326,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             updateViewDiagramChanged();
         }, DiagramChangeMessage.class);
         this.model.getMediator().addColleague(message -> {
+            processing = true;
             if (!selecting) {
                 selectTrain(((TrainSelectionMessage) message).train());
             }
+            processing = false;
         }, TrainSelectionMessage.class);
         this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
@@ -517,13 +519,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             Object selected = e.getPath().getLastPathComponent();
             TrainTreeNode node = (TrainTreeNode) selected;
             Object item = node.getUserObject();
-            if (!(item instanceof Train) || trainTree.getSelectionCount() > 1) {
-                if (model.getSelectedTrain() != null) {
+            if (!(item instanceof Train train) || trainTree.getSelectionCount() > 1) {
+                if (!processing && model.getSelectedTrain() != null) {
                     model.setSelectedTrain(null);
                 }
             } else {
-                Train train = (Train) item;
-                if (model.getSelectedTrain() != train) {
+                if (!processing && model.getSelectedTrain() != train) {
                     model.setSelectedTrain(train);
                 }
             }
