@@ -16,8 +16,6 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
     * or double-click on `grafikon.jar`
     * or use `grafikon.cmd` (`grafikon.sh`)
 
-Download [snapshots](https://bitbucket.org/jub77/grafikon/downloads) for alfa and beta builds.
-
 Output templates and outputs can be added from menu (downloaded from web): *File > Import > Import and replace templates (web)*.
 
 ![Grafikon](https://jub.parostroj.net/grafikon/grafikon.png)
