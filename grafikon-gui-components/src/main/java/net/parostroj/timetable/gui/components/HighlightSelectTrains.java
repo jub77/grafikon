@@ -62,7 +62,7 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
     }
 
     @Override
-    public Color getColor(TimeInterval interval) {
+    public Color getHighlightColor(TimeInterval interval) {
         return this.selectionColor;
     }
 

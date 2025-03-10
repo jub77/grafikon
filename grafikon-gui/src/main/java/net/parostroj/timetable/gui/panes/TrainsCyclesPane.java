@@ -69,7 +69,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
-        public Color getColor(TimeInterval interval) {
+        public Color getHighlightColor(TimeInterval interval) {
             return Color.GREEN;
         }
 

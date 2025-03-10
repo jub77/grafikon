@@ -147,7 +147,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         @Override
-        public Color getColor(TimeInterval interval) {
+        public Color getHighlightColor(TimeInterval interval) {
             return interval == connection.first ? Color.GREEN : Color.CYAN;
         }
 

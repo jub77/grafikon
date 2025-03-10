@@ -12,5 +12,5 @@ public interface HighlightedTrains {
 
     boolean isHighlighedInterval(TimeInterval interval);
 
-    Color getColor(TimeInterval interval);
+    Color getHighlightColor(TimeInterval interval);
 }
