@@ -89,13 +89,10 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
     }
 
     @Override
-    public List<TimeInterval> getSelected() {
-        return selectedTrain == null ? List.of() : selectedTrain.getTimeIntervalList();
-    }
-
-    @Override
     public boolean editSelected() {
-        mediator.sendMessage(new EditTrainMessage(selectedTrain));
-        return true;
+        if (selectedTrain != null) {
+            mediator.sendMessage(new EditTrainMessage(selectedTrain));
+        }
+        return selectedTrain != null;
     }
 }

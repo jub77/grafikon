@@ -195,17 +195,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         return interval != null;
     }
 
-    @Override
-    public List<TimeInterval> getSelected() {
-        return lastSelected != null ? Collections.singletonList(lastSelected) : Collections.emptyList();
-    }
-
-    @Override
-    public boolean editSelected() {
-        // do nothing
-        return false;
-    }
-
     private void initComponents() {
         filterMenu = new javax.swing.JPopupMenu();
         javax.swing.JRadioButtonMenuItem allRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();

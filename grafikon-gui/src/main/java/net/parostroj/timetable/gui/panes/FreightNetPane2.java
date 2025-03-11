@@ -85,7 +85,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             return selected;
         }
 
-        @Override
         public List<FNConnection> getSelected() {
             return selected == null ? Collections.emptyList() : Collections.singletonList(selected);
         }
@@ -200,11 +199,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             return interval != null;
         }
 
-        @Override
-        public List<TimeInterval> getSelected() {
-            return connection.toList();
-        }
-
         private TimeInterval lastInterval;
 
         private TimeInterval chooseInterval(List<TimeInterval> intervals) {
@@ -214,12 +208,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                     TimeInterval::isNodeOwner);
             lastInterval = selected;
             return selected;
-        }
-
-        @Override
-        public boolean editSelected() {
-            // nothing ...
-            return false;
         }
 
         private boolean checkEnabled() {
@@ -373,7 +361,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 @Override
                 public void visitFreightNetEvent(Event event) {
                     if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
-                            getSelector().getSelected().contains((FNConnection) event.getObject())) {
+                            selector.getSelected().contains((FNConnection) event.getObject())) {
                         getSelector().regionsSelected(Collections.emptyList());
                     }
                 }

@@ -6,8 +6,7 @@ public interface RegionSelector<T> {
 
     boolean regionsSelected(List<T> regions);
 
-    List<T> getSelected();
-
-    boolean editSelected();
-
+    default boolean editSelected() {
+        return false;
+    }
 }
