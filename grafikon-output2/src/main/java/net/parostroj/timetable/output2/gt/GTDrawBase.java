@@ -635,10 +635,8 @@ public abstract class GTDrawBase implements GTDraw {
     }
 
     protected Color getIntervalColor(TimeInterval interval) {
-        if (hTrains != null && hTrains.isHighlighedInterval(interval)) {
-            return hTrains.getHighlightColor(interval);
-        }
-        return trainColors.getIntervalColor(interval);
+        Color hColor = hTrains != null ? hTrains.getHighlightColor(interval) : null;
+        return hColor != null ? hColor : trainColors.getIntervalColor(interval);
     }
 
     protected void addShapeToCollector(TimeInterval interval, Shape shape) {

@@ -8,9 +8,8 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
+@FunctionalInterface
 public interface HighlightedTrains {
-
-    boolean isHighlighedInterval(TimeInterval interval);
 
     Color getHighlightColor(TimeInterval interval);
 }

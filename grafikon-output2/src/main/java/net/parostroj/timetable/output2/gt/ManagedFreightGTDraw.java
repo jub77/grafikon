@@ -101,7 +101,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             g.draw(line);
             g.setComposite(comp);
             g.setColor(FREIGHT_TEXT_COLOR);
-            if (hTrains != null && hTrains.isHighlighedInterval(interval)) {
+            Color hColor = hTrains != null ? hTrains.getHighlightColor(interval) : null;
+            if (hColor != null) {
                 g.setColor(highlight.getColor());
             }
             paintText(null, text, g, new Rectangle(bounds), location, width, dir);

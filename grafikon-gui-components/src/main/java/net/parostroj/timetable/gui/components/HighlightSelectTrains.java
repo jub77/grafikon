@@ -56,13 +56,8 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
     }
 
     @Override
-    public boolean isHighlighedInterval(TimeInterval interval) {
-        return set.contains(interval.getTrain());
-    }
-
-    @Override
     public Color getHighlightColor(TimeInterval interval) {
-        return this.selectionColor;
+        return set.contains(interval.getTrain()) ? this.selectionColor : null;
     }
 
     @Override

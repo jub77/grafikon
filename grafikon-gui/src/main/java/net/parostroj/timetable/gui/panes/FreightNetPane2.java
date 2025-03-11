@@ -141,13 +141,12 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final class HighlightSelection implements HighlightedTrains, RegionSelector<TimeInterval> {
 
         @Override
-        public boolean isHighlighedInterval(TimeInterval interval) {
-            return interval == connection.first || interval == connection.second;
-        }
-
-        @Override
         public Color getHighlightColor(TimeInterval interval) {
-            return interval == connection.first ? Color.GREEN : Color.CYAN;
+            if (interval == connection.first || interval == connection.second) {
+                return interval == connection.first ? Color.GREEN : Color.CYAN;
+            } else {
+                return null;
+            }
         }
 
         @Override

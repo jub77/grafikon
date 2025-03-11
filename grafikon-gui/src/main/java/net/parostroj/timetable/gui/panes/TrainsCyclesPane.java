@@ -50,11 +50,6 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         private TrainsCycle last;
 
         @Override
-        public boolean isHighlighedInterval(TimeInterval interval) {
-            return false;
-        }
-
-        @Override
         public void tcEvent(Action action, TrainsCycle cycle, Train train) {
             if (action == TCDelegate.Action.SELECTED_CHANGED) {
                 last = delegate.getSelectedCycle();
@@ -70,7 +65,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
         @Override
         public Color getHighlightColor(TimeInterval interval) {
-            return Color.GREEN;
+            return null;
         }
 
         @Override
