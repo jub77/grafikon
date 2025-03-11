@@ -6,7 +6,6 @@ import java.util.Set;
 
 import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.events.EditTrainMessage;
-import net.parostroj.timetable.gui.events.IntervalSelectionMessage;
 import net.parostroj.timetable.gui.events.TrainSelectionMessage;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.TimeInterval;
@@ -79,11 +78,8 @@ public class HighlightSelectTrains implements HighlightedTrains, RegionSelector<
             boolean intervalChange = selectedTimeInterval != interval;
             selectedTimeInterval = interval;
             if (!isEvent) {
-                if (trainChange) {
-                    mediator.sendMessage(new TrainSelectionMessage(selectedTrain));
-                }
-                if (intervalChange && interval != null) {
-                    mediator.sendMessage(new IntervalSelectionMessage(interval));
+                if (trainChange || intervalChange) {
+                    mediator.sendMessage(new TrainSelectionMessage(selectedTrain, selectedTimeInterval));
                 }
             }
             return interval != null;

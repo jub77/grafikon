@@ -21,7 +21,6 @@ import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.events.IntervalSelectionMessage;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
@@ -124,31 +123,6 @@ public class TrainView extends javax.swing.JPanel implements StorableGuiData {
     private void initModel(final ApplicationModel model) {
         this.model = model;
         this.updateView(model.getSelectedTrain());
-        model.getMediator().addColleague(message -> {
-            IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
-            if (ism.interval() != null) {
-                TimeInterval interval = ism.interval();
-                Train trainForInterval = interval.getTrain();
-                if (trainForInterval.getTimeIntervalBefore() == interval) {
-                    interval = trainForInterval.getFirstInterval();
-                } else if (trainForInterval.getTimeIntervalAfter() == interval) {
-                    interval = trainForInterval.getLastInterval();
-                }
-                int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
-                int column = TrainTableColumn.getIndex(trainTable.getColumnModel(),
-                        interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
-                trainTable.setRowSelectionInterval(row, row);
-                if (column != -1) {
-                    trainTable.setColumnSelectionInterval(column, column);
-                }
-                Rectangle rect = trainTable.getCellRect(row, 0, true);
-                trainTable.scrollRectToVisible(rect);
-                Component topLevelComponent = GuiComponentUtils.getTopLevelComponent(TrainView.this);
-                if (topLevelComponent.hasFocus()) {
-                    trainTable.requestFocus();
-                }
-            }
-        }, IntervalSelectionMessage.class);
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainEvent(Event event) {
@@ -162,10 +136,12 @@ public class TrainView extends javax.swing.JPanel implements StorableGuiData {
                 message -> updateView(null),
                 DiagramChangeMessage.class);
         model.getMediator().addColleague(
-                message -> updateView(((TrainSelectionMessage) message).train()),
+                message -> {
+                    updateView(((TrainSelectionMessage) message).train());
+                    updateInterval(((TrainSelectionMessage) message).interval());
+                },
                 TrainSelectionMessage.class);
     }
-
 
     private void updateView(Train train) {
         if (train == null) {
@@ -196,6 +172,30 @@ public class TrainView extends javax.swing.JPanel implements StorableGuiData {
         ((TrainTableModel)trainTable.getModel()).setTrain(train);
 
         this.invalidate();
+    }
+
+    private void updateInterval(TimeInterval interval) {
+        if (interval != null) {
+            Train trainForInterval = interval.getTrain();
+            if (trainForInterval.getTimeIntervalBefore() == interval) {
+                interval = trainForInterval.getFirstInterval();
+            } else if (trainForInterval.getTimeIntervalAfter() == interval) {
+                interval = trainForInterval.getLastInterval();
+            }
+            int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
+            int column = TrainTableColumn.getIndex(trainTable.getColumnModel(),
+                    interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
+            trainTable.setRowSelectionInterval(row, row);
+            if (column != -1) {
+                trainTable.setColumnSelectionInterval(column, column);
+            }
+            Rectangle rect = trainTable.getCellRect(row, 0, true);
+            trainTable.scrollRectToVisible(rect);
+            Component topLevelComponent = GuiComponentUtils.getTopLevelComponent(TrainView.this);
+            if (topLevelComponent.hasFocus()) {
+                trainTable.requestFocus();
+            }
+        }
     }
 
     private String addPreviousTrain(String name, Train train) {
