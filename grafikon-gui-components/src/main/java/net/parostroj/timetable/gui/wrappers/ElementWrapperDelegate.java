@@ -11,42 +11,29 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
 
     @Override
     public String toString(Object element) {
-        if (element instanceof EngineClass) {
-            return ((EngineClass) element).getName();
-        } else if (element instanceof LineClass) {
-            return ((LineClass) element).getName();
-        } else if (element instanceof Node) {
-            return ((Node) element).getName();
-        } else if (element instanceof TrainsCycle) {
-            return ((TrainsCycle) element).getName();
-        } else if (element instanceof TrainType) {
-            LocalizedString desc = ((TrainType) element).getDesc();
-            return desc != null ? desc.translate() : ((TrainType) element).getDefaultAbbr();
-        } else if (element instanceof TrainTypeCategory) {
-            return ((TrainTypeCategory) element).getName().translate();
-        } else if (element instanceof TimeInterval) {
-            return ((TimeInterval) element).getOwner().toString();
-        } else if (element instanceof TimetableImage) {
-            return element.toString();
-        } else if (element instanceof TextItem) {
-            return element.toString();
-        } else if (element instanceof Route) {
-            return element.toString();
-        } else if (element instanceof Train) {
-            return ((Train) element).getDefaultName();
-        } else if (element instanceof OutputTemplate) {
-            return ((OutputTemplate)element).getKey();
-        } else if (element instanceof TrainsCycleType) {
-            return ((TrainsCycleType)element).getName().translate();
-        } else if (element instanceof Group) {
-            return ((Group)element).getName();
-        } else if (element instanceof LineTrack) {
-            return ((LineTrack) element).getNumber();
-        } else if (element instanceof NodeTrack) {
-            NodeTrack nt = (NodeTrack) element;
-            return nt.getNumber() + (nt.isPlatform() ? " [" : "");
-        } else {
-            return super.toString(element);
-        }
+        return switch (element) {
+            case EngineClass engineClass -> engineClass.getName();
+            case LineClass lineClass -> lineClass.getName();
+            case Node node -> node.getName();
+            case TrainsCycle cycle -> cycle.getName();
+            case TrainType type -> {
+                LocalizedString abbr = type.getAbbr();
+                LocalizedString desc = type.getDesc();
+                String abbrTrans = abbr.translate();
+                yield desc != null ? abbrTrans + " - " + desc.translate() : abbrTrans;
+            }
+            case TrainTypeCategory category -> category.getName().translate();
+            case TimeInterval interval -> interval.getOwner().toString();
+            case TimetableImage ignored -> element.toString();
+            case TextItem ignored -> element.toString();
+            case Route ignored -> element.toString();
+            case Train train -> train.getDefaultName();
+            case OutputTemplate template -> template.getKey();
+            case TrainsCycleType cType -> cType.getName().translate();
+            case Group group -> group.getName();
+            case LineTrack lt -> lt.getNumber();
+            case NodeTrack nt -> nt.getNumber() + (nt.isPlatform() ? " [" : "");
+            case null, default -> element == null ? "-" : super.toString(element);
+        };
     }
 }
