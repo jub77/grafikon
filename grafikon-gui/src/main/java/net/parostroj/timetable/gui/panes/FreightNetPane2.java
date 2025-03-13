@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.swing.*;
 
+import net.parostroj.timetable.gui.components.GraphicalTimetableViewBuilder;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
@@ -31,7 +32,6 @@ import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.MouseOverHandler;
-import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
 import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
@@ -219,7 +219,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private static final Logger log = LoggerFactory.getLogger(FreightNetPane2.class);
 
-    private final GraphicalTimetableViewWithSave graphicalTimetableView;
+    private final GraphicalTimetableView graphicalTimetableView;
     private final GTLayeredPane2 scrollPane;
 
     private final transient Tuple<TimeInterval> connection = new Tuple<>();
@@ -242,7 +242,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     public FreightNetPane2(ApplicationModel appModel) {
         setLayout(new BorderLayout());
-        graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
+        graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableView();
+        GraphicalTimetableViewBuilder.updateWithSave(graphicalTimetableView);
         graphicalTimetableView
                 .setSettings(graphicalTimetableView.getSettings()
                         .set(GTViewSettings.Key.ORIENTATION_MENU, false)
