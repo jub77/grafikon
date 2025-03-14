@@ -1,32 +1,17 @@
 items:
-- id: czech
-  filename: czech.gtm
+- id: czsk
+  filename: czsk.gtm
   name:
-    default: Czech
-    cs: Česká
-- id: slovak
-  filename: slovak.gtm
+    default: Czech/Slovak (ČSD)
+    cs: Česká/Slovenská (ČSD)
+- id: pl
+  filename: pl.gtm
   name:
-    default: Slovak
-    cs: Slovenská
-- id: polish
-  filename: polish.gtm
-  name:
-    default: Polish
-    cs: Polská
-    pl: Polski
+    default: Polish (PKP)
+    cs: Polská (PKP)
+    pl: Polski (PKP)
 - id: empty
   filename: empty.gtm
   name:
     default: Empty
     cs: Prázdná
-- id: empty_script
-  filename: empty_script.gtm
-  name:
-    default: Empty (script)
-    cs: Prázdná (skript)
-- id: empty_classic
-  filename: empty_classic.gtm
-  name:
-    default: Empty (classic)
-    cs: Prázdná (klasická)
