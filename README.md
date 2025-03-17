@@ -52,3 +52,14 @@ The package for macOS contains only application bundled with Java without genera
 1. download zip file
 2. unpack it
 3. start `grafikon-image/bin/grafikon`
+
+## Simple String Substitution Templating
+
+Simple string templates can be used e.g. in name template of train. The following substitutions
+are available:
+
+- `${variable}` - replace with variable
+- `${if:bool-variable:string}` - if the variable is true, the string is substituted, otherwise empty string
+- `${prefix:variable:string}` - prefix variable (if not empty) value with string, otherwise replace with empty string
+- `${suffix:variable:string}` - add string after variable (if not empty), otherwise replace with empty string
+- `${translate:variable:locale-variable|#locale-string}` - translation
