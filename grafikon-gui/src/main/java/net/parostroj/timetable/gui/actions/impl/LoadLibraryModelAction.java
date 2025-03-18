@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.zip.ZipInputStream;
 
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.ls.LSFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,9 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
             try {
                 LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(selectedFile);
                 try (ZipInputStream stream = new ZipInputStream(new FileInputStream(selectedFile))) {
-                    context.setAttribute("library", ls.load(diagramType, stream));
+                    LSFeature[] features = diagramType == TrainDiagramType.NORMAL
+                            ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
+                    context.setAttribute("library", ls.load(stream, features));
                 }
             } catch (LSException e) {
                 log.warn("Error loading model.", e);

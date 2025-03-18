@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.ls.LSFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,9 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
         try {
             try {
                 LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                context.setAttribute("diagram", ls.load(diagramType, selectedFile));
+                LSFeature[] features = diagramType == TrainDiagramType.NORMAL
+                        ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
+                context.setAttribute("diagram", ls.load(selectedFile, features));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

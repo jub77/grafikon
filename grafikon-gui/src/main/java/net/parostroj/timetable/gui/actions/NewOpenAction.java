@@ -21,6 +21,8 @@ import net.parostroj.timetable.gui.dialogs.NewModelDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.ls.LSFeature;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
@@ -116,7 +118,9 @@ public class NewOpenAction extends AbstractAction {
                         model.setOpenedFile(selectedFile);
                         log.info("Loading: {}", selectedFile);
                         LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                        diagram = ls.load(model.getProgramSettings().getDiagramType(), selectedFile);
+                        LSFeature[] features = model.getProgramSettings().getDiagramType() == TrainDiagramType.NORMAL
+                                ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
+                        diagram = ls.load(selectedFile, features);
                     } catch (LSException e) {
                         log.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {

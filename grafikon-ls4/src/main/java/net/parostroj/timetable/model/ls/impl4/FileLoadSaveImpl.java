@@ -14,6 +14,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSFeature;
 import net.parostroj.timetable.model.ls.impl4.filters.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +81,9 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
+    public TrainDiagram load(File file, LSFeature... features) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            TrainDiagram diagram = this.load(diagramType, inputStream);
+            TrainDiagram diagram = this.load(inputStream, features);
             // set file info
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
             return diagram;
@@ -112,7 +113,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream zipInput) throws LSException {
+    public TrainDiagram load(ZipInputStream zipInput, LSFeature... features) throws LSException {
         try {
             ZipEntry entry;
             TrainDiagramBuilder builder = null;
@@ -129,7 +130,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
                     LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
-                    builder = new TrainDiagramBuilder(lstd, attachments, diagramType);
+                    builder = new TrainDiagramBuilder(lstd, attachments, getDiagramType(features));
                 }
                 // test diagram
                 if (builder == null) {
@@ -285,5 +286,18 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     @Override
     public ModelVersion getSaveVersion() {
         return CURRENT_VERSION;
+    }
+
+    private TrainDiagramType getDiagramType(LSFeature[] features) {
+        TrainDiagramType type = TrainDiagramType.NORMAL;
+        if (features != null) {
+            for (LSFeature feature : features) {
+                if (feature == LSFeature.RAW_DIAGRAM) {
+                    type = TrainDiagramType.RAW;
+                    break;
+                }
+            }
+        }
+        return type;
     }
 }

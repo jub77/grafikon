@@ -10,6 +10,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.ls.LSFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public LibraryItem loadItem(TrainDiagramType diagramType, InputStream is) {
+    public LibraryItem loadItem(InputStream is, LSFeature... features) {
         throw new UnsupportedOperationException();
     }
 
@@ -84,11 +85,12 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public Library load(TrainDiagramType diagramType, ZipInputStream is) throws LSException {
+    public Library load(ZipInputStream is, LSFeature... features) throws LSException {
         try {
             ZipEntry entry;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
-            LibraryBuilder libraryBuilder = new LibraryBuilder(LibraryBuilder.newConfig().setDiagramType(diagramType));
+            LibraryBuilder libraryBuilder = new LibraryBuilder(
+                    LibraryBuilder.newConfig().setDiagramType(getDiagramType(features)));
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
@@ -105,5 +107,18 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
         } catch (IOException e) {
             throw new LSException(e);
         }
+    }
+
+    private TrainDiagramType getDiagramType(LSFeature[] features) {
+        TrainDiagramType type = TrainDiagramType.NORMAL;
+        if (features != null) {
+            for (LSFeature feature : features) {
+                if (feature == LSFeature.RAW_DIAGRAM) {
+                    type = TrainDiagramType.RAW;
+                    break;
+                }
+            }
+        }
+        return type;
     }
 }

@@ -12,17 +12,17 @@ public interface LoadDelegate<T> {
 
     T load(ZipInputStream is) throws LSException;
 
-    static LoadDelegate<TrainDiagram> createForTrainDiagram(TrainDiagramType type) {
+    static LoadDelegate<TrainDiagram> createForTrainDiagram(LSFeature... features) {
         return is -> {
             LSFile ls = LSFileFactory.getInstance().createForLoad(is);
-            return ls.load(type, is);
+            return ls.load(is, features);
         };
     }
 
-    static LoadDelegate<Library> createForLibrary(TrainDiagramType type) {
+    static LoadDelegate<Library> createForLibrary(LSFeature... features) {
         return is -> {
             LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
-            return ls.load(type, is);
+            return ls.load(is, features);
         };
     }
 }

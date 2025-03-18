@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import net.parostroj.timetable.model.RuntimeInfo;
 import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSFeature;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
 import java.util.LinkedList;
@@ -60,7 +61,7 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
+    public TrainDiagram load(File file, LSFeature... features) throws LSException {
         try (ZipFile zip = new ZipFile(file)) {
             TrainDiagram diagram;
 
@@ -102,7 +103,7 @@ public class LoadSave implements LSFile {
             }
             diagram = this.loadTrainDiagram(modelVersion,
                     new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8),
-                    trainTypeList, diagramType);
+                    trainTypeList, getDiagramType(features));
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, modelVersion);
 
             // load images
@@ -171,7 +172,7 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream is) {
+    public TrainDiagram load(ZipInputStream is, LSFeature... features) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -199,5 +200,18 @@ public class LoadSave implements LSFile {
     @Override
     public void setProperty(String key, Object value) {
         // no properties available
+    }
+
+    private TrainDiagramType getDiagramType(LSFeature[] features) {
+        TrainDiagramType type = TrainDiagramType.NORMAL;
+        if (features != null) {
+            for (LSFeature feature : features) {
+                if (feature == LSFeature.RAW_DIAGRAM) {
+                    type = TrainDiagramType.RAW;
+                    break;
+                }
+            }
+        }
+        return type;
     }
 }

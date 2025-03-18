@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.zip.ZipInputStream;
 
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.ls.LSFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,9 @@ public class LoadDiagramUrlModelAction extends EventDispatchAfterModelAction {
         try {
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSFile ls = LSFileFactory.getInstance().createForLoad(is);
-                context.setAttribute("diagram", ls.load(diagramType, is));
+                LSFeature[] features = diagramType == TrainDiagramType.NORMAL
+                        ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
+                context.setAttribute("diagram", ls.load(is, features));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
 
@@ -29,8 +28,8 @@ class LSLibraryWrapper implements LSLibrary {
     }
 
     @Override
-    public LibraryItem loadItem(TrainDiagramType diagramType, InputStream is) throws LSException {
-        return impl.loadItem(diagramType, is);
+    public LibraryItem loadItem(InputStream is, LSFeature... features) throws LSException {
+        return impl.loadItem(is, features);
     }
 
     @Override
@@ -39,8 +38,8 @@ class LSLibraryWrapper implements LSLibrary {
     }
 
     @Override
-    public Library load(TrainDiagramType diagramType, ZipInputStream is) throws LSException {
-        return impl.load(diagramType, is);
+    public Library load(ZipInputStream is, LSFeature... features) throws LSException {
+        return impl.load(is, features);
     }
 
     @Override

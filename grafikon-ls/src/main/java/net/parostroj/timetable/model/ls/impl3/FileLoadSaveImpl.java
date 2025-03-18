@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSFeature;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
@@ -43,9 +44,9 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, File file) throws LSException {
+    public TrainDiagram load(File file, LSFeature... features) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            return this.load(diagramType, inputStream);
+            return this.load(inputStream, features);
         } catch (IOException ex) {
             throw new LSException(ex);
         }
@@ -85,7 +86,7 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(TrainDiagramType diagramType, ZipInputStream zipInput) throws LSException {
+    public TrainDiagram load(ZipInputStream zipInput, LSFeature... features) throws LSException {
         try {
             ZipEntry entry;
             TrainDiagramBuilder builder = null;
@@ -101,7 +102,7 @@ public class FileLoadSaveImpl implements LSFile {
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
                     LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
-                    builder = new TrainDiagramBuilder(lstd, diagramType);
+                    builder = new TrainDiagramBuilder(lstd, getDiagramType(features));
                 }
                 // test diagram
                 if (builder == null) {
@@ -204,5 +205,18 @@ public class FileLoadSaveImpl implements LSFile {
     @Override
     public void setProperty(String key, Object value) {
         properties.put(key, value);
+    }
+
+    private TrainDiagramType getDiagramType(LSFeature[] features) {
+        TrainDiagramType type = TrainDiagramType.NORMAL;
+        if (features != null) {
+            for (LSFeature feature : features) {
+                if (feature == LSFeature.RAW_DIAGRAM) {
+                    type = TrainDiagramType.RAW;
+                    break;
+                }
+            }
+        }
+        return type;
     }
 }
