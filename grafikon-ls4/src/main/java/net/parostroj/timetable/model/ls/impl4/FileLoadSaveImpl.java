@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -67,18 +66,18 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
 
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
-        loadFilters = new ArrayList<>();
-        // filter up to 22 is first because it deals with change from list to set (format)
-        loadFilters.add(new LoadFilter4d22());
-        // filters with increasing version
-        loadFilters.add(new LoadFilter4d2());
-        loadFilters.add(new LoadFilter4d7());
-        loadFilters.add(new LoadFilter4d13());
-        loadFilters.add(new LoadFilter4d18());
-        loadFilters.add(new LoadFilter4d19());
-        loadFilters.add(new LoadFilter4d21());
-        loadFilters.add(new LoadFilter4d24());
-        loadFilters.add(new LoadFilter4d26());
+        loadFilters = List.of(
+                // filter up to 22 is first because it deals with change from list to set (format)
+                new LoadFilter4d22(),
+                // filters with increasing version
+                new LoadFilter4d2(),
+                new LoadFilter4d7(),
+                new LoadFilter4d13(),
+                new LoadFilter4d18(),
+                new LoadFilter4d19(),
+                new LoadFilter4d21(),
+                new LoadFilter4d24(),
+                new LoadFilter4d26());
     }
 
     @Override

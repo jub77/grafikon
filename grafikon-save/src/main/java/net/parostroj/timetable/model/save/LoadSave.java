@@ -12,7 +12,6 @@ import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFeature;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -50,14 +49,14 @@ public class LoadSave implements LSFile {
     private final List<TrainDiagramFilter> saveFilters;
 
     public LoadSave() {
-        loadFilters = new LinkedList<>();
-        loadFilters.add(new TrainsNamesLoadFilter());
-        loadFilters.add(new LineTypeLoadFilter());
-        loadFilters.add(new WeightFilter());
-        loadFilters.add(new RouteFilter());
-        loadFilters.add(new LocalizationFilter());
-        loadFilters.add(new RecalculateFilter());
-        loadFilters.add(new NodeFilter());
+        loadFilters = List.of(
+                new TrainsNamesLoadFilter(),
+                new LineTypeLoadFilter(),
+                new WeightFilter(),
+                new RouteFilter(),
+                new LocalizationFilter(),
+                new RecalculateFilter(),
+                new NodeFilter());
         saveFilters = List.of();
     }
 

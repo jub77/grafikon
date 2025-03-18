@@ -135,25 +135,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.addAllEventListener(changesTracker);
         this.freightNet = new FreightNet(this);
         this.freightNet.addListener(listener);
-        this.validators = new ArrayList<>();
-        this.validators.add(new TrainRemoveValidator());
-        this.validators.add(new TrainNamesValidator(this));
-        this.validators.add(new TrainIntervalsValidator());
-        this.validators.add(new LineClassRemoveValidator(this));
-        this.validators.add(new GroupRemoveValidator(this));
-        this.validators.add(new CompanyRemoveValidator(this));
-        this.validators.add(new EngineClassRemoveValidator(this));
-        this.validators.add(new LineValidator());
-        this.validators.add(new TrainsCycleValidator());
-        this.validators.add(new TrainTypeValidator(this));
-        this.validators.add(new FreightNetValidator(this));
-        this.validators.add(new RegionValidator(this));
-        this.validators.add(new NodeValidator(this));
-        this.validators.add(new TrackConnectorValidator());
-        this.validators.add(new TrainCycleTypeRemoveValidator());
-        this.validators.add(new OutputTemplateRemoveValidator(this));
-        this.validators.add(new OutputValidator(this));
-        this.validators.add(new PreviousNextTrainValidator());
+        this.validators = List.of(
+                new TrainRemoveValidator(),
+                new TrainNamesValidator(this),
+                new TrainIntervalsValidator(),
+                new LineClassRemoveValidator(this),
+                new GroupRemoveValidator(this),
+                new CompanyRemoveValidator(this),
+                new EngineClassRemoveValidator(this),
+                new LineValidator(),
+                new TrainsCycleValidator(),
+                new TrainTypeValidator(this),
+                new FreightNetValidator(this),
+                new RegionValidator(this),
+                new NodeValidator(this),
+                new TrackConnectorValidator(),
+                new TrainCycleTypeRemoveValidator(),
+                new OutputTemplateRemoveValidator(this),
+                new OutputValidator(this),
+                new PreviousNextTrainValidator());
         this.itemLists = List.of(routes, images, engineClasses, textItems, outputTemplates,
                 groups, companies, trainTypes, trains, cycleTypes, outputs, trainTypeCategories);
     }
