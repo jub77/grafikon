@@ -1,22 +1,15 @@
 package net.parostroj.timetable.model;
 
+@FunctionalInterface
 public interface ObjectReference<T extends ObjectWithId> {
 
     String getRefId();
-    T getObject(ObjectMapping<T> mapping);
+    default T getObject(ObjectMapping<T> mapping) {
+        return mapping.getObject(getRefId());
+    }
 
     static <O extends ObjectWithId> ObjectReference<O> create(String id) {
-        return new ObjectReference<>() {
-            @Override
-            public String getRefId() {
-                return id;
-            }
-
-            @Override
-            public O getObject(ObjectMapping<O> mapping) {
-                return mapping.getObject(id);
-            }
-        };
+        return () -> id;
     }
 
     static <O extends ObjectWithId> ObjectReference<O> create(ObjectWithId object) {
