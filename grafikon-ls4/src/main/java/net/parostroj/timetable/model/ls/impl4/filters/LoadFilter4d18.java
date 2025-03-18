@@ -12,14 +12,14 @@ public class LoadFilter4d18 implements LoadFilter {
     @Override
     public void checkDiagram(TrainDiagram diagram, ModelVersion version) {
         if (version.compareTo(new ModelVersion(4, 18, 3)) <= 0) {
-            TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
+            Permissions permissions = diagram.getRuntimeInfo().getPermissions();
             // adjust complete name templates
             TextTemplate template = diagram.getTrainsData().getTrainCompleteNameTemplate();
-            diagram.getTrainsData().setTrainCompleteNameTemplate(this.adjustDescription(template, diagramType));
+            diagram.getTrainsData().setTrainCompleteNameTemplate(this.adjustDescription(template, permissions));
             for (TrainType type : diagram.getTrainTypes()) {
                 template = type.getTrainCompleteNameTemplate();
                 if (template != null) {
-                    type.setTrainCompleteNameTemplate(this.adjustDescription(template, diagramType));
+                    type.setTrainCompleteNameTemplate(this.adjustDescription(template, permissions));
                 }
             }
         }
@@ -38,9 +38,10 @@ public class LoadFilter4d18 implements LoadFilter {
         }
     }
 
-    private TextTemplate adjustDescription(TextTemplate template, TrainDiagramType type) {
+    private TextTemplate adjustDescription(TextTemplate template, Permissions permissions) {
         if (template.getLanguage() == Language.GROOVY && template.getTemplate().contains("description != ''")) {
-            template = type.createTextTemplate(template.getTemplate().replace("description != ''", "description"), Language.GROOVY);
+            template = permissions.createTextTemplate(
+                    template.getTemplate().replace("description != ''", "description"), Language.GROOVY);
         }
         return template;
     }

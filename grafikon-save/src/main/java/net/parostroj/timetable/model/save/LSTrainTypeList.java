@@ -49,15 +49,15 @@ public class LSTrainTypeList {
         return trainTypeList;
     }
 
-    public TrainsDataDto getTrainsData(TrainDiagramType diagramType) {
+    public TrainsDataDto getTrainsData(Permissions permissions) {
         if (data == null)
-            createData(diagramType);
+            createData(permissions);
         return data;
     }
 
-    private void createData(TrainDiagramType diagramType) {
-        TextTemplate trainName = trainNameTemplate != null ? diagramType.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null;
-        TextTemplate trainCompleteName = trainCompleteNameTemplate != null ? diagramType.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.GROOVY) : null;
+    private void createData(Permissions permissions) {
+        TextTemplate trainName = trainNameTemplate != null ? permissions.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null;
+        TextTemplate trainCompleteName = trainCompleteNameTemplate != null ? permissions.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.GROOVY) : null;
         data = new TrainsDataDto(
                 trainName != null ? trainName : TrainType.getDefaultTrainNameTemplate(),
                 trainCompleteName != null ? trainCompleteName : TrainType.getDefaultTrainCompleteNameTemplate(),

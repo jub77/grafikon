@@ -5,10 +5,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.parostroj.timetable.model.Permissions;
 import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.ls.LSFeature;
 import org.slf4j.Logger;
@@ -90,7 +92,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
             ZipEntry entry;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
             LibraryBuilder libraryBuilder = new LibraryBuilder(
-                    LibraryBuilder.newConfig().setDiagramType(getDiagramType(features)));
+                    LibraryBuilder.newConfig().setPermissions(getPermissions(features)));
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
@@ -109,16 +111,11 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
         }
     }
 
-    private TrainDiagramType getDiagramType(LSFeature[] features) {
-        TrainDiagramType type = TrainDiagramType.NORMAL;
-        if (features != null) {
-            for (LSFeature feature : features) {
-                if (feature == LSFeature.RAW_DIAGRAM) {
-                    type = TrainDiagramType.RAW;
-                    break;
-                }
-            }
-        }
-        return type;
+    private Permissions getPermissions(LSFeature[] features) {
+        return Stream.of(features)
+                .filter(feature -> LSFeature.RAW_DIAGRAM == feature)
+                .findAny()
+                .map(f -> Permissions.forType(TrainDiagramType.RAW))
+                .orElseGet(() -> Permissions.forType(TrainDiagramType.NORMAL));
     }
 }

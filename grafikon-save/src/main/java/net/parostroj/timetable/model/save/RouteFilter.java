@@ -22,7 +22,7 @@ public class RouteFilter implements TrainDiagramFilter {
             String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
             if (routeInfo != null) {
                 try {
-                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getRuntimeInfo().getDiagramType()));
+                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo, diagram.getRuntimeInfo().getPermissions()));
                 } catch (GrafikonException e) {
                     log.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
@@ -32,7 +32,7 @@ public class RouteFilter implements TrainDiagramFilter {
         return diagram;
     }
 
-    private TextTemplate convert(String routeInfo, TrainDiagramType diagramType) throws GrafikonException {
+    private TextTemplate convert(String routeInfo, Permissions permissions) throws GrafikonException {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < routeInfo.length(); i++) {
             char ch = routeInfo.charAt(i);
@@ -55,6 +55,6 @@ public class RouteFilter implements TrainDiagramFilter {
                 result.append(ch);
             }
         }
-        return diagramType.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
+        return permissions.createTextTemplate(result.toString(), TextTemplate.Language.SIMPLE);
     }
 }

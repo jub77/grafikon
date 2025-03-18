@@ -294,8 +294,8 @@ public class LSAttributesItem {
     private Object convertTextTemplate(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(TEXT_TEMPLATE_KEY_PREFIX.length());
         TextTemplate.Language language = TextTemplate.Language.fromString(languageStr);
-        if (language != null && context.getDiagramType().isAllowed(language)) {
-            return context.getDiagramType().createTextTemplate(value, language);
+        if (language != null && context.getPermissions().isAllowed(language)) {
+            return context.getPermissions().createTextTemplate(value, language);
         } else {
             return null;
         }
@@ -304,7 +304,7 @@ public class LSAttributesItem {
     private Object convertScript(LSContext context, String value, String valueType) {
         String languageStr = valueType.substring(SCRIPT_KEY_PREFIX.length());
         Script.Language language = Script.Language.valueOf(languageStr);
-        if (context.getDiagramType().isAllowed(language)) {
+        if (context.getPermissions().isAllowed(language)) {
             return Script.create(value, language);
         } else {
             return null;

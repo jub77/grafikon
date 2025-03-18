@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Stream;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSFeature;
@@ -208,15 +209,10 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     private TrainDiagramType getDiagramType(LSFeature[] features) {
-        TrainDiagramType type = TrainDiagramType.NORMAL;
-        if (features != null) {
-            for (LSFeature feature : features) {
-                if (feature == LSFeature.RAW_DIAGRAM) {
-                    type = TrainDiagramType.RAW;
-                    break;
-                }
-            }
-        }
-        return type;
+        return Stream.of(features)
+                .filter(feature -> LSFeature.RAW_DIAGRAM == feature)
+                .findAny()
+                .map(f -> TrainDiagramType.RAW)
+                .orElse(TrainDiagramType.NORMAL);
     }
 }

@@ -102,7 +102,7 @@ public class LSTrainType {
 
     public TrainType convertToTrainType(TrainDiagram diagram) {
         TrainDiagramPartFactory factory = diagram.getPartFactory();
-        TrainDiagramType diagramType = factory.getDiagramType();
+        Permissions permissions = factory.getPermissions();
         TrainType type =factory.createTrainType(factory.createId());
         type.setAbbr(LocalizedString.fromString(this.abbr));
         type.setColor(Conversions.convertTextToColor(this.color));
@@ -110,9 +110,9 @@ public class LSTrainType {
         type.setPlatform(this.platform);
         type.setCategory(this.getCategory(diagram));
         type.setTrainNameTemplate(this.trainNameTemplate != null ?
-                diagramType.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null);
+                permissions.createTextTemplate(trainNameTemplate, TextTemplate.Language.GROOVY) : null);
         type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-                diagramType.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.SIMPLE) : null);
+                permissions.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.SIMPLE) : null);
         return type;
     }
 

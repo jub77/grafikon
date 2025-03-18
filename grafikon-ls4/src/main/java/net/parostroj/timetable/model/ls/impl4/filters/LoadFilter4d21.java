@@ -25,24 +25,25 @@ public class LoadFilter4d21 implements LoadFilter {
             }
         }
         if (version.compareTo(new ModelVersion(4, 21, 1)) <= 0) {
-            TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
+            Permissions permissions = diagram.getRuntimeInfo().getPermissions();
             // convert train name templates (common)
             diagram.getTrainsData()
-                    .setTrainNameTemplate(convertForAbbreviation(diagram.getTrainsData().getTrainNameTemplate(), diagramType));
+                    .setTrainNameTemplate(convertForAbbreviation(diagram.getTrainsData().getTrainNameTemplate(), permissions));
             diagram.getTrainsData().setTrainCompleteNameTemplate(
-                    convertForAbbreviation(diagram.getTrainsData().getTrainCompleteNameTemplate(), diagramType));
+                    convertForAbbreviation(diagram.getTrainsData().getTrainCompleteNameTemplate(), permissions));
             // in train types
             for (TrainType type : diagram.getTrainTypes()) {
-                type.setTrainNameTemplate(convertForAbbreviation(type.getTrainNameTemplate(), diagramType));
-                type.setTrainCompleteNameTemplate(convertForAbbreviation(type.getTrainCompleteNameTemplate(), diagramType));
+                type.setTrainNameTemplate(convertForAbbreviation(type.getTrainNameTemplate(), permissions));
+                type.setTrainCompleteNameTemplate(convertForAbbreviation(type.getTrainCompleteNameTemplate(), permissions));
             }
         }
     }
 
-    private TextTemplate convertForAbbreviation(TextTemplate template, TrainDiagramType type) {
+    private TextTemplate convertForAbbreviation(TextTemplate template, Permissions permissions) {
         if (template != null && template.getTemplate().contains(".abbr") && template.getLanguage() != TextTemplate.Language.SIMPLE) {
             try {
-                template = type.createTextTemplate(template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
+                template = permissions.createTextTemplate(
+                        template.getTemplate().replaceAll("\\.abbr", ".defaultAbbr"), template.getLanguage());
             } catch (GrafikonException e) {
                 log.warn("Problem replacing abbreviation in template: {}", template.getTemplate());
             }

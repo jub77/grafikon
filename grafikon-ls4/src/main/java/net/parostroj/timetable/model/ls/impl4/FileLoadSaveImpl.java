@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -289,15 +290,10 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     private TrainDiagramType getDiagramType(LSFeature[] features) {
-        TrainDiagramType type = TrainDiagramType.NORMAL;
-        if (features != null) {
-            for (LSFeature feature : features) {
-                if (feature == LSFeature.RAW_DIAGRAM) {
-                    type = TrainDiagramType.RAW;
-                    break;
-                }
-            }
-        }
-        return type;
+        return Stream.of(features)
+                .filter(feature -> LSFeature.RAW_DIAGRAM == feature)
+                .findAny()
+                .map(f -> TrainDiagramType.RAW)
+                .orElse(TrainDiagramType.NORMAL);
     }
 }

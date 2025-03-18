@@ -32,6 +32,10 @@ public class RuntimeInfo implements AttributesHolder {
         return attributes.get(ATTR_DIAGRAM_TYPE, TrainDiagramType.class);
     }
 
+    public Permissions getPermissions() {
+        return Permissions.forType(getDiagramType());
+    }
+
     public void setDiagramType(TrainDiagramType diagramType) {
         attributes.setRemove(ATTR_DIAGRAM_TYPE, diagramType);
     }

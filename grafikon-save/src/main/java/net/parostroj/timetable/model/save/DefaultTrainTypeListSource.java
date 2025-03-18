@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.save;
 
-import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.Permissions;
 import net.parostroj.timetable.model.ls.LSException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,9 +20,9 @@ public class DefaultTrainTypeListSource {
         return DefaultTrainTypeListSource.class.getResourceAsStream(resourceName);
     }
 
-    public static Pair<TrainsDataDto, List<TrainType>> getDefaultTypeList(TrainDiagramType diagramType) throws LSException {
+    public static Pair<TrainsDataDto, List<TrainType>> getDefaultTypeList(Permissions permissions) throws LSException {
         LSTrainTypeSerializer serializer = LSTrainTypeSerializer.getLSTrainTypeSerializer();
         LSTrainTypeList lsList = serializer.load(new InputStreamReader(DefaultTrainTypeListSource.getDefaultTypesInputStream(), StandardCharsets.UTF_8));
-        return new Pair<>(lsList.getTrainsData(diagramType), lsList.getTrainTypeList());
+        return new Pair<>(lsList.getTrainsData(permissions), lsList.getTrainTypeList());
     }
 }

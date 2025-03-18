@@ -151,7 +151,7 @@ public class TrainDiagramPartFactory implements PartFactory {
      */
     @Override
     public OutputTemplate createOutputTemplate(String id) {
-        if (!getDiagramType().isOutputTemplateAllowed()) {
+        if (!getPermissions().isOutputTemplateAllowed()) {
             throw new GrafikonException("Output template forbidden");
         }
         return new OutputTemplate(id, diagram);
@@ -177,7 +177,7 @@ public class TrainDiagramPartFactory implements PartFactory {
     }
 
     @Override
-    public TrainDiagramType getDiagramType() {
-        return diagram.getRuntimeInfo().getDiagramType();
+    public Permissions getPermissions() {
+        return diagram.getRuntimeInfo().getPermissions();
     }
 }

@@ -7,15 +7,15 @@ package net.parostroj.timetable.model;
  */
 public class LibraryPartFactory implements PartFactory {
 
-    private final TrainDiagramType type;
+    private final Permissions permissions;
 
-    public LibraryPartFactory(TrainDiagramType type) {
-        this.type = type;
+    public LibraryPartFactory(Permissions permissions) {
+        this.permissions = permissions;
     }
 
     @Override
     public OutputTemplate createOutputTemplate(String id) {
-        if (type == TrainDiagramType.NORMAL) {
+        if (!permissions.isOutputTemplateAllowed()) {
             throw new GrafikonException("Not allowed for type");
         }
         return new OutputTemplate(id, null);
@@ -49,7 +49,7 @@ public class LibraryPartFactory implements PartFactory {
     }
 
     @Override
-    public TrainDiagramType getDiagramType() {
-        return type;
+    public Permissions getPermissions() {
+        return permissions;
     }
 }

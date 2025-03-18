@@ -13,7 +13,7 @@ public class LibraryBuilder {
 
         private boolean addMissing;
         private LibraryFactory libraryFactory;
-        private TrainDiagramType type = TrainDiagramType.NORMAL;
+        private Permissions permissions = Permissions.forType(TrainDiagramType.NORMAL);
 
         public Config setAddMissing(boolean addMissing) {
             this.addMissing = addMissing;
@@ -25,8 +25,8 @@ public class LibraryBuilder {
             return this;
         }
 
-        public Config setDiagramType(TrainDiagramType type) {
-            this.type = type;
+        public Config setPermissions(Permissions permissions) {
+            this.permissions = permissions;
             return this;
         }
 
@@ -38,8 +38,8 @@ public class LibraryBuilder {
             return addMissing;
         }
 
-        public TrainDiagramType getType() {
-            return type;
+        public Permissions getPermissions() {
+            return permissions;
         }
     }
 
@@ -52,7 +52,7 @@ public class LibraryBuilder {
     public LibraryBuilder(Config config) {
         this.config = config;
         this.addHandler = new LibraryAddHandler();
-        this.factory = new LibraryPartFactory(config.getType());
+        this.factory = new LibraryPartFactory(config.getPermissions());
         this.copyFactory = new CopyFactory(factory);
         this.items = new LinkedHashMap<>();
     }

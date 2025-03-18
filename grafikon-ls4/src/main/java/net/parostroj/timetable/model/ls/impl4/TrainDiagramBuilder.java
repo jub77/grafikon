@@ -157,7 +157,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
-        if (context.getDiagramType().isOutputTemplateAllowed()) {
+        if (context.getPermissions().isOutputTemplateAllowed()) {
             OutputTemplate template = lsOutputTemplate.createOutputTemplate(context, flsAttachments);
             diagram.getOutputTemplates().add(template);
         }
@@ -165,7 +165,7 @@ public class TrainDiagramBuilder {
 
     public void setOutput(LSOutput lsOutput) throws LSException {
         Output output = lsOutput.createOutput(context);
-        if (context.getDiagramType().isOutputTemplateAllowed() || output.getTemplateRef() != null) {
+        if (context.getPermissions().isOutputTemplateAllowed() || output.getTemplateRef() != null) {
             diagram.getOutputs().add(output);
         }
     }

@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.PartFactory;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.*;
 
 import java.util.function.Function;
 
@@ -17,8 +14,8 @@ public interface LSContext {
         return null;
     }
 
-    default TrainDiagramType getDiagramType() {
-        return getPartFactory().getDiagramType();
+    default Permissions getPermissions() {
+        return getPartFactory().getPermissions();
     }
 
     default LSContext overrideMapping(Function<String, ObjectWithId> mapping) {
