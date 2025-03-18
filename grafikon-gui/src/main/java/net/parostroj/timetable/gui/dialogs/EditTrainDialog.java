@@ -59,13 +59,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private static final Map<TextTemplate.Language, String> FROM_STATION = Map.of(
             TextTemplate.Language.GROOVY, "${stations.first}",
-            TextTemplate.Language.SIMPLE, "${index:stations:first}");
+            TextTemplate.Language.SIMPLE, "${stations[first]}");
     private static final Map<TextTemplate.Language, String> TO_STATION = Map.of(
             TextTemplate.Language.GROOVY, "${stations.last}",
-            TextTemplate.Language.SIMPLE, "${index:stations:last}");
+            TextTemplate.Language.SIMPLE, "${stations[last]}");
     private static final Map<TextTemplate.Language, String> STATION_X = Map.of(
             TextTemplate.Language.GROOVY, "${stations.get(%d)}",
-            TextTemplate.Language.SIMPLE, "${index:stations:%d}");
+            TextTemplate.Language.SIMPLE, "${stations[%d]}");
 
     private transient Train train;
 

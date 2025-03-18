@@ -97,7 +97,6 @@ public class SimpleSubstitutedString implements SubstitutedString {
                     case "prefix" -> prefixModule(module);
                     case "suffix" -> suffixModule(module);
                     case "if" -> ifModule(module);
-                    case "index" -> indexModule(module);
                     case "translate" -> translateModule(module);
                     default -> binding -> "";
                 };
@@ -158,29 +157,6 @@ public class SimpleSubstitutedString implements SubstitutedString {
             };
         }
 
-        private static SubstitutedString indexModule(String[] module) {
-            Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
-            return binding -> {
-                Object value = variableAccess.apply(binding);
-                int index = switch (module[2]) {
-                    case "first" -> 0;
-                    case "last" -> -1;
-                    default -> {
-                        try {
-                            yield  Integer.parseInt(module[2]);
-                        } catch (NumberFormatException e) {
-                            yield  0;
-                        }
-                    }
-                };
-                return switch (value) {
-                    case Indexed<?> indexed -> toString(index == -1 ? indexed.getLast() : indexed.get(index));
-                    case List<?> list -> toString(index == -1 ? list.getLast() : list.get(index));
-                    default -> "";
-                };
-            };
-        }
-
         private static SubstitutedString translateModule(String[] module) {
             Function<Map<String, Object>, Object> variableAccess = processVariableObject(module[1]);
             Function<Map<String, Object>, Object> localeAccess = processVariableObject(module[2]);
@@ -216,10 +192,10 @@ public class SimpleSubstitutedString implements SubstitutedString {
         }
 
         private static Function<Map<String, Object>, Object> processVariableObject(String variable) {
-            if (variable.contains(".")) {
+            if (variable.contains(".") || variable.contains("[")) {
                 String[] splitVariable = variable.split("\\.");
                 return m -> {
-                    Object o = m.get(splitVariable[0]);
+                    Object o = getProperty(m, splitVariable[0]);
                     int i = 1;
                     while (i < splitVariable.length) {
                         String prop = splitVariable[i++];
@@ -237,7 +213,16 @@ public class SimpleSubstitutedString implements SubstitutedString {
                 return null;
             }
             Object value = null;
-            if (object instanceof AttributesHolder ah) {
+            int start = property.indexOf('[');
+            if (start != -1) {
+                int end = property.indexOf(']');
+                if (start > 0 && start < end) {
+                    value = getProperty(object, property.substring(0, start));
+                    value = getPropertyOnIndex(value, property.substring(start + 1, end));
+                }
+            } else if (object instanceof Map<?, ?> map) {
+                value = map.get(property);
+            } else if (object instanceof AttributesHolder ah) {
                 value = ah.getAttribute(property, Object.class);
                 if (value == null) {
                     // try to get getter
@@ -254,8 +239,26 @@ public class SimpleSubstitutedString implements SubstitutedString {
             return value;
         }
 
-        private static String toString(Object object) {
-            return object == null ? "" : object.toString();
+        private static Object getPropertyOnIndex(Object object, String indexStr) {
+            if (object == null) {
+                return null;
+            }
+            int index = switch (indexStr) {
+                case "first" -> 0;
+                case "last" -> -1;
+                default -> {
+                    try {
+                        yield  Integer.parseInt(indexStr);
+                    } catch (NumberFormatException e) {
+                        yield  0;
+                    }
+                }
+            };
+            return switch (object) {
+                case Indexed<?> indexed -> index == -1 ? indexed.getLast() : indexed.get(index);
+                case List<?> list -> index == -1 ? list.getLast() : list.get(index);
+                default -> null;
+            };
         }
     }
 }

@@ -63,3 +63,6 @@ are available:
 - `${prefix:variable:string}` - prefix variable (if not empty) value with string, otherwise replace with empty string
 - `${suffix:variable:string}` - add string after variable (if not empty), otherwise replace with empty string
 - `${translate:variable:locale-variable|#locale-string}` - translation
+- `${default:variable:default-string}` - if variable is an empty string, it uses default value
+
+Variable can have fields (`${type.abbr}`) or index (`${stations[1]}` - first, last or number).
