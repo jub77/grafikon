@@ -95,7 +95,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         mediator.addColleague(
                 message -> setSelectedTrain(((TrainSelectionMessage) message).train(), false),
                 TrainSelectionMessage.class);
-        programSettings = new ProgramSettings();
+        programSettings = new ProgramSettings(this::getDiagram);
         outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
@@ -186,6 +186,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         this.diagram = diagram;
         if (this.diagram != null) {
             this.diagram.getRuntimeInfo().setTemplateMapping(templateStorage);
+            // update type
+            this.diagram.getRuntimeInfo().setDiagramType(programSettings.getDiagramType());
         }
 
         this.collegue.setTrainDiagram(diagram);

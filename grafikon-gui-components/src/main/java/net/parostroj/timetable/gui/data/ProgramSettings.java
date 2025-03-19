@@ -1,9 +1,12 @@
 package net.parostroj.timetable.gui.data;
 
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainDiagramType;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.ObjectsUtil;
+
+import java.util.function.Supplier;
 
 /**
  * Settings of the program.
@@ -12,12 +15,17 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class ProgramSettings {
 
+    private final Supplier<TrainDiagram> diagram;
     private String userName;
     private LengthUnit lengthUnit;
     private SpeedUnit speedLengthUnit;
     private boolean debugLogging;
     private TrainDiagramType diagramType;
     private boolean webTemplates;
+
+    public ProgramSettings(Supplier<TrainDiagram> diagram) {
+        this.diagram = diagram;
+    }
 
     public String getUserName() {
         return userName;
@@ -64,7 +72,11 @@ public class ProgramSettings {
     }
 
     public void setDiagramType(TrainDiagramType diagramType) {
+        TrainDiagram d = diagram.get();
         this.diagramType = diagramType;
+        if (d != null) {
+            d.getRuntimeInfo().setDiagramType(diagramType);
+        }
     }
 
     public TrainDiagramType getDiagramType() {
