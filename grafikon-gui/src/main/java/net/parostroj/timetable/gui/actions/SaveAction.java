@@ -8,12 +8,11 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
+import net.parostroj.timetable.gui.events.DiagramSavedMessage;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -111,7 +110,7 @@ public class SaveAction extends AbstractAction {
                 if (errorMessage != null) {
                     GuiComponentUtils.showError(errorMessage + " " + file.getName(), parent);
                 } else {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
+                    model.fireEvent(new DiagramSavedMessage(model.get()));
                 }
             }
         };

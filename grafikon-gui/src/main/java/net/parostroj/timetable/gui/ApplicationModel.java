@@ -9,10 +9,10 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
-import net.parostroj.timetable.gui.events.DiagramChangeMessage;
-import net.parostroj.timetable.gui.events.TrainSelectionMessage;
+import net.parostroj.timetable.gui.events.*;
 import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.model.TrainDiagramType;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.templates.DataOutputTemplateStorage;
 import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import net.parostroj.timetable.model.templates.OutputsLoader;
@@ -55,7 +55,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private static final String MODEL_SECTION = "model";
     private static final String WEB_TEMPLATES_KEY = "web.templates";
 
-    private final Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
     private TrainDiagram diagram;
     private boolean modelChanged;
@@ -87,11 +86,15 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         currentVersion = versionInfo.getVersion();
         guiContext = new GuiContextImpl();
         languageLoader = LanguageLoader.getInstance();
-        listeners = new HashSet<>();
         mediator = new Mediator();
         collegue = new TrainDiagramCollegue(mediator);
         mediator.addColleague(collegue);
-        mediator.addColleague(new ApplicationModelColleague(this, mediator));
+        mediator.addColleague(message -> {
+            if (!isModelChanged() && message instanceof Event) {
+                // all model changes causes model changed
+                setModelChanged(true);
+            }
+        });
         mediator.addColleague(
                 message -> setSelectedTrain(((TrainSelectionMessage) message).train(), false),
                 TrainSelectionMessage.class);
@@ -190,29 +193,19 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
             this.diagram.getRuntimeInfo().setDiagramType(programSettings.getDiagramType());
         }
 
+        this.setModelChanged(false);
         this.collegue.setTrainDiagram(diagram);
-        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,this));
         this.mediator.sendMessage(new DiagramChangeMessage(diagram));
-    }
-
-    /**
-     * adds application model listener.
-     *
-     * @param listener listener
-     */
-    public void addListener(ApplicationModelListener listener) {
-        listeners.add(listener);
     }
 
     /**
      * fires specified event for this model.
      *
-     * @param event event to be fired
+     * @param message message
      */
-    public void fireEvent(ApplicationModelEvent event) {
-        for (ApplicationModelListener listener : listeners)
-            listener.modelChanged(event);
-        this.checkModelChanged(event);
+    public void fireEvent(Object message) {
+        this.mediator.sendMessage(message);
+        this.checkMessageModelChanged(message);
     }
 
     /**
@@ -227,20 +220,16 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      */
     public void setModelChanged(boolean modelChanged) {
         if (modelChanged && !this.modelChanged) {
-            this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_CHANGED, this));
+            this.fireEvent(new DiagramModifiedMessage(this.getDiagram()));
         }
         this.modelChanged = modelChanged;
     }
 
-    private void checkModelChanged(ApplicationModelEvent event) {
-        switch(event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-            case MODEL_SAVED:
-                this.setModelChanged(false);
-                break;
-            default:
-                // nothing changed for other events
-                break;
+    private void checkMessageModelChanged(Object message) {
+        switch (message) {
+            case DiagramChangeMessage ignored -> this.setModelChanged(false);
+            case DiagramSavedMessage ignored -> this.setModelChanged(false);
+            default -> {}
         }
     }
 
@@ -317,18 +306,18 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
             this.lastOpenedFiles.addFirst(file);
             if (this.lastOpenedFiles.size() > LAST_OPENED_COUNT) {
                 File removed = this.lastOpenedFiles.removeLast();
-                this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, removed));
+                this.fireEvent(new OpenedChangedMessage(OpenedChangedMessage.Type.REMOVE, removed));
             }
         } else {
             this.lastOpenedFiles.remove(file);
             this.lastOpenedFiles.addFirst(file);
         }
-        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ADD_LAST_OPENED, this, file));
+        this.fireEvent(new OpenedChangedMessage((OpenedChangedMessage.Type.ADD), file));
     }
 
     public void removeLastOpenedFile(File file) {
         if (this.lastOpenedFiles.remove(file)) {
-            this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, file));
+            this.fireEvent(new OpenedChangedMessage(OpenedChangedMessage.Type.REMOVE, file));
         }
     }
 

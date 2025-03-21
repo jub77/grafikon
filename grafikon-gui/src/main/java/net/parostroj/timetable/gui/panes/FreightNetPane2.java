@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.components.GraphicalTimetableViewBuilder;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
@@ -27,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
@@ -464,11 +464,9 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         HighlightSelection hts = new HighlightSelection();
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
-        model.addListener(event -> {
-            if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());
-            }
-        });
+        model.getMediator().addColleague(
+                message -> graphicalTimetableView.setTrainDiagram(((DiagramChangeMessage) message).diagram()),
+                DiagramChangeMessage.class);
         intervalSelector.set(hts);
     }
 }

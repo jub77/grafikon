@@ -31,6 +31,10 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
+import net.parostroj.timetable.gui.events.DiagramSavedMessage;
+import net.parostroj.timetable.gui.events.DiagramModifiedMessage;
+import net.parostroj.timetable.gui.events.OpenedChangedMessage;
 import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
@@ -64,7 +68,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
+public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
 
     private static final long serialVersionUID = 1L;
 
@@ -157,8 +161,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addWindowListener(new MainFrameWindowListener(model, this));
 
-        model.addListener(this);
-        model.addListener(statusBar);
+        model.getMediator().addColleague(this::modelChanged,
+                DiagramChangeMessage.class, DiagramSavedMessage.class,
+                OpenedChangedMessage.class, DiagramModifiedMessage.class);
+        model.getMediator().addColleague(statusBar::modelChanged,
+                DiagramChangeMessage.class, DiagramSavedMessage.class, DiagramModifiedMessage.class);
 
         this.updateView();
 
@@ -190,28 +197,22 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         sMenu.add(item);
     }
 
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
+    private void modelChanged(Object message) {
+        switch (message) {
+            case DiagramChangeMessage ignored1 -> {
                 this.updateView();
                 this.setTitleChanged(false);
-                break;
-            case MODEL_CHANGED:
-                this.setTitleChanged(true);
-                break;
-            case MODEL_SAVED:
-                this.setTitleChanged(false);
-                break;
-            case ADD_LAST_OPENED:
-                this.addLastOpenedFile((File) event.getObject());
-                break;
-            case REMOVE_LAST_OPENED:
-                this.removeLastOpened((File) event.getObject());
-                break;
-            default:
-                // nothing for the rest
-                break;
+            }
+            case DiagramModifiedMessage ignored -> this.setTitleChanged(true);
+            case DiagramSavedMessage ignored -> this.setTitleChanged(false);
+            case OpenedChangedMessage ocm -> {
+                if (ocm.type() == OpenedChangedMessage.Type.ADD) {
+                    this.addLastOpenedFile(ocm.file());
+                } else {
+                    this.removeLastOpened(ocm.file());
+                }
+            }
+            default -> {}
         }
     }
 

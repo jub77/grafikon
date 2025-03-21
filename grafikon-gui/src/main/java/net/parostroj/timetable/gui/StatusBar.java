@@ -10,6 +10,9 @@ import java.time.Instant;
 
 import javax.swing.Timer;
 
+import net.parostroj.timetable.gui.events.DiagramChangeMessage;
+import net.parostroj.timetable.gui.events.DiagramSavedMessage;
+import net.parostroj.timetable.gui.events.DiagramModifiedMessage;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -26,7 +29,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class StatusBar extends javax.swing.JPanel implements ApplicationModelListener {
+public class StatusBar extends javax.swing.JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -129,26 +132,22 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         });
     }
 
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        TrainDiagram diagram = event.getModel().getDiagram();
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
+    public void modelChanged(Object message) {
+        switch (message) {
+            case DiagramChangeMessage dcm -> {
                 changed = false;
-                this.updateTrainsAndCirculations(diagram);
-                this.updateVersionAndTimestamp(diagram);
-                break;
-            case MODEL_SAVED:
+                this.updateTrainsAndCirculations(dcm.diagram());
+                this.updateVersionAndTimestamp(dcm.diagram());
+            }
+            case DiagramSavedMessage dsm -> {
                 changed = false;
-                this.updateVersionAndTimestamp(diagram);
-                break;
-            case MODEL_CHANGED:
+                this.updateVersionAndTimestamp(dsm.diagram());
+            }
+            case DiagramModifiedMessage mcm -> {
                 changed = true;
-                this.updateVersionAndTimestamp(diagram);
-                break;
-            default:
-                // nothing
-                break;
+                this.updateVersionAndTimestamp(mcm.diagram());
+            }
+            default -> {}
         }
     }
 

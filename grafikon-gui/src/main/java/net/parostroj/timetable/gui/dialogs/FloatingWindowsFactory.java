@@ -183,7 +183,6 @@ public class FloatingWindowsFactory {
     private static FloatingWindow createEventsViewerDialog(final Frame frame, final Mediator mediator) {
         final EventsViewerPanel panel = new EventsViewerPanel();
         panel.addConverter(new GTEventTypeConverter());
-        panel.addConverter(new ApplicationEventTypeConverter());
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.eventsviewer.title", "events.viewer") {
 
             private static final long serialVersionUID = 1L;
