@@ -255,8 +255,22 @@ public class SimpleSubstitutedString implements SubstitutedString {
                 }
             };
             return switch (object) {
-                case Indexed<?> indexed -> index == -1 ? indexed.getLast() : indexed.get(index);
-                case List<?> list -> index == -1 ? list.getLast() : list.get(index);
+                case Indexed<?> indexed -> {
+                    int size = indexed.size();
+                    if (size == 0 || index >= size) {
+                        yield  null;
+                    } else {
+                        yield index == -1 ? indexed.getLast() : indexed.get(index);
+                    }
+                }
+                case List<?> list -> {
+                    int size = list.size();
+                    if (size == 0 || index >= size) {
+                        yield null;
+                    } else {
+                        yield index == -1 ? list.getLast() : list.get(index);
+                    }
+                }
                 default -> null;
             };
         }
