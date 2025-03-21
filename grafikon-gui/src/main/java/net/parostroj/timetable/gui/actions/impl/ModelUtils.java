@@ -63,7 +63,7 @@ public class ModelUtils {
             }
         }
 
-        log.info("Saving: {}", file);
+        log.info("Saving model: {}", file);
         LSFile ls = LSFileFactory.getInstance().createForSave();
         ls.save(diagram, file);
         diagram.getAttributes().setSkipListeners(originalSkip);
@@ -74,16 +74,14 @@ public class ModelUtils {
         try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
             boolean originalSkip = library.getAttributes().isSkipListeners();
             library.getAttributes().setSkipListeners(true);
-            log.info("Saving: {}", file);
+            log.info("Saving library: {}", file);
             ls.save(library, os);
             library.getAttributes().setSkipListeners(originalSkip);
         }
     }
 
     public static int checkModelChangedContinue(ApplicationModel model, Component parent) {
-        if (!model.isModelChanged()) {
-            return JOptionPane.NO_OPTION;
-        } else {
+        if (model.isModelChanged()) {
             int result = JOptionPane.showConfirmDialog(parent, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
                 try (CloseableFileChooser modelFileChooser = FileChooserFactory.getInstance()
@@ -97,6 +95,8 @@ public class ModelUtils {
                 }
             }
             return result;
+        } else {
+            return JOptionPane.NO_OPTION;
         }
     }
 
