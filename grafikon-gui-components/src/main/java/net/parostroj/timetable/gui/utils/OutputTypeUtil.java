@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.utils;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.parostroj.timetable.model.OutputTemplate;
@@ -11,12 +9,11 @@ public final class OutputTypeUtil {
     private static final Map<String, String> OUTPUT_MAPPING;
 
     static {
-        Map<String, String> map = new HashMap<>();
-        map.put("pdf.groovy", "pdf");
-        map.put("draw", "svg");
-        map.put("groovy", "text");
-        map.put("xml", "xml");
-        OUTPUT_MAPPING = Collections.unmodifiableMap(map);
+        OUTPUT_MAPPING = Map.of(
+                "pdf.groovy", "pdf",
+                "draw", "svg",
+                "groovy", "text",
+                "xml", "xml");
     }
 
     private OutputTypeUtil() {}

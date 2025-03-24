@@ -13,7 +13,7 @@ public enum GuiIcon {
 
     private final String path;
 
-    private GuiIcon(String path) {
+    GuiIcon(String path) {
         this.path = path;
     }
 

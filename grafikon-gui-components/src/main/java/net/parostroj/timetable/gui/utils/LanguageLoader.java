@@ -23,9 +23,9 @@ public class LanguageLoader {
     public enum LanguagesType {
         GUI("locales.gui");
 
-        private String key;
+        private final String key;
 
-        private LanguagesType(String key) {
+        LanguagesType(String key) {
             this.key = key;
         }
 
@@ -87,7 +87,7 @@ public class LanguageLoader {
                 available.add(locale);
             }
         }
-        Collections.sort(available, new ConvertComparator<>(Collator.getInstance(), e -> e.getDisplayName()));
+        available.sort(new ConvertComparator<>(Collator.getInstance(), Locale::getDisplayName));
         return available;
     }
 
@@ -97,10 +97,6 @@ public class LanguageLoader {
 
     public List<Locale> getAvailableLocales() {
         return availableLocales;
-    }
-
-    public Map<Locale, String> createMap(Collection<Locale> locales) {
-        return EnumeratedValuesPM.createValueMap(locales, l -> l.getDisplayName(l));
     }
 
     public Map<Locale, String> createMap(Collection<Locale> locales, String system) {

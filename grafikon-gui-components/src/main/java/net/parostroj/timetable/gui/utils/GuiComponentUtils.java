@@ -71,7 +71,7 @@ public final class GuiComponentUtils {
     }
 
     public static Component getTopLevelComponent(Object component) {
-        if (component == null || !(component instanceof Component)) {
+        if (!(component instanceof Component)) {
             return null;
         } else {
             return getWindow((Component)component);
