@@ -58,11 +58,6 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
         imagePanel.setText(text);
         imagePanel.repaint();
     }
-
-    @Override
-    public void setProgress(int progress) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
 
 class ImagePanel extends JPanel {

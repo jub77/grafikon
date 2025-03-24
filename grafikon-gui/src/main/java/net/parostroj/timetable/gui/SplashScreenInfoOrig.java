@@ -49,9 +49,4 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
         }
         splash.update();
     }
-
-    @Override
-    public void setProgress(int progress) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
