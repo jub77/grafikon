@@ -23,7 +23,6 @@ import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.EditGroupsAction;
-import net.parostroj.timetable.gui.commands.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.*;
@@ -601,12 +600,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }
 
     private void deleteTrain(Train deletedTrain) {
-        DeleteTrainCommand deleteCommand = new DeleteTrainCommand(deletedTrain);
-        try {
-        	deleteCommand.execute(model.get());
-        } catch (GrafikonException e) {
-            log.error(e.getMessage(), e);
-        }
+        model.get().getTrains().remove(deletedTrain);
     }
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -619,16 +613,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         createDialog.setLocationRelativeTo(f);
         createDialog.setVisible(true);
         createDialog.dispose();
-
-        CreateTrainCommand command = createDialog.getCreateTrainCommand();
-        try {
-            if (command != null) {
-            	command.execute(model.get());
-            }
-        } catch (GrafikonException e) {
-            log.warn("Error executing create train command.", e);
-            GuiComponentUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
-        }
     }
 
     private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {

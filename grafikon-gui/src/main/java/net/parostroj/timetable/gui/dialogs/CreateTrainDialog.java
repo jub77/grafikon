@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -51,10 +50,6 @@ public class CreateTrainDialog extends javax.swing.JDialog {
         );
 
         pack();
-    }
-
-    public CreateTrainCommand getCreateTrainCommand() {
-        return createTrainView.getCreateTrainCommand();
     }
 
     public void updateView(Group selectedGroup) {

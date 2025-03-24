@@ -18,14 +18,17 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.actions.NodeComparator;
 import net.parostroj.timetable.actions.RouteBuilder;
-import net.parostroj.timetable.gui.commands.CreateTrainCommand;
+import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JCheckBox;
 
@@ -36,6 +39,8 @@ import javax.swing.JCheckBox;
  */
 public class CreateTrainView extends javax.swing.JPanel {
 
+    private static final Logger log = LoggerFactory.getLogger(CreateTrainView.class);
+
     private static final long serialVersionUID = 1L;
 
 	public static final TrainType NO_TYPE = new TrainType(null, null) {
@@ -44,7 +49,6 @@ public class CreateTrainView extends javax.swing.JPanel {
     };
 
     private transient TrainDiagram diagram;
-    private transient CreateTrainCommand createTrainCommand;
     private final ThroughNodesDialog tnDialog;
     private transient List<Node> throughNodes;
 
@@ -61,7 +65,6 @@ public class CreateTrainView extends javax.swing.JPanel {
     }
 
     public void updateView(Group selectedGroup) {
-        this.createTrainCommand = null;
         DefaultComboBoxModel<Node> fromModel = new DefaultComboBoxModel<>();
         DefaultComboBoxModel<Node> toModel = new DefaultComboBoxModel<>();
 
@@ -282,7 +285,7 @@ public class CreateTrainView extends javax.swing.JPanel {
             return;
         }
 
-        if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
+        if (nameTextField.getText() == null || nameTextField.getText().isBlank()) {
             GuiComponentUtils.showError(ResourceLoader.getString("create.train.trainnamemissing"), this.getParent());
             return;
         }
@@ -312,23 +315,28 @@ public class CreateTrainView extends javax.swing.JPanel {
         // get start time
         int start = diagram.getTimeConverter().convertTextToInt(startTimeTextField.getText());
         if (start == -1)
-            // midnight if cannot be parsed
+            // midnight if it cannot be parsed
             start = 0;
 
         Group group = groupComboBox.getGroupSelection().getGroup();
 
         // create command ...
         TrainType tType = (TrainType) typeComboBox.getSelectedItem();
-        this.createTrainCommand = new CreateTrainCommand(
-                ObjectsUtil.checkAndTrim(nameTextField.getText()),
-                tType != NO_TYPE ? tType : null,
-                        speed,
-                        route,
-                        start,
-                        (stopTextField.getText().equals("") ? 0 : Integer.parseInt(stopTextField.getText()) * 60),
-                        ObjectsUtil.checkAndTrim(commentTextField.getText()),
-                        dieselCheckBox.isSelected(),
-                        electricCheckBox.isSelected(), true, group, managedFreightCheckBox.isSelected());
+        try {
+            this.createTrain(
+                    ObjectsUtil.checkAndTrim(nameTextField.getText()),
+                    tType != NO_TYPE ? tType : null,
+                    speed,
+                    route,
+                    start,
+                    (stopTextField.getText().isBlank() ? 0 : Integer.parseInt(stopTextField.getText()) * 60),
+                    ObjectsUtil.checkAndTrim(commentTextField.getText()),
+                    dieselCheckBox.isSelected(),
+                    electricCheckBox.isSelected(), group, managedFreightCheckBox.isSelected());
+        } catch (Exception e) {
+            log.warn("Error executing create train command.", e);
+            GuiComponentUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
+        }
         // hide dialog
         this.closeDialog();
     }
@@ -336,10 +344,6 @@ public class CreateTrainView extends javax.swing.JPanel {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // hide dialog
         this.closeDialog();
-    }
-
-    public CreateTrainCommand getCreateTrainCommand() {
-        return createTrainCommand;
     }
 
     private void throughButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -353,6 +357,32 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     private void closeDialog() {
         this.getTopLevelAncestor().setVisible(false);
+    }
+
+    private void createTrain(String number, TrainType type, Integer topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, Group group, boolean managedFreight) {
+        TrainBuilder trainBuilder = new TrainBuilder();
+
+        Train train;
+        try {
+            train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, diagram, defaultStop);
+        } catch (Exception e) {
+            throw new GrafikonException(e.getMessage(), e);
+        }
+
+        train.setAttribute(Train.ATTR_DIESEL, diesel);
+        train.setAttribute(Train.ATTR_ELECTRIC, electric);
+        train.setDescription(description);
+        if (train.getType() != null && train.getType().getCategory() != null && !train.getType().getCategory().getKey().equals("freight")) {
+            train.setAttribute(Train.ATTR_EMPTY, Boolean.TRUE);
+        }
+        train.setAttribute(Train.ATTR_SHOW_STATION_LENGTH, Boolean.TRUE);
+        if (group != null) {
+            train.setAttribute(Train.ATTR_GROUP, group);
+        }
+        train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreight);
+
+        // add train to diagram
+        diagram.getTrains().add(train);
     }
 
     private javax.swing.JTextField commentTextField;
