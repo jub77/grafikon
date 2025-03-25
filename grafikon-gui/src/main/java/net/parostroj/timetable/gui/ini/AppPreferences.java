@@ -18,7 +18,7 @@ public final class AppPreferences {
     public static synchronized IniConfig getPreferences() throws IOException {
         if (configInstance == null) {
             File iniFile = getIniFile();
-            configInstance = iniFile != null ? new IniConfigIni4j(iniFile) : new IniConfigIni4j();
+            configInstance = iniFile != null ? new IniConfigCommons(iniFile) : new IniConfigCommons();
             configInstance.load();
         }
         return configInstance;

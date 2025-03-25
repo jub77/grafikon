@@ -25,7 +25,7 @@ import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
-import org.ini4j.spi.EscapeTool;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +141,7 @@ public class ExecuteScriptAction extends AbstractAction {
         String scriptStr = null;
         try {
             scriptStr = AppPreferences.getPreferences().getSection("scripts").get("last.script");
-            scriptStr = scriptStr != null ? EscapeTool.getInstance().unescape(scriptStr) : null;
+            scriptStr = scriptStr != null ? StringEscapeUtils.unescapeJava(scriptStr) : null;
         } catch (IOException ex) {
             log.error("Error reading script from preferences.", ex);
         }
@@ -163,7 +163,7 @@ public class ExecuteScriptAction extends AbstractAction {
         if (lastScript != null)
             try {
                 String scriptStr = lastScript.getLanguage().name() + ":" + lastScript.getSourceCode();
-                scriptStr = EscapeTool.getInstance().escape(scriptStr);
+                scriptStr = StringEscapeUtils.escapeJava(scriptStr);
                 AppPreferences.getPreferences().getSection("scripts").put("last.script", scriptStr);
             } catch (IOException e) {
                 log.error("Error writing script to preferences.", e);
