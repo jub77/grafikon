@@ -46,8 +46,8 @@ abstract class AbstractLoader<T> implements DataItemLoader<T> {
         }
         // create file with item location
         T instance;
-        try (InputStream iStream = getItemStream(item); ZipInputStream is = new ZipInputStream(iStream)) {
-            instance = loadDelegate.load(is);
+        try (InputStream is = getItemStream(item)) {
+            instance = loadDelegate.load(is, item);
         } catch (IOException e) {
             throw new LSException("Error loading item: " + e.getMessage(), e);
         }

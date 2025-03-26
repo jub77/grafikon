@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import net.parostroj.timetable.loader.DataItem;
 import org.beanfabrics.model.AbstractPM;
@@ -56,7 +57,7 @@ public class TemplatePM extends AbstractPM implements IPM<DataItem> {
         // write back
         DataItem template = ref != null ? ref.get() : null;
         if (template != null) {
-            DataItem newTemplate = new DataItem(template.id(), template.id(), template.version(),
+            DataItem newTemplate = new DataItem(template.id(), template.id(), Map.of(), template.version(),
                     name.getCurrentEdit().get(), description.getCurrentEdit().get());
             // write values back
             ref = new SoftReference<>(newTemplate);

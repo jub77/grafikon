@@ -6,13 +6,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
+import java.util.Map;
+
 /**
  * Data item information.
  *
  * @author jub
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record DataItem(String id, String filename,
+public record DataItem(String id, String filename, Map<String, String> settings,
         @JsonDeserialize(using = MVDeserializer.class)
         @JsonSerialize(using = MVSerializer.class)
         ModelVersion version,
