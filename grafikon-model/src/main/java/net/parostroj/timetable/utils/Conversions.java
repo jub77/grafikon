@@ -22,13 +22,4 @@ public final class Conversions {
     public static String convertColorToText(Color c) {
         return String.format("0x%02X%02X%02X", c.getRed(), c.getGreen(), c.getBlue());
     }
-
-    public static String loadFile(final InputStream is) throws IOException {
-        return new ByteSource() {
-            @Override
-            public InputStream openStream() {
-                return is;
-            }
-        }.asCharSource(StandardCharsets.UTF_8).read();
-    }
 }

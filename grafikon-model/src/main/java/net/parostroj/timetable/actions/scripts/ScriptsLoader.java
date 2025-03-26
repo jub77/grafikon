@@ -1,17 +1,18 @@
 package net.parostroj.timetable.actions.scripts;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
+import net.parostroj.timetable.loader.DataItem;
+import net.parostroj.timetable.loader.DataItemList;
+import net.parostroj.timetable.loader.DataItemLoader;
 import net.parostroj.timetable.model.Script;
-import net.parostroj.timetable.utils.Conversions;
-
+import net.parostroj.timetable.model.ls.LSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Returns list of predefined scripts.
@@ -22,14 +23,11 @@ public class ScriptsLoader {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptsLoader.class);
 
-    private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
+    private static final String DEFAULT_SCRIPTS_LOCATION = "/scripts";
     private static final String LIST = "list.yaml";
 
     private final String location;
     private Map<String, ScriptAction> scriptActions;
-
-    private Collection<ScriptAction> actionsView;
-    private Collection<String> keyView;
 
     private ScriptsLoader(String location) {
         this.location = location;
@@ -43,61 +41,29 @@ public class ScriptsLoader {
         return newScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
     }
 
-    synchronized Map<String, ScriptAction> getScriptActionsMap() {
+    public Map<String, ScriptAction> getScriptActionsMap() {
         if (scriptActions == null) {
             try {
-                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-                InputStream stream = ScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
-                ScriptList scriptList = mapper.readValue(stream, ScriptList.class);
-                List<ScriptDescription> sList = scriptList.scripts();
-                scriptActions = new LinkedHashMap<>(sList.size());
-                for (ScriptDescription d : sList) {
-                    scriptActions.put(d.id(), new ScriptActionImpl(location, d));
+                DataItemLoader<Script> loader = DataItemLoader.getFromResources(location, LIST, (is, dataItem) -> {
+                    try {
+                        String src = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                        return Script.create(src, Script.Language.GROOVY);
+                    } catch (IOException e) {
+                        throw new LSException("Error reading action: " + e.getMessage(), e);
+                    }
+                });
+                DataItemList list = loader.loadList();
+                scriptActions = new LinkedHashMap<>(list.items().size());
+                for (DataItem item : list.items()) {
+                    scriptActions.put(item.id(), new ScriptActionImpl(loader, item));
                 }
-                keyView = Collections.unmodifiableCollection(scriptActions.keySet());
-                actionsView = Collections.unmodifiableCollection(scriptActions.values());
-            } catch (IOException e) {
+                scriptActions = Collections.unmodifiableMap(scriptActions);
+            } catch (LSException e) {
                 log.error("Error loading list of scripts.", e);
             }
             if (scriptActions == null)
-                scriptActions = Collections.emptyMap();
+                scriptActions = Map.of();
         }
         return scriptActions;
-    }
-
-    public Collection<ScriptAction> getScriptActions() {
-        getScriptActionsMap();
-        return actionsView;
-    }
-
-    public Collection<String> getScriptIds() {
-        getScriptActionsMap();
-        return keyView;
-    }
-
-    public Script getScript(String id) {
-        ScriptAction action = getById(id);
-        return action == null ? null : action.getScript();
-    }
-
-    public ScriptAction getScriptAction(String id) {
-        return getById(id);
-    }
-
-    private ScriptAction getById(String id) {
-        return getScriptActionsMap().get(id);
-    }
-
-    static String loadFile(InputStream is) {
-        try {
-            return Conversions.loadFile(is);
-        } catch (Exception e) {
-            log.error("Error reading file.", e);
-            return "";
-        }
-    }
-
-    String getLocation() {
-        return location;
     }
 }

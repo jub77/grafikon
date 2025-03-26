@@ -5,16 +5,13 @@ import java.util.Map;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TranslatedString;
 
 public interface ScriptAction {
 
     String getId();
 
-    String getName();
-
-    Script getScript();
-
-    String getLocalizedName();
+    TranslatedString getName();
 
     void execute(TrainDiagram diagram) throws GrafikonException;
 

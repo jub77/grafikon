@@ -74,7 +74,7 @@ public class ExecuteScriptAction extends AbstractAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                ScriptAction scriptAction = loader.getScriptAction(scriptId);
+                ScriptAction scriptAction = loader.getScriptActionsMap().get(scriptId);
                 scriptAction.execute(model.getDiagram(), Collections.singletonMap("parent", parent));
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());

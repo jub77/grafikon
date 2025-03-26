@@ -2,8 +2,11 @@ package net.parostroj.timetable.actions.scripts;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
+import net.parostroj.timetable.loader.DataItem;
+import net.parostroj.timetable.loader.DataItemLoader;
+import net.parostroj.timetable.model.TranslatedString;
+import net.parostroj.timetable.model.ls.LSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,45 +23,30 @@ class ScriptActionImpl implements ScriptAction {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptActionImpl.class);
 
-    private final String location;
-    private final ScriptDescription desc;
-
+    private final DataItemLoader<Script> loader;
+    private final DataItem item;
     private Script cachedScript;
 
-    public ScriptActionImpl(String location, ScriptDescription desc) {
-        this.location = location;
-        this.desc = desc;
+    public ScriptActionImpl(DataItemLoader<Script> loader, DataItem item) {
+        this.loader = loader;
+        this.item = item;
     }
 
     @Override
     public String getId() {
-        return desc.id();
+        return item.id();
     }
 
     @Override
-    public String getLocalizedName() {
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle(location + ".names");
-            return bundle.getString(getId());
-        } catch (Exception e) {
-            // default name in case non-existence of resource for language
-            return getName();
-        }
+    public TranslatedString getName() {
+        return item.name();
     }
 
-    @Override
-    public String getName() {
-        return desc.name();
-    }
-
-    @Override
-    public Script getScript() {
+    private Script getScript() {
         if (cachedScript == null) {
-            String sLoc = location + "/" + desc.location();
-            String src = ScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
-                cachedScript = Script.create(src, desc.language());
-            } catch (GrafikonException e) {
+                cachedScript = loader.loadItem(item);
+            } catch (GrafikonException | LSException e) {
                 log.error("Couldn't create script.", e);
             }
         }

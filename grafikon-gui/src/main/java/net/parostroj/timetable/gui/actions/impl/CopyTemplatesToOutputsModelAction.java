@@ -23,7 +23,7 @@ public class CopyTemplatesToOutputsModelAction extends EventDispatchModelAction 
 
     @Override
     protected void eventDispatchAction() {
-        ScriptAction scriptAction = model.getScriptsLoader().getScriptAction("copy_output_templates_to_outputs");
+        ScriptAction scriptAction = model.getScriptsLoader().getScriptActionsMap().get("copy_output_templates_to_outputs");
         try {
             scriptAction.execute(model.getDiagram());
         } catch (GrafikonException e) {

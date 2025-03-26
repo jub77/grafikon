@@ -1,21 +1,31 @@
-scripts:
-- id: copy_engines_to_engineers_select
-  name: Copy engine to engineers circulations (selection)
-  language: GROOVY
-  location: copy_engines_to_engineers_select.groovy
-- id: check_duplicate_train_numbers
-  name: Check duplicate train numbers
-  language: GROOVY
-  location: check_duplicate_train_numbers.groovy
-- id: add_managed_freight_select
-  name: Add trains to managed freight (selection)
-  language: GROOVY
-  location: add_managed_freight_select.groovy
-- id: copy_output_templates_to_outputs_select
-  name: Copy output templates to outputs (selection)
-  language: GROOVY
-  location: copy_output_templates_to_outputs_select.groovy
-- id: check_train_tracks
-  name: Check train tracks
-  language: GROOVY
-  location: check_train_tracks.groovy
+items:
+  - id: copy_engines_to_engineers_select
+    filename: copy_engines_to_engineers_select.groovy
+    name:
+      default: Copy engine to engineers circulations (selection)
+      cs: Zkopíruj oběhy vozidel do turnusů (výběr)
+      sk: Skopíruj obehy vozidiel do turnusov (výber)
+  - id: check_duplicate_train_numbers
+    filename: check_duplicate_train_numbers.groovy
+    name:
+      default: Check duplicate train numbers
+      cs: Zkontrolovat duplicitní čísla vlaků
+      sk: Skontrolovať duplicitné čísla vlakov
+  - id: add_managed_freight_select
+    filename: add_managed_freight_select.groovy
+    name:
+      default: Add trains to managed freight (selection)
+      cs: Přidání vlaků do nákladní dopravy (výběr)
+      sk: Pridanie vlakov do nákladnej dopravy (výber)
+  - id: copy_output_templates_to_outputs_select
+    filename: copy_output_templates_to_outputs_select.groovy
+    name:
+      default: Copy output templates to outputs (selection)
+      cs: Zkopíruj šablony výstupů do výstupů (výběr)
+      sk: Skopíruj šablóny výstupov do výstupov (výber)
+  - id: check_train_tracks
+    filename: check_train_tracks.groovy
+    name:
+      default: Check train tracks
+      cs: Zkontrolovat koleje vlaku
+      sk: Skontrolovať koľaje vlaku

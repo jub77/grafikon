@@ -1,41 +1,61 @@
-scripts:
-- id: recalculate
-  name: Recalculate
-  language: GROOVY
-  location: recalculate.groovy
-- id: remove_weights
-  name: Remove weights
-  language: GROOVY
-  location: remove_weights.groovy
-- id: hide_length
-  name: Do not show length
-  language: GROOVY
-  location: hide_length.groovy
-- id: show_length
-  name: Show length
-  language: GROOVY
-  location: show_length.groovy
-- id: remove_interval_speed
-  name: Remove interval speed
-  language: GROOVY
-  location: remove_interval_speed.groovy
-- id: copy_engines_to_engineers
-  name: Copy engine to engineers circulations
-  language: GROOVY
-  location: copy_engines_to_engineers.groovy
-- id: add_managed_freight
-  name: Add trains to managed freight
-  language: GROOVY
-  location: add_managed_freight.groovy
-- id: copy_output_templates_to_outputs
-  name: Copy output templates to outputs
-  language: GROOVY
-  location: copy_output_templates_to_outputs.groovy
-- id: fix_connectors
-  name: Fix connector sides
-  language: GROOVY
-  location: fix_connectors.groovy
-- id: fix_train_tracks
-  name: Fix invalid train tracks
-  language: GROOVY
-  location: fix_train_tracks.groovy
+items:
+  - id: recalculate
+    filename: recalculate.groovy
+    name:
+      default: Recalculate
+      cs: Přepočítat vlaky
+      sk: Přepočítať vlaky
+  - id: remove_weights
+    filename: remove_weights.groovy
+    name:
+      default: Remove weights
+      cs: Odstranit specifikaci zátěže
+      sk: Odstrániť špecifikáciu záťaže
+  - id: hide_length
+    filename: hide_length.groovy
+    name:
+      default: Do not show length
+      cs: Skrýt max. délku vlaku
+      sk: Skryť max. dĺžku vlaku
+  - id: show_length
+    filename: show_length.groovy
+    name:
+      default: Show length
+      cs: Zobrazit max. délku vlaku
+      sk: Zobraziť max. dĺžku vlaku
+  - id: remove_interval_speed
+    filename: remove_interval_speed.groovy
+    name:
+      default: Remove interval speed
+      cs: Odstranit omezení rychlosti
+      sk: Odstrániť obmedzenie rýchlosti
+  - id: copy_engines_to_engineers
+    filename: copy_engines_to_engineers.groovy
+    name:
+      default: Copy engine to engineers circulations
+      cs: Zkopíruj oběhy vozidel do turnusů
+      sk: Skopíruj šablóny výstupov do výstupov
+  - id: add_managed_freight
+    filename: add_managed_freight.groovy
+    name:
+      default: Add trains to managed freight
+      cs: Přidání vlaků do nákladní dopravy
+      sk: Pridanie vlakov do nákladnej dopravy
+  - id: copy_output_templates_to_outputs
+    filename: copy_output_templates_to_outputs.groovy
+    name:
+      default: Copy output templates to outputs
+      cs: Zkopíruj šablony výstupů do výstupů
+      sk: Skopíruj šablóny výstupov do výstupov
+  - id: fix_connectors
+    filename: fix_connectors.groovy
+    name:
+      default: Fix connector sides
+      cs: Oprav strany kolejí na zhlaví
+      sk: Oprav strany koľají na zhlaví
+  - id: fix_train_tracks
+    filename: fix_train_tracks.groovy
+    name:
+      default: Fix invalid train tracks
+      cs: Oprav špatné koleje u vlaků
+      sk: Oprav nesprávne koľaje pri vlakoch

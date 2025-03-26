@@ -1,12 +1,12 @@
 package net.parostroj.timetable.model;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -68,8 +68,11 @@ public class TrainDiagramFactory {
     }
 
     static String getDefaultTimeScript() {
-        try {
-            return Conversions.loadFile(TrainDiagramFactory.class.getResourceAsStream(TIME_SCRIPT));
+        try (InputStream is = TrainDiagramFactory.class.getResourceAsStream(TIME_SCRIPT)) {
+            if (is == null) {
+                return "return 60";
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.warn("Error loading time script.");
             // fallback

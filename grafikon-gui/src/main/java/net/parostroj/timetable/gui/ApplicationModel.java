@@ -102,7 +102,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
-        guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
+        guiPsLoader = ScriptsLoader.newScriptsLoader("/gui_scripts");
         List<Locale> guiLocales = languageLoader.getLocales(LanguagesType.GUI);
         final Map<Locale, String> localeMap = languageLoader.createMap(guiLocales, "system");
         locale = new EnumeratedValuesPM<>(localeMap);

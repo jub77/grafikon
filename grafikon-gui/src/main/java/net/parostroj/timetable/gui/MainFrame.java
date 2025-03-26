@@ -179,12 +179,12 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         }
 
         // add predefined scripts
-        for (ScriptAction sd : model.getScriptsLoader().getScriptActions()) {
+        for (ScriptAction sd : model.getScriptsLoader().getScriptActionsMap().values()) {
             addScriptAction(sd, ExecuteScriptAction.MODEL_PREFIX, scriptsMenuModel);
         }
 
         // add gui scripts
-        for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActions()) {
+        for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActionsMap().values()) {
             addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX, scriptsMenuGui);
         }
     }
@@ -192,7 +192,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
     private void addScriptAction(ScriptAction sd, String type, JMenu sMenu) {
         JMenuItem item = new JMenuItem();
         item.setAction(executeScriptAction);
-        item.setText(sd.getLocalizedName());
+        item.setText(sd.getName().translate());
         item.setActionCommand(type + sd.getId());
         sMenu.add(item);
     }
