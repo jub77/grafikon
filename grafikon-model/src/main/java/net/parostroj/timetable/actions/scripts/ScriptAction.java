@@ -3,7 +3,6 @@ package net.parostroj.timetable.actions.scripts;
 import java.util.Map;
 
 import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TranslatedString;
 

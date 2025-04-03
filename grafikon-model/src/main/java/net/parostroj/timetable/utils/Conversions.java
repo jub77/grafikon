@@ -1,10 +1,6 @@
 package net.parostroj.timetable.utils;
 
 import java.awt.Color;
-import java.io.*;
-
-import com.google.common.io.ByteSource;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Converting utility.

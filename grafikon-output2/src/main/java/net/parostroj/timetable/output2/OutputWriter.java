@@ -21,8 +21,6 @@ public class OutputWriter {
     public static final String OUTPUT_TEMPLATE_LOG_NAME = "net.parostroj.timetable.output2.Template";
     public static final String OUTPUT_SCRIPT_LOG_NAME = "net.parostroj.timetable.output2.Script";
 
-    private static final Logger log = LoggerFactory.getLogger(OutputWriter.class);
-
     public interface ProcessListener {
 
         void processed(net.parostroj.timetable.model.Output modelOutput);

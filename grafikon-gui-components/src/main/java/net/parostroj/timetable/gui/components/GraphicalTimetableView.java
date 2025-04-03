@@ -70,6 +70,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         void mouseOverIntervals(Collection<TimeInterval> intervals);
     }
 
+    @SuppressWarnings("unused")
     private interface ToolTipHelper {
         default Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval) { return List.of(); }
         default Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) { return List.of(); }

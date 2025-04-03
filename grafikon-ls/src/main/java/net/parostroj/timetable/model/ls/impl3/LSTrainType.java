@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.ls.impl3;
 
-import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainType;
 import java.awt.Color;
 import jakarta.xml.bind.annotation.XmlElement;

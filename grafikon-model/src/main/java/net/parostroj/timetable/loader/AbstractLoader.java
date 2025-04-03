@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipInputStream;
 
 abstract class AbstractLoader<T> implements DataItemLoader<T> {
 
