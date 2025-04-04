@@ -58,15 +58,12 @@ public class AttributeChange {
     }
 
     private Object createCopyIfNeeded(Object value) {
-        if (value instanceof Set) {
-            return ImmutableSet.copyOf((Collection<?>) value);
-        } else if (value instanceof List) {
-            return ImmutableList.copyOf((Iterable<?>) value);
-        } else if (value instanceof Map) {
-            return ImmutableMap.copyOf((Map<?, ?>) value);
-        } else {
-            return value;
-        }
+        return switch (value) {
+            case Set<?> set -> ImmutableSet.copyOf(set);
+            case List<?> list -> ImmutableList.copyOf(list);
+            case Map<?, ?> map -> ImmutableMap.copyOf(map);
+            case null, default -> value;
+        };
     }
 
     @Override

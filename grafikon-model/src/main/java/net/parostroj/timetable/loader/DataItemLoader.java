@@ -12,7 +12,7 @@ public interface DataItemLoader<T> {
     T loadItem(DataItem item) throws LSException;
 
     default <V> DataItemLoader<V> transform(Function<T, V> tf) {
-        return new DataItemLoader<V>() {
+        return new DataItemLoader<>() {
             @Override
             public DataItemList loadList() throws LSException {
                 return DataItemLoader.this.loadList();

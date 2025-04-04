@@ -7,7 +7,6 @@ import net.parostroj.timetable.model.computation.TrackSelectionComputation;
 import net.parostroj.timetable.model.computation.TrainRouteSelection;
 import net.parostroj.timetable.model.computation.TrainRouteTracksComputation;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;

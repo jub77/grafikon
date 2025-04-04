@@ -13,40 +13,24 @@ public class EventProcessing {
 
     public static void visit(Event event, EventVisitor visitor) {
         Object source = event.getSource();
-        if (source instanceof TrainDiagram) {
-            visitor.visitDiagramEvent(event);
-        } else if (source instanceof Net) {
-            visitor.visitNetEvent(event);
-        } else if (source instanceof Node) {
-            visitor.visitNodeEvent(event);
-        } else if (source instanceof Line) {
-            visitor.visitLineEvent(event);
-        } else if (source instanceof Train) {
-            visitor.visitTrainEvent(event);
-        } else if (source instanceof TrainType) {
-            visitor.visitTrainTypeEvent(event);
-        } else if (source instanceof TrainsCycle) {
-            visitor.visitTrainsCycleEvent(event);
-        } else if (source instanceof TrainsCycleType) {
-            visitor.visitTrainsCycleTypeEvent(event);
-        } else if (source instanceof TextItem) {
-            visitor.visitTextItemEvent(event);
-        } else if (source instanceof EngineClass) {
-            visitor.visitEngineClassEvent(event);
-        } else if (source instanceof OutputTemplate) {
-            visitor.visitOutputTemplateEvent(event);
-        } else if (source instanceof FreightNet) {
-            visitor.visitFreightNetEvent(event);
-        } else if (source instanceof LineClass) {
-            visitor.visitLineClassEvent(event);
-        } else if (source instanceof Output) {
-            visitor.visitOutputEvent(event);
-        } else if (source instanceof TrainTypeCategory) {
-            visitor.visitTrainTypeCategoryEvent(event);
-        } else if (source instanceof TrackConnector) {
-            visitor.visitTrackConnectorEvent(event);
-        } else {
-            visitor.visitOtherEvent(event);
+        switch (source) {
+            case TrainDiagram ignored -> visitor.visitDiagramEvent(event);
+            case Net ignored -> visitor.visitNetEvent(event);
+            case Node ignored -> visitor.visitNodeEvent(event);
+            case Line ignored -> visitor.visitLineEvent(event);
+            case Train ignored -> visitor.visitTrainEvent(event);
+            case TrainType ignored -> visitor.visitTrainTypeEvent(event);
+            case TrainsCycle ignored -> visitor.visitTrainsCycleEvent(event);
+            case TrainsCycleType ignored -> visitor.visitTrainsCycleTypeEvent(event);
+            case TextItem ignored -> visitor.visitTextItemEvent(event);
+            case EngineClass ignored -> visitor.visitEngineClassEvent(event);
+            case OutputTemplate ignored -> visitor.visitOutputTemplateEvent(event);
+            case FreightNet ignored -> visitor.visitFreightNetEvent(event);
+            case LineClass ignored -> visitor.visitLineClassEvent(event);
+            case Output ignored -> visitor.visitOutputEvent(event);
+            case TrainTypeCategory ignored -> visitor.visitTrainTypeCategoryEvent(event);
+            case TrackConnector ignored -> visitor.visitTrackConnectorEvent(event);
+            case null, default -> visitor.visitOtherEvent(event);
         }
     }
 

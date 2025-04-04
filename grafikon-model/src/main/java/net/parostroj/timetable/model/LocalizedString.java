@@ -1,10 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -137,7 +133,7 @@ public interface LocalizedString extends TranslatedString {
             if (strings == null) {
                 return Collections.emptyList();
             } else {
-                strings.sort((s1, s2) -> s1.getLocale().toLanguageTag().compareTo(s2.getLocale().toLanguageTag()));
+                strings.sort(Comparator.comparing(s -> s.getLocale().toLanguageTag()));
                 return strings;
             }
         }

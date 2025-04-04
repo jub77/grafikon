@@ -267,26 +267,28 @@ public abstract class Import {
                 // skip import of a key
                 continue;
             }
-            if (entry.getValue() instanceof ObjectWithId) {
-                ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
-                if (objectWithId != null) {
-                    dest.set(entry.getKey(), objectWithId);
+            switch (entry.getValue()) {
+                case ObjectWithId withId -> {
+                    ObjectWithId objectWithId = this.getObjectWithId(withId);
+                    if (objectWithId != null) {
+                        dest.set(entry.getKey(), objectWithId);
+                    }
                 }
-            } else if (entry.getValue() instanceof Collection
-                    && containsObjectWithId((Collection<?>) entry.getValue())) {
-                Collection<Object> collection = getObjectsWithId(
-                        entry.getValue() instanceof Set ? new HashSet<>() : new ArrayList<>(),
-                        (Collection<?>) entry.getValue());
-                if (!collection.isEmpty()) {
-                    dest.set(entry.getKey(), collection);
+                case Collection<?> collection1 when containsObjectWithId(collection1) -> {
+                    Collection<Object> collection = getObjectsWithId(
+                            entry.getValue() instanceof Set ? new HashSet<>() : new ArrayList<>(),
+                            collection1);
+                    if (!collection.isEmpty()) {
+                        dest.set(entry.getKey(), collection);
+                    }
                 }
-            } else if (entry.getValue() instanceof Map && containsObjectWithId((Map<?, ?>) entry.getValue())) {
-                Map<Object, Object> map = getObjectsWithId(new HashMap<>(), (Map<?, ?>) entry.getValue());
-                if (!map.isEmpty()) {
-                    dest.set(entry.getKey(), map);
+                case Map<?, ?> map1 when containsObjectWithId(map1) -> {
+                    Map<Object, Object> map = getObjectsWithId(new HashMap<>(), map1);
+                    if (!map.isEmpty()) {
+                        dest.set(entry.getKey(), map);
+                    }
                 }
-            } else {
-                dest.set(entry.getKey(), entry.getValue());
+                case null, default -> dest.set(entry.getKey(), entry.getValue());
             }
         }
         return dest;

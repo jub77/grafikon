@@ -5,7 +5,6 @@ import java.util.*;
 import com.google.common.collect.Iterators;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.ObservableObject;
 
 /**
  * Common implementation of route segment.

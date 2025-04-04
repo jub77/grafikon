@@ -55,7 +55,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     private TimeIntervalCalculation calculation;
 
     /**
-     * creates instance of an time interval.
+     * creates instance of a time interval.
      *
      * @param id id
      * @param train train
@@ -443,7 +443,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     /**
-     * @return connector used for arrival to the route segment
+     * @return connector used for arrival to segment
      */
     public Optional<TrackConnector> getFromTrackConnector() {
         TimeInterval previousInterval = this.getPreviousTrainInterval();

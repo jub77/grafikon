@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.ObservableObject;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
