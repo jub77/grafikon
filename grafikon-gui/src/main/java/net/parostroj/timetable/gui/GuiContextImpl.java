@@ -41,7 +41,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
                 windowSection.removeSection();
             } else {
                 windowSection.clear();
-                windowSection.putAll(value);
+                value.forEach(windowSection::put);
             }
         });
         return section;
@@ -50,8 +50,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     @Override
     public IniConfigSection loadFromPreferences(IniConfig prefs) {
         IniConfigSection section = prefs.getSection(INI_SECTION);
-        section.entrySet().forEach(
-                entry -> dataMap.put(entry.getKey(), this.dataFromString(entry.getValue())));
+        section.getKeys().forEach(key -> dataMap.put(key, this.dataFromString(section.get(key))));
 
         this.preferences = prefs;
 
@@ -80,8 +79,10 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
             if (preferencesMap.containsKey(key)) {
                 map = preferencesMap.get(key);
             } else {
-                map = new HashMap<>();
-                preferences.getSection(key).copyToMap(map);
+                Map<String, String> prefMap = new HashMap<>();
+                IniConfigSection section = preferences.getSection(key);
+                section.getKeys().forEach(iniKey -> prefMap.put(iniKey, section.get(key)));
+                map = prefMap;
             }
             if (map == null) {
                 map = Collections.emptyMap();

@@ -4,10 +4,8 @@ import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.tree.ImmutableNode;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.StreamSupport;
 
 public class IniConfigSectionCommons implements IniConfigSection {
 
@@ -20,18 +18,18 @@ public class IniConfigSectionCommons implements IniConfigSection {
     }
 
     @Override
-    public void put(String key, String value) {
-        ini.setProperty(escapeKey(escpapedSectionKey, key), value);
-    }
-
-    @Override
-    public String get(String key) {
-        return ini.getString(escapeKey(escpapedSectionKey, key));
+    public <T> T get(String key, Class<T> clazz) {
+        return ini.get(clazz, escapeKey(escpapedSectionKey, key));
     }
 
     @Override
     public <T> T get(String key, Class<T> clazz, T defaultValue) {
         return ini.get(clazz, escapeKey(escpapedSectionKey, key), defaultValue);
+    }
+
+    @Override
+    public <T> List<T> getAll(String key, Class<T> clazz) {
+        return ini.getList(clazz, escapeKey(escpapedSectionKey, key));
     }
 
     @Override
@@ -45,38 +43,16 @@ public class IniConfigSectionCommons implements IniConfigSection {
     }
 
     @Override
-    public void putAll(Map<String, String> values) {
-        values.forEach((key, value) -> ini.setProperty(escapeKey(escpapedSectionKey, key), value));
+    public Collection<String> getKeys() {
+        Iterable<String> itarable = ini.subset(escpapedSectionKey)::getKeys;
+        return StreamSupport.stream(itarable.spliterator(), false)
+                .map(IniConfigSectionCommons::unescapeKey)
+                .toList();
     }
 
     @Override
-    public Collection<Entry<String, String>> entrySet() {
-        Map<String, String> map = new HashMap<>();
-        copyToMap(map);
-        return map.entrySet();
-    }
-
-    @Override
-    public void copyToMap(Map<String, String> map) {
-        Iterable<String> i = ini.subset(escpapedSectionKey)::getKeys;
-        for (String escapedKey : i) {
-            map.put(unescapeKey(escapedKey), ini.getString(escpapedSectionKey + "." + escapedKey));
-        }
-    }
-
-    @Override
-    public void add(String key, String value) {
+    public void add(String key, Object value) {
         ini.addProperty(escapeKey(escpapedSectionKey, key), value);
-    }
-
-    @Override
-    public String get(String key, String defaultValue) {
-        return ini.getString(escapeKey(escpapedSectionKey, key), defaultValue);
-    }
-
-    @Override
-    public List<String> getAll(String key) {
-        return ini.getList(String.class, escapeKey(escpapedSectionKey, key));
     }
 
     @Override

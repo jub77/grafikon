@@ -7,7 +7,7 @@ package net.parostroj.timetable.gui.ini;
  */
 public interface StorableGuiData {
 
-    public IniConfigSection saveToPreferences(IniConfig prefs);
+    IniConfigSection saveToPreferences(IniConfig prefs);
 
-    public IniConfigSection loadFromPreferences(IniConfig prefs);
+    IniConfigSection loadFromPreferences(IniConfig prefs);
 }
