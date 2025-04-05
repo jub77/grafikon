@@ -1,6 +1,6 @@
 # Grafikon
 
-Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo etc).
+Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo etc...).
 
 ## Examples
 
@@ -17,6 +17,11 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
     * or use `grafikon.cmd` (`grafikon.sh`)
 
 Outputs can be added from menu (bundled with program as default): *File > Import > Import outputs*.
+The outputs are then generated from *Outputs > Outputs...* by pressing *Generate all* button.
+
+In order to use Groovy string templates as well as output templates directly in the gtm,
+the type of the diagram in *Settings > Settings...* has to be set to *raw*. All Groovy
+scripts and templates are stripped from loaded gtm otherwise.
 
 ![Grafikon](https://jub.parostroj.net/grafikon/grafikon.png)
 
