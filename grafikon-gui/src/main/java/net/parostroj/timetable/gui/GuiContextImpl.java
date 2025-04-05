@@ -105,7 +105,7 @@ public class GuiContextImpl implements GuiContext, StorableGuiData {
     }
 
     private String dataToString(StorableWindowData data) {
-        return String.format("%d|%d|%d|%d", data.getX(), data.getY(), data.getWidth(), data.getHeight());
+        return String.format("%d|%d|%d|%d", data.x(), data.y(), data.width(), data.height());
     }
 
     private StorableWindowData dataFromString(String str) {
