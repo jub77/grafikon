@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.events;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,8 +69,9 @@ public class AttributeChange {
     public String toString() {
         StringBuilder b = new StringBuilder("[");
         b.append(name);
-        if (category != null)
+        if (category != null) {
             b.append(',').append(category);
+        }
         b.append(';');
         b.append(oldValue);
         b.append("->");
