@@ -29,7 +29,7 @@ subprojects { prj ->
 			dependency 'org.slf4j:slf4j-api:2.0.17'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.17'
 			dependency 'joda-time:joda-time:2.14.0'
-			dependency 'com.google.guava:guava:33.4.6-jre', {
+			dependency 'com.google.guava:guava:33.4.7-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
