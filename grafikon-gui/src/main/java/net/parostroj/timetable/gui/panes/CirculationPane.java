@@ -16,7 +16,6 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.dialogs.EditLocalizedStringOkCancelDialog;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
-import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.ini.IniConfig;
 import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
@@ -68,6 +67,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             public void handleEvent(Action action, TrainsCycle cycle, Train train) {
                 if (action == Action.DIAGRAM_CHANGE) {
                     diagram = delegate.getTrainDiagram();
+                    CirculationPane.this.diagram = diagram;
                     updateTypes();
                     this.fireEvent(Action.REFRESH, null);
                 }
@@ -87,8 +87,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             }
         });
         createButton.setEnabled(false);
-        model.getMediator().addColleague(message -> diagram = ((DiagramChangeMessage) message).diagram(),
-                DiagramChangeMessage.class);
     }
 
     private void initComponents() {
