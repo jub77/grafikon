@@ -24,12 +24,12 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:4.0.26'
-			dependency 'org.apache.groovy:groovy-jsr223:4.0.26'
+			dependency 'org.apache.groovy:groovy-templates:4.0.27'
+			dependency 'org.apache.groovy:groovy-jsr223:4.0.27'
 			dependency 'org.slf4j:slf4j-api:2.0.17'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.17'
 			dependency 'joda-time:joda-time:2.14.0'
-			dependency 'com.google.guava:guava:33.4.7-jre', {
+			dependency 'com.google.guava:guava:33.4.8-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -38,7 +38,7 @@ subprojects { prj ->
 				exclude 'org.checkerframework:checker-qual'
 				exclude 'com.google.guava:listenablefuture'
 			}
-			dependency 'org.apache.xmlgraphics:fop:2.10', {
+			dependency 'org.apache.xmlgraphics:fop:2.11', {
 				exclude 'org.apache.xmlgraphics:batik-extension'
 				exclude 'commons-logging:commons-logging'
 				exclude 'org.apache.pdfbox:fontbox'
@@ -62,11 +62,11 @@ subprojects { prj ->
 				exclude 'org.eclipse.angus:angus-activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-			dependency 'org.junit.jupiter:junit-jupiter:5.12.1'
+			dependency 'org.junit.jupiter:junit-jupiter:5.13.0'
 			dependency 'org.hamcrest:hamcrest:3.0'
-			dependency 'io.smallrye.reactive:mutiny:2.8.0'
-			dependency 'com.fasterxml.jackson:jackson-bom:2.18.3'
-			dependency 'org.apache.commons:commons-configuration2:2.11.0', {
+			dependency 'io.smallrye.reactive:mutiny:2.9.0'
+			dependency 'com.fasterxml.jackson:jackson-bom:2.19.0'
+			dependency 'org.apache.commons:commons-configuration2:2.12.0', {
 				exclude 'commons-logging:commons-logging'
 			}
 		}
