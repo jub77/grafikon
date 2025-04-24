@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui;
 
-import de.skuzzle.semantic.Version;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -9,6 +8,7 @@ import java.util.*;
 
 import javax.swing.UIManager;
 
+import com.github.zafarkhaja.semver.Version;
 import net.parostroj.timetable.gui.events.*;
 import net.parostroj.timetable.gui.ini.AppPreferences;
 import net.parostroj.timetable.model.TrainDiagramType;
@@ -360,6 +360,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     private String getMajorMinorString(Version version) {
-        return String.format("%d.%d", version.getMajor(), version.getMinor());
+        return String.format("%d.%d", version.majorVersion(), version.minorVersion());
     }
 }

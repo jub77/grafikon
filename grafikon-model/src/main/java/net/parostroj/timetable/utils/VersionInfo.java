@@ -1,13 +1,13 @@
 package net.parostroj.timetable.utils;
 
-import de.skuzzle.semantic.Version;
 import java.util.Map;
 
+import com.github.zafarkhaja.semver.Version;
 import net.parostroj.timetable.utils.ManifestVersionInfo.VersionData;
 
 public class VersionInfo {
 
-    private static final Version NO_MANIFEST_VERSION = Version.parseVersion("0.0.0-no.manifest");
+    private static final Version NO_MANIFEST_VERSION = Version.parse("0.0.0-no.manifest");
 
     private final Version version;
 
@@ -25,7 +25,7 @@ public class VersionInfo {
 
     public Version getVersionWithoutBuild() {
         Version completeVersion = getVersion();
-        return completeVersion.withBuildMetaData("");
+        return completeVersion.withoutBuildMetadata();
     }
 
     public Version getVersion() {
