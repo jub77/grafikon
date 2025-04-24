@@ -22,7 +22,7 @@ class FileLoader<T> extends AbstractLoader<T> {
 
     @Override
     public String toString() {
-        return "Default";
+        return "File[" + itemLocation + "/" + itemListFile + "]";
     }
 
     @Override

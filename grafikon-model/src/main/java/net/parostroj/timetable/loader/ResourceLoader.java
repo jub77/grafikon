@@ -20,7 +20,7 @@ class ResourceLoader<T> extends AbstractLoader<T> {
 
     @Override
     public String toString() {
-        return "Default";
+        return "Resource[" + itemLocation + "/" + itemListFile + "]";
     }
 
     @Override

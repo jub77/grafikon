@@ -37,6 +37,6 @@ class UrlLoader<T> extends AbstractLoader<T> {
 
     @Override
     public String toString() {
-        return String.format("Url[%s]", baseUrl);
+        return String.format("Url[%s]", baseUrl.toString() + "/" + itemListFile);
     }
 }
