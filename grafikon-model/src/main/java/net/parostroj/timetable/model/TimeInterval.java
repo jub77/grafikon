@@ -32,9 +32,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     /** Interval. */
     private Interval interval;
     /** Train. */
-    private Train train;
+    private final Train train;
     /** Owner. */
-    private NetSegment<? extends Track> owner;
+    private final NetSegment<? extends Track> owner;
     /** Track. */
     private Track track;
     /** Speed. */
@@ -46,13 +46,13 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     /** For tests - overlapping time intervals. */
     private Set<TimeInterval> overlappingIntervals;
     /** Direction of the time interval regarding the underlying line. */
-    private TimeIntervalDirection direction;
+    private final TimeIntervalDirection direction;
     /** Speed used for calculation of running time (line as an owner). */
     private Integer usedSpeed;
     /** Changed - used for indication that the time interval for whatever reason changed. */
     private boolean changed;
 
-    private TimeIntervalCalculation calculation;
+    private final TimeIntervalCalculation calculation;
 
     /**
      * creates instance of a time interval.
@@ -69,8 +69,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      */
     public TimeInterval(String id, Train train, NetSegment<? extends Track> owner, int start, int end, Integer speed,
             TimeIntervalDirection direction, Track track, int addedTime) {
-        this.setTrain(train);
-        this.setOwner(owner);
+        this.train = train;
+        this.calculation = new TimeIntervalCalculation(train, this);
+        this.owner = owner;
         this.interval = IntervalFactory.createInterval(start, end);
         this.speedLimit = speed;
         this.direction = direction;
@@ -165,14 +166,6 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      */
     public Train getTrain() {
         return train;
-    }
-
-    /**
-     * @param train train to be set
-     */
-    public void setTrain(Train train) {
-        this.train = train;
-        this.calculation = new TimeIntervalCalculation(train, this);
     }
 
     /**
@@ -384,24 +377,10 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     /**
-     * @param owner new owner to be set
-     */
-    public void setOwner(NetSegment<? extends Track> owner) {
-        this.owner = owner;
-    }
-
-    /**
      * @return direction
      */
     public TimeIntervalDirection getDirection() {
         return direction;
-    }
-
-    /**
-     * @param direction new direction to be set
-     */
-    public void setDirection(TimeIntervalDirection direction) {
-        this.direction = direction;
     }
 
     /**
