@@ -53,6 +53,7 @@ public class LSAttributesItem {
     static {
         ENUM_TYPE_MAP.put(NodeType.class, "node.type");
         ENUM_TYPE_MAP.put(Node.Side.class, "node.side");
+        ENUM_TYPE_MAP.put(ManagedFreight.class, "managed.freight");
     }
 
     /**

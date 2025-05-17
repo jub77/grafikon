@@ -35,6 +35,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
     public static final String ATTR_LINE_TYPE = "line.type";
     public static final String ATTR_LINE_WIDTH = "line.width";
     public static final String ATTR_LINE_LENGTH = "line.length";
+    public static final String ATTR_MANAGED_FREIGHT = "managed.freight";
     public static final String ATTR_VERSION = "version";
 
     /** Train diagram. */

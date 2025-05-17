@@ -10,6 +10,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import net.parostroj.timetable.gui.wrappers.ManagedFreightWrapperDelegate;
+import net.parostroj.timetable.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +21,6 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
-import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.LineType;
-import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 import javax.swing.JButton;
@@ -50,9 +45,17 @@ public class TrainTypeDialog extends javax.swing.JDialog {
         initComponents();
         nameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
         cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
-        WrapperDelegate<LineType> lineTypeWrapperDelegate = new LineTypeWrapperDelegate();
+        WrapperDelegate<LineType> lineTypeWrapperDelegate = type -> {
+            String key = type.getKey();
+            return ResourceLoader.getString("edit.traintypes.line.type." + key);
+        };
         for (LineType type : LineType.values()) {
             lineTypeComboBox.addItem(Wrapper.getWrapper(type, lineTypeWrapperDelegate));
+        }
+        WrapperDelegate<ManagedFreight> managedFreightWrapperDelegate = new ManagedFreightWrapperDelegate();
+        managedFreightComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("MMMMMM"));
+        for (ManagedFreight managedFreight : ManagedFreight.values()) {
+            managedFreightComboBox.addItem(Wrapper.getWrapper(managedFreight, managedFreightWrapperDelegate));
         }
 
         pack();
@@ -118,7 +121,11 @@ public class TrainTypeDialog extends javax.swing.JDialog {
         lineWidthTextField.setColumns(4);
         lineWidthTextField.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
+        managedFreightComboBox = new javax.swing.JComboBox<>();
+
         javax.swing.JLabel lineTypeLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.type") + ":"); // NOI18N
+
+        javax.swing.JLabel managedFreightLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.managed.freight") + ":");
 
         javax.swing.JLabel lineWidthLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.width") + ":"); // NOI18N
 
@@ -147,7 +154,11 @@ public class TrainTypeDialog extends javax.swing.JDialog {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(platformNeededCheckBox)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(showWeightInfoCheckBox))
+                            .addComponent(showWeightInfoCheckBox)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(managedFreightLabel)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(managedFreightComboBox))
                         .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
                         .addComponent(completeNameTemplateCheckBox)
                         .addComponent(nameTemplateCheckBox)
@@ -212,7 +223,9 @@ public class TrainTypeDialog extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(platformNeededCheckBox)
-                        .addComponent(showWeightInfoCheckBox))
+                        .addComponent(showWeightInfoCheckBox)
+                        .addComponent(managedFreightLabel)
+                        .addComponent(managedFreightComboBox))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(lineTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -284,6 +297,8 @@ public class TrainTypeDialog extends javax.swing.JDialog {
             lineTypeComboBox.setSelectedIndex(lineType.ordinal());
             lineWidthTextField.setText(Integer.toString(this.convertDoubleValueToPercent(selected, TrainType.ATTR_LINE_WIDTH)));
             lineLengthTextField.setText(Integer.toString(this.convertDoubleValueToPercent(selected, TrainType.ATTR_LINE_LENGTH)));
+
+            managedFreightComboBox.setSelectedIndex(selected.getAttribute(TrainType.ATTR_MANAGED_FREIGHT, ManagedFreight.class, ManagedFreight.NONE).ordinal());
         } else {
             abbrTextField.getPresentationModel().init(LocalizedString.fromString(""), diagram.getLocales());
             descTextField.getPresentationModel().init(LocalizedString.fromString(""), diagram.getLocales());
@@ -301,6 +316,7 @@ public class TrainTypeDialog extends javax.swing.JDialog {
             lineTypeComboBox.setSelectedIndex(0);
             lineWidthTextField.setText("100");
             lineLengthTextField.setText("100");
+            managedFreightComboBox.setSelectedIndex(0);
         }
     }
 
@@ -353,6 +369,9 @@ public class TrainTypeDialog extends javax.swing.JDialog {
             type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
             type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractRatioFromPercentage(lineWidthTextField));
             type.getAttributes().setRemove(TrainType.ATTR_LINE_LENGTH, extractRatioFromPercentage(lineLengthTextField));
+
+            type.getAttributes().setRemove(TrainType.ATTR_MANAGED_FREIGHT, extractManagedFreight());
+
         }
         setVisible(false);
     }
@@ -362,6 +381,13 @@ public class TrainTypeDialog extends javax.swing.JDialog {
         LineType type = (LineType) Objects.requireNonNull(selectedType).getElement();
         // solid is default value -> null
         return type == LineType.SOLID ? null : type.getValue();
+    }
+
+    private ManagedFreight extractManagedFreight() {
+        Wrapper<?> selectedWrapper = (Wrapper<?>) managedFreightComboBox.getSelectedItem();
+        ManagedFreight managedFreight = (ManagedFreight) Objects.requireNonNull(selectedWrapper).getElement();
+        // NONE -> default value
+        return managedFreight == ManagedFreight.NONE ? null : managedFreight;
     }
 
     private Double extractRatioFromPercentage(JTextField field) {
@@ -397,13 +423,6 @@ public class TrainTypeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox showWeightInfoCheckBox;
     private javax.swing.JTextField lineWidthTextField;
     private javax.swing.JComboBox<Wrapper<LineType>> lineTypeComboBox;
+    private javax.swing.JComboBox<Wrapper<ManagedFreight>> managedFreightComboBox;
     private javax.swing.JTextField lineLengthTextField;
-
-    private static class LineTypeWrapperDelegate implements WrapperDelegate<LineType> {
-        @Override
-        public String toString(LineType element) {
-            String key = element.getKey();
-            return ResourceLoader.getString("edit.traintypes.line.type." + key);
-        }
-    }
 }
