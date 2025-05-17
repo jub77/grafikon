@@ -43,11 +43,11 @@ public final class ModelPredicates {
     }
 
     public static boolean nodeInterval(TimeInterval interval) {
-        return interval.isNodeOwner();
+        return interval != null && interval.isNodeOwner();
     }
 
     public static boolean lineInterval(TimeInterval interval) {
-        return interval.isLineOwner();
+        return interval != null && interval.isLineOwner();
     }
 
     public static Predicate<Train> getTrainsByType(final Set<TrainType> types) {
