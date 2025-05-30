@@ -7,6 +7,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.EventProcessing;
 import net.parostroj.timetable.utils.Pair;
@@ -146,12 +147,24 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
                         modifiedTrain((Train) event.getSource());
                         break;
                     case ATTRIBUTE:
-                        if (event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT, Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
+                        if (event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT_OVERRIDE, Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
                             modifiedTrain((Train) event.getSource());
                         }
                         break;
                     default:
                         break;
+                }
+            }
+
+            @Override
+            public void visitTrainTypeEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE && event.getAttributeChange().checkName(TrainType.ATTR_MANAGED_FREIGHT)) {
+                    TrainType type = (TrainType) event.getSource();
+                    for (Train train : type.getDiagram().getTrains()) {
+                        if (train.getType() == type) {
+                            modifiedTrain(train);
+                        }
+                    }
                 }
             }
         };

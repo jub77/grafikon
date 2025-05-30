@@ -18,7 +18,7 @@ import javax.swing.*;
 import net.parostroj.timetable.gui.components.GraphicalTimetableViewBuilder;
 import net.parostroj.timetable.gui.events.DiagramChangeMessage;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
@@ -38,10 +38,6 @@ import net.parostroj.timetable.gui.ini.IniConfigSection;
 import net.parostroj.timetable.gui.ini.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.model.FNConnection;
-import net.parostroj.timetable.model.FreightNet;
-import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.EventProcessing;
 import net.parostroj.timetable.output2.gt.GTDraw;
@@ -184,10 +180,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                     manageFreightCheckBox.setSelected(false);
                 } else {
                     Train train = connection.first.getTrain();
-                    if (train.isManagedFreight() && !connection.first.isFirst()
+                    if (train.getManagedFreight() != ManagedFreight.NONE && !connection.first.isFirst()
                             && !connection.first.isLast() && connection.first.isInnerStop()) {
                         manageFreightCheckBox.setEnabled(true);
-                        manageFreightCheckBox.setSelected(!connection.first.isNotManagedFreight());
+                        manageFreightCheckBox.setSelected(connection.first.isFreight());
                     } else {
                         manageFreightCheckBox.setEnabled(false);
                         manageFreightCheckBox.setSelected(false);
@@ -328,8 +324,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         buttonPanel.add(manageFreightCheckBox);
         manageFreightCheckBox.addActionListener(e -> {
             if (editType == EditType.SHUNTING && connection.first != null) {
-                connection.first.setAttributeAsBool(
-                        TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !manageFreightCheckBox.isSelected());
+                connection.first.computeAndSetFreight(manageFreightCheckBox.isSelected());
             }
         });
 

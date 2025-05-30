@@ -35,7 +35,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable,
     public static final String ATTR_TOP_SPEED = "topSpeed";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_COMPLETE_NAME = "completeName";
-    public static final String ATTR_MANAGED_FREIGHT = "managed.freight";
+    public static final String ATTR_MANAGED_FREIGHT_OVERRIDE = "managed.freight.override";
     public static final String ATTR_OPTIONAL = "optional";
     public static final String ATTR_TECHNOLOGICAL_BEFORE = "technological.before";
     public static final String ATTR_TECHNOLOGICAL_AFTER = "technological.after";
@@ -101,11 +101,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable,
             if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
                 Train.this.recalculate();
             }
-            fixManagedFreight(change);
+            if (change.checkName(ATTR_MANAGED_FREIGHT_OVERRIDE)) {
+                fixManagedFreight();
+            }
             fixJoinedTrains(change);
             listenerSupport.fireEvent(new Event(Train.this, change));
         }, (attrs, change) -> {
-            if (change.checkName(Train.ATTR_NEXT_JOINED_TRAIN)) {
+            if (change.checkName(ATTR_NEXT_JOINED_TRAIN)) {
                 Train newTrain = (Train) change.getNewValue();
                 return newTrain == null
                         || this.getLastInterval().getOwnerAsNode() == newTrain.getFirstInterval().getOwnerAsNode();
@@ -120,10 +122,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable,
         this.setAttribute(ATTR_ELECTRIC, false);
     }
 
-    private void fixManagedFreight(AttributeChange change) {
-        if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
+    protected void fixManagedFreight() {
+        if (getManagedFreight() == ManagedFreight.NONE) {
             for (TimeInterval interval : intervalList) {
-                interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                interval.removeAttribute(TimeInterval.ATTR_MANAGED_FREIGHT_OVERRIDE);
             }
         }
     }
@@ -1051,8 +1053,21 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable,
         return this.getAttributes().getBool(ATTR_EMPTY);
     }
 
-    public boolean isManagedFreight() {
-        return this.getAttributeAsBool(Train.ATTR_MANAGED_FREIGHT);
+    public ManagedFreight getManagedFreight() {
+        ManagedFreight mf = getAttributes().get(ATTR_MANAGED_FREIGHT_OVERRIDE, ManagedFreight.class);
+        if (mf == null && type != null) {
+            mf = type.getAttribute(TrainType.ATTR_MANAGED_FREIGHT, ManagedFreight.class);
+        }
+        return mf == null ? ManagedFreight.NONE : mf;
+    }
+
+    public void computeAndSetManagedFreight(ManagedFreight managedFreight) {
+        ManagedFreight trainTypeManagedFreight = type == null
+                ? ManagedFreight.NONE
+                : type.getAttribute(TrainType.ATTR_MANAGED_FREIGHT, ManagedFreight.class);
+        trainTypeManagedFreight = trainTypeManagedFreight == null ? ManagedFreight.NONE : trainTypeManagedFreight;
+        this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE,
+                managedFreight != trainTypeManagedFreight ? managedFreight : null);
     }
 
     public Train getPreviousJoinedTrain() {

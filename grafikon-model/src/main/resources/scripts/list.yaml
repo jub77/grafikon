@@ -35,12 +35,6 @@ items:
       default: Copy engine to engineers circulations
       cs: Zkopíruj oběhy vozidel do turnusů
       sk: Skopíruj šablóny výstupov do výstupov
-  - id: add_managed_freight
-    filename: add_managed_freight.groovy
-    name:
-      default: Add trains to managed freight
-      cs: Přidání vlaků do nákladní dopravy
-      sk: Pridanie vlakov do nákladnej dopravy
   - id: copy_output_templates_to_outputs
     filename: copy_output_templates_to_outputs.groovy
     name:

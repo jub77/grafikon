@@ -20,7 +20,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public static final String ATTR_COMMENT_SHOWN = "comment.shown";
     public static final String ATTR_SHUNT = "shunt";
     public static final String ATTR_OCCUPIED = "occupied";
-    public static final String ATTR_NOT_MANAGED_FREIGHT = "not.managed.freight";
+    public static final String ATTR_MANAGED_FREIGHT_OVERRIDE = "managed.freight.override";
     public static final String ATTR_NO_REGION_CENTER_TRANSFER = "no.region.center.transfer";
 
     public static final int DAY = 24 * 3600;
@@ -365,7 +365,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     private void setIntervalImpl(int start, int end) {
         this.interval = IntervalFactory.createInterval(start, end);
         if (this.getLength() == 0) {
-            this.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+            this.removeAttribute(TimeInterval.ATTR_MANAGED_FREIGHT_OVERRIDE);
         }
     }
 
@@ -585,10 +585,6 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         return train.isAttached();
     }
 
-    public boolean isNotManagedFreight() {
-    	return this.getAttributeAsBool(ATTR_NOT_MANAGED_FREIGHT);
-    }
-
     public boolean isNoRegionCenterTransfer() {
         return this.getAttributeAsBool(ATTR_NO_REGION_CENTER_TRANSFER);
     }
@@ -606,22 +602,53 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     public boolean isFreightFrom() {
-        return isFreightCommon() && (this.isFirst() || this.isInnerStop());
+        ManagedFreight mf = getTrain().getManagedFreight();
+        if (isNotFreightCommon(mf)) {
+            return false;
+        }
+        return this.isFirst() || (this.isInnerStop() && ( mf == ManagedFreight.ALL)
+                || Boolean.TRUE.equals(getAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, Boolean.class)));
     }
 
     public boolean isFreightTo() {
-        return isFreightCommon() && (this.isLast() || this.isInnerStop());
+        ManagedFreight mf = getTrain().getManagedFreight();
+        if (isNotFreightCommon(mf)) {
+            return false;
+        }
+        return this.isLast() || (this.isInnerStop() && (mf == ManagedFreight.ALL
+                || Boolean.TRUE.equals(getAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, Boolean.class))));
     }
 
     public boolean isFreight() {
-        return isFreightCommon() && this.isStop();
+        ManagedFreight mf = getTrain().getManagedFreight();
+        if (isNotFreightCommon(mf)) {
+            return false;
+        }
+        return this.isStop() && (mf == ManagedFreight.ALL || Boolean.TRUE.equals(getAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, Boolean.class)))
+                || this.isFirst() || this.isLast();
+    }
+
+    public void computeAndSetFreight(boolean freight) {
+        ManagedFreight mf = getTrain().getManagedFreight();
+        switch (mf) {
+            case ALL -> this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? null : Boolean.FALSE);
+            case ENDS -> {
+                if (this.isFirst() || this.isLast()) {
+                    this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? null : Boolean.FALSE);
+                } else if (this.isInnerStop()) {
+                    this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? Boolean.TRUE : false);
+                }
+            }
+        }
     }
 
     public boolean isFreightConnection() {
         return !getTrain().getDiagram().getFreightNet().getTrainsFrom(this).isEmpty();
     }
 
-    private boolean isFreightCommon() {
-        return this.getTrain().isManagedFreight() && !this.isNotManagedFreight() && !this.isTechnological();
+    private boolean isNotFreightCommon(ManagedFreight mf) {
+        return mf == ManagedFreight.NONE
+                || Boolean.FALSE.equals(getAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, Boolean.class))
+                || this.isTechnological();
     }
 }

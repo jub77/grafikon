@@ -11,12 +11,6 @@ items:
       default: Check duplicate train numbers
       cs: Zkontrolovat duplicitní čísla vlaků
       sk: Skontrolovať duplicitné čísla vlakov
-  - id: add_managed_freight_select
-    filename: add_managed_freight_select.groovy
-    name:
-      default: Add trains to managed freight (selection)
-      cs: Přidání vlaků do nákladní dopravy (výběr)
-      sk: Pridanie vlakov do nákladnej dopravy (výber)
   - id: copy_output_templates_to_outputs_select
     filename: copy_output_templates_to_outputs_select.groovy
     name:

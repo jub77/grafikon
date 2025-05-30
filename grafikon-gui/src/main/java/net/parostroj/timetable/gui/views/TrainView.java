@@ -131,6 +131,14 @@ public class TrainView extends javax.swing.JPanel implements StorableGuiData {
                     updateView(selectedTrain);
                 }
             }
+
+            @Override
+            public void processTrainTypeEvent(Event event) {
+                Train selectedTrain = model.getSelectedTrain();
+                if (event.getSource() == (selectedTrain != null ? selectedTrain.getType() : null)) {
+                    updateView(selectedTrain);
+                }
+            }
         }, Event.class);
         model.getMediator().addColleague(
                 message -> updateView(null),

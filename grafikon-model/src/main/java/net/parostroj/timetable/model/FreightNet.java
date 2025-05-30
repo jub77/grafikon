@@ -135,14 +135,14 @@ public class FreightNet implements Visitable, AttributesHolder, ObservableObject
         List<FNConnection> toBeDeleted = new ArrayList<>();
         for (FNConnection conn : connections) {
             TimeInterval fromInterval = conn.getFrom();
-            if (!fromInterval.getTrain().isManagedFreight() || !fromInterval.isStop()) {
+            if (fromInterval.getTrain().getManagedFreight() == ManagedFreight.NONE || !fromInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
         connections = toTrainMap.get(train);
         for (FNConnection conn : connections) {
             TimeInterval toInterval = conn.getTo();
-            if (!toInterval.getTrain().isManagedFreight() || !toInterval.isStop()) {
+            if (toInterval.getTrain().getManagedFreight() == ManagedFreight.NONE || !toInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }

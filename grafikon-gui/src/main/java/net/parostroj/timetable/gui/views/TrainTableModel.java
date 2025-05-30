@@ -13,16 +13,7 @@ import java.util.Map;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Track;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.freight.FreightConnectionPath;
 import net.parostroj.timetable.model.freight.FreightConnectionStrategy;
 import net.parostroj.timetable.output2.util.OutputFreightUtil;
@@ -91,12 +82,12 @@ class TrainTableModel extends AbstractTableModel {
             if (node.getType() == NodeType.SIGNAL && columnIndex != TrainTableColumn.PLATFORM.ordinal()) {
                 return false;
             }
-            if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.ordinal() && (!train.isManagedFreight()
+            if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.ordinal() && (train.getManagedFreight() == ManagedFreight.NONE
                     || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow))) {
                 return false;
             }
             if (columnIndex == TrainTableColumn.REGION_CENTER_TRANSFER.ordinal() && rowIndex != 0) {
-                return train.isManagedFreight() && interval.getOwnerAsNode().isCenterOfRegions();
+                return train.getManagedFreight() != ManagedFreight.NONE && interval.getOwnerAsNode().isCenterOfRegions();
             }
         }
         return TrainTableColumn.getColumn(columnIndex).isAllowedToEdit(rowIndex, lastRow, interval);
@@ -167,7 +158,7 @@ class TrainTableModel extends AbstractTableModel {
             case CONFLICTS:
                 StringBuilder builder = new StringBuilder();
                 for (TimeInterval overlap : interval.getOverlappingIntervals()) {
-                    if (builder.length() != 0) {
+                    if (!builder.isEmpty()) {
                         builder.append(", ");
                     }
                     builder.append(overlap.getTrain().getDefaultName());
@@ -192,7 +183,7 @@ class TrainTableModel extends AbstractTableModel {
                 if (interval.isNodeOwner() && rowIndex != 0 && rowIndex != lastRow
                         && interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
                     int stop = interval.getLength() / 60;
-                    // celculate with time scale ...
+                    // celculate with timescale ...
                     Double timeScale = diagram.getAttributes().get(TrainDiagram.ATTR_TIME_SCALE, Double.class);
                     retValue = stop / timeScale;
                 }
@@ -218,14 +209,14 @@ class TrainTableModel extends AbstractTableModel {
             case MANAGED_FREIGHT:
                 // managed freight
                 retValue = false;
-                if (train.isManagedFreight() && interval.isNodeOwner()) {
-                    retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributeAsBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                if (train.getManagedFreight() != ManagedFreight.NONE && interval.isNodeOwner()) {
+                    retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && interval.isFreight();
                 }
                 break;
             case REGION_CENTER_TRANSFER:
                 // transfer in region center
                 retValue = false;
-                if (interval.isNodeOwner() && train.isManagedFreight()
+                if (interval.isNodeOwner() && train.getManagedFreight() != ManagedFreight.NONE
                         && interval.getOwnerAsNode().isCenterOfRegions()
                         && !interval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER)
                         && rowIndex != 0) {
@@ -244,7 +235,7 @@ class TrainTableModel extends AbstractTableModel {
                     }
                     if (interval.isFreightFrom()) {
                         List<FreightConnectionPath> cargoDst = strategy.getFreightToNodes(interval);
-                        if (!cargoDst.isEmpty() && result.length() > 0) {
+                        if (!cargoDst.isEmpty() && !result.isEmpty()) {
                             result.append(' ');
                         }
                     result.append(freightUtil.freightListToString(cargoDst, Locale.getDefault()));
@@ -396,7 +387,7 @@ class TrainTableModel extends AbstractTableModel {
                 this.fireTableRowsUpdated(rowIndex, rowIndex);
                 break;
             case MANAGED_FREIGHT:
-                interval.getAttributes().setBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !((Boolean) aValue));
+                interval.computeAndSetFreight((boolean) aValue);
                 this.fireTableRowsUpdated(0, lastRow);
                 break;
             case REGION_CENTER_TRANSFER:

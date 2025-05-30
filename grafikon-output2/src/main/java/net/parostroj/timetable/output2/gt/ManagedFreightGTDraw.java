@@ -261,10 +261,18 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             @Override
             public void visitTrainEvent(Event event) {
                 if (event.getType() == Event.Type.ATTRIBUTE
-                        && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                        && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT_OVERRIDE)) {
                     setRefresh(Refresh.REPAINT);
                 } else if (event.getType() == Event.Type.OBJECT_ATTRIBUTE
-                        && event.getAttributeChange().checkName(TimeInterval.ATTR_NOT_MANAGED_FREIGHT)) {
+                        && event.getAttributeChange().checkName(TimeInterval.ATTR_MANAGED_FREIGHT_OVERRIDE)) {
+                    setRefresh(Refresh.REPAINT);
+                }
+            }
+
+            @Override
+            public void visitTrainTypeEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE
+                        && event.getAttributeChange().checkName(TrainType.ATTR_MANAGED_FREIGHT)) {
                     setRefresh(Refresh.REPAINT);
                 }
             }

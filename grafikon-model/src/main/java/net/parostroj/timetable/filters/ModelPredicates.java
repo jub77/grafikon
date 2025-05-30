@@ -24,7 +24,7 @@ public final class ModelPredicates {
     }
 
     public static Predicate<Train> managedTrain() {
-        return Train::isManagedFreight;
+        return train -> train.getManagedFreight() != ManagedFreight.NONE;
     }
 
     public static <T extends ObjectWithId> Predicate<T> matchId(final String id) {

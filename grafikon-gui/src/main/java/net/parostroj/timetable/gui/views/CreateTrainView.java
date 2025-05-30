@@ -30,8 +30,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.JCheckBox;
-
 /**
  * View for dialog with creating of the train.
  *
@@ -163,8 +161,6 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         JLabel label = new JLabel(ResourceLoader.getString("create.train.group"));
 
-        managedFreightCheckBox = new JCheckBox(ResourceLoader.getString("edit.train.managed.freight"));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -206,8 +202,6 @@ public class CreateTrainView extends javax.swing.JPanel {
                                 .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(groupComboBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(managedFreightCheckBox)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(dieselCheckBox)
                                     .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(electricCheckBox)))))
@@ -226,7 +220,6 @@ public class CreateTrainView extends javax.swing.JPanel {
                         .addComponent(label))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(managedFreightCheckBox)
                         .addComponent(dieselCheckBox)
                         .addComponent(electricCheckBox))
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -332,7 +325,7 @@ public class CreateTrainView extends javax.swing.JPanel {
                     (stopTextField.getText().isBlank() ? 0 : Integer.parseInt(stopTextField.getText()) * 60),
                     ObjectsUtil.checkAndTrim(commentTextField.getText()),
                     dieselCheckBox.isSelected(),
-                    electricCheckBox.isSelected(), group, managedFreightCheckBox.isSelected());
+                    electricCheckBox.isSelected(), group);
         } catch (Exception e) {
             log.warn("Error executing create train command.", e);
             GuiComponentUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
@@ -359,7 +352,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         this.getTopLevelAncestor().setVisible(false);
     }
 
-    private void createTrain(String number, TrainType type, Integer topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, Group group, boolean managedFreight) {
+    private void createTrain(String number, TrainType type, Integer topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, Group group) {
         TrainBuilder trainBuilder = new TrainBuilder();
 
         Train train;
@@ -379,7 +372,6 @@ public class CreateTrainView extends javax.swing.JPanel {
         if (group != null) {
             train.setAttribute(Train.ATTR_GROUP, group);
         }
-        train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreight);
 
         // add train to diagram
         diagram.getTrains().add(train);
@@ -388,7 +380,6 @@ public class CreateTrainView extends javax.swing.JPanel {
     private javax.swing.JTextField commentTextField;
     private javax.swing.JCheckBox dieselCheckBox;
     private javax.swing.JCheckBox electricCheckBox;
-    private javax.swing.JCheckBox managedFreightCheckBox;
     private javax.swing.JComboBox<Node> fromComboBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField speedTextField;

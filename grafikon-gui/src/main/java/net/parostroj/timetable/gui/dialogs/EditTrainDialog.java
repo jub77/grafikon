@@ -13,7 +13,9 @@ import javax.swing.DefaultComboBoxModel;
 
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.views.CreateTrainView;
+import net.parostroj.timetable.gui.wrappers.ManagedFreightWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.WeightUnit;
@@ -41,6 +43,7 @@ import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.awt.event.*;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -79,6 +82,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         routeEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
+        WrapperDelegate<ManagedFreight> managedFreightWrapperDelegate = new ManagedFreightWrapperDelegate();
+        managedFreightComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("MMMMMM"));
+        for (ManagedFreight managedFreight : ManagedFreight.values()) {
+            managedFreightComboBox.addItem(Wrapper.getWrapper(managedFreight, managedFreightWrapperDelegate));
+        }
+
     }
 
     /**
@@ -93,7 +102,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
             electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
-            managedFreightCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT));
+            managedFreightComboBox.setSelectedItem(Wrapper.getWrapper(train.getAttribute(Train.ATTR_MANAGED_FREIGHT_OVERRIDE, ManagedFreight.class)));
             showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
             emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
             optionalCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_OPTIONAL));
@@ -174,6 +183,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
         javax.swing.JLabel routeLabel = new javax.swing.JLabel();
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
+
+        managedFreightComboBox = new javax.swing.JComboBox<>();
 
         setTitle(ResourceLoader.getString("edit.train")); // NOI18N
 
@@ -531,18 +542,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
         showLengthCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         showLengthCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        managedFreightCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.managed.freight")); // NOI18N
-        managedFreightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        managedFreightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        GridBagConstraints gbcManagedFreightCheckBox = new GridBagConstraints();
-        gbcManagedFreightCheckBox.weightx = 1.0;
-        gbcManagedFreightCheckBox.anchor = GridBagConstraints.NORTHWEST;
-        gbcManagedFreightCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbcManagedFreightCheckBox.insets = new Insets(0, 0, 5, 5);
-        gbcManagedFreightCheckBox.gridx = 0;
-        gbcManagedFreightCheckBox.gridy = 2;
-        optionsPanel.add(managedFreightCheckBox, gbcManagedFreightCheckBox);
-
         optionalCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.optional.train")); //NOI18N
         GridBagConstraints gbcCheckBox = new GridBagConstraints();
         optionalCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -550,9 +549,28 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbcCheckBox.weightx = 1.0;
         gbcCheckBox.anchor = GridBagConstraints.WEST;
         gbcCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbcCheckBox.gridx = 1;
+        gbcCheckBox.gridx = 0;
         gbcCheckBox.gridy = 2;
         optionsPanel.add(optionalCheckBox, gbcCheckBox);
+
+        javax.swing.JLabel managedFreightLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.train.managed.freight") + ":"); // NOI18N
+        javax.swing.JPanel managedFreightPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        managedFreightLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        managedFreightPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        managedFreightComboBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        managedFreightPanel.add(managedFreightLabel);
+        managedFreightPanel.add(javax.swing.Box.createHorizontalStrut(5));
+        managedFreightPanel.add(managedFreightComboBox);
+
+        GridBagConstraints gbcManagedFreightPanel = new GridBagConstraints();
+        gbcManagedFreightPanel.weightx = 1.0;
+        gbcManagedFreightPanel.anchor = GridBagConstraints.NORTHWEST;
+        gbcManagedFreightPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbcManagedFreightPanel.insets = new Insets(5, 0, 0, 0);
+        gbcManagedFreightPanel.gridx = 0;
+        gbcManagedFreightPanel.gridy = 3;
+        gbcManagedFreightPanel.gridwidth = 2;
+        optionsPanel.add(managedFreightPanel, gbcManagedFreightPanel);
 
         getContentPane().setLayout(layout);
 
@@ -640,7 +658,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
         }
 
         // managed freight
-        train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
+        ManagedFreight mf = (ManagedFreight) ((Wrapper<?>) Objects.requireNonNull(managedFreightComboBox.getSelectedItem())).getElement();
+        train.computeAndSetManagedFreight(mf);
 
         // next and previous trains
         train.setNextJoinedTrain(nextTrainModel.getSelectedObject());
@@ -692,7 +711,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private GroupsComboBox groupsComboBox;
     private JCheckBox weightLimitCheckBox;
     private ValueWithUnitEditBox weightLimitEditBox;
-    private javax.swing.JCheckBox managedFreightCheckBox;
+    private javax.swing.JComboBox<Wrapper<ManagedFreight>> managedFreightComboBox;
 
     private WrapperListModel<Train> previousTrainModel;
     private WrapperListModel<Train> nextTrainModel;

@@ -67,7 +67,16 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
         this.diagram = diagram;
         listenerSupport = new ListenerSupport();
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new Event(TrainType.this, change)));
+                (attrs, change) -> {
+                    if (change.checkName(ATTR_MANAGED_FREIGHT)) {
+                        for (Train train : diagram.getTrains()) {
+                            if (train.getType() == this) {
+                                train.fixManagedFreight();
+                            }
+                        }
+                    }
+                    listenerSupport.fireEvent(new Event(TrainType.this, change));
+                });
     }
 
     /**
