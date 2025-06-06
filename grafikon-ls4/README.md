@@ -2,6 +2,11 @@
 
 ## Diagram
 
+### 4.28
+
+- managed freight changed to enum
+- managed freight defined in train type and overriden in train and interval 
+
 ### 4.27
 
 - loading mode normal/raw
