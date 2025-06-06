@@ -71,3 +71,8 @@ are available:
 - `${default:variable:default-string}` - if variable is an empty string, it uses default value
 
 Variable can have fields (`${type.abbr}`) or index (`${stations[1]}` - first, last or number).
+
+## Distances Between Stations
+
+Distances between station are measured from and to center of stations. The length of the station is a separate value
+and is not included in the measurement.
