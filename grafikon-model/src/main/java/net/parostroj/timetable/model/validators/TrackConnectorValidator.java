@@ -16,7 +16,7 @@ public class TrackConnectorValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof TrackConnector) {
+        if (event.getSource() instanceof TrackConnector connector) {
             if (event.getType() == Type.OBJECT_ATTRIBUTE
                     && event.getAttributeChange().checkName(TrackConnectorSwitch.ATTR_STRAIGHT)) {
                 TrackConnectorSwitch sw = (TrackConnectorSwitch) event.getObject();
@@ -27,7 +27,6 @@ public class TrackConnectorValidator implements TrainDiagramValidator {
                         .forEach(Train::recalculate);
             } else if (event.getType() == Type.ATTRIBUTE
                     && event.getAttributeChange().checkName(TrackConnector.ATTR_ORIENTATION)) {
-                TrackConnector connector = (TrackConnector) event.getSource();
                 connector.getLineTrack().ifPresent(lt -> lt.getTimeIntervalList().stream()
                         .map(TimeInterval::getTrain)
                         .distinct()

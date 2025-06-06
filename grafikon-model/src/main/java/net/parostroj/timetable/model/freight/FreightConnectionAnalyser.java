@@ -119,56 +119,48 @@ public class FreightConnectionAnalyser {
         return Comparator.comparingInt(TrainPath::getLength);
     }
 
-    private static class ConnectionFinder {
-
-        private final int start;
-        private final int shunt;
-
-        public ConnectionFinder(int start, int shunt) {
-            this.start = start;
-            this.shunt = shunt;
-        }
+    private record ConnectionFinder(int start, int shunt) {
 
         public TrainPath find(NodeFreightConnection connection) {
-            int current = start;
-            TrainPath result = FreightFactory.createTrainPath(emptyList());
-            TrainPath last = null;
-            for (DirectNodeConnection currentSet : connection.getSteps()) {
-                final int currentStart = current;
-                TrainPath selected = getSame(last, currentSet)
-                        .orElseGet(() -> getClosest(currentStart, currentSet)
-                                .orElse(null));
-                if (selected == null) {
-                    throw new IllegalArgumentException("Only complete connections allowed.");
+                int current = start;
+                TrainPath result = FreightFactory.createTrainPath(emptyList());
+                TrainPath last = null;
+                for (DirectNodeConnection currentSet : connection.getSteps()) {
+                    final int currentStart = current;
+                    TrainPath selected = getSame(last, currentSet)
+                            .orElseGet(() -> getClosest(currentStart, currentSet)
+                                    .orElse(null));
+                    if (selected == null) {
+                        throw new IllegalArgumentException("Only complete connections allowed.");
+                    }
+                    // increase the time for with shunt time
+                    current = selected.getEndTime() + shunt;
+                    result.addAll(selected);
+                    last = selected;
                 }
-                // increase the time for with shunt time
-                current = selected.getEndTime() + shunt;
-                result.addAll(selected);
-                last = selected;
+                return result;
             }
-            return result;
-        }
 
-        /**
-         * @return the same train (if the same train can be used for the next part, shunt time is ignored)
-         */
-        private Optional<TrainPath> getSame(TrainPath last, DirectNodeConnection currentSet) {
-            if (last == null) {
-                return Optional.empty();
-            } else {
-                Train lastTrain = last.getLast().getTrain();
-                return currentSet.getConnections().stream()
-                        .filter(c -> c.getFirst().getTrain() == lastTrain)
-                        .findAny();
+            /**
+             * @return the same train (if the same train can be used for the next part, shunt time is ignored)
+             */
+            private Optional<TrainPath> getSame(TrainPath last, DirectNodeConnection currentSet) {
+                if (last == null) {
+                    return Optional.empty();
+                } else {
+                    Train lastTrain = last.getLast().getTrain();
+                    return currentSet.getConnections().stream()
+                            .filter(c -> c.getFirst().getTrain() == lastTrain)
+                            .findAny();
+                }
+            }
+
+            /**
+             * @return train which is closest the time specified
+             */
+            private Optional<TrainPath> getClosest(int time, DirectNodeConnection dnc) {
+                return dnc.getConnections().stream()
+                        .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())));
             }
         }
-
-        /**
-         * @return train which is closest the time specified
-         */
-        private Optional<TrainPath> getClosest(int time, DirectNodeConnection dnc) {
-            return dnc.getConnections().stream()
-                    .min(Comparator.comparingInt(tp -> TimeUtil.difference(time, tp.getStartTime())));
-        }
-    }
 }

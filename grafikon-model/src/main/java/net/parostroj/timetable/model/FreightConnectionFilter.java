@@ -31,16 +31,14 @@ public interface FreightConnectionFilter {
          * @return converts from string key to FilterResult, in case of unknown key, it returns OK.
          */
         public static FilterResult fromString(String key) {
-            if (key == null) {
-                return OK;
-            } else {
+            if (key != null) {
                 for (FilterResult result : values()) {
                     if (result.key.equals(key)) {
                         return result;
                     }
                 }
-                return OK;
             }
+            return OK;
         }
 
         public String getKey() {
@@ -63,18 +61,7 @@ public interface FreightConnectionFilter {
         }
     }
 
-    class FilterContext {
-
-        private final TimeInterval startInterval;
-
-        public FilterContext(TimeInterval startInterval) {
-            this.startInterval = startInterval;
-        }
-
-        public TimeInterval getStartInterval() {
-            return startInterval;
-        }
-    }
+    record FilterContext(TimeInterval startInterval) {}
 
     FilterResult accepted(FilterContext context, FreightConnection dst, int level);
 

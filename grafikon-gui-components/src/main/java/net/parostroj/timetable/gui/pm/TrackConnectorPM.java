@@ -216,7 +216,7 @@ public class TrackConnectorPM extends AbstractPM {
         conn.setNumber(number.getText().trim());
         conn.setPosition(position.getInteger());
         conn.setOrientation(orientation.getValue());
-        conn.setLineTrack(Optional.ofNullable(lineTrack.getValue()));
+        conn.setLineTrack(lineTrack.getValue());
     }
 
     public static String getSideString(Node.Side side) {

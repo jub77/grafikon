@@ -19,7 +19,7 @@ public class MVDeserializer extends StdDeserializer<ModelVersion> {
     }
 
     @Override
-    public ModelVersion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public ModelVersion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         TreeNode treeNode = jsonParser.readValueAsTree();
         if (treeNode instanceof TextNode textNode) {
             return ModelVersion.parseModelVersion(textNode.textValue());

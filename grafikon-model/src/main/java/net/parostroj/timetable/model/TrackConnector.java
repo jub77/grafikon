@@ -36,7 +36,7 @@ public interface TrackConnector
 
     Optional<LineTrack> getLineTrack();
 
-    void setLineTrack(Optional<LineTrack> lineTrack);
+    void setLineTrack(LineTrack lineTrack);
 
     TrackConnectorSwitches getSwitches();
 

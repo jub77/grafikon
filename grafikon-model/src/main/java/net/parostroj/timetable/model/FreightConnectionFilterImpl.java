@@ -59,7 +59,7 @@ class FreightConnectionFilterImpl implements FreightConnectionFilter {
     }
 
     private FilterResult getCurrentResult(FilterContext context, FreightConnection dst) {
-        if (isInNodeList(dst, stopNodesExclude) || isNotInNodeList(context.getStartInterval(), fromNodes)) {
+        if (isInNodeList(dst, stopNodesExclude) || isNotInNodeList(context.startInterval(), fromNodes)) {
             return STOP_EXCLUDE;
         }
         if (isInNodeList(dst, stopNodes)) {

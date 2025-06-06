@@ -73,11 +73,11 @@ public class LSLineTrack extends LSTrack {
         this.addValuesTrack(context, lineTrack);
         if (fromConnector != null) {
             TrackConnector fromC = fromNode.getConnectors().getById(fromConnector);
-            fromC.setLineTrack(Optional.of(lineTrack));
+            fromC.setLineTrack(lineTrack);
         }
         if (toConnector != null) {
             TrackConnector toC = toNode.getConnectors().getById(toConnector);
-            toC.setLineTrack(Optional.of(lineTrack));
+            toC.setLineTrack(lineTrack);
         }
         return lineTrack;
     }

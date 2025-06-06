@@ -44,9 +44,9 @@ public class LineValidator implements TrainDiagramValidator {
                 routes.forEach(route -> diagram.getRoutes().remove(route));
 
                 line.getFrom().getConnectors().getForLineTrack(lineTrack)
-                        .ifPresent(c -> c.setLineTrack(Optional.empty()));
+                        .ifPresent(c -> c.setLineTrack(null));
                 line.getTo().getConnectors().getForLineTrack(lineTrack)
-                        .ifPresent(c -> c.setLineTrack(Optional.empty()));
+                        .ifPresent(c -> c.setLineTrack(null));
             }
         }
         return false;

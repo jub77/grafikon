@@ -21,7 +21,7 @@ public class LStringDeserializer extends StdDeserializer<LocalizedString> {
     }
 
     @Override
-    public LocalizedString deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public LocalizedString deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         TreeNode treeNode = jsonParser.readValueAsTree();
         if (treeNode instanceof ObjectNode objectNode) {
             LocalizedString.Builder builder = LocalizedString.newBuilder();

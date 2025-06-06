@@ -118,15 +118,7 @@ public class TrainBuilder {
 
         // create time intervals
         for (TimeInterval originalInterval : reverseIntervals) {
-            TimeInterval interval;
-            if (originalInterval.isNodeOwner()) {
-                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
-                        currentTime, currentTime + originalInterval.getLength(), null);
-            } else {
-                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
-                        0, 0, originalInterval.getSpeedLimit(), originalInterval.getDirection().reverse(), null,
-                        originalInterval.getAddedTime());
-            }
+            TimeInterval interval = createTimeInterval(originalInterval, train, currentTime);
             currentTime = interval.getEnd();
             train.addInterval(interval);
         }
@@ -134,6 +126,19 @@ public class TrainBuilder {
         train.assignEmptyTracks();
 
         return train;
+    }
+
+    private static TimeInterval createTimeInterval(TimeInterval originalInterval, Train train, int currentTime) {
+        TimeInterval interval;
+        if (originalInterval.isNodeOwner()) {
+            interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
+                    currentTime, currentTime + originalInterval.getLength(), null);
+        } else {
+            interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
+                    0, 0, originalInterval.getSpeedLimit(), originalInterval.getDirection().reverse(), null,
+                    originalInterval.getAddedTime());
+        }
+        return interval;
     }
 
     /**

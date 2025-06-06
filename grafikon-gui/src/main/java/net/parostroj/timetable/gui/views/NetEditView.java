@@ -116,8 +116,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 n.getTracks().add(track);
                 n.setLocation(new Location(location.x, location.y));
                 // connectors and switches
-                TrackConnector lc = factory.createDefaultConnector(factory.createId(), n, "1", Node.Side.LEFT, Optional.of(track));
-                TrackConnector rc = factory.createDefaultConnector(factory.createId(), n, "2", Node.Side.RIGHT, Optional.of(track));
+                TrackConnector lc = factory.createDefaultConnector(factory.createId(), n, "1", Node.Side.LEFT, track);
+                TrackConnector rc = factory.createDefaultConnector(factory.createId(), n, "2", Node.Side.RIGHT, track);
                 n.getConnectors().add(lc);
                 n.getConnectors().add(rc);
                 model.getDiagram().getNet().addNode(n);
@@ -735,10 +735,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 connWithoutLineTrack.orElseGet(() -> {
                     TrackConnector connector = factory.createDefaultConnector(
                             IdGenerator.getInstance().getId(), srcNode, name, side,
-                            Optional.empty());
+                            null);
                     srcNode.getConnectors().add(connector);
                     return connector;
-                }).setLineTrack(Optional.of(track));
+                }).setLineTrack(track);
             }
         });
 

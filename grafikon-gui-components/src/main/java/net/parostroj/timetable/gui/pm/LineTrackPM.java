@@ -76,10 +76,10 @@ public class LineTrackPM extends AbstractPM implements IPM<LineTrack> {
         connWithoutLineTrack.orElseGet(() -> {
             TrackConnector connector = factory.createDefaultConnector(
                     IdGenerator.getInstance().getId(), srcNode, name, side,
-                    Optional.empty());
+                    null);
             srcNode.getConnectors().add(connector);
             return connector;
-        }).setLineTrack(Optional.of(track));
+        }).setLineTrack(track);
     }
 
     @Override

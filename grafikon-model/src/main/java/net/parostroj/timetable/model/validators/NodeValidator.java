@@ -26,9 +26,8 @@ public class NodeValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof Node && event.getType() == Type.ATTRIBUTE) {
+        if (event.getSource() instanceof Node node && event.getType() == Type.ATTRIBUTE) {
             if (event.getAttributeChange().checkName(Node.ATTR_CENTER_OF_REGIONS)) {
-                Node node = (Node) event.getSource();
                 return checkNodeControl(node);
             } else if (event.getAttributeChange().checkName(Node.ATTR_LENGTH, Node.ATTR_NOT_STRAIGHT_SPEED, Node.ATTR_SPEED)) {
                 List<TimeInterval> intervals = Lists.newArrayList((Node) event.getSource());

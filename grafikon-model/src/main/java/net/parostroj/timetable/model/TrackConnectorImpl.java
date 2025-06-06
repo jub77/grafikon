@@ -104,8 +104,8 @@ public class TrackConnectorImpl implements TrackConnector {
     }
 
     @Override
-    public void setLineTrack(Optional<LineTrack> lineTrack) {
-        attributes.setRemove(ATTR_LINE_TRACK, lineTrack.orElse(null));
+    public void setLineTrack(LineTrack lineTrack) {
+        attributes.setRemove(ATTR_LINE_TRACK, lineTrack);
     }
 
     @Override

@@ -137,7 +137,7 @@ public class LoadFilter {
 
     private void addConnector(TrainDiagramPartFactory factory, Node node, String number, Node.Side orientation) {
         TrackConnector otherConnector = factory
-                .createDefaultConnector(factory.createId(), node, number, orientation, Optional.empty());
+                .createDefaultConnector(factory.createId(), node, number, orientation, null);
         node.getConnectors().add(otherConnector);
     }
 }

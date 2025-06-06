@@ -32,7 +32,7 @@ public interface Permissions {
 
 class PermissionsImpl implements Permissions {
 
-    static Map<TrainDiagramType, Permissions> forType = Map.of(
+     static final Map<TrainDiagramType, Permissions> forType = Map.of(
             TrainDiagramType.NORMAL, new PermissionsImpl(
                     Set.of(TextTemplate.Language.PLAIN, TextTemplate.Language.SIMPLE),
                     Set.of(),

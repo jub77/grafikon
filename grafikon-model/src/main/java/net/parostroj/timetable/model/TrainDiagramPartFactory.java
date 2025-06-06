@@ -63,15 +63,14 @@ public class TrainDiagramPartFactory implements PartFactory {
      * @see #createConnector(String, Node)
      */
     public TrackConnector createDefaultConnector(String id, Node node, String number,
-            Node.Side orientation, Optional<NodeTrack> straightTrack) {
+            Node.Side orientation, NodeTrack straightTrack) {
         TrackConnector connector = this.createConnector(id, node);
         connector.setNumber(number);
         connector.setOrientation(orientation);
-        NodeTrack st = straightTrack.orElse(null);
         node.tracks.forEach(track -> {
             TrackConnectorSwitch sw = connector.createSwitch(IdGenerator.getInstance().getId());
             sw.setNodeTrack(track);
-            if (track == st) {
+            if (track == straightTrack) {
                 sw.setStraight(true);
             }
             connector.getSwitches().add(sw);

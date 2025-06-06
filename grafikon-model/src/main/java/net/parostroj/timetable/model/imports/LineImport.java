@@ -66,10 +66,10 @@ public class LineImport extends Import {
             // add line track to connectors
             importedTrack.getFromTrackConnector()
                     .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeFrom, c)))
-                    .ifPresent(c -> c.setLineTrack(Optional.of(track)));
+                    .ifPresent(c -> c.setLineTrack(track));
             importedTrack.getToTrackConnector()
                     .flatMap(c -> Optional.ofNullable(this.getConnector(iNodeTo, c)))
-                    .ifPresent(c -> c.setLineTrack(Optional.of(track)));
+                    .ifPresent(c -> c.setLineTrack(track));
         }
 
         // add to diagram
