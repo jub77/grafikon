@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.Optional;
-
 import net.parostroj.timetable.utils.IdGenerator;
 
 public class TrainDiagramPartFactory implements PartFactory {
