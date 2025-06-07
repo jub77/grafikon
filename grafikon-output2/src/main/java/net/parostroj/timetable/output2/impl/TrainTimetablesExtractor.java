@@ -280,8 +280,7 @@ public class TrainTimetablesExtractor {
         boolean first = true;
         // check if the train is first in the station (start be marked with trapezoid)
         if (!interval.isFirst())
-            for (Iterator<TimeInterval> i = over.iterator(); i.hasNext();) {
-                TimeInterval checked = i.next();
+            for (TimeInterval checked : over) {
                 if (interval.getStart() > checked.getStart() || (interval.getStart() == checked.getStart()
                         && comparator.compare(interval.getTrain(), checked.getTrain()) >= 0)) {
                     first = false;
@@ -356,7 +355,7 @@ public class TrainTimetablesExtractor {
         Optional<Node.Side> toSide = nodeI.getFromTrackConnector()
                 .map(TrackConnector::getOrientation)
                 .map(Node.Side::opposite);
-        if (!toSide.isPresent()) {
+        if (toSide.isEmpty()) {
             return false;
         }
         // no switch with orientation of the opposite side of arrival

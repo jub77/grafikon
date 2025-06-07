@@ -12,12 +12,12 @@ import net.parostroj.timetable.model.FreightColor;
 public class FreightColorAdapter extends XmlAdapter<String, FreightColor> {
 
     @Override
-    public FreightColor unmarshal(String v) throws Exception {
+    public FreightColor unmarshal(String v) {
         return FreightColor.getByKey(v);
     }
 
     @Override
-    public String marshal(FreightColor v) throws Exception {
+    public String marshal(FreightColor v) {
         return v.getKey();
     }
 }

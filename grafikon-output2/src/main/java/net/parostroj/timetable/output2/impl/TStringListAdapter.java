@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.TranslatedString;
 public class TStringListAdapter extends XmlAdapter<List<LString>, List<TranslatedString>> {
 
     @Override
-    public List<TranslatedString> unmarshal(List<LString> v) throws Exception {
+    public List<TranslatedString> unmarshal(List<LString> v) {
         if (v == null) {
             return null;
         } else {
@@ -19,7 +19,7 @@ public class TStringListAdapter extends XmlAdapter<List<LString>, List<Translate
     }
 
     @Override
-    public List<LString> marshal(List<TranslatedString> v) throws Exception {
+    public List<LString> marshal(List<TranslatedString> v) {
         if (v == null) {
             return null;
         } else {

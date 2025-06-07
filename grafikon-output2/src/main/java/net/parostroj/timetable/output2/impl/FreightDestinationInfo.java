@@ -105,7 +105,7 @@ public class FreightDestinationInfo {
             freightStr.append(abbreviation ? abbr : name);
         }
         if (colorsStr != null) {
-            freightStr.append(colorsStr.toString());
+            freightStr.append(colorsStr);
         }
         return freightStr.toString();
     }

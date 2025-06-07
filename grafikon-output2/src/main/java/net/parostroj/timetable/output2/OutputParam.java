@@ -7,7 +7,7 @@ package net.parostroj.timetable.output2;
  */
 public class OutputParam {
 
-    private String name;
+    private final String name;
     private Object value;
     private boolean optional;
 
@@ -32,7 +32,7 @@ public class OutputParam {
     public Object getValue() {
         return value;
     }
-    
+
     public <T> T getValue(Class<T> clazz) {
         return clazz.cast(value);
     }

@@ -142,8 +142,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     }
 
     private void paintText(FNConnection conn, String text, Graphics2D g, Rectangle rectangle, Point point, int width, int dir) {
-        rectangle.setLocation(point.x - (width / 2), point.y - fontInfo.height + fontInfo.descent);
-        if (dir == -1) point.y += fontInfo.descent;
+        rectangle.setLocation(point.x - (width / 2), point.y - fontInfo.height() + fontInfo.descent());
+        if (dir == -1) point.y += fontInfo.descent();
         while (collisions(rectangle)) {
             int dy = -rectangle.height * dir;
             rectangle.translate(0, dy);
@@ -159,7 +159,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left) {
         int half = (width + lineExtend) / 2;
         int x1 = point.x - half;
-        int y = point.y + fontInfo.descent;
+        int y = point.y + fontInfo.descent();
         int x2 = point.x + half;
         Line2D line = new Line2D.Float(x1, y, x2, y);
         g.draw(line);
@@ -197,9 +197,9 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
         // init position depending on direction
         if (dir == -1) {
-            y = y + fontInfo.height - fontInfo.descent;
+            y = y + fontInfo.height() - fontInfo.descent();
         } else {
-            y = y - arrow - fontInfo.descent;
+            y = y - arrow - fontInfo.descent();
         }
 
         return new Point(x, y);

@@ -87,7 +87,7 @@ public class PdfTransformer {
             }
 
             @Override
-            public OutputStream getOutputStream(URI uri) throws IOException {
+            public OutputStream getOutputStream(URI uri) {
                 return null;
             }
         };

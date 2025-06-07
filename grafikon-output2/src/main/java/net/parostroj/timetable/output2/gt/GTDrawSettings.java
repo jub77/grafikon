@@ -49,7 +49,7 @@ public class GTDrawSettings {
         }
     }
 
-    protected Map<Key, Object> preferences;
+    protected final Map<Key, Object> preferences;
 
     protected GTDrawSettings() {
         preferences = new EnumMap<>(Key.class);

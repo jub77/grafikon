@@ -36,7 +36,7 @@ public class OutputUtil {
     }
 
     public Comparator<TimeInterval> getNormalizedStartComparator() {
-        return (a, b) -> Integer.compare(a.getInterval().getNormalizedStart(), b.getInterval().getNormalizedStart());
+        return Comparator.comparingInt(a -> a.getInterval().getNormalizedStart());
     }
 
     public Locale getLocaleForNode(Node node, Locale defaultLocale) {

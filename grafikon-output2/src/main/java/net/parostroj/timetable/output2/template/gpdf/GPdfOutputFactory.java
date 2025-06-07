@@ -28,21 +28,17 @@ import net.parostroj.timetable.output2.template.TemplateWriterFactory;
 public class GPdfOutputFactory extends OutputFactory {
 
     private static final String TYPE = "pdf.groovy";
-    private static final List<String> OUTPUT_TYPES;
+    private static final List<String> OUTPUT_TYPES = List.of(
+            "starts",
+            "ends",
+            "trains",
+            "stations",
+            "diagram",
+            "engine_cycles",
+            "custom_cycles",
+            "train_unit_cycles");
 
     private static final Logger log = LoggerFactory.getLogger(GPdfOutputFactory.class);
-
-    static {
-        OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList(
-                "starts",
-                "ends",
-                "trains",
-                "stations",
-                "diagram",
-                "engine_cycles",
-                "custom_cycles",
-                "train_unit_cycles"));
-    }
 
     private final GroovyTemplateFactory factory;
     private final PdfTransformer transformer;

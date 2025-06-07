@@ -28,8 +28,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private static final Logger log = LoggerFactory.getLogger(NetGraphAdapter.class);
 
     static {
-        try {
-            InputStream is = NetGraphAdapter.class.getResourceAsStream("/graph/shapes.xml");
+        try (InputStream is = NetGraphAdapter.class.getResourceAsStream("/graph/shapes.xml")) {
             Document doc = mxXmlUtils.parseXml(mxUtils.readInputStream(Objects.requireNonNull(is)));
             Element shapes = doc.getDocumentElement();
             NodeList list = shapes.getElementsByTagName("shape");

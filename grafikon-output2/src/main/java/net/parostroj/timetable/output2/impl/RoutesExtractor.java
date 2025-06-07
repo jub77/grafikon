@@ -51,7 +51,7 @@ public class RoutesExtractor {
                 }
             }
         }
-        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<>(routes);
+        return (routes == null) ? Collections.emptyList() : new ArrayList<>(routes);
     }
 
     /**
@@ -70,7 +70,7 @@ public class RoutesExtractor {
                 routes.add(route);
             }
         }
-        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<>(routes);
+        return (routes == null) ? Collections.emptyList() : new ArrayList<>(routes);
     }
 
     /**
@@ -129,8 +129,7 @@ public class RoutesExtractor {
                 info.setName(route.getName());
                 long length = 0;
                 for (RouteSegment seg : route.getSegments()) {
-                    if (seg instanceof Node) {
-                        Node node = (Node) seg;
+                    if (seg instanceof Node node) {
                         RouteSegmentInfo rsInfo = new RouteSegmentInfo();
                         rsInfo.setName(node.getName());
                         rsInfo.setType(node.getType().getKey());

@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.events.Event;
 
 public abstract class GTDrawDecorator implements GTDraw {
 
-    protected GTDraw decoratedDraw;
+    protected final GTDraw decoratedDraw;
 
     GTDrawDecorator(GTDraw draw) {
         this.decoratedDraw = draw;

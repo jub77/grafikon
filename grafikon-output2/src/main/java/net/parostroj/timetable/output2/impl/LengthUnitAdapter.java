@@ -12,12 +12,12 @@ import net.parostroj.timetable.model.units.LengthUnit;
 public class LengthUnitAdapter extends XmlAdapter<String, LengthUnit> {
 
     @Override
-    public LengthUnit unmarshal(String v) throws Exception {
+    public LengthUnit unmarshal(String v) {
         return LengthUnit.getByKey(v);
     }
 
     @Override
-    public String marshal(LengthUnit v) throws Exception {
+    public String marshal(LengthUnit v) {
         return v.getKey();
     }
 }

@@ -30,7 +30,7 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph {
         setGridEnabled(false);
         graphT = aGraphT;
         insertJGraphT(graphT);
-        graphListener = new GraphListener<V, E>() {
+        graphListener = new GraphListener<>() {
             @Override
             public void edgeAdded(GraphEdgeChangeEvent<V, E> e) {
                 addJGraphTEdge(e.getEdge());

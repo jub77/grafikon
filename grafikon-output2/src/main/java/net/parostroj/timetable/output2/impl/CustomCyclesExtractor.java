@@ -63,7 +63,7 @@ public class CustomCyclesExtractor {
         outputCycle.setTypeName(cycle.getType().getName());
         outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
-        TrainsCycleItem current = null;
+        TrainsCycleItem current;
         TrainsCycleItem previous = null;
         while (i.hasNext()) {
             current = i.next();

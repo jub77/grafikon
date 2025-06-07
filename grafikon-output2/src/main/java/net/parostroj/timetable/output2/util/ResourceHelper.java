@@ -25,7 +25,7 @@ public final class ResourceHelper {
         try {
             ByteSource bs = new ByteSource() {
                 @Override
-                public InputStream openStream() throws IOException {
+                public InputStream openStream() {
                     return getStream(filename, cl);
                 }
             };

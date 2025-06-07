@@ -66,10 +66,10 @@ public class CirculationDraw {
                 FontInfo infoS = DrawUtils.createFontInfo(smallFont, g);
                 infoT = DrawUtils.createFontInfo(titleFont, g);
 
-                this.textOffset = infoN.descent;
-                this.textOffsetSmall = infoS.descent;
-                this.letter = new Dimension(DrawUtils.getStringWidth(g, "M"), infoN.height);
-                this.letterSmall = new Dimension(DrawUtils.getStringWidth(g, smallFont, "M"), infoS.height);
+                this.textOffset = infoN.descent();
+                this.textOffsetSmall = infoS.descent();
+                this.letter = new Dimension(DrawUtils.getStringWidth(g, "M"), infoN.height());
+                this.letterSmall = new Dimension(DrawUtils.getStringWidth(g, smallFont, "M"), infoS.height());
                 this.init = true;
             }
             this.border = (int) (this.letter.height * BORDER_VALUE);
@@ -87,8 +87,8 @@ public class CirculationDraw {
                 int height = 2 * border + rows * row + title;
                 startY = border;
                 if (titleText != null) {
-                    height += infoT.height;
-                    startY += infoT.height;
+                    height += infoT.height();
+                    startY += infoT.height();
                 }
                 int width = 2 * border + description + (int) ((toTime - fromTime) * step);
                 size = new Dimension(width, height);
@@ -129,15 +129,13 @@ public class CirculationDraw {
         this.layout.colors = (location, item) -> {
             Color color = colors != null ? colors.getColor(location, item) : null;
             if (color == null) {
-                switch (location) {
-                    case COLOR_COLUMN_1: color = C_COLOR_COLUMN_1; break;
-                    case COLOR_COLUMN_2: color = C_COLOR_COLUMN_2; break;
-                    case COLOR_LINE: color = C_COLOR_LINE; break;
-                    case COLOR_TEXT: color = Color.BLACK; break;
-                    case COLOR_FILL: color = Color.RED; break;
-                    case COLOR_OUTLINE: color = Color.BLACK; break;
-                    default: color = Color.BLACK;
-                }
+                color = switch (location) {
+                    case COLOR_COLUMN_1 -> C_COLOR_COLUMN_1;
+                    case COLOR_COLUMN_2 -> C_COLOR_COLUMN_2;
+                    case COLOR_LINE -> C_COLOR_LINE;
+                    case COLOR_FILL -> Color.RED;
+                    default -> Color.BLACK;
+                };
             }
             return color;
         };
@@ -185,7 +183,7 @@ public class CirculationDraw {
         int width = DrawUtils.getStringWidth(g, text);
         int offsetX = (layout.size.width - width) / 2;
 
-        g.drawString(text, offsetX, layout.startY - (layout.infoT.descent * 2));
+        g.drawString(text, offsetX, layout.startY - (layout.infoT.descent() * 2));
 
         g.setFont(backup);
     }

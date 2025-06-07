@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
 
@@ -63,7 +64,7 @@ public class LString {
         return LocalizedString.newBuilder(getDefaultString())
                 .addAllStringWithLocale(FluentIterable
                         .from(getLocalizedStrings())
-                        .transform(ls -> LocalizedString.newStringWithLocale(ls.getValue(), ls.getLang()))
+                        .transform(ls -> LocalizedString.newStringWithLocale(Objects.requireNonNull(ls).getValue(), ls.getLang()))
                         .toList())
                 .build();
     }

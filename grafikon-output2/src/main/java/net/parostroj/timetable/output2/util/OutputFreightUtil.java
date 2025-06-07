@@ -147,7 +147,7 @@ public class OutputFreightUtil {
     /**
      * Method returns list of strings with destinations. It automatically
      * reorders the list by direction (the method
-     * {@link #reorderFreightListByDirection(Collection)} shouldn't be called
+     * {@link #reorderFreightListByDirection(Collection)}) shouldn't be called
      * before calling this method.
      *
      * @param list list of freight connections
@@ -179,7 +179,7 @@ public class OutputFreightUtil {
                     .append(']');
         }
         if (dest.isRegionsDestination()) {
-            boolean empty = result.length() == 0;
+            boolean empty = result.isEmpty();
             if (!empty) result.append('(');
             result.append(String.join(",", freightRegionsToString(dest, locale)));
             if (!empty) result.append(')');

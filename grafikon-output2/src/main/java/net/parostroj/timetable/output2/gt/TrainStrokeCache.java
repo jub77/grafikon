@@ -48,7 +48,9 @@ public class TrainStrokeCache {
     }
 
     public void add(LineType type, float[] dashes) {
-        dashMap.put(type, dashes);
+        if (dashMap != null) {
+            dashMap.put(type, dashes);
+        }
     }
 
     public Stroke getStroke() {
@@ -65,7 +67,7 @@ public class TrainStrokeCache {
     }
 
     public Stroke getStroke(TrainType type) {
-        Stroke stroke = null;
+        Stroke stroke;
         if (type == null) {
             stroke = getStroke();
         } else {
@@ -86,7 +88,7 @@ public class TrainStrokeCache {
 
     private Stroke createTrainStroke(LineType type, float wRatio, float lRatio) {
         float width = zoom * this.baseWidth * wRatio;
-        float[] dashes = null;
+        float[] dashes;
         if (dashMap != null) {
             // based on dashMap
             dashes = dashMap.get(type);

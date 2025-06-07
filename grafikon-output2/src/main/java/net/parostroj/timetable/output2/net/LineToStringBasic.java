@@ -24,7 +24,7 @@ public class LineToStringBasic implements Function<Line, String> {
             return line.toString();
         }
         StringBuilder result = new StringBuilder(conv.collectRoutesString(line));
-        if (result.length() != 0) {
+        if (!result.isEmpty()) {
             result.append('\n');
         }
         result.append(conv.getLineLengthString(line, lengthUnit.get()));

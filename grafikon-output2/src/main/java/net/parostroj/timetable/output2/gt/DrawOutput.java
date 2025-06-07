@@ -14,12 +14,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -201,30 +196,26 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
     }
 
     private Dimension getTotalSize(List<Dimension> sizes, DrawLayout layout) {
-        switch (layout.getOrientation()) {
-            case TOP_DOWN:
-                int width = 0;
-                int height = 0;
-                for (Dimension s : sizes) {
-                    width = Math.max(width, s.width);
-                    height += s.height;
-                }
-                return new Dimension(width, height);
-            default:
-                throw new IllegalArgumentException();
+        if (Objects.requireNonNull(layout.getOrientation()) == DrawLayout.Orientation.TOP_DOWN) {
+            int width = 0;
+            int height = 0;
+            for (Dimension s : sizes) {
+                width = Math.max(width, s.width);
+                height += s.height;
+            }
+            return new Dimension(width, height);
         }
+        throw new IllegalArgumentException();
     }
 
     private Point getLocation(List<Dimension> sizes, int position, DrawLayout layout) {
-        switch (layout.getOrientation()) {
-            case TOP_DOWN:
-                int y = 0;
-                for (int i = 0; i < position; i++) {
-                    y += sizes.get(i).height;
-                }
-                return new Point(0, y);
-            default:
-                throw new IllegalArgumentException();
+        if (Objects.requireNonNull(layout.getOrientation()) == DrawLayout.Orientation.TOP_DOWN) {
+            int y = 0;
+            for (int i = 0; i < position; i++) {
+                y += sizes.get(i).height;
+            }
+            return new Point(0, y);
         }
+        throw new IllegalArgumentException();
     }
 }

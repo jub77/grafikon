@@ -7,12 +7,12 @@ import net.parostroj.timetable.model.TranslatedString;
 public class TStringAdapter extends XmlAdapter<LString, TranslatedString> {
 
     @Override
-    public TranslatedString unmarshal(LString v) throws Exception {
+    public TranslatedString unmarshal(LString v) {
         return v == null ? null : v.createLocalizedString();
     }
 
     @Override
-    public LString marshal(TranslatedString v) throws Exception {
+    public LString marshal(TranslatedString v) {
         return v == null ? null : new LString(v);
     }
 }

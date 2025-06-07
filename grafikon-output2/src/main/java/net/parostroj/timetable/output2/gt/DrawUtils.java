@@ -13,14 +13,7 @@ public final class DrawUtils {
 
     private DrawUtils() {}
 
-    private static class ShortenStringFunction implements Function<Integer, String> {
-
-        private final String str;
-
-        public ShortenStringFunction(String str) {
-            this.str = str;
-        }
-
+    private record ShortenStringFunction(String str) implements Function<Integer, String> {
         @Override
         public String apply(Integer length) {
             return length > str.length() ? "" : str.substring(0, str.length() - length);
@@ -42,22 +35,7 @@ public final class DrawUtils {
                 Math.round(lm.getHeight()));
     }
 
-    public static class FontInfo {
-        public final int strikeThrough;
-        public final int descent;
-        public final int height;
-
-        public FontInfo(int strikeThrough, int descent, int height) {
-            this.strikeThrough = strikeThrough;
-            this.descent = descent;
-            this.height = height;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("strike=%d, descent=%d, height=%d", strikeThrough, descent, height);
-        }
-    }
+    public record FontInfo(int strikeThrough, int descent, int height) {}
 
     /**
      * Returns string for given width. If the string is shortened, it adds three dots at the end.

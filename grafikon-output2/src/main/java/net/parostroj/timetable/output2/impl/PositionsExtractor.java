@@ -81,7 +81,7 @@ public class PositionsExtractor {
         List<Position> result = new LinkedList<>();
         for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
             if (!cycle.isEmpty()) {
-                TrainsCycleItem end = cycle.getItems().get(cycle.getItems().size() - 1);
+                TrainsCycleItem end = cycle.getItems().getLast();
                 String endName = end.getToInterval().getOwnerAsNode().getName();
                 String endTrack = end.getToInterval().getTrack().getNumber();
                 String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());

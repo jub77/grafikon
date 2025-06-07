@@ -12,12 +12,12 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 public class LocaleAdapter extends XmlAdapter<String, Locale> {
 
     @Override
-    public Locale unmarshal(String v) throws Exception {
+    public Locale unmarshal(String v) {
         return Locale.forLanguageTag(v);
     }
 
     @Override
-    public String marshal(Locale v) throws Exception {
+    public String marshal(Locale v) {
         return v.toLanguageTag();
     }
 

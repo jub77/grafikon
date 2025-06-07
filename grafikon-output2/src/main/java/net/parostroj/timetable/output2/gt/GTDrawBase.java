@@ -68,7 +68,7 @@ public abstract class GTDrawBase implements GTDraw {
     protected List<Node> stations;
     protected double timeStep;
 
-    protected Locale locale;
+    protected final Locale locale;
 
     protected final Color background;
     protected final int startTime;
@@ -84,7 +84,6 @@ public abstract class GTDrawBase implements GTDraw {
     protected final Collection<GTDraw.Listener> listeners;
 
     // caching
-    private final Map<String, Rectangle> stringBounds = new HashMap<>();
     private final Map<Node, String> nodeStrings = new HashMap<>();
 
     GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
@@ -255,7 +254,7 @@ public abstract class GTDrawBase implements GTDraw {
         Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         // substract two M width - for pdf/svg (width doesn't match real width)
         int width = configSize.width - 2 * borderX - 2 * getMSize(g).width;
-        int y = this.borderY + fi.height;
+        int y = this.borderY + fi.height();
 
         Object titleObject = config.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
         String text = switch (titleObject) {
@@ -266,7 +265,7 @@ public abstract class GTDrawBase implements GTDraw {
         };
         int textWidth = DrawUtils.getStringWidth(g, text);
         int shiftX = (width - textWidth) / 2;
-        int shiftY = fi.descent;
+        int shiftY = fi.descent();
         g.setColor(Color.black);
         g.drawString(text, this.borderX + shiftX, y - shiftY);
         // restore font
@@ -500,7 +499,7 @@ public abstract class GTDrawBase implements GTDraw {
             Rectangle b = this.getStringBounds(name, g);
             FontInfo fi = this.getFontInfo(g);
             int ow = this.getMSize(g).width / 5;
-            Rectangle r2 = new Rectangle(-ow, fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
+            Rectangle r2 = new Rectangle(-ow, fi.descent() - fi.height() - ow, b.width + 2 * ow, fi.height() + 2 * ow);
             orientationDelegate.drawStationName(g, name, r2, y, fi, borderX, borderY, background, titleHeight);
         }
     }
@@ -529,7 +528,7 @@ public abstract class GTDrawBase implements GTDraw {
         if (length - (rr.width + this.getMSize(g).width) > 0) {
             g.drawString(trainName, shift, -above);
             if (this.isCollectorCollecting(train)) {
-                rr.translate(shift, -(above - fi.descent + fi.height));
+                rr.translate(shift, -(above - fi.descent() + fi.height()));
                 nameShape = newTransform.createTransformedShape(rr);
                 try {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
@@ -574,15 +573,11 @@ public abstract class GTDrawBase implements GTDraw {
     private Rectangle getCharSize(String ch, Graphics2D g) {
         FontMetrics fm = g.getFontMetrics();
         FontInfo info = this.getFontInfo(g);
-        return new Rectangle(fm.stringWidth(ch), info.height);
+        return new Rectangle(fm.stringWidth(ch), info.height());
     }
 
     protected Rectangle getStringBounds(String str, Graphics2D g) {
-        Rectangle rectangle = this.stringBounds.get(str);
-        if (rectangle == null) {
-            rectangle = new Rectangle(g.getFontMetrics().stringWidth(str), getFontInfo(g).height);
-        }
-        return rectangle;
+        return new Rectangle(g.getFontMetrics().stringWidth(str), getFontInfo(g).height());
     }
 
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
@@ -713,13 +708,7 @@ public abstract class GTDrawBase implements GTDraw {
             @Override
             public void visitDiagramEvent(Event event) {
                 switch (event.getType()) {
-                case REMOVED:
-                    if (event.getObject() instanceof Train) {
-                        stringBounds.remove(((Train) event.getObject()).getDefaultName());
-                        setRefresh(Refresh.REPAINT);
-                    }
-                    break;
-                case ADDED:
+                case REMOVED, ADDED:
                     if (event.getObject() instanceof Train) {
                         setRefresh(Refresh.REPAINT);
                     }
@@ -743,7 +732,6 @@ public abstract class GTDrawBase implements GTDraw {
                     break;
                 case ATTRIBUTE:
                     if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                        stringBounds.remove(((Train) event.getSource()).getDefaultName());
                         setRefresh(Refresh.REPAINT);
                     } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL, Train.ATTR_TECHNOLOGICAL_AFTER,
                             Train.ATTR_TECHNOLOGICAL_BEFORE)) {
@@ -759,7 +747,6 @@ public abstract class GTDrawBase implements GTDraw {
             public void visitNodeEvent(Event event) {
                 if (Objects.requireNonNull(event.getType()) == Event.Type.ATTRIBUTE) {
                     if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
-                        stringBounds.remove(((Node) event.getSource()).getName());
                         nodeStrings.remove((Node) event.getSource());
                         setRefresh(Refresh.REPAINT);
                     }

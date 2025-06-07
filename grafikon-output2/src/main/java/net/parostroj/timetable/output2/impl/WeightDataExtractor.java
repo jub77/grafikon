@@ -119,14 +119,15 @@ public class WeightDataExtractor {
         WeightDataRow lastRow = i.next();
         while (i.hasNext()) {
             WeightDataRow row = i.next();
-            if (this.compareEngineLists(lastRow.getEngines(), row.getEngines()) && ((lastRow.getWeight() != null && lastRow.getWeight().equals(row.getWeight())) || lastRow.getWeight() == row.getWeight())) {
+            if (this.compareEngineLists(lastRow.getEngines(), row.getEngines())
+                    && Objects.equals(lastRow.getWeight(), row.getWeight())) {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
                 lastRow = row;
             }
         }
-        // set from to to null, where there is only one row
+        // set from to null, where there is only one row
         if (data.size() == 1) {
             lastRow.setFrom(null);
             lastRow.setTo(null);

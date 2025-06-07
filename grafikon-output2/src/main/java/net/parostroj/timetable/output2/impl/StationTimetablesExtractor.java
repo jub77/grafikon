@@ -291,14 +291,14 @@ public class StationTimetablesExtractor {
 
     private BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> getNextFunction() {
         return adjacentSessions ?
-                (cycle, item) -> cycle.getNextItemCyclic(item) :
-                (cycle, item) -> cycle.getNextItem(item);
+                TrainsCycle::getNextItemCyclic :
+                TrainsCycle::getNextItem;
     }
 
     private BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> getPreviousFunction() {
         return adjacentSessions ?
-                (cycle, item) -> cycle.getPreviousItemCyclic(item) :
-                (cycle, item) -> cycle.getPreviousItem(item);
+                TrainsCycle::getPreviousItemCyclic :
+                TrainsCycle::getPreviousItem;
     }
 
     private void updateAdjacent(CycleFromTo cycle, TrainsCycleItem current, TrainsCycleItem adjacent) {

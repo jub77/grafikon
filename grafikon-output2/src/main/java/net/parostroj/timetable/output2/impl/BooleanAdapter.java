@@ -10,12 +10,12 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 public class BooleanAdapter extends XmlAdapter<String, Boolean> {
 
     @Override
-    public Boolean unmarshal(String v) throws Exception {
+    public Boolean unmarshal(String v) {
         return Boolean.parseBoolean(v);
     }
 
     @Override
-    public String marshal(Boolean v) throws Exception {
+    public String marshal(Boolean v) {
         return Boolean.TRUE.equals(v) ? "true" : null;
     }
 

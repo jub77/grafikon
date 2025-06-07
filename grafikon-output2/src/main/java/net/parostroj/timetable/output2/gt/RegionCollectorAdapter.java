@@ -12,7 +12,7 @@ import com.google.common.collect.Multimap;
 
 public abstract class RegionCollectorAdapter<T> extends RegionCollector<T> {
 
-    protected Multimap<T, Shape> regions = LinkedListMultimap.create();
+    protected final Multimap<T, Shape> regions = LinkedListMultimap.create();
 
     protected RegionCollectorAdapter() {
     }
