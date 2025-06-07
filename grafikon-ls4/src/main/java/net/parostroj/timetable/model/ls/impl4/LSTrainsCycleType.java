@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainsCycleType;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for type of trains cycles.
@@ -60,7 +59,7 @@ public class LSTrainsCycleType {
         this.key = key;
     }
 
-    public TrainsCycleType createTrainsCycleType(LSContext context) throws LSException {
+    public TrainsCycleType createTrainsCycleType(LSContext context) {
         TrainsCycleType type = new TrainsCycleType(id, context.getDiagram());
         type.setKey(key);
         if (name != null) {

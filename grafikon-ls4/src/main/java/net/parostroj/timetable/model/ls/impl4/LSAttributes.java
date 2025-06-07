@@ -6,7 +6,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.ls.LSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +62,11 @@ public class LSAttributes {
         this.attributes = attributes;
     }
 
-    public Attributes createAttributes() throws LSException {
+    public Attributes createAttributes() {
         return this.createAttributes(null);
     }
 
-    public Attributes createAttributes(LSContext context) throws LSException {
+    public Attributes createAttributes(LSContext context) {
         Attributes lAttributes = new Attributes();
         if (this.attributes != null) {
             for (LSAttributesItem lItem : this.attributes) {

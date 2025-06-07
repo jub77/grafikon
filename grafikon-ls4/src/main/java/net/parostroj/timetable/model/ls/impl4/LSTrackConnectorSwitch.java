@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * @author jub
@@ -39,7 +38,7 @@ public class LSTrackConnectorSwitch {
         this.attributes = attributes;
     }
 
-    public TrackConnectorSwitch createSwitch(TrackConnector connector, LSContext context) throws LSException {
+    public TrackConnectorSwitch createSwitch(TrackConnector connector, LSContext context) {
         TrackConnectorSwitch sw = connector.createSwitch(id);
         if (this.attributes != null) {
             sw.getAttributes().add(this.attributes.createAttributes(context));

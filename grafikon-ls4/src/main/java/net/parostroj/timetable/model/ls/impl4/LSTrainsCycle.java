@@ -9,7 +9,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
@@ -105,7 +104,7 @@ public class LSTrainsCycle {
         this.items = items;
     }
 
-    public TrainsCycle createTrainsCycle(LSContext context) throws LSException {
+    public TrainsCycle createTrainsCycle(LSContext context) {
         TrainDiagram diagram = context.getDiagram();
         TrainsCycleType cycleType = diagram.getCycleTypes().getById(type);
         if (cycleType == null) {

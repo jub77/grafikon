@@ -10,7 +10,6 @@ import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrackConnectorSwitch;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * @author jub
@@ -60,7 +59,7 @@ public class LSTrackConnector {
         this.switches = switches;
     }
 
-    public TrackConnector createConnector(LSContext context, Node node) throws LSException {
+    public TrackConnector createConnector(LSContext context, Node node) {
         Attributes attrs = attributes.createAttributes(context);
         TrackConnector conn = context.getPartFactory().createConnector(id, node);
         conn.getAttributes().add(attrs);

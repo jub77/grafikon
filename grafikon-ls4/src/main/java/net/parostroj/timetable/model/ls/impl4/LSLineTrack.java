@@ -1,12 +1,9 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.Optional;
-
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for line track.
@@ -67,8 +64,7 @@ public class LSLineTrack extends LSTrack {
         this.toConnector = toConnector;
     }
 
-    public LineTrack createLineTrack(Line line, Node fromNode, Node toNode,
-            LSContext context) throws LSException {
+    public LineTrack createLineTrack(Line line, Node fromNode, Node toNode, LSContext context) {
         LineTrack lineTrack = new LineTrack(this.getId(), line);
         this.addValuesTrack(context, lineTrack);
         if (fromConnector != null) {

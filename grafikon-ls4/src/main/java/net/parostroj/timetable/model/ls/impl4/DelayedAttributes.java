@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Attributes with delayed creation in order to get all {@link ObjectWithId} references.
@@ -23,7 +22,7 @@ public class DelayedAttributes<T extends AttributesHolder> {
         return object;
     }
 
-    public void addAttributes(LSContext context) throws LSException {
+    public void addAttributes(LSContext context) {
         object.getAttributes().add(attributes.createAttributes(context));
     }
 }

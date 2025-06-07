@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing text items.
@@ -61,7 +60,7 @@ public class LSTextItem {
         this.attributes = attributes;
     }
 
-    public TextItem createTextItem(LSContext context) throws LSException {
+    public TextItem createTextItem(LSContext context) {
         TextItem item = new TextItem(id, context.getDiagram());
         item.getAttributes().add(attributes.createAttributes(context));
         if (template != null) {

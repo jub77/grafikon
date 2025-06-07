@@ -10,7 +10,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
 
 /**
@@ -126,7 +125,7 @@ public class LSTrainType {
         this.attributes = attributes;
     }
 
-    public TrainType createTrainType(LSContext context) throws LSException {
+    public TrainType createTrainType(LSContext context) {
         TrainType type = context.getPartFactory().createTrainType(id);
         if (abbr != null) {
             type.setAbbr(LocalizedString.fromString(abbr));

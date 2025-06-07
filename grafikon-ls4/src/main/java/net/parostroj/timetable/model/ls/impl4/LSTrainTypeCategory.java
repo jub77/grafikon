@@ -10,7 +10,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train type category.
@@ -83,7 +82,7 @@ public class LSTrainTypeCategory {
         this.attributes = attributes;
     }
 
-    public TrainTypeCategory createTrainTypeCategory() throws LSException {
+    public TrainTypeCategory createTrainTypeCategory() {
         TrainTypeCategory category = new TrainTypeCategory(id);
         if (getRows() != null)
             for (LSPenaltyTableRow lsRow : getRows()) {

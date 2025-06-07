@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for line class.
@@ -64,7 +63,7 @@ public class LSLineClass {
         this.attributes = attributes;
     }
 
-    public LineClass createLineClass() throws LSException {
+    public LineClass createLineClass() {
         LineClass lineClass = new LineClass(id);
         if (this.version == 0) {
             lineClass.setName(name);

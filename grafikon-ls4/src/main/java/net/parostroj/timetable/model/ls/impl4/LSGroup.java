@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.ls.impl4;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Group;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing group.
@@ -50,7 +49,7 @@ public class LSGroup {
         this.attributes = attributes;
     }
 
-    public Group createGroup(LSContext context) throws LSException {
+    public Group createGroup(LSContext context) {
         Group group = context.getDiagram().getPartFactory().createGroup(id);
         // expected value -> null (for compatibility before version 4.18.2)
         group.setName(name);

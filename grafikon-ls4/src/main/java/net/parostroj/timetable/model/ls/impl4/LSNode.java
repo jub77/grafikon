@@ -11,7 +11,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing nodes.
@@ -142,7 +141,7 @@ public class LSNode {
         this.version = version;
     }
 
-    public Node createNode(LSContext context) throws LSException {
+    public Node createNode(LSContext context) {
         Node node = context.getPartFactory().createNode(id);
         // if version < 1 - use deprecated properties
         if (version < 1) {

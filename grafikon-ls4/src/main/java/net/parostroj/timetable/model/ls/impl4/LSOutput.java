@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for outputs.
@@ -42,7 +41,7 @@ public class LSOutput {
         this.attributes = attributes;
     }
 
-    public Output createOutput(LSContext context) throws LSException {
+    public Output createOutput(LSContext context) {
         Output output = context.getDiagram().getPartFactory().createOutput(id);
         output.getAttributes().add(attributes.createAttributes(context));
         return output;

@@ -6,7 +6,6 @@ import java.util.List;
 import jakarta.xml.bind.annotation.*;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing net.
@@ -62,7 +61,7 @@ public class LSFreightNet {
         this.attributes = attributes;
     }
 
-    public void createFreightNet(LSContext context) throws LSException {
+    public void createFreightNet(LSContext context) {
         FreightNet net = context.getDiagram().getFreightNet();
         net.getAttributes().add(this.getAttributes().createAttributes(context));
     }

@@ -77,16 +77,16 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) throws LSException {
+    public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) {
         List<TrainTypeCategory> categories = lSPenaltyTable.createPenaltyTable();
         diagram.getTrainTypeCategories().addAll(categories);
     }
 
-    public void setTrainTypeCategory(LSTrainTypeCategory lsCategory) throws LSException {
+    public void setTrainTypeCategory(LSTrainTypeCategory lsCategory) {
         diagram.getTrainTypeCategories().add(lsCategory.createTrainTypeCategory());
     }
 
-    public void setNet(LSNet lsNet) throws LSException {
+    public void setNet(LSNet lsNet) {
         Net net = this.diagram.getNet();
         // add regions
         if (lsNet.getRegions() != null) {
@@ -121,7 +121,7 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setFreightNet(LSFreightNet lsFreightNet) throws LSException {
+    public void setFreightNet(LSFreightNet lsFreightNet) {
         lsFreightNet.createFreightNet(context);
         for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
             Train from = diagram.getTrains().getById(lsConnection.getTrainFrom());
@@ -142,7 +142,7 @@ public class TrainDiagramBuilder {
         diagram.getRoutes().add(route);
     }
 
-    public void setTrainType(LSTrainType lsType) throws LSException {
+    public void setTrainType(LSTrainType lsType) {
         TrainType type = lsType.createTrainType(context);
         TrainType foundTrainType;
         if ((foundTrainType = diagram.getTrainTypes().getById(type.getId())) != null) {
@@ -151,7 +151,7 @@ public class TrainDiagramBuilder {
         diagram.getTrainTypes().add(type);
     }
 
-    public void setTextItem(LSTextItem lsTextItem) throws LSException {
+    public void setTextItem(LSTextItem lsTextItem) {
         TextItem item = lsTextItem.createTextItem(context);
         diagram.getTextItems().add(item);
     }
@@ -163,7 +163,7 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setOutput(LSOutput lsOutput) throws LSException {
+    public void setOutput(LSOutput lsOutput) {
         Output output = lsOutput.createOutput(context);
         if (context.getPermissions().isOutputTemplateAllowed() || output.getTemplateRef() != null) {
             diagram.getOutputs().add(output);
@@ -177,7 +177,7 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setTrain(LSTrain lsTrain) throws LSException {
+    public void setTrain(LSTrain lsTrain) {
         DelayedAttributes<Train> delayedAttributes = lsTrain.createTrain(context);
         delayedAttributesList.add(delayedAttributes);
         Train train = delayedAttributes.getObject();
@@ -188,7 +188,7 @@ public class TrainDiagramBuilder {
         diagram.getTrains().add(train);
     }
 
-    public void setEngineClass(LSEngineClass lsEngineClass) throws LSException {
+    public void setEngineClass(LSEngineClass lsEngineClass) {
         EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet().getLineClasses()::getById);
         EngineClass foundEc;
         if ((foundEc = diagram.getEngineClasses().getById(ec.getId())) != null) {
@@ -197,7 +197,7 @@ public class TrainDiagramBuilder {
         diagram.getEngineClasses().add(ec);
     }
 
-    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
+    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(context);
         TrainsCycle foundCycle;
         if ((foundCycle = diagram.getCycleById(cycle.getId())) != null) {
@@ -243,13 +243,13 @@ public class TrainDiagramBuilder {
         }
     }
 
-    private void finishDelaydObjectWithIds() throws LSException {
+    private void finishDelaydObjectWithIds() {
         for (DelayedAttributes<?> delayedAttributes : delayedAttributesList) {
             delayedAttributes.addAttributes(context);
         }
     }
 
-    public TrainDiagram getTrainDiagram() throws LSException {
+    public TrainDiagram getTrainDiagram() {
         if (diagram == null) {
             throw new IllegalStateException("Diagram already created");
         }

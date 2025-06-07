@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.Company;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing company.
@@ -39,7 +38,7 @@ public class LSCompany {
         this.attributes = attributes;
     }
 
-    public Company createCompany(LSContext context) throws LSException {
+    public Company createCompany(LSContext context) {
         Company company = context.getDiagram().getPartFactory().createCompany(id);
         company.getAttributes().add(attributes.createAttributes(context));
         return company;

@@ -12,7 +12,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.WeightTableRow;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for engine class.
@@ -87,7 +86,7 @@ public class LSEngineClass {
         this.attributes = attributes;
     }
 
-    public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) throws LSException {
+    public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) {
         EngineClass ec = new EngineClass(id);
         if (this.version == 0) {
             ec.setName(name);

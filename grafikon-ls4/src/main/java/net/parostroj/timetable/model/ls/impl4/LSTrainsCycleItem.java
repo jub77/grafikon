@@ -6,7 +6,6 @@ import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for trains cycle item.
@@ -76,7 +75,7 @@ public class LSTrainsCycleItem {
         this.attributes = attributes;
     }
 
-    public TrainsCycleItem createTrainsCycleItem(TrainsCycle cycle, LSContext context) throws LSException {
+    public TrainsCycleItem createTrainsCycleItem(TrainsCycle cycle, LSContext context) {
         Train modelTrain = context.getDiagram().getTrains().getById(train);
         TrainsCycleItem item = new TrainsCycleItem(cycle, modelTrain,
                 LocalizedString.fromString(comment), modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));

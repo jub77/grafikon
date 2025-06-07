@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.library.LibraryItemType;
 
 class LSLibraryTypeMapping {
 
-    static BiMap<LibraryItemType, String> OUTPUT_DIR_MAPPING;
+    static final BiMap<LibraryItemType, String> OUTPUT_DIR_MAPPING;
 
     static {
         OUTPUT_DIR_MAPPING = EnumHashBiMap.create(LibraryItemType.class);

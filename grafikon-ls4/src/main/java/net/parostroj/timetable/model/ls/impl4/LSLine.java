@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -16,7 +15,6 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrackConnector;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -122,7 +120,7 @@ public class LSLine {
         this.version = version;
     }
 
-    public void createLine(LSContext context) throws LSException {
+    public void createLine(LSContext context) {
         TrainDiagram diagram = context.getDiagram();
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
