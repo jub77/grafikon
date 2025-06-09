@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.ls;
 
-import java.io.File;
 import java.util.List;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.model.TrainDiagram;
 
 /**
@@ -20,22 +17,12 @@ class LSFileWrapper implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file, LSFeature... features) throws LSException {
-        return impl.load(file, features);
+    public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
+        return impl.load(source, features);
     }
 
     @Override
-    public TrainDiagram load(ZipInputStream is, LSFeature... features) throws LSException {
-        return impl.load(is, features);
-    }
-
-    @Override
-    public void save(TrainDiagram diagram, File file) throws LSException {
-        throw new LSException("Save operation not supported.");
-    }
-
-    @Override
-    public void save(TrainDiagram diagram, ZipOutputStream os) throws LSException {
+    public void save(TrainDiagram diagram, LSSink sink) throws LSException {
         throw new LSException("Save operation not supported.");
     }
 

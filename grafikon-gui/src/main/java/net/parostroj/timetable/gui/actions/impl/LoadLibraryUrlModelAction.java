@@ -5,16 +5,13 @@ import java.net.URI;
 import java.util.zip.ZipInputStream;
 
 import net.parostroj.timetable.model.TrainDiagramType;
-import net.parostroj.timetable.model.ls.LSFeature;
+import net.parostroj.timetable.model.ls.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSLibrary;
-import net.parostroj.timetable.model.ls.LSLibraryFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
@@ -44,10 +41,11 @@ public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
         try {
             log.debug("Loading library: {}", url);
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
-                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
+                LSSource source = LSSource.create(is);
+                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(source);
                 LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                         ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
-                context.setAttribute("library", ls.load(is, features));
+                context.setAttribute("library", ls.load(source, features));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

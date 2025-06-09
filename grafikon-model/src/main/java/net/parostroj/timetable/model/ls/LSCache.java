@@ -64,7 +64,15 @@ class LSCache<T extends LSVersions> {
         return latestVersion != null ? this.createInstanceForSave(latestVersion) : null;
     }
 
-    public T createForLoad(ZipInputStream is) throws LSException {
+    public  T createForLoad(LSSource source) throws LSException {
+        return switch (source.getSource()) {
+            case ZipInputStream zis -> createForLoad(zis);
+            case File file -> createForLoad(file);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        };
+    }
+
+    private T createForLoad(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = is.getNextEntry();
             if (entry == null || !entry.getName().equals(metadataFile)) {
@@ -79,7 +87,7 @@ class LSCache<T extends LSVersions> {
         }
     }
 
-    public T createForLoad(File file) throws LSException {
+    private T createForLoad(File file) throws LSException {
         try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry entry = zipFile.getEntry(metadataFile);
             Properties metadata = new Properties();

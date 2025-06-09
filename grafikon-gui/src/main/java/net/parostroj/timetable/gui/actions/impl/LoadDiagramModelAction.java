@@ -4,16 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import net.parostroj.timetable.model.TrainDiagramType;
-import net.parostroj.timetable.model.ls.LSFeature;
+import net.parostroj.timetable.model.ls.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ls.LSFile;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
@@ -42,10 +39,11 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
+                LSSource source = LSSource.create(selectedFile);
+                LSFile ls = LSFileFactory.getInstance().createForLoad(source);
                 LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                         ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
-                context.setAttribute("diagram", ls.load(selectedFile, features));
+                context.setAttribute("diagram", ls.load(source, features));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {

@@ -2,8 +2,6 @@ package net.parostroj.timetable.model.ls;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
@@ -22,7 +20,7 @@ public interface LSLibrary extends LSVersions, LSConfigurable {
 
     LibraryItem loadItem(InputStream is, LSFeature... features) throws LSException;
 
-    void save(Library library, ZipOutputStream os) throws LSException;
+    void save(Library library, LSSink sink) throws LSException;
 
-    Library load(ZipInputStream is, LSFeature... features) throws LSException;
+    Library load(LSSource source, LSFeature... features) throws LSException;
 }

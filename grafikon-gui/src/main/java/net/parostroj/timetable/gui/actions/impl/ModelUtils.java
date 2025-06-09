@@ -18,11 +18,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.library.Library;
-import net.parostroj.timetable.model.ls.LSFile;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.model.ls.LSLibrary;
-import net.parostroj.timetable.model.ls.LSLibraryFactory;
+import net.parostroj.timetable.model.ls.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -65,7 +61,7 @@ public class ModelUtils {
 
         log.info("Saving model: {}", file);
         LSFile ls = LSFileFactory.getInstance().createForSave();
-        ls.save(diagram, file);
+        ls.save(diagram, LSSink.create(file));
         diagram.getAttributes().setSkipListeners(originalSkip);
     }
 
@@ -75,7 +71,7 @@ public class ModelUtils {
             boolean originalSkip = library.getAttributes().isSkipListeners();
             library.getAttributes().setSkipListeners(true);
             log.info("Saving library: {}", file);
-            ls.save(library, os);
+            ls.save(library, LSSink.create(os));
             library.getAttributes().setSkipListeners(originalSkip);
         }
     }

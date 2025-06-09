@@ -3,8 +3,6 @@ package net.parostroj.timetable.model.ls;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
@@ -33,13 +31,13 @@ class LSLibraryWrapper implements LSLibrary {
     }
 
     @Override
-    public void save(Library library, ZipOutputStream os) throws LSException {
+    public void save(Library library, LSSink sink) throws LSException {
         throw new LSException("Save operation not supported.");
     }
 
     @Override
-    public Library load(ZipInputStream is, LSFeature... features) throws LSException {
-        return impl.load(is, features);
+    public Library load(LSSource source, LSFeature... features) throws LSException {
+        return impl.load(source, features);
     }
 
     @Override

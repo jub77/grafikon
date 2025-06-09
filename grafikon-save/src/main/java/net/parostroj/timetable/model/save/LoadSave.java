@@ -8,20 +8,17 @@ package net.parostroj.timetable.model.save;
 import java.nio.charset.StandardCharsets;
 import net.parostroj.timetable.model.RuntimeInfo;
 import net.parostroj.timetable.model.TrainDiagramType;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFeature;
-import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.*;
+
 import java.io.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.LSFile;
 
 /**
  * Helper class for loading/saving model and other parts.
@@ -61,7 +58,14 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file, LSFeature... features) throws LSException {
+    public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
+        return switch (source.getSource()) {
+            case File file -> load(file, features);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        };
+    }
+
+    private TrainDiagram load(File file, LSFeature... features) throws LSException {
         try (ZipFile zip = new ZipFile(file)) {
             TrainDiagram diagram;
 
@@ -117,7 +121,14 @@ public class LoadSave implements LSFile {
     }
 
     @Override
-    public void save(TrainDiagram diagram, File file) throws LSException {
+    public void save(TrainDiagram diagram, LSSink sink) throws LSException {
+        switch (sink.getSink()) {
+            case File file -> save(diagram, file);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        }
+    }
+
+    private void save(TrainDiagram diagram, File file) throws LSException {
         try (ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(file))) {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
@@ -169,16 +180,6 @@ public class LoadSave implements LSFile {
         }
         serializer.save(writer, diagram, trainTypeList);
         writer.flush();
-    }
-
-    @Override
-    public TrainDiagram load(ZipInputStream is, LSFeature... features) {
-        throw new UnsupportedOperationException("Not supported.");
-    }
-
-    @Override
-    public void save(TrainDiagram diagram, ZipOutputStream os) throws LSException {
-        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.Permissions;
 import net.parostroj.timetable.model.TrainDiagramType;
-import net.parostroj.timetable.model.ls.LSFeature;
+import net.parostroj.timetable.model.ls.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +20,6 @@ import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryBuilder;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSLibrary;
-import net.parostroj.timetable.model.ls.ModelVersion;
 
 public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
 
@@ -63,7 +60,14 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public void save(Library library, ZipOutputStream zipOutput) throws LSException {
+    public void save(Library library, LSSink sink) throws LSException {
+        switch (sink.getSink()) {
+            case ZipOutputStream zos -> save(library, zos);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        }
+    }
+
+    private void save(Library library, ZipOutputStream zipOutput) throws LSException {
         try {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
@@ -87,7 +91,14 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public Library load(ZipInputStream is, LSFeature... features) throws LSException {
+    public Library load(LSSource source, LSFeature... features) throws LSException {
+        return switch (source.getSource()) {
+            case ZipInputStream zis -> load(zis, features);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        };
+    }
+
+    private Library load(ZipInputStream is, LSFeature... features) throws LSException {
         try {
             ZipEntry entry;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);

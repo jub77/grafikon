@@ -5,10 +5,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSFeature;
-import net.parostroj.timetable.model.ls.LSFile;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.*;
 
 /**
  * Implementation of FileLoadSave for model versions 3.x.
@@ -45,7 +42,15 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public TrainDiagram load(File file, LSFeature... features) throws LSException {
+    public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
+        return switch (source.getSource()) {
+            case ZipInputStream zis -> load(zis, features);
+            case File file -> load(file, features);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        };
+    }
+
+    private TrainDiagram load(File file, LSFeature... features) throws LSException {
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
             return this.load(inputStream, features);
         } catch (IOException ex) {
@@ -54,7 +59,15 @@ public class FileLoadSaveImpl implements LSFile {
     }
 
     @Override
-    public void save(TrainDiagram diagram, File file) throws LSException {
+    public void save(TrainDiagram diagram, LSSink sink) throws LSException {
+        switch (sink.getSink()) {
+            case ZipOutputStream zos -> save(diagram, zos);
+            case File file -> save(diagram, file);
+            case null, default -> throw new IllegalArgumentException("Unsupported");
+        }
+    }
+
+    private void save(TrainDiagram diagram, File file) throws LSException {
         try (ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(file))) {
             this.save(diagram, outputStream);
         } catch (IOException ex) {
@@ -86,8 +99,7 @@ public class FileLoadSaveImpl implements LSFile {
         return loaded;
     }
 
-    @Override
-    public TrainDiagram load(ZipInputStream zipInput, LSFeature... features) throws LSException {
+    private TrainDiagram load(ZipInputStream zipInput, LSFeature... features) throws LSException {
         try {
             ZipEntry entry;
             TrainDiagramBuilder builder = null;
@@ -138,8 +150,7 @@ public class FileLoadSaveImpl implements LSFile {
         }
     }
 
-    @Override
-    public void save(TrainDiagram diagram, ZipOutputStream zipOutput) throws LSException {
+    private void save(TrainDiagram diagram, ZipOutputStream zipOutput) throws LSException {
         try {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));

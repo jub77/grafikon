@@ -1,9 +1,5 @@
 package net.parostroj.timetable.model.ls;
 
-import java.io.File;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
 import net.parostroj.timetable.model.TrainDiagram;
 
 /**
@@ -16,11 +12,7 @@ public interface LSFile extends LSVersions, LSConfigurable {
     String METADATA_KEY_MODEL_VERSION = "model.version";
     String METADATA = "metadata.properties";
 
-    TrainDiagram load(File file, LSFeature... features) throws LSException;
+    TrainDiagram load(LSSource source, LSFeature... features) throws LSException;
 
-    TrainDiagram load(ZipInputStream is, LSFeature... features) throws LSException;
-
-    void save(TrainDiagram diagram, File file) throws LSException;
-
-    void save(TrainDiagram diagram, ZipOutputStream os) throws LSException;
+    void save(TrainDiagram diagram, LSSink sink) throws LSException;
 }

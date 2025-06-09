@@ -14,8 +14,9 @@ public final class LoadDelegateFactory {
     public static LoadDelegate<TrainDiagram> createForTrainDiagram(LSFeature... features) {
         return (is, item) -> {
             try (ZipInputStream zis = new ZipInputStream(is)) {
-                LSFile ls = LSFileFactory.getInstance().createForLoad(zis);
-                return ls.load(zis, features);
+                LSSource source = LSSource.create(zis);
+                LSFile ls = LSFileFactory.getInstance().createForLoad(source);
+                return ls.load(source, features);
             } catch (IOException e) {
                 throw new LSException("Error loading diagram: " + e.getMessage(), e);
             }
@@ -25,8 +26,9 @@ public final class LoadDelegateFactory {
     public static LoadDelegate<Library> createForLibrary(LSFeature... features) {
         return (is, item) -> {
             try (ZipInputStream zis = new ZipInputStream(is)) {
-                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(zis);
-                return ls.load(zis, features);
+                LSSource source = LSSource.create(zis);
+                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(source);
+                return ls.load(source, features);
             } catch (IOException e) {
                 throw new LSException("Error loading library: " + e.getMessage(), e);
             }
