@@ -91,7 +91,7 @@ public class Attributes implements Map<String, Object> {
     public void set(String category, String name, Object value) {
         Map<String, Object> map = this.getMapForCategory(category);
         Object oldValue = map.get(name);
-        if (!ObjectsUtil.compareWithNull(oldValue, value)) {
+        if (!Objects.equals(oldValue, value)) {
             AttributeChange change = new AttributeChange(name, oldValue, value, category);
             if (checker.check(this, change)) {
                 map.put(name, value);

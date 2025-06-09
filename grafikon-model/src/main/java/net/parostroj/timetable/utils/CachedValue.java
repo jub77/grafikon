@@ -1,5 +1,7 @@
 package net.parostroj.timetable.utils;
 
+import java.util.Objects;
+
 /**
  * Cached value.
  *
@@ -23,7 +25,7 @@ public class CachedValue<T> {
     }
 
     public boolean set(T value) {
-        boolean different = !ObjectsUtil.compareWithNull(value, this.value) && cached;
+        boolean different = !Objects.equals(value, this.value) && cached;
         this.value = value;
         this.cached = true;
         return different;

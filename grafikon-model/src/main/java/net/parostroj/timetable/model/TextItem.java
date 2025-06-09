@@ -1,11 +1,11 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -48,7 +48,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Obse
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+        if (!Objects.equals(name, this.name)) {
             String oldName = this.name;
             this.name = name;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
@@ -60,7 +60,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Obse
     }
 
     public void setTemplate(TextTemplate template) {
-        if (!ObjectsUtil.compareWithNull(template, this.template)) {
+        if (!Objects.equals(template, this.template)) {
             TextTemplate oldTemplate = this.template;
             this.template = template;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));

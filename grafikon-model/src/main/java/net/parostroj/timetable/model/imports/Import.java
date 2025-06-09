@@ -9,7 +9,6 @@ import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Imports trains from one diagram to another.
@@ -137,7 +136,7 @@ public abstract class Import {
             return Iterables.tryFind(diagram.getTrains(), train -> {
                 TrainType trainType = getTrainType(origTrain.getType());
                 return train.getNumber().equals(origTrain.getNumber())
-                        && ObjectsUtil.compareWithNull(train.getType(), trainType);
+                        && Objects.equals(train.getType(), trainType);
             }).orNull();
         }
     }
@@ -149,7 +148,7 @@ public abstract class Import {
             return Iterables.tryFind(diagram.getCycles(), cycle -> {
                 TrainsCycleType cycleType = getCycleType(origCycle.getType());
                 return cycle.getName().equals(origCycle.getName())
-                        && ObjectsUtil.compareWithNull(cycle.getType(), cycleType);
+                        && Objects.equals(cycle.getType(), cycleType);
             }).orNull();
         }
     }

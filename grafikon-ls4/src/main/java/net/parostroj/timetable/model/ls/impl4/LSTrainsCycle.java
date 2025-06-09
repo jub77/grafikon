@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
@@ -9,7 +10,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Storage for train cycles.
@@ -110,7 +110,7 @@ public class LSTrainsCycle {
         if (cycleType == null) {
             // fallback to name
             for (TrainsCycleType t : diagram.getCycleTypes()) {
-                if (ObjectsUtil.compareWithNull(t.getKey(), type)) {
+                if (Objects.equals(t.getKey(), type)) {
                     cycleType = t;
                 }
             }

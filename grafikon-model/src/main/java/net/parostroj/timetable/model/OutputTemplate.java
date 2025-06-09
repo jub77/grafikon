@@ -2,9 +2,10 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.ls.ModelVersion;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
+
+import java.util.Objects;
 
 /**
  * Output template.
@@ -96,7 +97,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setTemplate(TextTemplate template) {
-        if (!ObjectsUtil.compareWithNull(template, this.template)) {
+        if (!Objects.equals(template, this.template)) {
             TextTemplate oldTemplate = this.template;
             this.template = template;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
@@ -108,7 +109,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setScript(Script script) {
-        if (!ObjectsUtil.compareWithNull(script, this.script)) {
+        if (!Objects.equals(script, this.script)) {
             Script oldScript = this.script;
             this.script = script;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_SCRIPT, oldScript, script)));

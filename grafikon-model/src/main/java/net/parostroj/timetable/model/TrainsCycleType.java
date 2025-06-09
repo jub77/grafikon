@@ -10,7 +10,6 @@ import java.util.*;
 
 import net.parostroj.timetable.model.LocalizedString.Builder;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -76,7 +75,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public void setKey(String key) {
-        if (!ObjectsUtil.compareWithNull(key, this.key)) {
+        if (!Objects.equals(key, this.key)) {
             String oldKey = this.key;
             this.key = key;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_KEY, oldKey, key)));

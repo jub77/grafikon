@@ -3,11 +3,11 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Window;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainDiagramPartFactory;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Dialog for editing companies.
@@ -76,7 +76,7 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
         String companyAbbr = company.getAbbr();
         dialog.showDialog(company);
         dialog.dispose();
-        if (!ObjectsUtil.compareWithNull(companyAbbr, company.getAbbr())) {
+        if (!Objects.equals(companyAbbr, company.getAbbr())) {
             this.refreshAll();
         }
     }

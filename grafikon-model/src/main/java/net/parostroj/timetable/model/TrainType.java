@@ -1,11 +1,11 @@
 package net.parostroj.timetable.model;
 
 import java.awt.Color;
+import java.util.Objects;
 
 import net.parostroj.timetable.model.Train.NameType;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.ls.ModelVersion;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -131,7 +131,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
      * @param color the color to be set
      */
     public void setColor(Color color) {
-        if (!ObjectsUtil.compareWithNull(color, this.color)) {
+        if (!Objects.equals(color, this.color)) {
             Color oldColor = this.color;
             this.color = color;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_COLOR, oldColor, color)));
@@ -182,7 +182,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
      * @param category sets category of train type
      */
     public void setCategory(TrainTypeCategory category) {
-        if (!ObjectsUtil.compareWithNull(category, this.category)) {
+        if (!Objects.equals(category, this.category)) {
             TrainTypeCategory oldCategory = this.category;
             this.category = category;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_CATEGORY, oldCategory,
@@ -201,7 +201,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
      * @param trainNameTemplate sets train name template
      */
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
-        if (!ObjectsUtil.compareWithNull(trainNameTemplate, this.trainNameTemplate)) {
+        if (!Objects.equals(trainNameTemplate, this.trainNameTemplate)) {
             TextTemplate oldTemplate = this.trainNameTemplate;
             this.trainNameTemplate = trainNameTemplate;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TRAIN_NAME_TEMPLATE,
@@ -220,7 +220,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Obs
      * @param trainCompleteNameTemplate sets template with complete train name
      */
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
-        if (!ObjectsUtil.compareWithNull(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
+        if (!Objects.equals(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
             TextTemplate oldTemplate = this.trainCompleteNameTemplate;
             this.trainCompleteNameTemplate = trainCompleteNameTemplate;
             this.listenerSupport.fireEvent(new Event(this, new AttributeChange(

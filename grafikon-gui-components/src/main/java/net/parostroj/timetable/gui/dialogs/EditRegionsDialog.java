@@ -3,13 +3,13 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Window;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 
 import net.parostroj.timetable.gui.wrappers.BasicWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainDiagramPartFactory;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
@@ -83,7 +83,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
         String regionName = region.getName();
         dialog.showDialog(region, element);
         dialog.dispose();
-        if (!ObjectsUtil.compareWithNull(regionName, region.getName())) {
+        if (!Objects.equals(regionName, region.getName())) {
             this.refreshAll();
         }
     }

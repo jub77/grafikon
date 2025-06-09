@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -129,7 +128,7 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
 
     public Node getNodeByName(String name) {
         for (Node node : netDelegate.vertexSet()) {
-            if (ObjectsUtil.compareWithNull(node.getName(), name)) {
+            if (Objects.equals(node.getName(), name)) {
                 return node;
             }
         }
@@ -138,7 +137,7 @@ public class Net implements Visitable, TrainDiagramPart, ObservableObject, Compo
 
     public Node getNodeByAbbr(String abbr) {
         for (Node node : netDelegate.vertexSet()) {
-            if (ObjectsUtil.compareWithNull(node.getAbbr(), abbr)) {
+            if (Objects.equals(node.getAbbr(), abbr)) {
                 return node;
             }
         }

@@ -18,22 +18,6 @@ public class ObjectsUtil {
     }
 
     /**
-     * Returns only first line of the text.
-     *
-     * @param str string
-     * @return first line of the string
-     */
-    public static String getFirstLine(String str) {
-        String line = str;
-        // keep only the first line
-        int index = line.indexOf('\n');
-        if (index != -1) {
-            line = line.substring(0, index);
-        }
-        return line;
-    }
-
-    /**
      * Checks string and if it is not null, it trims it and transforms empty string to null,
      * otherwise it returns it trimmed.
      *
@@ -59,17 +43,6 @@ public class ObjectsUtil {
      */
     public static String trimNonEmpty(String str) {
         return (str == null) ? "" : str.trim();
-    }
-
-    /**
-     * Returns if the instances are equal or not.
-     *
-     * @param o1 first object
-     * @param o2 second object
-     * @return equality
-     */
-    public static boolean compareWithNull(Object o1, Object o2) {
-        return Objects.equals(o1, o2);
     }
 
     /**
@@ -163,10 +136,6 @@ public class ObjectsUtil {
 
     public static <T> Collection<T> checkEmpty(Collection<T> collection) {
         return collection == null ? null : (collection.isEmpty() ? null : collection);
-    }
-
-    public static <T> List<T> checkEmpty(List<T> list) {
-        return list == null ? null : (list.isEmpty() ? null : list);
     }
 
     public static <K, V> Map<K, V> checkEmpty(Map<K, V> map) {

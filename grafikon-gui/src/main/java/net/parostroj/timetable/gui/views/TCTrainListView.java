@@ -399,7 +399,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             LocalizedString lComment = changeDialog.getComment();
             item.setRemoveAttribute(TrainsCycleItem.ATTR_COMMENT, lComment);
             Integer setupTime = changeDialog.getSetupTime();
-            boolean setupTimeChanged = !ObjectsUtil.compareWithNull(setupTime, item.getSetupTime());
+            boolean setupTimeChanged = !Objects.equals(setupTime, item.getSetupTime());
             item.setRemoveAttribute(TrainsCycleItem.ATTR_SETUP_TIME, setupTime);
             TimeInterval from = changeDialog.getFrom();
             TimeInterval to = changeDialog.getTo();
