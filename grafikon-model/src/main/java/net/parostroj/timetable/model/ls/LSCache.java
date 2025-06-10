@@ -1,7 +1,6 @@
 package net.parostroj.timetable.model.ls;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -64,15 +63,7 @@ class LSCache<T extends LSVersions> {
         return latestVersion != null ? this.createInstanceForSave(latestVersion) : null;
     }
 
-    public  T createForLoad(LSSource source) throws LSException {
-        return switch (source.getSource()) {
-            case ZipInputStream zis -> createForLoad(zis);
-            case File file -> createForLoad(file);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        };
-    }
-
-    private T createForLoad(ZipInputStream is) throws LSException {
+    public T createForLoad(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = is.getNextEntry();
             if (entry == null || !entry.getName().equals(metadataFile)) {
@@ -87,7 +78,15 @@ class LSCache<T extends LSVersions> {
         }
     }
 
-    private T createForLoad(File file) throws LSException {
+    public T createForLoad(File file) throws LSException {
+        if (file.exists() && file.isDirectory()) {
+            return createForLoadDir(file);
+        } else {
+            return createForLoadFile(file);
+        }
+    }
+
+    public T createForLoadFile(File file) throws LSException {
         try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry entry = zipFile.getEntry(metadataFile);
             Properties metadata = new Properties();
@@ -100,6 +99,19 @@ class LSCache<T extends LSVersions> {
         } catch (IOException ex) {
             throw new LSException(ex);
         }
+    }
+
+    public T createForLoadDir(File file) throws LSException {
+        Properties metadata = new Properties();
+        File mFile = new File(file, metadataFile);
+        if (mFile.exists()) {
+            try (InputStream is = new FileInputStream(mFile)) {
+                metadata.load(is);
+            } catch (IOException e) {
+                throw new LSException(e);
+            }
+        }
+        return this.createInstanceForLoad(metadata);
     }
 
     public T createForLoad(ModelVersion modelVersion) throws LSException {

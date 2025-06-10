@@ -1,12 +1,11 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.TimetableImage;
 
+import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +30,11 @@ public class FileLoadSaveImages {
      * saves image for timetable.
      *
      * @param image image
-     * @param os zip output stream
+     * @param sink sink
      */
-    public void saveTimetableImage(TimetableImage image, ZipOutputStream os) throws IOException {
+    public void saveTimetableImage(TimetableImage image, LSSink sink) throws IOException, LSException {
         // copy image to zip
-        ZipEntry entry = new ZipEntry(location + image.getFilename());
+        String itemName = location + image.getFilename();
         if (image.getImageFile() == null) {
             // skip images without image file
             log.warn("Skipping image {} because the gtm doesn't contain a file.", image.getFilename());
@@ -43,9 +42,7 @@ public class FileLoadSaveImages {
         }
 
         ByteSource src = Files.asByteSource(image.getImageFile());
-        entry.setSize(src.size());
-        os.putNextEntry(entry);
-        src.copyTo(os);
+        src.copyTo(sink.nextItem(itemName));
     }
 
     /**
@@ -54,7 +51,7 @@ public class FileLoadSaveImages {
      * @param is input stream
      * @return file
      */
-    public File loadTimetableImage(ZipInputStream is) throws IOException {
+    public File loadTimetableImage(InputStream is) throws IOException {
         File tempFile = File.createTempFile("gt_", ".temp");
 
         Files.asByteSink(tempFile).writeFrom(is);

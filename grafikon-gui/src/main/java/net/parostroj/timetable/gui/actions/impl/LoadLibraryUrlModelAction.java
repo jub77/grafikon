@@ -42,7 +42,7 @@ public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
             log.debug("Loading library: {}", url);
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSSource source = LSSource.create(is);
-                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(source);
+                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(is);
                 LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                         ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
                 context.setAttribute("library", ls.load(source, features));

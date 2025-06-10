@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.save;
 
-import java.io.IOException;
+import java.io.FilterReader;
 import java.io.Reader;
 
 /**
@@ -9,22 +9,14 @@ import java.io.Reader;
  *
  * @author jub
  */
-public class NoCloseAllowedReader extends Reader {
-
-    private final Reader reader;
+public class NoCloseAllowedReader extends FilterReader {
 
     public NoCloseAllowedReader(Reader reader) {
         super(reader);
-        this.reader = reader;
     }
 
     @Override
     public void close() {
         // close is not propagated
-    }
-
-    @Override
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        return reader.read(cbuf, off, len);
     }
 }

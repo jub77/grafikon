@@ -115,7 +115,7 @@ public class NewOpenAction extends AbstractAction {
                         model.setOpenedFile(selectedFile);
                         log.info("Loading: {}", selectedFile);
                         LSSource source = LSSource.create(selectedFile);
-                        LSFile ls = LSFileFactory.getInstance().createForLoad(source);
+                        LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                         LSFeature[] features = model.getProgramSettings().getDiagramType() == TrainDiagramType.NORMAL
                                 ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
                         diagram = ls.load(source, features);

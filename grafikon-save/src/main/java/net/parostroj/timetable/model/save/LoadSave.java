@@ -14,9 +14,6 @@ import java.io.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.TrainDiagram;
 
@@ -59,22 +56,16 @@ public class LoadSave implements LSFile {
 
     @Override
     public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
-        return switch (source.getSource()) {
-            case File file -> load(file, features);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        };
-    }
-
-    private TrainDiagram load(File file, LSFeature... features) throws LSException {
-        try (ZipFile zip = new ZipFile(file)) {
+        try (source) {
             TrainDiagram diagram;
 
             // load metadata
-            ZipEntry entry = zip.getEntry(METADATA);
+            LSSource.Item item = source.nextItem();
             Properties metadata = new Properties();
-            if (entry != null) {
+            if (item.name().equals(METADATA)) {
                 // load metadata
-                metadata.load(zip.getInputStream(entry));
+                metadata.load(item.stream());
+                item = source.nextItem();
             }
 
             // set model version
@@ -90,29 +81,33 @@ public class LoadSave implements LSFile {
                 throw new LSException("Cannot load newer model.");
             }
             // load train types
-            entry = zip.getEntry(TRAIN_TYPES_NAME);
             InputStream isTypes;
-            if (entry == null) {
-                isTypes = DefaultTrainTypeListSource.getDefaultTypesInputStream();
+            boolean types = false;
+            if (item.name().equals(TRAIN_TYPES_NAME)) {
+                isTypes = item.stream();
+                types = true;
             } else {
-                isTypes = zip.getInputStream(entry);
+                isTypes = DefaultTrainTypeListSource.getDefaultTypesInputStream();
             }
             LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer();
             LSTrainTypeList trainTypeList = tts.load(new InputStreamReader(isTypes, StandardCharsets.UTF_8));
 
+            if (types) {
+                item = source.nextItem();
+            }
+
             // load model
-            entry = zip.getEntry(TRAIN_DIAGRAM_NAME);
-            if (entry == null) {
+            if (!item.name().equals(TRAIN_DIAGRAM_NAME)) {
                 throw new LSException("Model not found.");
             }
             diagram = this.loadTrainDiagram(modelVersion,
-                    new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8),
+                    new InputStreamReader(item.stream(), StandardCharsets.UTF_8),
                     trainTypeList, getDiagramType(features));
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, modelVersion);
 
             // load images
             LoadSaveImages lsImages = new LoadSaveImages();
-            lsImages.loadTimetableImages(diagram, zip);
+            lsImages.loadTimetableImages(diagram, source);
 
             return diagram;
         } catch (IOException ex) {
@@ -122,31 +117,21 @@ public class LoadSave implements LSFile {
 
     @Override
     public void save(TrainDiagram diagram, LSSink sink) throws LSException {
-        switch (sink.getSink()) {
-            case File file -> save(diagram, file);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        }
-    }
-
-    private void save(TrainDiagram diagram, File file) throws LSException {
-        try (ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(file))) {
+        try (sink) {
             // save metadata
-            zipOutput.putNextEntry(new ZipEntry(METADATA));
-            this.createMetadata().store(zipOutput, null);
+            this.createMetadata().store(sink.nextItem(METADATA), null);
 
             // save train types
             LSTrainTypeList trainTypeList = new LSTrainTypeList(diagram.getTrainTypes(), diagram.getTrainsData());
-            zipOutput.putNextEntry(new ZipEntry(TRAIN_TYPES_NAME));
             LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer();
-            tts.save(new OutputStreamWriter(zipOutput, StandardCharsets.UTF_8), trainTypeList);
+            tts.save(new OutputStreamWriter(sink.nextItem(TRAIN_TYPES_NAME), StandardCharsets.UTF_8), trainTypeList);
 
             // save diagram
-            zipOutput.putNextEntry(new ZipEntry(TRAIN_DIAGRAM_NAME));
-            this.saveTrainDiagram(new OutputStreamWriter(zipOutput, StandardCharsets.UTF_8), diagram, trainTypeList);
+            this.saveTrainDiagram(new OutputStreamWriter(sink.nextItem(TRAIN_DIAGRAM_NAME), StandardCharsets.UTF_8), diagram, trainTypeList);
 
             // save images
             LoadSaveImages lsImages = new LoadSaveImages();
-            lsImages.saveTimetableImages(diagram, zipOutput);
+            lsImages.saveTimetableImages(diagram, sink);
         } catch (IOException ex) {
             throw new LSException(ex);
         }

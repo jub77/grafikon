@@ -1,9 +1,38 @@
 package net.parostroj.timetable.model.ls;
 
-public interface LSSource {
-    Object getSource();
+import net.parostroj.timetable.model.TrainDiagram;
 
-    static LSSource create(Object source) {
-        return () -> source;
+import java.io.*;
+import java.util.zip.ZipInputStream;
+
+public interface LSSource extends AutoCloseable {
+
+    record Item(String name, InputStream stream) {}
+
+    default void updateInfo(TrainDiagram diagram) {
+        // nothing
+    }
+
+    Item nextItem() throws LSException;
+
+    @Override
+    default void close() throws LSException {
+        // nothing
+    }
+
+    static LSSource create(ZipInputStream zis) {
+        return new ZipStreamSource(zis);
+    }
+
+    static LSSource create(File file) throws LSException {
+        try {
+            if (file.exists() && file.isDirectory()) {
+                return new DirectorySource(file);
+            } else {
+                return new ZipFileSource(file);
+            }
+        } catch (IOException e) {
+            throw new LSException(e);
+        }
     }
 }

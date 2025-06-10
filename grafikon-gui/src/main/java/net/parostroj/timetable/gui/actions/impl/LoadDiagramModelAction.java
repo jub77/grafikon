@@ -40,7 +40,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
         try {
             try {
                 LSSource source = LSSource.create(selectedFile);
-                LSFile ls = LSFileFactory.getInstance().createForLoad(source);
+                LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                 LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                         ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
                 context.setAttribute("diagram", ls.load(source, features));

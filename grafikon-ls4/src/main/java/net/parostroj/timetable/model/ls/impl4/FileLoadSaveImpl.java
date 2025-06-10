@@ -1,17 +1,12 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.*;
@@ -79,111 +74,72 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 new LoadFilter4d27());
     }
 
-    @Override
-    public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
-        return switch (source.getSource()) {
-            case ZipInputStream zis -> load(zis, features);
-            case File file -> load(file, features);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        };
-    }
-
-    private TrainDiagram load(File file, LSFeature... features) throws LSException {
-        try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
-            TrainDiagram diagram = this.load(inputStream, features);
-            // set file info
-            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
-            return diagram;
-        } catch (IOException ex) {
-            throw new LSException(ex);
-        }
-    }
-
-    @Override
-    public void save(TrainDiagram diagram, LSSink sink) throws LSException {
-        switch (sink.getSink()) {
-            case ZipOutputStream zos -> save(diagram, zos);
-            case File file -> save(diagram, file);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        }
-    }
-
-    private void save(TrainDiagram diagram, File file) throws LSException {
-        try (ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(file))) {
-            this.save(diagram, outputStream);
-            // set file info
-            diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE, file);
-        } catch (IOException ex) {
-            throw new LSException(ex);
-        }
-    }
-
-    private void save(ZipOutputStream zipOutput, String zipEntryName, Object saved) throws LSException, IOException {
-        zipOutput.putNextEntry(new ZipEntry(zipEntryName));
-        lss.save(zipOutput, saved);
+    private void save(LSSink sink, String itemName, Object saved) throws LSException, IOException {
+        lss.save(sink.nextItem(itemName), saved);
     }
 
     private String createEntryName(String prefix, int cnt) {
         return String.format("%s%06d.%s", prefix, cnt, "xml");
     }
 
-    private TrainDiagram load(ZipInputStream zipInput, LSFeature... features) throws LSException {
+    @Override
+    public TrainDiagram load(LSSource source, LSFeature... features) throws LSException {
         try {
-            ZipEntry entry;
+            LSSource.Item item;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
-            while ((entry = zipInput.getNextEntry()) != null) {
-                if (entry.getName().equals(METADATA)) {
+            while ((item = source.nextItem()) != null) {
+                if (item.name().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
                     Properties props = new Properties();
-                    props.load(zipInput);
+                    props.load(item.stream());
                     version = checkVersion(METADATA_KEY_MODEL_VERSION, props);
                     continue;
                 }
-                if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
-                    LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
+                if (item.name().equals(DATA_TRAIN_DIAGRAM)) {
+                    LSTrainDiagram lstd = lss.load(item.stream(), LSTrainDiagram.class);
                     builder = new TrainDiagramBuilder(lstd, attachments, getDiagramType(features));
                 }
                 // test diagram
                 if (builder == null) {
-                    throw new LSException("Train diagram builder has to be first entry: " + entry.getName());
+                    throw new LSException("Train diagram builder has to be first entry: " + item.name());
                 }
-                if (entry.getName().equals(DATA_PENALTY_TABLE)) {
-                    builder.setPenaltyTable(lss.load(zipInput, LSPenaltyTable.class));
-                } else if (entry.getName().equals(DATA_NET)) {
-                    builder.setNet(lss.load(zipInput, LSNet.class));
-                } else if (entry.getName().startsWith(DATA_ROUTES)) {
-                    builder.setRoute(lss.load(zipInput, LSRoute.class));
-                } else if (entry.getName().startsWith(DATA_TRAIN_TYPE_CATEGORIES)) {
-                    builder.setTrainTypeCategory(lss.load(zipInput, LSTrainTypeCategory.class));
-                } else if (entry.getName().startsWith(DATA_TRAIN_TYPES)) {
-                    builder.setTrainType(lss.load(zipInput, LSTrainType.class));
-                } else if (entry.getName().startsWith(DATA_TEXT_ITEMS)) {
-                    builder.setTextItem(lss.load(zipInput, LSTextItem.class));
-                } else if (entry.getName().startsWith(DATA_OUTPUT_TEMPLATES)) {
-                    builder.setOutputTemplate(lss.load(zipInput, LSOutputTemplate.class));
-                } else if (entry.getName().startsWith(DATA_TRAINS)) {
-                    builder.setTrain(lss.load(zipInput, LSTrain.class));
-                } else if (entry.getName().startsWith(DATA_ENGINE_CLASSES)) {
-                    builder.setEngineClass(lss.load(zipInput, LSEngineClass.class));
-                } else if (entry.getName().startsWith(DATA_TRAINS_CYCLES)) {
-                    builder.setTrainsCycle(lss.load(zipInput, LSTrainsCycle.class));
-                } else if (entry.getName().startsWith(DATA_CHANGES)) {
-                    builder.setDiagramChangeSet(lss.load(zipInput, LSDiagramChangeSet.class));
-                } else if (entry.getName().startsWith(FREIGHT_NET)) {
-                    builder.setFreightNet(lss.load(zipInput, LSFreightNet.class));
-                } else if (entry.getName().startsWith(DATA_IMAGES)) {
-                    if (entry.getName().endsWith(".xml")) {
-                        builder.addImage(lss.load(zipInput, LSImage.class));
+                if (item.name().equals(DATA_PENALTY_TABLE)) {
+                    builder.setPenaltyTable(lss.load(item.stream(), LSPenaltyTable.class));
+                } else if (item.name().equals(DATA_NET)) {
+                    builder.setNet(lss.load(item.stream(), LSNet.class));
+                } else if (item.name().startsWith(DATA_ROUTES)) {
+                    builder.setRoute(lss.load(item.stream(), LSRoute.class));
+                } else if (item.name().startsWith(DATA_TRAIN_TYPE_CATEGORIES)) {
+                    builder.setTrainTypeCategory(lss.load(item.stream(), LSTrainTypeCategory.class));
+                } else if (item.name().startsWith(DATA_TRAIN_TYPES)) {
+                    builder.setTrainType(lss.load(item.stream(), LSTrainType.class));
+                } else if (item.name().startsWith(DATA_TEXT_ITEMS)) {
+                    builder.setTextItem(lss.load(item.stream(), LSTextItem.class));
+                } else if (item.name().startsWith(DATA_OUTPUT_TEMPLATES)) {
+                    builder.setOutputTemplate(lss.load(item.stream(), LSOutputTemplate.class));
+                } else if (item.name().startsWith(DATA_TRAINS)) {
+                    builder.setTrain(lss.load(item.stream(), LSTrain.class));
+                } else if (item.name().startsWith(DATA_ENGINE_CLASSES)) {
+                    builder.setEngineClass(lss.load(item.stream(), LSEngineClass.class));
+                } else if (item.name().startsWith(DATA_TRAINS_CYCLES)) {
+                    builder.setTrainsCycle(lss.load(item.stream(), LSTrainsCycle.class));
+                } else if (item.name().startsWith(DATA_CHANGES)) {
+                    builder.setDiagramChangeSet(lss.load(item.stream(), LSDiagramChangeSet.class));
+                } else if (item.name().startsWith(FREIGHT_NET)) {
+                    builder.setFreightNet(lss.load(item.stream(), LSFreightNet.class));
+                } else if (item.name().startsWith(DATA_IMAGES)) {
+                    if (item.name().endsWith(".xml")) {
+                        builder.addImage(lss.load(item.stream(), LSImage.class));
                     } else {
-                        builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput));
+                        builder.addImageFile(new File(item.name()).getName(), loadImages.loadTimetableImage(item.stream()));
                     }
-                } else if (entry.getName().startsWith(DATA_ATTACHMENTS)) {
-                    attachments.load(zipInput, entry);
-                } else if (entry.getName().startsWith(DATA_OUTPUTS)) {
-                    builder.setOutput(lss.load(zipInput, LSOutput.class));
+                } else if (item.name().startsWith(DATA_ATTACHMENTS)) {
+                    attachments.load(item);
+                } else if (item.name().startsWith(DATA_OUTPUTS)) {
+                    builder.setOutput(lss.load(item.stream(), LSOutput.class));
                 }
             }
             TrainDiagram trainDiagram = Objects.requireNonNull(builder).getTrainDiagram();
@@ -192,6 +148,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             }
             // set file version
             trainDiagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, version);
+            source.updateInfo(trainDiagram);
             log.debug("Loaded version: {}", version != null ? version : "<missing>");
             return trainDiagram;
         } catch (IOException e) {
@@ -199,11 +156,11 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
         }
     }
 
-    private void save(TrainDiagram diagram, ZipOutputStream zipOutput) throws LSException {
-        try {
+    @Override
+    public void save(TrainDiagram diagram, LSSink sink) throws LSException {
+        try (sink) {
             // save metadata
-            zipOutput.putNextEntry(new ZipEntry(METADATA));
-            this.createMetadata(METADATA_KEY_MODEL_VERSION).store(zipOutput, null);
+            this.createMetadata(METADATA_KEY_MODEL_VERSION).store(sink.nextItem(METADATA), null);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
 
             // increase save version (increment by one)
@@ -212,38 +169,38 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             diagram.setSaveTimestamp(Instant.now());
 
             // save train diagram
-            this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
+            this.save(sink, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
             // save net
-            this.save(zipOutput, DATA_NET, new LSNet(diagram.getNet()));
+            this.save(sink, DATA_NET, new LSNet(diagram.getNet()));
             int cnt = 0;
             // save train type categories
             for (TrainTypeCategory category : diagram.getTrainTypeCategories()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPE_CATEGORIES, cnt++), new LSTrainTypeCategory(category));
+                this.save(sink, this.createEntryName(DATA_TRAIN_TYPE_CATEGORIES, cnt++), new LSTrainTypeCategory(category));
             }
             cnt = 0;
             // save routes
             for (Route route : diagram.getRoutes()) {
-                this.save(zipOutput, this.createEntryName(DATA_ROUTES, cnt++), new LSRoute(route));
+                this.save(sink, this.createEntryName(DATA_ROUTES, cnt++), new LSRoute(route));
             }
             cnt = 0;
             // save train types
             for (TrainType trainType : diagram.getTrainTypes()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPES, cnt++), new LSTrainType(trainType));
+                this.save(sink, this.createEntryName(DATA_TRAIN_TYPES, cnt++), new LSTrainType(trainType));
             }
             cnt = 0;
             // save trains
             for (Train train : diagram.getTrains()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS, cnt++), new LSTrain(train));
+                this.save(sink, this.createEntryName(DATA_TRAINS, cnt++), new LSTrain(train));
             }
             cnt = 0;
             // save engine classes
             for (EngineClass engineClass : diagram.getEngineClasses()) {
-                this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, cnt++), new LSEngineClass(engineClass));
+                this.save(sink, this.createEntryName(DATA_ENGINE_CLASSES, cnt++), new LSEngineClass(engineClass));
             }
             cnt = 0;
             // save text items
             for (TextItem item : diagram.getTextItems()) {
-                this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, cnt++), new LSTextItem(item));
+                this.save(sink, this.createEntryName(DATA_TEXT_ITEMS, cnt++), new LSTextItem(item));
             }
             cnt = 0;
             // save output templates
@@ -251,41 +208,42 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 LSOutputTemplate lsOutputTemplate = Boolean.TRUE.equals(properties.get("inline.output.template.attachments")) ?
                         new LSOutputTemplate(template) :
                         new LSOutputTemplate(template, attachments);
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, cnt++), lsOutputTemplate);
+                this.save(sink, this.createEntryName(DATA_OUTPUT_TEMPLATES, cnt++), lsOutputTemplate);
             }
             cnt = 0;
             // save diagram change sets
             for (String version : diagram.getChangesTracker().getVersions()) {
                 DiagramChangeSet set = diagram.getChangesTracker().getChangeSet(version);
                 if (!set.getChanges().isEmpty())
-                    this.save(zipOutput, this.createEntryName(DATA_CHANGES, cnt++), new LSDiagramChangeSet(set));
+                    this.save(sink, this.createEntryName(DATA_CHANGES, cnt++), new LSDiagramChangeSet(set));
             }
             cnt = 0;
             // save trains cycles
             for (TrainsCycle cycle : diagram.getCycles()) {
-                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, cnt++), new LSTrainsCycle(cycle));
+                this.save(sink, this.createEntryName(DATA_TRAINS_CYCLES, cnt++), new LSTrainsCycle(cycle));
             }
             cnt = 0;
             // save outputs
             for (Output output : diagram.getOutputs()) {
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUTS, cnt++), new LSOutput(output));
+                this.save(sink, this.createEntryName(DATA_OUTPUTS, cnt++), new LSOutput(output));
             }
 
             // save images
             cnt = 0;
             FileLoadSaveImages saveImages = new FileLoadSaveImages(DATA_IMAGES);
             for (TimetableImage image : diagram.getImages()) {
-                this.save(zipOutput, createEntryName(DATA_IMAGES, cnt++), new LSImage(image));
-                saveImages.saveTimetableImage(image, zipOutput);
+                this.save(sink, createEntryName(DATA_IMAGES, cnt++), new LSImage(image));
+                saveImages.saveTimetableImage(image, sink);
             }
             // save attachments
-            attachments.save(zipOutput);
+            attachments.save(sink);
 
             // save freight net
-            this.save(zipOutput, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
+            this.save(sink, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
 
             // update file version
             diagram.getRuntimeInfo().setAttribute(RuntimeInfo.ATTR_FILE_VERSION, this.getSaveVersion());
+            sink.updateInfo(diagram);
         } catch (IOException ex) {
             throw new LSException(ex);
         }

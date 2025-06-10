@@ -5,15 +5,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import com.google.common.io.ByteStreams;
 
 import net.parostroj.timetable.model.Attachment;
 import net.parostroj.timetable.model.Attachment.AttachmentType;
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSSink;
+import net.parostroj.timetable.model.ls.LSSource;
 import net.parostroj.timetable.utils.Pair;
 
 public class FileLoadSaveAttachments {
@@ -42,24 +42,22 @@ public class FileLoadSaveAttachments {
         templateMap.put(attachment.getRef(), new Pair<>(attachment, template));
     }
 
-    public void save(ZipOutputStream zipOutput) throws IOException {
+    public void save(LSSink sink) throws IOException, LSException {
         for (Map.Entry<String, Attachment> entry : attachmentMap.entrySet()) {
             String reference = entry.getKey();
             Attachment attachment = entry.getValue();
-            ZipEntry zipEntry = new ZipEntry(location + reference);
+            String itemName = location + reference;
             byte[] bytes = this.getBytes(attachment);
-            zipEntry.setSize(bytes.length);
-            zipOutput.putNextEntry(zipEntry);
-            zipOutput.write(bytes);
+            sink.nextItem(itemName).write(bytes);
         }
     }
 
-    public void load(ZipInputStream zipInput, ZipEntry entry) throws IOException {
-        String ref = entry.getName().substring(location.length());
+    public void load(LSSource.Item item) throws IOException {
+        String ref = item.name().substring(location.length());
         Pair<LSAttachment, OutputTemplate> pair = templateMap.get(ref);
         // ignore if template does not exist
         if (pair != null) {
-            byte[] bytes = ByteStreams.toByteArray(zipInput);
+            byte[] bytes = ByteStreams.toByteArray(item.stream());
             Attachment attachment = getAttachment(pair, bytes);
             pair.second.getAttachments().add(attachment);
         }

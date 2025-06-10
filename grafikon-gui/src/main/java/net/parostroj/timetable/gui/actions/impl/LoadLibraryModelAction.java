@@ -41,8 +41,7 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                LSSource source = LSSource.create(selectedFile);
-                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(source);
+                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(selectedFile);
                 try (ZipInputStream stream = new ZipInputStream(new FileInputStream(selectedFile))) {
                     LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                             ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};

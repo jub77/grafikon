@@ -6,9 +6,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.parostroj.timetable.model.Permissions;
 import net.parostroj.timetable.model.TrainDiagramType;
@@ -61,20 +58,12 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
 
     @Override
     public void save(Library library, LSSink sink) throws LSException {
-        switch (sink.getSink()) {
-            case ZipOutputStream zos -> save(library, zos);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        }
-    }
-
-    private void save(Library library, ZipOutputStream zipOutput) throws LSException {
-        try {
+        try (sink) {
             // save metadata
-            zipOutput.putNextEntry(new ZipEntry(METADATA));
-            this.createMetadata(METADATA_KEY_LIBRARY_VERSION).store(zipOutput, null);
+            this.createMetadata(METADATA_KEY_LIBRARY_VERSION).store(sink.nextItem(METADATA), null);
             for (LibraryItemType itemType : LibraryItemType.values()) {
                 for (LibraryItem item : library.getItems().get(itemType)) {
-                    this.save(zipOutput, String.format("%s/%s.%s",
+                    this.save(sink, String.format("%s/%s.%s",
                             LSLibraryTypeMapping.typeToDirectory(item.getType()),
                             item.getObject().getId(),
                             "xml"), new LSLibraryItem(item));
@@ -85,34 +74,26 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
         }
     }
 
-    private void save(ZipOutputStream zipOutput, String zipEntryName, Object saved) throws LSException, IOException {
-        zipOutput.putNextEntry(new ZipEntry(zipEntryName));
-        lss.save(zipOutput, saved);
+    private void save(LSSink sink, String itemName, Object saved) throws LSException, IOException {
+        lss.save(sink.nextItem(itemName), saved);
     }
 
     @Override
     public Library load(LSSource source, LSFeature... features) throws LSException {
-        return switch (source.getSource()) {
-            case ZipInputStream zis -> load(zis, features);
-            case null, default -> throw new IllegalArgumentException("Unsupported");
-        };
-    }
-
-    private Library load(ZipInputStream is, LSFeature... features) throws LSException {
         try {
-            ZipEntry entry;
+            LSSource.Item item;
             ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
             LibraryBuilder libraryBuilder = new LibraryBuilder(
                     LibraryBuilder.newConfig().setPermissions(getPermissions(features)));
-            while ((entry = is.getNextEntry()) != null) {
-                if (entry.getName().equals(METADATA)) {
+            while ((item = source.nextItem()) != null) {
+                if (item.name().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
                     Properties props = new Properties();
-                    props.load(is);
+                    props.load(item.stream());
                     version = checkVersion(METADATA_KEY_LIBRARY_VERSION, props);
                     continue;
                 }
-                LSLibraryItem lsItem = lss.load(is, LSLibraryItem.class);
+                LSLibraryItem lsItem = lss.load(item.stream(), LSLibraryItem.class);
                 lsItem.createLibraryItem(libraryBuilder);
             }
             log.debug("Loaded version: {}", version != null ? version : "<missing>");

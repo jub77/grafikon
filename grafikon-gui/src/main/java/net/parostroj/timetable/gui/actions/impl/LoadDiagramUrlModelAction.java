@@ -41,7 +41,7 @@ public class LoadDiagramUrlModelAction extends EventDispatchAfterModelAction {
         try {
             try (ZipInputStream is = new ZipInputStream(URI.create(url).toURL().openStream())){
                 LSSource source = LSSource.create(is);
-                LSFile ls = LSFileFactory.getInstance().createForLoad(source);
+                LSFile ls = LSFileFactory.getInstance().createForLoad(is);
                 LSFeature[] features = diagramType == TrainDiagramType.NORMAL
                         ? new LSFeature[0] : new LSFeature[]{LSFeature.RAW_DIAGRAM};
                 context.setAttribute("diagram", ls.load(source, features));
