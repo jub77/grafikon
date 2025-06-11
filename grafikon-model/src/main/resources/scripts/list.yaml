@@ -53,3 +53,8 @@ items:
       default: Fix invalid train tracks
       cs: Oprav špatné koleje u vlaků
       sk: Oprav nesprávne koľaje pri vlakoch
+  - id: clean_managed_freight
+    filename: clean_managed_freight.groovy
+    name:
+      default: Clean managed freight
+      cs: Vyčistit nákladní dopravu
