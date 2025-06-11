@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.ls;
 import net.parostroj.timetable.model.TrainDiagram;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.zip.ZipInputStream;
 
 public interface LSSource extends AutoCloseable {
@@ -34,5 +35,9 @@ public interface LSSource extends AutoCloseable {
         } catch (IOException e) {
             throw new LSException(e);
         }
+    }
+
+    static LSSource create(Path path) throws LSException {
+        return create(path.toFile());
     }
 }

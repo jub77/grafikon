@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.function.UnaryOperator;
 import java.util.zip.ZipInputStream;
 
@@ -27,6 +28,10 @@ class AbstractLSFactory<T extends LSVersions> {
 
     public T createForLoad(File file) throws LSException {
         return lsFileCache.createForLoad(file);
+    }
+
+    public T createForLoad(Path path) throws LSException {
+        return lsFileCache.createForLoad(path.toFile());
     }
 
     public T createForLoad(ModelVersion modelVersion) throws LSException {
