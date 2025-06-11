@@ -1,7 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4.filters;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.parostroj.timetable.model.FreightColor;
@@ -21,15 +21,15 @@ public class LoadFilter4d22 implements LoadFilter {
                 try {
                     Collection<Region> regions = node.getAttributeAsCollection(Node.ATTR_REGIONS, Region.class);
                     if (regions != null && !(regions instanceof Set)) {
-                        node.setAttribute(Node.ATTR_REGIONS, new HashSet<>(regions));
+                        node.setAttribute(Node.ATTR_REGIONS, new LinkedHashSet<>(regions));
                     }
                     Collection<Region> centerRegions = node.getAttributeAsCollection(Node.ATTR_CENTER_OF_REGIONS, Region.class);
                     if (centerRegions != null && !(centerRegions instanceof Set)) {
-                        node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, new HashSet<>(centerRegions));
+                        node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, new LinkedHashSet<>(centerRegions));
                     }
                     Collection<FreightColor> freightColors = node.getAttributeAsCollection(Node.ATTR_FREIGHT_COLORS, FreightColor.class);
                     if (freightColors != null && !(freightColors instanceof Set)) {
-                        node.setAttribute(Node.ATTR_FREIGHT_COLORS, new HashSet<>(freightColors));
+                        node.setAttribute(Node.ATTR_FREIGHT_COLORS, new LinkedHashSet<>(freightColors));
                     }
                 } finally {
                     node.getAttributes().setSkipListeners(false);

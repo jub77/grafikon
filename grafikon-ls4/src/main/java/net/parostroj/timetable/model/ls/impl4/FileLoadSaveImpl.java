@@ -25,6 +25,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
 
     private static final Logger log = LoggerFactory.getLogger(FileLoadSaveImpl.class);
 
+    private static final String INLINE_ATTACHMENTS = "inline.output.template.attachments";
+
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
@@ -72,6 +74,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 new LoadFilter4d24(),
                 new LoadFilter4d26(),
                 new LoadFilter4d27());
+        properties.put(INLINE_ATTACHMENTS, true);
     }
 
     private void save(LSSink sink, String itemName, Object saved) throws LSException, IOException {
@@ -205,7 +208,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             cnt = 0;
             // save output templates
             for (OutputTemplate template : diagram.getOutputTemplates()) {
-                LSOutputTemplate lsOutputTemplate = Boolean.TRUE.equals(properties.get("inline.output.template.attachments")) ?
+                LSOutputTemplate lsOutputTemplate = Boolean.TRUE.equals(properties.get(INLINE_ATTACHMENTS)) ?
                         new LSOutputTemplate(template) :
                         new LSOutputTemplate(template, attachments);
                 this.save(sink, this.createEntryName(DATA_OUTPUT_TEMPLATES, cnt++), lsOutputTemplate);

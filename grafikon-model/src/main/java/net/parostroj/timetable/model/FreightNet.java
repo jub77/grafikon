@@ -1,11 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
@@ -39,6 +34,7 @@ public class FreightNet implements Visitable, AttributesHolder, ObservableObject
     private final AttributesListener defaultAttributesListener;
     private final ListenerSupport listenerSupport;
 
+    private final Set<FNConnection> connections = new LinkedHashSet<>();
     private final ListMultimap<TimeInterval, FNConnection> fromMap = ArrayListMultimap.create();
     private final ListMultimap<TimeInterval, FNConnection> toMap = ArrayListMultimap.create();
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
@@ -86,7 +82,7 @@ public class FreightNet implements Visitable, AttributesHolder, ObservableObject
     }
 
     public Collection<FNConnection> getConnections() {
-        return Collections.unmodifiableCollection(fromMap.values());
+        return Collections.unmodifiableCollection(connections);
     }
 
     public FNConnection getConnection(TimeInterval from, TimeInterval to) {
@@ -104,6 +100,7 @@ public class FreightNet implements Visitable, AttributesHolder, ObservableObject
         this.toMap.put(conn.getTo(), conn);
         this.fromTrainMap.put(conn.getFrom().getTrain(), conn);
         this.toTrainMap.put(conn.getTo().getTrain(), conn);
+        this.connections.add(conn);
         this.fireEvent(new Event(this, Event.Type.ADDED, conn));
     }
 
@@ -113,6 +110,7 @@ public class FreightNet implements Visitable, AttributesHolder, ObservableObject
             this.toMap.remove(conn.getTo(), conn);
             this.fromTrainMap.remove(conn.getFrom().getTrain(), conn);
             this.toTrainMap.remove(conn.getTo().getTrain(), conn);
+            this.connections.remove(conn);
             this.fireEvent(new Event(this, Event.Type.REMOVED, conn));
         }
     }

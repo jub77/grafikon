@@ -18,7 +18,7 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
     }
 
     protected ItemSetImpl(ItemSetEventCallback<T> eventCallback) {
-        this.items = new HashSet<>();
+        this.items = new LinkedHashSet<>();
         this.eventCallback = eventCallback;
     }
 

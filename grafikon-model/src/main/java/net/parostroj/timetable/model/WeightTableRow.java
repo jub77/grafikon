@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.Event;
@@ -22,7 +19,7 @@ public class WeightTableRow {
     WeightTableRow(EngineClass engineClass, int speed) {
         this.engineClass = engineClass;
         this.speed = speed;
-        weights = new HashMap<>();
+        weights = new LinkedHashMap<>();
     }
 
     public Map<LineClass, Integer> getWeights() {

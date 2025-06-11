@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.validators;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 
@@ -100,7 +97,7 @@ public class NodeValidator implements TrainDiagramValidator {
         if (center.isPresent()) {
             Set<FreightColor> colors = node.getFreightColors();
             center.get().getAllNodes().stream().filter(n -> n != node && !n.getFreightColors().isEmpty()).forEach(n -> {
-                Set<FreightColor> nColors = new HashSet<>(n.getFreightColors());
+                Set<FreightColor> nColors = new LinkedHashSet<>(n.getFreightColors());
                 if (nColors.removeAll(colors)) {
                     n.setFreightColors(nColors);
                 }

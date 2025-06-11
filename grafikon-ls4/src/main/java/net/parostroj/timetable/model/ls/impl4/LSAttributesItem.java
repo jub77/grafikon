@@ -175,7 +175,7 @@ public class LSAttributesItem {
             case SET_KEY, LIST_KEY -> {
                 Collection<Object> result;
                 if (type.equals(SET_KEY)) {
-                    result = new HashSet<>();
+                    result = new LinkedHashSet<>();
                 } else {
                     result = new ArrayList<>();
                 }

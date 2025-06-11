@@ -1,9 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -24,7 +22,7 @@ public class LSTrainDiagram {
     private LSTrainsData trainsData;
     private LSAttributes attributes;
     private boolean changesTracking;
-    private Set<LSTrainsCycleType> cycleTypes;
+    private List<LSTrainsCycleType> cycleTypes;
     private List<LSGroup> groups;
     private List<LSCompany> companies;
 
@@ -85,14 +83,14 @@ public class LSTrainDiagram {
 
 
     @XmlElement(name = "cycle_type")
-    public Set<LSTrainsCycleType> getCycleTypes() {
+    public List<LSTrainsCycleType> getCycleTypes() {
         if (cycleTypes == null) {
-            cycleTypes = new HashSet<>();
+            cycleTypes = new LinkedList<>();
         }
         return cycleTypes;
     }
 
-    public void setCycleTypes(Set<LSTrainsCycleType> cycleTypes) {
+    public void setCycleTypes(List<LSTrainsCycleType> cycleTypes) {
         this.cycleTypes = cycleTypes;
     }
 

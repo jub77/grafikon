@@ -304,7 +304,7 @@ public class EditNodeDialog extends BaseEditDialog<NodePM> {
             dialog.setLocationRelativeTo(EditNodeDialog.this);
             List<FreightColor> result = dialog.showDialog(colors);
             if (result != null) {
-                colors = new HashSet<>(result);
+                colors = new LinkedHashSet<>(result);
             }
             dialog.dispose();
         });
