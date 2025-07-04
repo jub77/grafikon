@@ -14,9 +14,9 @@ items:
   - id: copy_output_templates_to_outputs_select
     filename: copy_output_templates_to_outputs_select.groovy
     name:
-      default: Copy output templates to outputs (selection)
-      cs: Zkopíruj šablony výstupů do výstupů (výběr)
-      sk: Skopíruj šablóny výstupov do výstupov (výber)
+      default: Create default outputs (selection)
+      cs: Vytvoření výchozích výstupů (výběr)
+      sk: Vytvorenie predvolených výstupov (výber)
   - id: check_train_tracks
     filename: check_train_tracks.groovy
     name:

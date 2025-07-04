@@ -38,9 +38,9 @@ items:
   - id: copy_output_templates_to_outputs
     filename: copy_output_templates_to_outputs.groovy
     name:
-      default: Copy output templates to outputs
-      cs: Zkopíruj šablony výstupů do výstupů
-      sk: Skopíruj šablóny výstupov do výstupov
+      default: Create default outputs
+      cs: Vytvoření výchozích výstupů
+      sk: Vytvorenie predvolených výstupov
   - id: fix_connectors
     filename: fix_connectors.groovy
     name:
