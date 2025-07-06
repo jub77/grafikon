@@ -379,6 +379,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", this::ouputTemplatesMenuItemActionPerformed, true); // NOI18N
         this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", this::ouputMenuItemActionPerformed, true); // NOI18N
+        actionMenu.add(new javax.swing.JSeparator());
         this.addMenuItem(actionMenu, "menu.file.outputs.create.resources", new CreateOutputsResourcesAction(model), null); // NOI18N
 
         menuBar.add(actionMenu);
