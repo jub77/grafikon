@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.BooleanPM;
@@ -23,11 +24,6 @@ import org.beanfabrics.support.Validation;
 import net.parostroj.timetable.gui.components.AttributesNameTranslation;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Output;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
 
 public class OutputPM extends AbstractPM {
@@ -166,7 +162,12 @@ public class OutputPM extends AbstractPM {
         if (diagram != null) {
             newOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
             newOutput.setName(name.getCurrentEdit().get());
-            newOutput.setTemplate(templates.getValue());
+            OutputTemplate template = templates.getValue();
+            if (template.getAttributes().get(OutputTemplate.ATTR_SOURCE) == null) {
+                newOutput.setTemplate(templates.getValue());
+            } else {
+                newOutput.setTemplateRef(ObjectReference.create(template));
+            }
             newOutput.setLocale(locale.getValue());
             newOutput.setKey(key.getText());
         }
