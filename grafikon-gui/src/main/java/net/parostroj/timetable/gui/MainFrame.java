@@ -333,7 +333,6 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
 
         this.addMenuItem(importMenu, "menu.file.exportimport", new ImportAction(model, false, true), null); // NOI18N
         this.addMenuItem(importMenu, "menu.file.exportimport.trains", new ImportAction(model, true, false), null); // NOI18N
-        this.addMenuItem(importMenu, "menu.file.outputs.create.resources", new CreateOutputsResourcesAction(model), null); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.library.export", new ExportAction(model, this), null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
@@ -380,6 +379,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", this::ouputTemplatesMenuItemActionPerformed, true); // NOI18N
         this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", this::ouputMenuItemActionPerformed, true); // NOI18N
+        this.addMenuItem(actionMenu, "menu.file.outputs.create.resources", new CreateOutputsResourcesAction(model), null); // NOI18N
 
         menuBar.add(actionMenu);
 
