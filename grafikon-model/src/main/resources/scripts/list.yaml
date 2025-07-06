@@ -58,3 +58,13 @@ items:
     name:
       default: Clean managed freight
       cs: Vyčistit nákladní dopravu
+  - id: copy_output_templates_to_included
+    filename: copy_output_templates_to_included.groovy
+    name:
+      default: Include embedded output templates (raw)
+      cs: Vlož vestavěné šablony výstupů (raw)
+  - id: copy_included_output_templates_to_outputs
+    filename: copy_included_output_templates_to_outputs.groovy
+    name:
+      default: Create outputs from included templates (raw)
+      cs: Vytvoření výstupů z vložených šablon (raw)
