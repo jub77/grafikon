@@ -44,6 +44,7 @@ public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings
         debugLogging.setBoolean(settings.isDebugLogging());
         diagramType.setValue(settings.getDiagramType());
         webTemplates.setBoolean(settings.isWebTemplates());
+        diagramType.setEditable(settings.getTrainDiagram() == null);
     }
 
     private void writeResult() {

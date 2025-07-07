@@ -90,4 +90,8 @@ public class ProgramSettings {
     public void setWebTemplates(boolean webTemplates) {
         this.webTemplates = webTemplates;
     }
+
+    public TrainDiagram getTrainDiagram() {
+        return diagram.get();
+    }
 }
