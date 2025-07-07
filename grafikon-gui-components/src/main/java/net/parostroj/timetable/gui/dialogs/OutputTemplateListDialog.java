@@ -108,14 +108,13 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private void updateButtons() {
-        boolean allow = diagram != null && diagram.getRuntimeInfo().getPermissions().isOutputTemplateAllowed();
         String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
         int selectedCount = templateList.getSelectedIndices().length;
-        deleteButton.setEnabled(selectedCount > 0 && allow);
-        editButton.setEnabled(selectedCount == 1 && allow);
-        copyButton.setEnabled(newName != null && selectedCount == 1 && allow);
+        deleteButton.setEnabled(selectedCount > 0);
+        editButton.setEnabled(selectedCount == 1);
+        copyButton.setEnabled(newName != null && selectedCount == 1);
         // create button
-        newButton.setEnabled(newName != null && allow);
+        newButton.setEnabled(newName != null);
 
         // description
         if (selectedCount == 1) {
