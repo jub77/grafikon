@@ -15,7 +15,6 @@ import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
@@ -35,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.event.ItemEvent;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -116,9 +116,18 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             d += 0.5;
         }
 
+        strategyTypeModelRaw = new WrapperListModel<>(true);
+        strategyTypeModelNormal = new WrapperListModel<>(true);
+
         for (ConnectionStrategyType sType : ConnectionStrategyType.values()) {
-            strategyTypeModel.addWrapper(Wrapper.getWrapper(sType, item -> ResourceLoader.getString("strategy." + item.getKey())));
+            Wrapper<ConnectionStrategyType> wrapper = Wrapper.getWrapper(sType, item -> ResourceLoader.getString("strategy." + item.getKey()));
+            strategyTypeModelRaw.addWrapper(wrapper);
+            if (sType != ConnectionStrategyType.CUSTOM_CONNECTION_FILTER) {
+                strategyTypeModelNormal.addWrapper(wrapper);
+            }
         }
+
+        strategyTypeModel = strategyTypeModelRaw;
 
         pack();
     }
@@ -132,6 +141,18 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
 
     private void updateValues() {
         if (diagram != null) {
+            TrainDiagramType diagramType = diagram.getRuntimeInfo().getDiagramType();
+            Set<TextTemplate.Language> allowedLang = diagram.getRuntimeInfo().getPermissions().getAllowedTemplate();
+            cNameTemplateEditBox.setLanguages(allowedLang);
+            nameTemplateEditBox.setLanguages(allowedLang);
+            tabbedPane.setEnabledAt(1, diagramType == TrainDiagramType.RAW);
+            if (diagramType == TrainDiagramType.RAW) {
+                strategyTypeModel = strategyTypeModelRaw;
+            } else {
+                strategyTypeModel = strategyTypeModelNormal;
+            }
+            strategyType.setModel(strategyTypeModel);
+
             // set original values ...
             scaleComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_SCALE, Object.class));
             ratioComboBox.setSelectedItem(format.format(diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class)));
@@ -234,7 +255,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     }
 
     private void initComponents() {
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new javax.swing.JTabbedPane();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
         javax.swing.JPanel dataPanel = new javax.swing.JPanel();
@@ -591,9 +612,7 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
         freightPanel.add(freightStrategyPanel, BorderLayout.NORTH);
 
         freightStrategyPanel.add(new JLabel(ResourceLoader.getString("modelinfo.freight.connection.strategy") + ": "));
-        strategyTypeModel = new WrapperListModel<>(true);
-        javax.swing.JComboBox<Wrapper<ConnectionStrategyType>> strategyType = new javax.swing.JComboBox<>();
-        strategyType.setModel(strategyTypeModel);
+        strategyType = new javax.swing.JComboBox<>();
         freightStrategyPanel.add(strategyType);
 
         strategyType.addItemListener(e -> {
@@ -806,10 +825,10 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
             try {
                 FreightConnectionStrategy.create(strategyTypeModel.getSelectedObject(), diagram, script);
                 diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, script);
-            } catch (GrafikonException e) {
+            } catch (Exception e) {
                 // log and fallback
                 log.warn("Error using script for strategy: {}", e.getMessage());
-                diagram.getFreightNet().setConnectionStrategyType(ConnectionStrategyType.BASE);
+                diagram.getFreightNet().setConnectionStrategyType(ConnectionStrategyType.REGION);
                 diagram.getFreightNet().setRemoveAttribute(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER, null);
             }
         }
@@ -868,7 +887,11 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
     private javax.swing.JComboBox<Object> speedUnitComboBox;
     private javax.swing.JTextField changeDirectionTextField;
     private javax.swing.JCheckBox changeDirectionCheckBox;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JComboBox<Wrapper<ConnectionStrategyType>> strategyType;
 
+    private final WrapperListModel<ConnectionStrategyType> strategyTypeModelRaw;
+    private final WrapperListModel<ConnectionStrategyType> strategyTypeModelNormal;
     private WrapperListModel<ConnectionStrategyType> strategyTypeModel;
     private net.parostroj.timetable.gui.components.ScriptEditBox filterScriptEditBox;
 }

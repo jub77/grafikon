@@ -96,6 +96,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     public void showDialog(Train train) {
         this.train = train;
         if (train != null)  {
+            routeEditBox.setLanguages(train.getDiagram().getRuntimeInfo().getPermissions().getAllowedTemplate());
             // model for train types
             typeComboBox.setModel(new DefaultComboBoxModel<>(train.getDiagram().getTrainTypes().toArray(new TrainType[0])));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);

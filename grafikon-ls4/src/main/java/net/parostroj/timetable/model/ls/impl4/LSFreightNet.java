@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.xml.bind.annotation.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.freight.ConnectionStrategyType;
 
 /**
  * Class for storing net.
@@ -29,7 +30,6 @@ public class LSFreightNet {
         for (FNConnection connection : net.getConnections()) {
             this.connections.add(new LSFreightConnection(connection));
         }
-
     }
 
     public String getId() {
@@ -64,5 +64,9 @@ public class LSFreightNet {
     public void createFreightNet(LSContext context) {
         FreightNet net = context.getDiagram().getFreightNet();
         net.getAttributes().add(this.getAttributes().createAttributes(context));
+        if (net.getConnectionStrategyType() == ConnectionStrategyType.CUSTOM_CONNECTION_FILTER
+                && net.getAttributes().get(FreightNet.ATTR_CUSTOM_CONNECTION_FILTER) == null) {
+            net.setConnectionStrategyType(ConnectionStrategyType.REGION);
+        }
     }
 }

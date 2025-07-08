@@ -34,8 +34,8 @@ public class TextItemsDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         // create model and set it
-        itemsModel = new WrapperListModel<TextItem>(false);
-        itemsModel.setObjectListener(new WrapperListModel.ObjectListener<TextItem>() {
+        itemsModel = new WrapperListModel<>(false);
+        itemsModel.setObjectListener(new WrapperListModel.ObjectListener<>() {
             @Override
             public void added(TextItem object, int index) {
                 diagram.getTextItems().add(index, object);
@@ -84,10 +84,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void initComponents() {
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane listScrollPane = new javax.swing.JScrollPane();
-        itemList = new javax.swing.JList<Wrapper<TextItem>>();
+        itemList = new javax.swing.JList<>();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel handlePanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
+        nameTextField.setColumns(6);
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
@@ -106,12 +107,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmm"));
-        itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                itemListValueChanged(evt);
-            }
-        });
+        itemList.addListSelectionListener(this::itemListValueChanged);
         listScrollPane.setViewportView(itemList);
 
         textPanel.add(listScrollPane, BorderLayout.CENTER);
@@ -131,44 +127,19 @@ public class TextItemsDialog extends javax.swing.JDialog {
         });
         handlePanel.add(nameTextField);
 
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createButtonActionPerformed(evt);
-            }
-        });
+        createButton.addActionListener(this::createButtonActionPerformed);
         handlePanel.add(createButton);
 
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
         handlePanel.add(deleteButton);
 
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        editButton.addActionListener(this::editButtonActionPerformed);
         handlePanel.add(editButton);
 
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
+        upButton.addActionListener(this::upButtonActionPerformed);
         handlePanel.add(upButton);
 
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
+        downButton.addActionListener(this::downButtonActionPerformed);
         handlePanel.add(downButton);
 
         controlPanel.add(handlePanel, java.awt.BorderLayout.NORTH);
@@ -229,7 +200,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TextItemDialog dialog = new TextItemDialog(this, true);
         dialog.setLocationRelativeTo(this);
-        dialog.showDialog(new TextItemModel(selectedItem.getTemplate()));
+        dialog.showDialog(diagram, new TextItemModel(selectedItem.getTemplate()));
         TextItemModel newItemModel = dialog.getResultModel();
         if (newItemModel != null) {
             selectedItem.setTemplate(newItemModel.template);

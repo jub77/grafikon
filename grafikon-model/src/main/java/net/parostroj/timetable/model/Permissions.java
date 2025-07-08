@@ -5,12 +5,12 @@ import java.util.Set;
 
 public interface Permissions {
 
-    boolean isAllowed(TextTemplate.Language language);
-    boolean isAllowed(Script.Language language);
     boolean isOutputTemplateAllowed();
+    Set<TextTemplate.Language> getAllowedTemplate();
+    Set<Script.Language> getAllowedScript();
 
     default TextTemplate createTextTemplate(String template, TextTemplate.Language language) {
-        if (isAllowed(language)) {
+        if (getAllowedTemplate().contains(language)) {
             return TextTemplate.create(template, language);
         } else {
             return null;
@@ -18,11 +18,19 @@ public interface Permissions {
     }
 
     default Script createScript(String sourceCode, Script.Language language) {
-        if (isAllowed(language)) {
+        if (getAllowedScript().contains(language)) {
             return Script.create(sourceCode, language);
         } else {
             return null;
         }
+    }
+
+    default boolean isAllowed(TextTemplate.Language lng) {
+        return getAllowedTemplate().contains(lng);
+    }
+
+    default boolean isAllowed(Script.Language lng) {
+        return getAllowedScript().contains(lng);
     }
 
     static Permissions forType(TrainDiagramType type) {
@@ -54,17 +62,17 @@ class PermissionsImpl implements Permissions {
     }
 
     @Override
-    public boolean isAllowed(TextTemplate.Language language) {
-        return templateAllowed.contains(language);
-    }
-
-    @Override
-    public boolean isAllowed(Script.Language language) {
-        return scriptAllowed.contains(language);
-    }
-
-    @Override
     public boolean isOutputTemplateAllowed() {
         return outputTemplateAllowed;
+    }
+
+    @Override
+    public Set<Script.Language> getAllowedScript() {
+        return scriptAllowed;
+    }
+
+    @Override
+    public Set<TextTemplate.Language> getAllowedTemplate() {
+        return templateAllowed;
     }
 }

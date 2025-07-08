@@ -5,8 +5,7 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Window;
+import java.awt.*;
 import java.util.Arrays;
 
 import javax.swing.JPanel;
@@ -17,6 +16,7 @@ import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TextTemplate.Language;
 
+import net.parostroj.timetable.model.TrainDiagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +48,10 @@ public class TextItemDialog extends javax.swing.JDialog {
         init();
     }
 
-    public void showDialog(TextItemModel template) {
+    public void showDialog(TrainDiagram diagram, TextItemModel template) {
         this.itemModel = template;
         this.resultItemModel = null;
-        this.updateValues();
+        this.updateValues(diagram);
         this.setVisible(true);
     }
 
@@ -63,7 +63,8 @@ public class TextItemDialog extends javax.swing.JDialog {
         return resultItemModel;
     }
 
-    private void updateValues() {
+    private void updateValues(TrainDiagram diagram) {
+        textTemplateEditBox.setTemplateLanguages(diagram.getRuntimeInfo().getPermissions().getAllowedTemplate());
         textTemplateEditBox.setEnabled(true);
         textTemplateEditBox.setTemplate(this.itemModel.template);
     }
@@ -73,7 +74,7 @@ public class TextItemDialog extends javax.swing.JDialog {
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
 
-        textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", Font.PLAIN, 12)); // NOI18N
         textTemplateEditBox.setColumns(80);
         textTemplateEditBox.setRows(25);
         getContentPane().add(textTemplateEditBox, java.awt.BorderLayout.CENTER);
@@ -81,27 +82,27 @@ public class TextItemDialog extends javax.swing.JDialog {
         controlPanel.setLayout(new java.awt.BorderLayout());
 
         controlPanel.add(verifyPanel, BorderLayout.WEST);
-        verifyButton = new javax.swing.JButton();
+        javax.swing.JButton verifyButton = new javax.swing.JButton();
         verifyPanel.add(verifyButton);
 
         verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
 
-        verifyButton.addActionListener(evt -> verifyButtonActionPerformed(evt));
+        verifyButton.addActionListener(this::verifyButtonActionPerformed);
 
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
 
         JPanel buttonPanel = new JPanel();
         controlPanel.add(buttonPanel, BorderLayout.EAST);
-        okButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
         buttonPanel.add(okButton);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         buttonPanel.add(cancelButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
-        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
+        okButton.addActionListener(this::okButtonActionPerformed);
 
         pack();
     }
@@ -135,8 +136,5 @@ public class TextItemDialog extends javax.swing.JDialog {
         return textTemplateEditBox.getTemplate();
     }
 
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton okButton;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
-    private javax.swing.JButton verifyButton;
 }

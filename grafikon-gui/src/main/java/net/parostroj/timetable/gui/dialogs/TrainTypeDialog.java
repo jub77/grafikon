@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.Arrays;
 
 import java.util.Objects;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JColorChooser;
@@ -271,6 +272,9 @@ public class TrainTypeDialog extends javax.swing.JDialog {
         }
 
         if (selected != null) {
+            Set<TextTemplate.Language> allowedlang = diagram.getRuntimeInfo().getPermissions().getAllowedTemplate();
+            cNameTemplateEditBox.setLanguages(allowedlang);
+            nameTemplateEditBox.setLanguages(allowedlang);
             abbrTextField.getPresentationModel().init(selected.getAbbr(), diagram.getLocales());
             descTextField.getPresentationModel().init(selected.getDesc(), diagram.getLocales());
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));

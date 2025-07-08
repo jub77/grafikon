@@ -3,7 +3,7 @@ import net.parostroj.timetable.model.imports.OutputTemplateImport
 
 def outputs = []
 def storage = diagram.runtimeInfo.templateStorage
-if (storage != null) {
+if (storage != null && diagram.runtimeInfo.permissions.outputTemplateAllowed) {
     def outputTemplates = storage.templates
     def otImport = new OutputTemplateImport(diagram, ImportMatch.ID, true)
     for (template in outputTemplates) {
