@@ -64,7 +64,7 @@ subprojects { prj ->
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 			dependency 'org.junit.jupiter:junit-jupiter:5.13.3'
 			dependency 'org.hamcrest:hamcrest:3.0'
-			dependency 'io.smallrye.reactive:mutiny:2.9.2'
+			dependency 'io.smallrye.reactive:mutiny:2.9.3'
 			dependency 'com.fasterxml.jackson:jackson-bom:2.19.1'
 			dependency 'org.apache.commons:commons-configuration2:2.12.0', {
 				exclude 'commons-logging:commons-logging'
