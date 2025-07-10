@@ -5,7 +5,6 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.impl.CopyTemplatesToOutputsModelAction;
-import net.parostroj.timetable.gui.actions.impl.OutputTemplateSelectionModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 
 import javax.swing.*;
@@ -26,9 +25,6 @@ public class CreateOutputsResourcesAction extends AbstractAction {
         ActionHandler handler = ActionHandler.getInstance();
         ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(e.getSource()));
 
-        context.setAttribute("diagram", model.getDiagram());
-
-        handler.execute(new OutputTemplateSelectionModelAction(context));
         handler.execute(new CopyTemplatesToOutputsModelAction(context, model));
     }
 }
