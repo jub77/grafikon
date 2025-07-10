@@ -44,7 +44,7 @@ public class DataOutputTemplateStorage implements OutputTemplateStorage {
         Map<String, OutputTemplate> templates;
         try {
             DataItemList list = loader.loadList();
-            templates = list.toItemCollection().stream()
+            templates = list.toItemStream()
                     .map(this::getItems)
                     .flatMap(Collection::stream)
                     .map(LibraryItem::getObject)
