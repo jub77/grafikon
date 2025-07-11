@@ -755,6 +755,13 @@ public class SettingsDialog extends javax.swing.JDialog implements GuiContextCom
                 diagram.getChangesTracker().setLastAsCurrent();
             }
             diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
+            if (!diagram.getChangesTracker().isTrackingEnabled()) {
+                // clean up changes
+                while (diagram.getChangesTracker().getCurrentChangeSet() != null) {
+                    diagram.getChangesTracker().removeCurrentChangeSet(true);
+                    diagram.getChangesTracker().setLastAsCurrent();
+                }
+            }
         }
 
         // change direction
