@@ -73,7 +73,9 @@ public class ExportAction extends AbstractAction {
     }
 
     private Library createLibrary(ExportImportSelection selection) {
-        LibraryBuilder libBuilder = new LibraryBuilder(new LibraryBuilder.Config().setAddMissing(true));
+        LibraryBuilder libBuilder = new LibraryBuilder(new LibraryBuilder.Config()
+                .setPermissions(model.getDiagram().getRuntimeInfo().getPermissions())
+                .setAddMissing(true));
         selection.getObjectMap().values().stream().flatMap(Collection::stream).forEach(libBuilder::importObject);
         return libBuilder.build();
     }
