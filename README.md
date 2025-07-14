@@ -16,8 +16,9 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
     * or double-click on `grafikon.jar`
     * or use `grafikon.cmd` (`grafikon.sh`)
 
-Outputs can be added from menu (bundled with program as default): *File > Import > Import outputs*.
-The outputs are then generated from *Outputs > Outputs...* by pressing *Generate all* button.
+Outputs can be added from menu (output templates bundled with program as default):
+*Outputs > Create default outputs*. The outputs can be then generated from *Outputs > Outputs...*
+by pressing *Generate all* button.
 
 In order to use Groovy string templates as well as output templates directly in the gtm,
 the type of the diagram in *Settings > Settings...* has to be set to *raw*. All Groovy
@@ -76,3 +77,10 @@ Variable can have fields (`${type.abbr}`) or index (`${stations[1]}` - first, la
 
 Distances between station are measured from and to center of stations. The length of the station is a separate value
 and is not included in the measurement.
+
+## Diagram Type
+
+Can be configured in *Settings > Settings...*.  
+
+- **normal** - default type with simple templating only and no output templates bundled in gtm
+- **raw** - allow groovy templating and scripting, output templates can be bundled in gtm
