@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>4afb6c8c-7e4f-4abd-bfaf-fd1ee3d21975</id>
+        <template>
+            <template>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;%
+    foldedHeader = settings['folded.header']
+
+    // definition of constants
+    HEIGHT = 92
+    FOLDED_HEIGHT = 30
+    ROW_COUNT = foldedHeader ? 1 : 2
+    COLUMN_COUNT = 13
+
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        return result
+    }
+
+    def padding() {'margin=".4mm .5mm .1mm .5mm"'}
+    def paddingTime() {'margin-right=".5mm"'}
+    def border() {"border=${borderValue()}"}
+    def borderCirc() {'border="solid .3mm black"'}
+    def borderValue() {'"solid .3mm black"'}
+    def rarr() { return "&amp;#8594;" }
+
+    // counter of sequences
+    seqId = 1
+
+    def getSequence(cycle) {
+        if (!cycle.next) {
+            return [new CycleWrapper(cycle)]
+        } else {
+            def sequence = []
+            def current = cycle
+            def cnt = 0
+            while (true) {
+                sequence &lt;&lt; new CycleWrapper(current, ++cnt, seqId)
+                current = current.next
+                if (current == cycle) break
+            }
+            for (w in sequence) {
+                w.cnt = cnt
+            }
+            seqId++
+            return sequence
+        }
+    }
+
+    def getFirstFreeSequence(sequences, freeColumns) {
+        if (sequences.empty) {
+            return null
+        } else {
+            def selected = [null]
+            for (sequence in sequences) {
+                if (sequence.size() &lt;= freeColumns || sequence.size() &gt; COLUMN_COUNT) {
+                    selected = sequence
+                    sequences.remove(selected)
+                    break
+                }
+            }
+            return selected
+        }
+    }
+
+    class CycleWrapper {
+        def cycle
+        def cnt
+        def seq
+        def id
+
+        CycleWrapper(cycle, seq, id) {
+            this.cycle = cycle
+            this.seq = seq
+            this.id = id
+        }
+
+        CycleWrapper(cycle) {
+            this.cycle = cycle
+        }
+    }
+
+    // prepare cycles - duplicate the ones needed in sequences
+    def sequences = []
+    for (cycle in cycles) {
+        sequences &lt;&lt; getSequence(cycle)
+    }
+    def wrappers = []
+    def currentColumn = 0
+    while (true) {
+        if (sequences.empty) break;
+        def freeColumns = COLUMN_COUNT - currentColumn
+        def sequence = getFirstFreeSequence(sequences, freeColumns)
+        for (w in sequence) {
+            ++currentColumn
+            wrappers &lt;&lt; w
+            if (currentColumn == COLUMN_COUNT) currentColumn = 0
+        }
+    }
+%&gt;
+
+&lt;root xmlns="http://www.w3.org/1999/XSL/Format"&gt;
+&lt;layout-master-set&gt;
+  &lt;simple-page-master master-name="simpleA4-portrait" page-height="21cm" page-width="29.7cm" margin="1cm 1cm 1cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body /&gt;
+  &lt;/simple-page-master&gt;
+&lt;/layout-master-set&gt;
+&lt;page-sequence master-reference="simpleA4-portrait" font-family="SansCondensed"&gt;
+  &lt;flow flow-name="xsl-region-body"&gt;
+  &lt;% printWrappers(wrappers) %&gt;
+  &lt;/flow&gt;
+&lt;/page-sequence&gt;
+&lt;/root&gt;
+&lt;%
+def printWrappers(wrappers) {
+  Iterator iterator = wrappers.iterator();
+  count = 0;
+  while(true) {
+%&gt;
+&lt;block font-size="3mm"&gt;
+&lt;table border-collapse="separate" border-separation=".2mm" table-layout="fixed" width="100%"&gt;
+&lt;% for (ind in 1..COLUMN_COUNT) { %&gt;
+    &lt;table-column column-width="${100/COLUMN_COUNT}%"/&gt;
+&lt;% } %&gt;
+    &lt;table-body&gt;
+        &lt;table-row&gt;&lt;%
+      countInRow = 0;
+      c = null;
+      while (true) {
+        if (iterator.hasNext()) {
+          c = iterator.next();
+        } else {
+          c = null;
+        }
+        if (c != null) {
+          %&gt;
+    &lt;table-cell ${borderCirc()}&gt;
+      &lt;% print_cycle(c) %&gt;
+    &lt;/table-cell&gt;&lt;%
+        } else {
+          %&gt;
+    &lt;table-cell&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;%
+        }
+        countInRow++;
+        if (countInRow == COLUMN_COUNT)
+          break;
+      }
+    %&gt;
+    &lt;/table-row&gt;
+    &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;/block&gt;
+&lt;%
+    if (!iterator.hasNext())
+      break;
+    count++;
+    if (count % ROW_COUNT == 0) {
+      // page break if needed
+    }
+  }
+}
+
+def print_cycle(w) {
+    def c = w.cycle
+    def loc = getLocale(c)
+    def company = getCompany(c)
+%&gt;
+&lt;block keep-together.within-page="always"&gt;
+&lt;table border-collapse="collapse" table-layout="fixed" width="100%"&gt;
+&lt;table-body&gt;
+&lt;% if (foldedHeader) { %&gt;
+&lt;table-row&gt;
+    &lt;table-cell number-columns-spanned="2" border-bottom="double .6mm black"&gt;
+        &lt;block-container reference-orientation="180" height="${FOLDED_HEIGHT}mm"&gt;
+            &lt;block font-size="3mm" font-weight="bold" margin-left=".7mm" margin-top=".7mm"&gt;${c.name}&lt;/block&gt;
+            &lt;block font-size="2mm" font-weight="bold" margin-left=".7mm"&gt;${c.description ?: ""}&lt;/block&gt;
+            &lt;% if (company) { %&gt;
+            &lt;block font-size="2mm" margin-left=".7mm" margin-top=".3mm"&gt;${company}&lt;/block&gt;
+            &lt;% } %&gt;
+        &lt;/block-container&gt;
+    &lt;/table-cell&gt;
+&lt;/table-row&gt;
+&lt;% } %&gt;
+&lt;table-row height="${HEIGHT-4}mm"&gt;&lt;table-cell number-columns-spanned="2"&gt;&lt;block&gt;
+&lt;table border-collapse="collapse" table-layout="fixed" width="100%"&gt;
+    &lt;table-column column-width="44%" /&gt;
+    &lt;table-column column-width="28%" /&gt;
+    &lt;table-column column-width="28%" /&gt;
+    &lt;table-body&gt;
+        &lt;table-row&gt;
+          &lt;table-cell font-size="3mm" font-weight="bold" number-columns-spanned="3"&gt;&lt;block margin-left=".7mm" margin-top=".7mm"&gt;${c.name}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;table-row&gt;
+          &lt;table-cell font-size="2mm" font-weight="bold" number-columns-spanned="3"&gt;&lt;block margin-left=".7mm"&gt;${c.description ?: ""}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;% if (company) { %&gt;
+        &lt;table-row font-size="2mm"&gt;
+          &lt;table-cell number-columns-spanned="3"&gt;&lt;block margin-left=".7mm" margin-top=".3mm"&gt;${company}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;% } %&gt;
+        &lt;% for (row in c.rows) { %&gt;
+        &lt;table-row${row.helper ? ' font-style="italic"' : ""} font-size="2mm" border-top="${row.wait &gt; 25 * 60 ? 'dashed' : 'solid'} .3mm black"&gt;
+          &lt;table-cell number-rows-spanned="2"&gt;&lt;block ${padding()}&gt;${row.trainName.translate(loc)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${row.fromAbbr}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${row.toAbbr}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;table-row font-size="2mm" text-align="center"&gt;
+          &lt;table-cell&gt;&lt;block ${paddingTime()}&gt;${convertTime(row.fromTime)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block ${paddingTime()}&gt;${convertTime(row.toTime)}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;% } %&gt;
+        &lt;/table-body&gt;&lt;/table&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;/table-row&gt;
+        &lt;% if (c.next) { %&gt;
+        &lt;table-row height="4mm" border-top=${borderValue()} font-size="2mm" display-align="center"&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${rarr()} ${c.next.name}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell text-align="right"&gt;&lt;block ${padding()}&gt;${w.id}[${w.seq}/${w.cnt}]&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;% } else { %&gt;
+        &lt;table-row height="4.3mm"&gt;&lt;table-cell number-columns-spanned="2"&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;/table-row&gt;
+        &lt;% } %&gt;
+    &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;/block&gt;&lt;%
+}
+
+def getCompany(cycle) {
+    def company = cycle?.company?.abbr
+}
+
+def getLocale(cycle) {
+    def l = cycle?.company?.locale
+    return l ?: locale
+}
+%&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Cards for circulations of engines (FRED)</value>
+                <value type="string.cs">Lístky pro oběhy hnacích vozidel (FRED)</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">engines_fred</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">engine_cycles</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">pdf.groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">PDF: Cards for circulations of engines</value>
+                <value type="string.cs">PDF: Lístky pro oběhy hnacích vozidel</value>
+            </attribute>
+            <attribute>
+                <key>folded.header</key>
+                <type>localized.string</type>
+                <value type="string">Folded header</value>
+                <value type="string.cs">Přeložené záhlaví</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>folded.header</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

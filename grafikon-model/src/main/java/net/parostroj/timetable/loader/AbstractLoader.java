@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 
-abstract class AbstractLoader<T> implements DataItemLoader<T> {
+abstract class AbstractLoader<T, I extends AutoCloseable> implements DataItemLoader<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractLoader.class);
 
     private DataItemList itemList;
-    private final LoadDelegate<T> loadDelegate;
+    private final LoadDelegate<T, I> loadDelegate;
 
-    AbstractLoader(LoadDelegate<T> loadDelegate) {
+    AbstractLoader(LoadDelegate<T, I> loadDelegate) {
         this.loadDelegate = loadDelegate;
     }
 
@@ -45,13 +45,13 @@ abstract class AbstractLoader<T> implements DataItemLoader<T> {
         }
         // create file with item location
         T instance;
-        try (InputStream is = getItemStream(item)) {
+        try (I is = getItemSource(item)) {
             instance = loadDelegate.load(is, item);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new LSException("Error loading item: " + e.getMessage(), e);
         }
         return instance;
     }
 
-    protected abstract InputStream getItemStream(DataItem item) throws IOException;
+    protected abstract I getItemSource(DataItem item) throws IOException;
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>1fdae40b-1aad-48d6-a7d5-acf96c9d0674</id>
+    <color>0xFF0000</color>
+    <category_id>6aa57e7c-4e8d-47a9-9da2-c4e6b08a7000</category_id>
+    <platform>true</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">Ex</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">Fast train</value>
+            <value type="string.cs">Expresní vlak</value>
+            <value type="string.sk">Expresný vlak</value>
+        </attribute>
+    </attributes>
+</train_type>

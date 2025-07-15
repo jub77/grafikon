@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>bd2068a9-7f49-45ec-a863-6f5efdde24bf</id>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Train units</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">xml-train_units</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">train_unit_cycles</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">xml</value>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

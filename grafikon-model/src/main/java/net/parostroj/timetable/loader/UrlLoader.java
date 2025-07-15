@@ -10,12 +10,12 @@ import java.net.URL;
  *
  * @author jub
  */
-class UrlLoader<T> extends AbstractLoader<T> {
+class UrlLoader<T> extends AbstractLoader<T, InputStream> {
 
     private final URL baseUrl;
     private final String itemListFile;
 
-    public UrlLoader(URL baseUrl, String itemListFile, LoadDelegate<T> loadDelegate) {
+    public UrlLoader(URL baseUrl, String itemListFile, LoadDelegate<T, InputStream> loadDelegate) {
         super(loadDelegate);
         this.baseUrl = baseUrl;
         this.itemListFile = itemListFile;
@@ -31,7 +31,7 @@ class UrlLoader<T> extends AbstractLoader<T> {
     }
 
     @Override
-    protected InputStream getItemStream(DataItem item) throws IOException {
+    protected InputStream getItemSource(DataItem item) throws IOException {
         return URI.create(baseUrl.toString() + "/" + item.filename()).toURL().openStream();
     }
 

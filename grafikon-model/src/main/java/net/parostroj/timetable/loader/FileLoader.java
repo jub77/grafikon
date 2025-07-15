@@ -9,9 +9,9 @@ import java.io.InputStream;
  *
  * @author jub
  */
-class FileLoader<T> extends AbstractLoader<T> {
+class FileLoader<T> extends AbstractLoader<T, InputStream> {
 
-    public FileLoader(LoadDelegate<T> loadDelegate, String listFile, String itemLocation) {
+    public FileLoader(LoadDelegate<T, InputStream> loadDelegate, String listFile, String itemLocation) {
         super(loadDelegate);
         this.itemListFile = listFile;
         this.itemLocation = itemLocation;
@@ -31,7 +31,7 @@ class FileLoader<T> extends AbstractLoader<T> {
     }
 
     @Override
-    protected InputStream getItemStream(DataItem item) throws FileNotFoundException {
+    protected InputStream getItemSource(DataItem item) throws FileNotFoundException {
         return new FileInputStream(itemLocation + "/" + item.filename());
     }
 }

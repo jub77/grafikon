@@ -1,0 +1,1340 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>c913c2da-b238-4ec4-aa00-1cba944cfc1c</id>
+        <template>
+            <template>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;%
+  FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+  PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
+  
+  // adapt locale (if cycle contains definition of one)
+  def cycleLocale = trains?.cycle?.company?.locale
+  locale = cycleLocale ?: locale
+  
+  DAGGER = "&amp;#8224;"
+  DELTA = "&amp;#916;"
+  OMICRON = "&amp;#927;"
+  LOZ = "&amp;#9674;"
+  RARR = "&amp;#8594;"
+  SPACE = "&amp;#160;"
+  STAR = "&amp;#9733;"
+  TRAIN_RIGHT = "&amp;#10704;"
+  TRAIN_LEFT = "&amp;#10703;"
+
+  title_page = settings['title.page']
+  limited = settings['limit.to.circulation'] &amp;&amp; trains.cycle
+  highlight = settings['highlight.circulation'] &amp;&amp; trains.cycle
+  tiHolder = TrainsItemsHolder.create(trains, limited)
+  showTitleStart = settings['title.start']
+  useSetupTime = settings['setup.time']
+  useTechnologicalTime = settings['technological.time']
+  alwaysShowHours = settings['always.show.hours']
+  freightCapacity = settings['freight.capacity']
+  engineLeft = settings['engine.left']
+  freightEnd = settings['freight.end']
+%&gt;
+
+&lt;root xmlns="http://www.w3.org/1999/XSL/Format"&gt;
+&lt;layout-master-set&gt;
+  &lt;simple-page-master master-name="A5-Title" page-height="21cm" page-width="14.8cm" margin="1cm 1cm 1cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body /&gt;
+    &lt;region-after region-name="footer" precedence="true" extent="2.5cm"/&gt;
+  &lt;/simple-page-master&gt;
+  &lt;simple-page-master master-name="A5-Pages-Even" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body margin-top=".5cm" margin-bottom=".5cm"/&gt;
+    &lt;region-before region-name="header-even" precedence="true" extent=".5cm" /&gt;
+    &lt;region-after region-name="footer-even" precedence="true" extent=".5cm" /&gt;
+  &lt;/simple-page-master&gt;
+  &lt;simple-page-master master-name="A5-Pages-Odd" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body margin-top=".5cm" margin-bottom=".5cm"/&gt;
+    &lt;region-before region-name="header-odd" precedence="true" extent=".5cm" /&gt;
+    &lt;region-after region-name="footer-odd" precedence="true" extent=".5cm" /&gt;
+  &lt;/simple-page-master&gt;
+  &lt;simple-page-master master-name="A5-Pages-List" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body margin-top=".5cm" margin-bottom=".5cm"/&gt;
+    &lt;region-after region-name="footer-even" precedence="true" extent=".5cm" /&gt;
+  &lt;/simple-page-master&gt;
+  &lt;page-sequence-master master-name="A5-Pages"&gt;
+    &lt;repeatable-page-master-alternatives&gt;
+    &lt;% if (title_page) { %&gt;&lt;conditional-page-master-reference page-position="first" master-reference="A5-Pages-List"/&gt;&lt;% } %&gt;
+    &lt;conditional-page-master-reference odd-or-even="even" master-reference="A5-Pages-Even"/&gt;
+    &lt;conditional-page-master-reference odd-or-even="odd" master-reference="A5-Pages-Odd"/&gt;
+    &lt;/repeatable-page-master-alternatives&gt;
+  &lt;/page-sequence-master&gt;
+&lt;/layout-master-set&gt;
+&lt;% if (title_page) printTitlePage() %&gt;
+&lt;page-sequence master-reference="A5-Pages" font-family="SansCondensed" font-size="4mm"&gt;
+&lt;static-content flow-name="header-even"&gt;
+  &lt;block text-align-last="justify" font-size="3mm"&gt;&lt;page-number/&gt;&lt;leader leader-pattern="space" /&gt;${localization["header.publisher"].translate(locale)}&lt;/block&gt;
+&lt;/static-content&gt;
+&lt;static-content flow-name="header-odd"&gt;
+  &lt;block text-align-last="justify" font-size="3mm"&gt;${localization["header.publisher"].translate(locale)}&lt;leader leader-pattern="space" /&gt;&lt;page-number/&gt;&lt;/block&gt;
+&lt;/static-content&gt;
+&lt;static-content flow-name="footer-even"&gt;
+  &lt;block&gt;&lt;/block&gt;
+&lt;/static-content&gt;
+&lt;static-content flow-name="footer-odd"&gt;
+  &lt;block&gt;&lt;/block&gt;
+&lt;/static-content&gt;
+&lt;flow flow-name="xsl-region-body"&gt;
+  &lt;% if (title_page) printTrainList() %&gt;
+  &lt;% printTimetables() %&gt;
+&lt;/flow&gt;
+&lt;/page-sequence&gt;
+&lt;/root&gt;
+
+&lt;!-- ======================== Title Page ======================== --&gt;
+&lt;%
+def printTitlePage() {
+  def company = getCompany(trains.cycle, locale)
+  def company_part = getCompanyPart(trains.cycle, locale)
+%&gt;
+&lt;page-sequence master-reference="A5-Title" font-family="Sans" font-size="4mm"&gt;
+&lt;static-content flow-name="footer"&gt;
+  &lt;block text-align="center" font-size="3.5mm" space-after="15mm"&gt;${localization["internal.use"].translate(locale)}&lt;/block&gt;
+  &lt;block text-align="center" font-size="3mm"&gt;${localization["publisher"].translate(locale)}&lt;/block&gt;
+&lt;/static-content&gt;
+&lt;flow flow-name="xsl-region-body"&gt;
+  &lt;block-container text-align="center" font-weight="bold" height="35mm"&gt;
+    &lt;block&gt;${company}&lt;/block&gt;
+    &lt;block&gt;${company_part}&lt;/block&gt;
+  &lt;/block-container&gt;
+  &lt;block-container text-align="center" font-weight="bold"&gt;
+    &lt;block font-size="8mm" space-after="7mm"&gt;${localization["train.timetable"].translate(locale)}&lt;/block&gt;
+    &lt;block linefeed-treatment="preserve" font-size="12mm"&gt;${getRouteNames(trains)}&lt;/block&gt;
+  &lt;/block-container&gt;
+  &lt;block text-align="center"&gt;${localization["for.line"].translate(locale)}&lt;/block&gt;
+  &lt;block linefeed-treatment="preserve" text-align="center" font-weight="bold" space-after="7mm"&gt;${getRoutePaths(trains)}&lt;/block&gt;
+  &lt;% if (trains.validity) { %&gt;&lt;block font-weight="bold" text-align="center" space-after="15mm"&gt;${localization["validity.from"].translate(locale)} ${trains.validity}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (trains.cycle) { %&gt;&lt;block font-weight="bold" text-align="center" space-after="3mm" font-size="5mm"&gt;${localization["cycle"].translate(locale)}: ${trains.cycle.name}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (trains.cycle &amp;&amp; trains.cycle.description) { %&gt;&lt;block text-align="center" space-after="4mm"&gt;${trains.cycle.description}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (showTitleStart &amp;&amp; trains.cycle &amp;&amp; tiHolder.items) { %&gt;&lt;block text-align="center" font-size="4.75mm"&gt;${getStartTimeComment(tiHolder.items[0].item, locale)}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (trains.cycle &amp;&amp; trains.cycle.level) { %&gt;&lt;block text-align="center" font-size="5.5mm"&gt;&lt;% for (int i = 0; i &lt; trains.cycle.level; i++) {%&gt;${STAR}&lt;%} %&gt;&lt;/block&gt;&lt;% } %&gt;
+&lt;/flow&gt;
+&lt;/page-sequence&gt;
+&lt;%
+}
+%&gt;
+
+&lt;!-- ======================== Train List ======================== --&gt;
+&lt;%
+def printTrainList() { 
+if (trains.cycle) { %&gt;
+
+&lt;block&gt;${localization["list.train.title"].translate(locale)}:&lt;/block&gt;
+&lt;table border-collapse="collapse" table-layout="fixed" space-after="4mm" width="100%"&gt;
+  &lt;table-column column-width="23%" /&gt;
+  &lt;table-column column-width="12%" /&gt;
+  &lt;table-column column-width="19%" /&gt;
+  &lt;table-column column-width="38.7%" /&gt;
+  &lt;table-column column-width="7.3%" /&gt;
+  &lt;table-header font-size="3mm"&gt;
+    &lt;table-row border-top="solid .2mm" border-bottom="solid .2mm"&gt;
+      &lt;table-cell&gt;&lt;block&gt;${localization["column.train"].translate(locale)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell&gt;&lt;block&gt;${localization["column.departure"].translate(locale)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell&gt;&lt;block&gt;${localization["column.from.to"].translate(locale)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell number-columns-spanned="2"&gt;&lt;block text-align-last="justify"&gt;&lt;inline&gt;${localization["column.note"].translate(locale)}&lt;/inline&gt;&lt;leader leader-pattern="space" /&gt;&lt;inline&gt;${localization["index.page"].translate(locale)}&lt;/inline&gt;&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;/table-row&gt;
+  &lt;/table-header&gt;
+  &lt;table-body&gt;
+&lt;%
+  if (!tiHolder.items) { %&gt;&lt;table-cell&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;% }
+  def lastNode = null
+  def abbrMap = [:]
+  def index = 0
+  for (iHolder in tiHolder.items) {
+    def item = iHolder.item
+    abbrMap[item.fromAbbr] = item.from
+    abbrMap[item.toAbbr] = item.to
+    if (lastNode != null &amp;&amp; lastNode != item.from) {
+    %&gt;&lt;table-row&gt;&lt;table-cell number-columns-spanned="4"&gt;&lt;block&gt;&amp;#8212; ${localization["move.to.station"].translate(locale)} ${item.from} &amp;#8212;&lt;/block&gt;&lt;/table-cell&gt;&lt;/table-row&gt;&lt;%
+    }
+    lastNode = item.to
+%&gt;
+    &lt;table-row&gt;
+      &lt;table-cell&gt;&lt;block&gt;${item.trainName.translate(locale)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell margin-right="2mm"&gt;&lt;block text-align="right" font-weight="bold"&gt;${convertTime(item.fromTime)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell&gt;&lt;block&gt;${item.fromAbbr} - ${item.toAbbr}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell&gt;&lt;block&gt;&lt;inline font-size="3.5mm" vertical-align="middle"&gt;${getItemComment(item, locale)}&lt;/inline&gt;&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell&gt;&lt;block text-align="right"&gt;&lt;page-number-citation ref-id="${iHolder.trainHolder.refId}"/&gt;&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;/table-row&gt;
+&lt;%
+    index++
+  } %&gt;
+  &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;%
+  abbrMap.sort().each {
+    %&gt;&lt;block font-size="3.25mm"&gt;${it.key} - ${it.value}&lt;/block&gt;&lt;%
+  }
+}
+%&gt;
+&lt;block page-break-after="always"&gt;&amp;#160;&lt;/block&gt;
+&lt;%
+}
+%&gt;
+
+&lt;!-- ======================== Timetables ======================== --&gt;
+&lt;%
+def printTimetables() {
+  def index = 0
+  if (!tiHolder.trains) {%&gt;&lt;block&gt;&lt;/block&gt;&lt;%}
+  for (tHolder in tiHolder.trains) {
+    def train = tHolder.train
+    def iHolder = tiHolder.items ? tiHolder.items[index] : null
+%&gt;
+&lt;block-container keep-together.within-page="always" space-before.minimum="1mm" space-before.optimum="5mm" space-before.maximum="7mm"&gt;
+  &lt;block text-align="center" id="${tHolder.refId}" font-weight="bold" font-size="5mm"&gt;${train.completeName.translate(locale)}&lt;/block&gt;
+  &lt;% if (settings['show.circulation'] &amp;&amp; trains.cycle) { %&gt;&lt;block text-align="center" font-size="3.5mm" font-weight="bold"&gt;${trains.cycle.name}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (iHolder) {
+       def setupComment = getSetupTimeComment(iHolder.item, locale) 
+       if(setupComment) { %&gt;&lt;block text-align="center" font-size="3.5mm" space-after=".75mm"&gt;${setupComment}&lt;/block&gt;&lt;% }
+     }
+  %&gt;
+  &lt;block-container font-size="3mm"&gt;
+  &lt;!-- ======== Route info ========= --&gt;
+  &lt;% if (train.routeInfo) { %&gt;&lt;block text-align="center" space-after=".8mm"&gt;${train.routeInfo.collect{it.part}.join(' - ')}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (!train.routeInfo &amp;&amp; !tHolder.whole) { %&gt;&lt;block text-align="center" space-after=".8mm"&gt;${train.rows.first().station} - ${train.rows.last().station}&lt;/block&gt;&lt;% } %&gt;
+  &lt;!-- ======== Weight info ========= --&gt;
+  &lt;%
+     def fwt = true
+     if (train.weightData &amp;&amp; !settings['hide.weight.info']) {
+       lastEngine = null
+       %&gt;&lt;table border-collapse="collapse" table-layout="fixed" width="100%" font-size="2.75mm"&gt;&lt;table-column column-width="50%"/&gt;&lt;table-column column-width="50%"/&gt;&lt;table-body&gt;&lt;%
+       for (wr in train.weightData) {
+         currentEngine = wr.engines.join(", ") %&gt;
+      &lt;table-row&gt;
+        &lt;table-cell&gt;&lt;block text-align-last="justify" margin-right="1mm"&gt;&lt;inline&gt;${(currentEngine &amp;&amp; currentEngine != lastEngine) ? (localization[train.diesel ? "diesel.unit" : "engine"].translate(locale) + " " + currentEngine + ". ") : ""}&lt;/inline&gt;
+        &lt;leader leader-pattern="space" /&gt;&lt;inline&gt;${(wr.weight  &amp;&amp; (fwt || (currentEngine &amp;&amp; currentEngine != lastEngine))) ? localization["norm.load"].translate(locale) + ":" : "&amp;#160;"}&lt;/inline&gt;&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align-last="justify"&gt;&lt;inline&gt;${wr.from  &amp;&amp; wr.to ? wr.from + " - " + wr.to : "&amp;#160;"}&lt;/inline&gt;&lt;leader leader-pattern="space" /&gt;
+        &lt;inline&gt;${wr.weight ? wr.weight + " " + localization["tons"].translate(locale) : "&amp;#160;"}&lt;/inline&gt;&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;/table-row&gt;&lt;%
+         fwt = false
+         lastEngine = currentEngine
+       }
+       %&gt;&lt;/table-body&gt;&lt;/table&gt;&lt;%
+     } %&gt;
+  &lt;!-- ======== Length info ========= --&gt;
+  &lt;%
+     if (train.lengthData) {
+       if (train.lengthData.length % 2 == 1) {
+         train.lengthData.length = train.lengthData.length - 1
+       } %&gt;
+      &lt;block font-size="2.75mm"&gt;
+        &lt;inline&gt;${localization["length"].translate(locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? localization["length.axles"].translate(locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}&lt;/inline&gt;
+      &lt;/block&gt;&lt;%
+      } %&gt;
+  &lt;!-- ========= Rows ============ --&gt;
+  &lt;%
+  printTimetableHeader(train.controlled)
+  def rowL = train.rows.size() - 1
+  def cnt = 0
+  def lastSpeed = null
+  def lastSpeed2 = null
+  def isSpeed2 = false
+  def fromT = new Time()
+  def toT = new Time()
+  def stopDur = new Duration()
+  def runDur = new Duration()
+  def lastTo = null
+  def lastLineClass = null
+  def cChar = "*"
+  def fChar = DAGGER // dagger
+  for (row in train.rows) {
+    def speed = row.setSpeed != null ? row.setSpeed : row.speed
+    def speed2 = row.speed
+    isSpeed2 = isSpeed2 || speed != speed2
+    def emphName = (cnt == 0) || (cnt == rowL) || row.stationType == "branch.station"
+    def speedStr = ((lastSpeed == null || lastSpeed != speed) &amp;&amp; speed != null) ?  speed : " "
+    fromT.compute(row.arrival, alwaysShowHours || cnt == rowL || tHolder.isLimit(cnt), row.arrival != row.departure)
+    toT.compute(row.departure, alwaysShowHours || tHolder.isLimit(cnt), true)
+    def stationName = row.station
+    def desc = ""
+    if (row.stationType == "stop.with.freight") stationName += " ${localization['abbr.stop.freight'].translate(locale)}"
+    if (row.stationType == "stop") stationName += " ${localization['abbr.stop'].translate(locale)}"
+    if (emphName) stationName = "&lt;inline font-weight=\"bold\"&gt;${stationName}&lt;/inline&gt;"
+    if (row.lightSignals) { desc += getImage("signal.svg", "3.4mm") } 
+    if (train.controlled &amp;&amp; row.firstConcurrent != null &amp;&amp; !row.firstConcurrent) {
+      desc += getImage("trapezoid_sign.svg", "3.2mm")
+    } else {
+      if (row.straight == false &amp;&amp; !row.lightSignals) desc += RARR // rarr
+    }
+    if (row.lineEnd) desc += DELTA // Delta
+    if (row.occupied) desc += OMICRON // Omicron
+    if (row.shunt) desc += LOZ // loz
+    if (row.comment != null) {desc += cChar; cChar += "*"}
+    if (settings['freight'] &amp;&amp; row.freightDest != null) {desc += fChar; fChar += DAGGER} // dagger
+    if (desc == "") desc = " "
+    def speed2Str = (lastSpeed2 == null || lastSpeed2 != speed2) &amp;&amp; speed2 != null &amp;&amp; isSpeed2 ? speed2 : null;
+    def lineClassStr = " "
+    if ((lastLineClass == null || (lastLineClass != row.lineClass)) &amp;&amp; row.lineClass != null) {
+      lineClassStr += row.lineClass
+      if (isSpeed2)
+        lineClassStr += "/" + speed2
+    } else if (speed2Str != null) {
+        lineClassStr += (row.lineClass != null ? row.lineClass : "-") + "/" + speed2Str
+    }
+    lastLineClass = row.lineClass
+    def showTrack
+    def tTrains
+    if (train.controlled) {
+      showTrack = row.track != null &amp;&amp; !row.controlStation &amp;&amp; row.onControlled
+      tTrains = null
+      if (row.concurrentTrains != null) {
+        for (tTrain in row.concurrentTrains) {
+          if (tTrains == null) tTrains = ""
+          else tTrains += ", "
+          tTrains += tTrain.translate(locale).replaceAll(' ',SPACE)
+        }
+      }
+      if (tTrains == null) tTrains = " "
+    }
+    if (!limited || (limited &amp;&amp; highlight) || tHolder.isIn(cnt)) {
+      %&gt;
+      &lt;table-row&gt;
+        &lt;table-cell ${(limited &amp;&amp; highlight &amp;&amp; !tHolder.isIn(cnt)) ? 'background-color="lightgray"' : ''}&gt;&lt;block text-align-last="justify" margin-right="1mm"&gt;&lt;inline&gt;${stationName}${train.controlled &amp;&amp; row.controlStation ? " " + getImage("control_station.svg", "2.7mm") : ""}&lt;/inline&gt; &lt;leader leader-pattern="dots" font-family="Sans" /&gt;&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align="center"&gt;${desc}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;% if (train.controlled) { %&gt;&lt;table-cell&gt;&lt;block text-align="center"&gt;${showTrack ? row.track : " "}&lt;/block&gt;&lt;/table-cell&gt;&lt;% } %&gt;
+        &lt;table-cell&gt;&lt;block text-align="right" ${marginTR()} font-weight="bold"&gt;${cnt != tHolder.start ? runDur.show(lastTo, row.arrival) : ""}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm"&gt;${fromT.out}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align="right" ${marginTR()}&gt;${stopDur.show(row.arrival,row.departure)}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm"&gt;${toT.out}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block text-align="right" ${marginTR()}&gt;${speedStr}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;table-cell&gt;&lt;block font-size="3mm" ${marginTL()}&gt;${lineClassStr}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;% if (train.controlled) { %&gt;&lt;table-cell&gt;&lt;block font-size="2.5mm" ${marginTL()}&gt;${tTrains}&lt;/block&gt;&lt;/table-cell&gt;&lt;% } %&gt;
+      &lt;/table-row&gt;&lt;%
+    }
+    cnt++
+    lastSpeed = speed
+    lastSpeed2 = speed2
+    lastTo = row.departure
+  }
+  
+  def timeTotal = stopDur.total + runDur.total
+  def totalHours = (int) (timeTotal / 60)
+  def totalMinutes = timeTotal - totalHours * 60
+  def totalMinutesStr = Duration.show(totalMinutes)
+
+  %&gt;
+  &lt;table-row border-top="solid .4mm" border-bottom="solid .4mm"&gt;
+    &lt;table-cell number-columns-spanned="${train.controlled ? '3' : '2'}"&gt;&lt;block margin-top=".3mm" margin-right="1mm" text-align="right"&gt;${localization["total.train.time"].translate(locale)} . . .&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;table-cell&gt;&lt;block margin-top=".3mm" text-align="right" ${marginTR()}&gt;${runDur.showTotal()}&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;table-cell&gt;&lt;block margin-top=".3mm" text-align="center"&gt;+&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;table-cell&gt;&lt;block margin-top=".3mm" text-align="right" ${marginTR()}&gt;${stopDur.showTotal()}&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;table-cell number-columns-spanned="${train.controlled ? '4' : '3'}"&gt;&lt;block margin-top=".3mm" margin-left="1mm"&gt;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization["hours"].translate(locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization["minutes"].translate(locale) : ""}&lt;/block&gt;&lt;/table-cell&gt;
+  &lt;/table-row&gt;&lt;%
+  // ---------------- footer of the timetable -----------
+  printTimetableFooter()
+  
+  comments = createComments(tHolder)
+  for (comment in comments) {
+    // ----------- comments --------------
+    %&gt;&lt;block&gt;&lt;inline-container width="8mm"&gt;&lt;block text-align-last="justify"&gt;${comment[0]}&lt;leader leader-pattern="space" /&gt;=&lt;/block&gt;&lt;/inline-container&gt;&lt;inline-container width="100%"&gt;&lt;block margin-left="1mm"&gt;${comment[1]}&lt;/block&gt;&lt;/inline-container&gt;&lt;/block&gt;&lt;%
+  }
+
+  %&gt;
+  &lt;/block-container&gt;
+&lt;/block-container&gt;
+&lt;%
+    index++
+  }
+}
+%&gt;
+
+&lt;!-- ======================== Print timetable =================== --&gt;
+&lt;%
+def printTimetableHeader(controlled) {
+%&gt;&lt;table border-collapse="collapse" table-layout="fixed" width="100%" font-size="3.5mm" display-align="center" space-after=".7mm"&gt;
+  &lt;table-column column-width="31%" ${separationT()} /&gt;
+  &lt;table-column column-width="6%" ${separationT()} /&gt;
+  &lt;% if (controlled) { %&gt;&lt;table-column column-width="6%" ${separationT()} /&gt;&lt;% } %&gt;
+  &lt;table-column column-width="6%" ${separationT()} /&gt;
+  &lt;table-column column-width="11%" ${separationT()} /&gt;
+  &lt;table-column column-width="6%" ${separationT()} /&gt;
+  &lt;table-column column-width="11%" ${separationT()} /&gt;
+  &lt;table-column column-width="6%" ${separationT()}  /&gt;
+  &lt;table-column column-width="${controlled ? '4.5%' : '23%'}" ${controlled ? separationT() : ""}/&gt;
+  &lt;% if (controlled) { %&gt;&lt;table-column column-width="12.5%" /&gt;&lt;% } %&gt;
+  &lt;table-header font-size="2mm"&gt;
+    &lt;table-row border-top="solid .7mm" border-bottom="solid .4mm" text-align="center"&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;1&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;2&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;% if (controlled) { %&gt;&lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;2a&lt;/block&gt;&lt;/table-cell&gt;&lt;% } %&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;3&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;4&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;5&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;6&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;7&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;8&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;% if (controlled) { %&gt;&lt;table-cell ${paddingTTop()}&gt;&lt;block&gt;9&lt;/block&gt;&lt;/table-cell&gt;&lt;% } %&gt;
+    &lt;/table-row&gt;
+  &lt;/table-header&gt;
+  &lt;table-body&gt;&lt;%
+}
+  
+def getImage(image, height) {
+  return "&lt;external-graphic src=\"${image}\" height=\"${height}\" content-width=\"scale-to-fit\" content-height=\"scale-to-fit\" vertical-align=\"middle\" padding-right=\".3mm\"/&gt;"
+}
+  
+def paddingTTop() {
+  return 'padding-top=".3mm"'
+}
+  
+def separationT() {
+  return 'border-right="solid .2mm"'
+}
+
+def marginTR() {
+  return 'margin-right=".7mm"'
+}
+
+def marginTL() {
+  return 'margin-left=".7mm"'
+}
+
+def printTimetableFooter() {
+%&gt;&lt;/table-body&gt;&lt;/table&gt;&lt;%
+}
+%&gt;
+
+
+&lt;!-- ======================== Helper methods =================== --&gt;
+&lt;%
+  def getCompany(cycle, loc) {
+    def company = cycle?.company?.name
+    company = company ?: cycle?.company?.abbr
+    return company ?: localization["company"].translate(loc)
+  }
+
+  def getCompanyPart(cycle, loc) {
+    def part = cycle?.company?.part
+    if (!part &amp;&amp; !cycle?.company?.abbr) {
+        part = localization["company.part"].translate(loc)
+    }
+    return part ?: ""
+  }
+
+  // returns names of routes
+  def getRouteNames(trains) {
+    def result = ""
+    def routeNames = [] as Set
+    if (trains.routes != null &amp;&amp; !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        if (!routeNames.contains(route.name)) {
+          result = add(result,"\n",route.name)
+          routeNames &lt;&lt; route.name
+        }
+      }
+    } else {
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers
+    }
+    return result
+  }
+
+  // returns paths of routes
+  def getRoutePaths(trains) {
+    def result = ""
+    if (trains.routes != null &amp;&amp; !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        def stationsStr = null
+        stationsStr = add(stationsStr," - ",route.segments.first().name)
+        stationsStr = add(stationsStr," - ",route.segments.last().name)
+        result = add(result,"\n",stationsStr)
+      }
+    } else {
+      result = (trains.routeStations == null) ? "-" : trains.routeStations
+    }
+    return result
+  }
+
+  def add(str, delimiter, value) {
+    if (str == null || str.isEmpty())
+      str = value
+    else
+      str += delimiter + value
+    return str
+  }
+
+  def getItemComment(item, loc) {
+    def comment = item.comment
+    if (comment) {
+      comment = comment.translate(loc)
+    }
+    def setupComment = getSetupTimeComment(item, loc)
+    if (setupComment) {
+      comment = comment ? "${comment}, ${setupComment}" : setupComment
+    }
+    return comment ?: ""
+  }
+
+  def getSetupTimeComment(item, loc) {
+    def setupTime = getSetupTime(item)
+    return setupTime ? getStartTimeComment(item, setupTime, loc) : null
+  }
+
+  def getStartTimeComment(item, loc) {
+    return getStartTimeComment(item, getSetupTime(item), loc)
+  }
+
+  def getStartTimeComment(item, setupTime, loc) {
+    def time = Time.parse(item.fromTime)
+    if (setupTime) time = time.minusSeconds(setupTime)
+    return localization["circulation.start"].translate(loc) + ": " + PRINT_FORMATTER.print(time)
+  }
+
+  def getSetupTime(item) {
+    def time = null
+    if (useTechnologicalTime &amp;&amp; item.technologicalTime) time = item.technologicalTime
+    if (useSetupTime &amp;&amp; item.setupTime) time = item.setupTime
+    return time
+  }
+
+  def convertTime(time) {
+    def parsed = FORMATTER.parseLocalTime(time)
+    def result = PRINT_FORMATTER.print(parsed)
+    return result
+  }
+
+  def createComments(tHolder) {
+    def train = tHolder.train
+    def symbol = "*";
+    def fSymbol = DAGGER // dagger
+    def list = []
+    def shunt = false
+    def occupied = false
+    def lineEnd = false
+    def cnt = 0
+    for (row in train.rows) {
+      def isIn = tHolder.isIn(cnt)
+      if (!lineEnd &amp;&amp; row.lineEnd &amp;&amp; isIn) { // Delta
+        list &lt;&lt; [DELTA, localization["entry.line.end"].translate(locale)]
+        lineEnd = true
+      }
+      if (!occupied &amp;&amp; row.occupied &amp;&amp; isIn) { // Omicron
+        list &lt;&lt; [OMICRON, localization["entry.occupied"].translate(locale)]
+        occupied = true
+      }
+      if (!shunt &amp;&amp; row.shunt &amp;&amp; isIn) { // loz
+        list &lt;&lt; [LOZ ,localization["entry.shunt"].translate(locale)]
+        shunt = true
+      }
+      if (row.comment != null) {
+        if (isIn) list &lt;&lt; [symbol, row.comment.translate(locale)]
+        symbol += "*"
+      }
+      if (settings['freight'] &amp;&amp; row.freightDest != null) {
+        def freightList = row.freightDest
+        if (freightEnd) freightList = freightList.reverse()
+        if (isIn) list &lt;&lt; [fSymbol, engineLeft ? "${TRAIN_LEFT} ${convertFreight(freightList.reverse())}" : "${convertFreight(freightList)} ${TRAIN_RIGHT}"]
+        fSymbol += DAGGER
+      }
+      cnt++
+    }
+    return list
+  }
+  
+  def convertFreight(freightDest) {
+      return freightDest.collect{i -&gt; convertFreightDest(i)}.join(', ')
+  }
+  
+  def convertFreightDest(i) {
+      def capacity = (freightCapacity &amp;&amp; i.capacity) ? "[${i.capacity}]" : ""
+      def str = "${i.toString(locale, true)}${i.center ? '(' + i.regions.join(', ') + ')' : ''}" + capacity
+      return i.center ? "&lt;inline font-weight=\"bold\"&gt;${str}&lt;/inline&gt;" : str
+  }
+
+%&gt;
+&lt;!-- ================ Train + circulation holder ================ --&gt;
+&lt;%
+  class TrainsItemsHolder {
+    def items = []
+    def trains = []
+    
+    def static create(trains, limited) {
+      def holder = new TrainsItemsHolder()
+      if (!limited) {
+        def ts = [:]
+        // trains
+        for (train in trains.trainTimetables) {
+          def tHolder = TrainHolder.createFromTrain(train)
+          holder.trains &lt;&lt; tHolder
+          ts[train.name.defaultString] = tHolder
+        }
+        // cirulation items
+        if (trains.cycle) {
+          for (item in trains.cycle.rows) {
+            def tHolder = ts[item.trainName.defaultString]
+            def iHolder = new CirculationItemHolder(item, tHolder)
+            holder.items &lt;&lt; iHolder
+          }
+        }
+      } else {
+        // limited
+        def ts = [:]
+        for (train in trains.trainTimetables) {
+          ts[train.name.defaultString] = train
+        }
+        for (item in trains.cycle.rows) {
+          def tHolder = TrainHolder.createFromCirculationItem(item, ts[item.trainName.defaultString])
+          def iHolder = new CirculationItemHolder(item, tHolder)
+          holder.items &lt;&lt; iHolder
+          holder.trains &lt;&lt; tHolder
+        }
+      }
+      return holder
+    }
+  }
+
+  class CirculationItemHolder {
+    def trainHolder
+    def item
+    
+    CirculationItemHolder(item, train) {
+      this.trainHolder = train
+      this.item = item
+    }
+  }
+
+  class TrainHolder {
+    def train
+    def start
+    def end
+    def refId
+    
+    private static counter = 0
+    
+    private TrainHolder(train) {
+      this.train = train
+      this.refId = "train${counter++}"
+    }
+    
+    def static createFromTrain(train) {
+      def holder = new TrainHolder(train)
+      holder.start = 0
+      holder.end = train.rows.size() - 1
+      return holder
+    }
+    
+    def static createFromCirculationItem(item, train) {
+      def holder = new TrainHolder(train)
+      // define limits
+      holder.start = getIndex(train, item.fromAbbr)
+      holder.end = getIndex(train, item.toAbbr)
+      return holder
+    }
+    
+    private static getIndex(train, abbr) {
+      def cnt = 0
+      for (row in train.rows) {
+        if (row.stationAbbr == abbr) {
+            return cnt
+        }
+        cnt++
+      }
+    }
+    
+    def isIn(position) {
+      return start &lt;= position &amp;&amp; position &lt;= end
+    }
+    
+    def isLimit(position) {
+      return position == start || position == end
+    }
+    
+    def getWhole() {
+      return start == 0 &amp;&amp; end == train.rows.size() - 1
+    }
+  }
+%&gt;
+&lt;!-- ================ Time helpers ================ --&gt;
+&lt;%
+  class Duration {
+    def total = 0
+
+    def show(from,to) {
+      if (from == null || to == null)
+        return " "
+      def f = Time.parse(from)
+      def t = Time.parse(to)
+      def period = new org.joda.time.Period(f,t)
+      if (t &lt; f) {
+        period = period.plusDays(1).normalizedStandard()
+      }
+      double dur = period.toStandardMinutes().minutes
+      dur += period.seconds / 60
+      total += dur
+      return Duration.show(dur)
+    }
+
+    def showTotal() {
+      return Duration.show(total)
+    }
+
+    def static show(dur) {
+      // convert to html
+      if (dur == null || dur == 0)
+        return " "
+      else {
+        def minutes = (int) dur
+        def seconds = (int) (dur - minutes) * 10
+        def str = minutes + (seconds == 0 ?  " " : "&lt;inline vertical-align=\"text-top\" font-size=\"1.85mm\"&gt;${seconds}&lt;/inline&gt;") // TODO super position smaller size
+        return str
+      }
+    }
+  }
+
+  class Time {
+    def hour
+    def out = " "
+    static org.joda.time.format.DateTimeFormatter FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    static org.joda.time.format.DateTimeFormatter PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(' ').appendMinuteOfHour(2).toFormatter();
+
+    def compute(timeStr, forceShowHour, show) {
+      def parsed = parse(timeStr)
+      if (parsed == null)
+        out = " "
+      else {
+        def result
+        if (parsed.hourOfDay != hour || forceShowHour)
+          result = PRINT_FORMATTER.print(parsed)
+        else
+          result = parsed.minuteOfHour
+
+        if (show)
+          hour = parsed.hourOfDay
+
+        if (parsed.secondOfMinute != 0) {
+          def part = (int) (parsed.secondOfMinute / 60.0 * 10)
+          result += "&lt;inline vertical-align=\"text-top\" font-size=\"2mm\"&gt;${part}&lt;/inline&gt;" // TODO super position smaller size
+        } else {
+          result += " "
+        }
+        out = show ? result : " "
+      }
+    }
+
+    def static parse(str) {
+      if (str == null)
+        return null
+      else {
+        return FORMATTER.parseLocalTime(str)
+      }
+    }
+  }
+%&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>def cycles = selection == null
+    ? diagram.driverCycleType.cycles
+    : selection
+for (cycle in cycles) {
+    outputs.create()
+        .setName("${cycle}.pdf")
+        .setParams(["driver_cycle":cycle])
+        .setDirectory(key)
+}</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attachment name="trapezoid_sign.svg" type="BINARY">
+            <binaryData>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnDQogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iDQogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIg0KICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIg0KICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHZlcnNpb249IjEuMSINCiAgIGlkPSJzdmcyIg0KICAgdmlld0JveD0iMCAwIDEwNC41ODgzOSAxMDYuMDUzODYiDQogICBoZWlnaHQ9IjI5LjkzMDc1Nm1tIg0KICAgd2lkdGg9IjI5LjUxNzE2OG1tIj4NCiAgPGRlZnMNCiAgICAgaWQ9ImRlZnM0IiAvPg0KICA8bWV0YWRhdGENCiAgICAgaWQ9Im1ldGFkYXRhNyI+DQogICAgPHJkZjpSREY+DQogICAgICA8Y2M6V29yaw0KICAgICAgICAgcmRmOmFib3V0PSIiPg0KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4NCiAgICAgICAgPGRjOnR5cGUNCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4NCiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+DQogICAgICA8L2NjOldvcms+DQogICAgPC9yZGY6UkRGPg0KICA8L21ldGFkYXRhPg0KICA8Zw0KICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTY5LjI0MDQzLC01Mi45MDAxNzEpIg0KICAgICBpZD0ibGF5ZXIxIj4NCiAgICA8cGF0aA0KICAgICAgIGlkPSJyZWN0NDY5NSINCiAgICAgICBkPSJtIDE5Ny44NDk0Nyw1OC4zODU2NTcgNDcuMzcwMywwIDIwLjU5NTc5LDUzLjA2NDM1MyAtODguNTYxODgsMCB6Ig0KICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEwLjk3MDk3MTExO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lIiAvPg0KICAgIDxwYXRoDQogICAgICAgaWQ9InBhdGg0Njk4Ig0KICAgICAgIGQ9Im0gMjIxLjUzNDYyLDExNi44NjYyNiAwLDQyLjA4Nzc2Ig0KICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjguNjcxMjU0MTY7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4NCiAgPC9nPg0KPC9zdmc+DQo=</binaryData>
+        </attachment>
+        <attachment name="signal.svg" type="BINARY">
+            <binaryData>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnDQogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iDQogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIg0KICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIg0KICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHZlcnNpb249IjEuMSINCiAgIGlkPSJzdmcyIg0KICAgdmlld0JveD0iMCAwIDcwLjA5Mzk5NiAxMjcuNDk4ODgiDQogICBoZWlnaHQ9IjM1Ljk4MzAxN21tIg0KICAgd2lkdGg9IjE5Ljc4MjA4NG1tIj4NCiAgPGRlZnMNCiAgICAgaWQ9ImRlZnM0IiAvPg0KICA8bWV0YWRhdGENCiAgICAgaWQ9Im1ldGFkYXRhNyI+DQogICAgPHJkZjpSREY+DQogICAgICA8Y2M6V29yaw0KICAgICAgICAgcmRmOmFib3V0PSIiPg0KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4NCiAgICAgICAgPGRjOnR5cGUNCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4NCiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+DQogICAgICA8L2NjOldvcms+DQogICAgPC9yZGY6UkRGPg0KICA8L21ldGFkYXRhPg0KICA8Zw0KICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjU5LjU0NzM5LC0xMjYuNzIyOTIpIg0KICAgICBpZD0ibGF5ZXIxIj4NCiAgICA8cGF0aA0KICAgICAgIGQ9Im0gMjY1Ljc0ODE4LDE2MS43NjYxOCBjIDFlLTUsLTEwLjMwNTc2IDUuNDk4MDYsLTE5LjgyODY3IDE0LjQyMzExLC0yNC45ODE1NSA4LjkyNTA1LC01LjE1Mjg4IDE5LjkyMTE1LC01LjE1Mjg4IDI4Ljg0NjIsMCA4LjkyNTA1LDUuMTUyODggMTQuNDIzMTEsMTQuNjc1NzggMTQuNDIzMSwyNC45ODE1NSBsIDAsNTcuNDEyMzUgYyAxZS01LDEwLjMwNTc2IC01LjQ5ODA1LDE5LjgyODY2IC0xNC40MjMxLDI0Ljk4MTU0IC04LjkyNTA1LDUuMTUyODggLTE5LjkyMTE1LDUuMTUyODggLTI4Ljg0NjIsMCAtOC45MjUwNCwtNS4xNTI4OCAtMTQuNDIzMSwtMTQuNjc1NzkgLTE0LjQyMzExLC0yNC45ODE1NCB6Ig0KICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEyLjQwMTU3NTA5O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiDQogICAgICAgaWQ9InBhdGg0MTY2IiAvPg0KICAgIDxjaXJjbGUNCiAgICAgICByPSIxMi4wNTE2MTMiDQogICAgICAgY3k9IjIyMC4xNzAwOSINCiAgICAgICBjeD0iMjk0LjU5NDM5Ig0KICAgICAgIGlkPSJwYXRoNDE3MCINCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDoxMi40MDE1NzUwOTtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgLz4NCiAgICA8Y2lyY2xlDQogICAgICAgcj0iMTIuMDUxNjEzIg0KICAgICAgIGN5PSIxNjYuMTIzNzkiDQogICAgICAgY3g9IjI5NC41OTQzOSINCiAgICAgICBpZD0icGF0aDQxNzAtMyINCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDoxMi40MDE1NzUwOTtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgLz4NCiAgPC9nPg0KPC9zdmc+DQo=</binaryData>
+        </attachment>
+        <attachment name="control_station.svg" type="BINARY">
+            <binaryData>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnDQogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iDQogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIg0KICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIg0KICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHdpZHRoPSIyOS42NzU2ODRtbSINCiAgIGhlaWdodD0iMjkuNjc1Njg0bW0iDQogICB2aWV3Qm94PSIwIDAgMTA1LjE1MDA2IDEwNS4xNTAwNiINCiAgIGlkPSJzdmcyIg0KICAgdmVyc2lvbj0iMS4xIj4NCiAgPGRlZnMNCiAgICAgaWQ9ImRlZnM0IiAvPg0KICA8bWV0YWRhdGENCiAgICAgaWQ9Im1ldGFkYXRhNyI+DQogICAgPHJkZjpSREY+DQogICAgICA8Y2M6V29yaw0KICAgICAgICAgcmRmOmFib3V0PSIiPg0KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4NCiAgICAgICAgPGRjOnR5cGUNCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4NCiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+DQogICAgICA8L2NjOldvcms+DQogICAgPC9yZGY6UkRGPg0KICA8L21ldGFkYXRhPg0KICA8Zw0KICAgICBpZD0ibGF5ZXIxIg0KICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNS44MjQxNTQ0LC01LjIxNzc3MDEpIj4NCiAgICA8Y2lyY2xlDQogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6OC44NTgyNjc3ODtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSINCiAgICAgICBpZD0icGF0aDQxNTEiDQogICAgICAgY3g9IjU4LjM5OTE4NSINCiAgICAgICBjeT0iNTcuNzkyODAxIg0KICAgICAgIHI9IjQ4LjE0NTg5NyIgLz4NCiAgICA8Y2lyY2xlDQogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6My41NDMzMDcwNztzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSINCiAgICAgICBpZD0icGF0aDQxNTMiDQogICAgICAgY3g9IjU4LjM5OTE4NSINCiAgICAgICBjeT0iNTcuNzkyODAxIg0KICAgICAgIHI9IjE4LjA1NDcxIiAvPg0KICA8L2c+DQo8L3N2Zz4NCg==</binaryData>
+        </attachment>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Timetables for circulations of drivers</value>
+                <value type="string.cs">Sešitové jízdní řády pro turnusy</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">trains_per_circulation</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">trains</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">pdf.groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">PDF: Timetables for circulations of drivers</value>
+                <value type="string.cs">PDF: Sešitové jízdní řády pro turnusy</value>
+            </attribute>
+            <attribute>
+                <key>selection.type</key>
+                <value type="string">driver.circulation</value>
+            </attribute>
+            <attribute>
+                <key>diesel.unit</key>
+                <type>localized.string</type>
+                <value type="string">Diesel unit</value>
+                <value type="string.bg">Дизелова мотриса</value>
+                <value type="string.cs">Motorový vůz</value>
+                <value type="string.de">Triebwagen</value>
+                <value type="string.hu">Motor kocsi</value>
+                <value type="string.pl">lok.</value>
+                <value type="string.sk">Motorový voz</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine</key>
+                <type>localized.string</type>
+                <value type="string">Engine</value>
+                <value type="string.bg">Локомотив</value>
+                <value type="string.cs">Lok.</value>
+                <value type="string.de">Tfz</value>
+                <value type="string.hu">Mozd</value>
+                <value type="string.pl">lok.</value>
+                <value type="string.sk">Lok.</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.list</key>
+                <type>localized.string</type>
+                <value type="string">List of trains</value>
+                <value type="string.bg">Списък с влакове</value>
+                <value type="string.cs">Seznam vlaků</value>
+                <value type="string.de">Liste der Züge</value>
+                <value type="string.hu">Vonat lista</value>
+                <value type="string.pl">Zestawienie pociągów</value>
+                <value type="string.sk">Zoznam vlakov</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>index.train</key>
+                <type>localized.string</type>
+                <value type="string">Train</value>
+                <value type="string.bg">Влак</value>
+                <value type="string.cs">Vlak</value>
+                <value type="string.de">Zug</value>
+                <value type="string.hu">Vonat</value>
+                <value type="string.pl">Pociąg</value>
+                <value type="string.sk">Vlak</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>index.page</key>
+                <type>localized.string</type>
+                <value type="string">Page</value>
+                <value type="string.bg">Страница</value>
+                <value type="string.cs">Strana</value>
+                <value type="string.de">Seite</value>
+                <value type="string.hu">Oldal</value>
+                <value type="string.pl">Strona</value>
+                <value type="string.sk">Strana</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>total.train.time</key>
+                <type>localized.string</type>
+                <value type="string">Sum</value>
+                <value type="string.bg">Сума</value>
+                <value type="string.cs">Úhrnem</value>
+                <value type="string.de">zusammen</value>
+                <value type="string.hu">Együtt</value>
+                <value type="string.pl">Razem</value>
+                <value type="string.sk">Spolu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>hours</key>
+                <type>localized.string</type>
+                <value type="string">hours</value>
+                <value type="string.bg">часове</value>
+                <value type="string.cs">hod.</value>
+                <value type="string.de">Std.</value>
+                <value type="string.hu">óra</value>
+                <value type="string.pl">godz.</value>
+                <value type="string.sk">hod.</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>minutes</key>
+                <type>localized.string</type>
+                <value type="string">minutes</value>
+                <value type="string.bg">минути</value>
+                <value type="string.cs">min.</value>
+                <value type="string.de">Min.</value>
+                <value type="string.hu">perc</value>
+                <value type="string.pl">min.</value>
+                <value type="string.sk">min.</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>abbr.stop</key>
+                <type>localized.string</type>
+                <value type="string">s</value>
+                <value type="string.bg">сп.</value>
+                <value type="string.cs">z</value>
+                <value type="string.de">Hp</value>
+                <value type="string.hu">-ig</value>
+                <value type="string.pl">po</value>
+                <value type="string.sk">z</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>abbr.stop.freight</key>
+                <type>localized.string</type>
+                <value type="string">fs</value>
+                <value type="string.bg">тг</value>
+                <value type="string.cs">nz</value>
+                <value type="string.de">Hst</value>
+                <value type="string.hu">nz</value>
+                <value type="string.pl">lpo</value>
+                <value type="string.sk">nz</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>tons</key>
+                <type>localized.string</type>
+                <value type="string">tons</value>
+                <value type="string.bg">тона</value>
+                <value type="string.cs">tun</value>
+                <value type="string.de">Tonnen</value>
+                <value type="string.hu">tonna</value>
+                <value type="string.pl">ton</value>
+                <value type="string.sk">ton</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>norm.load</key>
+                <type>localized.string</type>
+                <value type="string">Load norm</value>
+                <value type="string.bg">Норма товарене</value>
+                <value type="string.cs">Norma zatížení</value>
+                <value type="string.de">Last norm</value>
+                <value type="string.hu">Terhelési előírás</value>
+                <value type="string.pl">Masa</value>
+                <value type="string.sk">Norma zaťaženia</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>entry.line.end</key>
+                <type>localized.string</type>
+                <value type="string">regular arrival to line end</value>
+                <value type="string.bg">пристига в глух коловоз</value>
+                <value type="string.cs">pravidelný vjezd na kusou kolej</value>
+                <value type="string.de">regelmäßige Eingang auf Stumpfgleis</value>
+                <value type="string.hu">menetrend szerint csonkavágányra érkezik</value>
+                <value type="string.pl">możliwy wjazd na ślepy tor</value>
+                <value type="string.sk">pravidelný vjazd na kusú koľaj</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>entry.occupied</key>
+                <type>localized.string</type>
+                <value type="string">regular arrival to occupied track</value>
+                <value type="string.bg">пристига в зает коловоз</value>
+                <value type="string.cs">pravidelný vjezd na obsazenou kolej</value>
+                <value type="string.de">RegelmäßigeEingang auf das besetzte Gleis</value>
+                <value type="string.hu">menetrend szerint foglaltra jár</value>
+                <value type="string.pl">możliwy wjazd na tor zajęty przez inny pociąg</value>
+                <value type="string.sk">pravidelný vjazd na obsadenú koľaj</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>entry.shunt</key>
+                <type>localized.string</type>
+                <value type="string">shunting on departure side, go carefully</value>
+                <value type="string.bg">маневра в изходна гърловина, карай внимателно</value>
+                <value type="string.cs">na odjezdové straně se posunuje, vjíždějte opatrně</value>
+                <value type="string.de">auf den Abfahrtseite ist Verschieben, einfahren vorsichtig</value>
+                <value type="string.hu">bejárás közben tolatás</value>
+                <value type="string.pl">Uwaga na manewrujące składy!</value>
+                <value type="string.sk">na odjazdovej strane sa posunuje, vchádzajte opatrne</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>length</key>
+                <type>localized.string</type>
+                <value type="string">Length norm</value>
+                <value type="string.bg">Норматив дължина</value>
+                <value type="string.cs">Normativ délky</value>
+                <value type="string.de">Normativ Länge</value>
+                <value type="string.hu">Normatív hossz</value>
+                <value type="string.pl">Długość</value>
+                <value type="string.sk">Normatív dĺžky</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>length.axles</key>
+                <type>localized.string</type>
+                <value type="string">axles</value>
+                <value type="string.bg">оси</value>
+                <value type="string.cs">náprav</value>
+                <value type="string.de">Achsen</value>
+                <value type="string.hu">tengelyszám</value>
+                <value type="string.pl">osi</value>
+                <value type="string.sk">náprav</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>header.publisher</key>
+                <type>localized.string</type>
+                <value type="string">OstraMo</value>
+                <value type="string.cs">OstraMo</value>
+                <value type="string.de">OstraMo</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>internal.use</key>
+                <type>localized.string</type>
+                <value type="string">For internal use only</value>
+                <value type="string.bg">Само за вътрешна употреба</value>
+                <value type="string.cs">Jen pro služební potřebu</value>
+                <value type="string.de">Nur für den Dienstgebrauch</value>
+                <value type="string.hu">Csak szolgálati használatra</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>circulation.start</key>
+                <type>localized.string</type>
+                <value type="string">Start</value>
+                <value type="string.bg">Начало</value>
+                <value type="string.cs">Nástup</value>
+                <value type="string.de">Dienstbeginn</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Circulations of engineers</value>
+                <value type="string.bg">Циркулации на машнисти</value>
+                <value type="string.cs">Turnusy</value>
+                <value type="string.de">Turnusen</value>
+                <value type="string.hu">Turnus</value>
+                <value type="string.pl">Plany Pracy</value>
+                <value type="string.sk">Turnusy</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>publisher</key>
+                <type>localized.string</type>
+                <value type="string">Nakladatelství OstraMo - Ostrava</value>
+                <value type="string.bg">Издател OstraMo - Ostrava</value>
+                <value type="string.cs">Nakladatelství OstraMo - Ostrava</value>
+                <value type="string.de">Nakladatelství OstraMo - Ostrava</value>
+                <value type="string.hu">Szerkesztő</value>
+                <value type="string.pl">www.fremo.pl</value>
+                <value type="string.sk">Nakladatelstvo OstraMo - Ostrava</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>company</key>
+                <type>localized.string</type>
+                <value type="string">ČESKOSLOVENSKÉ STÁTNÍ DRÁHY</value>
+                <value type="string.bg">Български Държавни Железници</value>
+                <value type="string.cs">ČESKOSLOVENSKÉ STÁTNÍ DRÁHY</value>
+                <value type="string.de">Östereichische Bundesbahnen</value>
+                <value type="string.hu">MÁV</value>
+                <value type="string.pl">Polskie Koleje Państwowe</value>
+                <value type="string.sk">ČESKOSLOVENSKÉ ŠTÁTNE DRÁHY</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>company.part</key>
+                <type>localized.string</type>
+                <value type="string">Střední dráha</value>
+                <value type="string.bg">БДЖ</value>
+                <value type="string.cs">Střední dráha</value>
+                <value type="string.de">Wien</value>
+                <value type="string.hu">Ide johet MAV resze</value>
+                <value type="string.pl">PKP</value>
+                <value type="string.sk">Východná dráha</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>validity.from</key>
+                <type>localized.string</type>
+                <value type="string">Valid from</value>
+                <value type="string.bg">Важи от</value>
+                <value type="string.cs">Platí od</value>
+                <value type="string.de">Gültig ab</value>
+                <value type="string.hu">Érvényes -től</value>
+                <value type="string.pl">ważny w dniach</value>
+                <value type="string.sk">Platí od</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>cycle</key>
+                <type>localized.string</type>
+                <value type="string">Circulation of engineers</value>
+                <value type="string.bg">Циркулация на машинисти</value>
+                <value type="string.cs">Turnus</value>
+                <value type="string.de">Turnus</value>
+                <value type="string.hu">Turnus</value>
+                <value type="string.pl">Plan Pracy</value>
+                <value type="string.sk">Turnus</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>for.line</key>
+                <type>localized.string</type>
+                <value type="string">for line</value>
+                <value type="string.bg">за линия</value>
+                <value type="string.cs">pro trať</value>
+                <value type="string.de">für Strecke</value>
+                <value type="string.hu">Vonal</value>
+                <value type="string.pl">dla linii</value>
+                <value type="string.sk">pre trať</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.train</key>
+                <type>localized.string</type>
+                <value type="string">Train</value>
+                <value type="string.bg">Влак</value>
+                <value type="string.cs">Vlak</value>
+                <value type="string.de">Zug</value>
+                <value type="string.hu">Vonat</value>
+                <value type="string.pl">Pociąg</value>
+                <value type="string.sk">Vlak</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.departure</key>
+                <type>localized.string</type>
+                <value type="string">Departure</value>
+                <value type="string.bg">Заминава</value>
+                <value type="string.cs">Odjezd</value>
+                <value type="string.de">Abfahrt</value>
+                <value type="string.hu">Indulás</value>
+                <value type="string.pl">Odjazd</value>
+                <value type="string.sk">Odjazd</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.note</key>
+                <type>localized.string</type>
+                <value type="string">Note</value>
+                <value type="string.bg">Забележка</value>
+                <value type="string.cs">Poznámka</value>
+                <value type="string.de">Bemerkung</value>
+                <value type="string.hu">Megjegyzés</value>
+                <value type="string.pl">Uwagi</value>
+                <value type="string.sk">Poznámka</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>move.to.station</key>
+                <type>localized.string</type>
+                <value type="string">move to station</value>
+                <value type="string.bg">преместване на гара</value>
+                <value type="string.cs">přesun do stanice</value>
+                <value type="string.de">Transfer zum Bahnhof</value>
+                <value type="string.hu">Mozgatás állomásra</value>
+                <value type="string.pl">przesuń do stacji</value>
+                <value type="string.sk">presun do stanice</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>list.train.title</key>
+                <type>localized.string</type>
+                <value type="string">Trains for this driver circulation</value>
+                <value type="string.bg">Влакове за циркулации на този машинист</value>
+                <value type="string.cs">V tomto turnusu vede strojvedoucí vlak v úseku</value>
+                <value type="string.de">In diesem Turnus führt Lokführer der Zug auf dem Abschnitt</value>
+                <value type="string.hu">Ebben a fordában mozdonyvezető csak az alábbi útvonalon vezet</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.timetable</key>
+                <type>localized.string</type>
+                <value type="string">Timetable</value>
+                <value type="string.bg">Разписание</value>
+                <value type="string.cs">Sešitový jízdní řád</value>
+                <value type="string.de">Buchfahrplan</value>
+                <value type="string.hu">Szolgálati menetrend</value>
+                <value type="string.pl">Rozklad jazdy pociągów</value>
+                <value type="string.sk">Zošitový cestovný poriadok</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.from.to</key>
+                <type>localized.string</type>
+                <value type="string">From - To</value>
+                <value type="string.bg">От - До</value>
+                <value type="string.cs">Nástup - Konec</value>
+                <value type="string.de">Aus - Nach</value>
+                <value type="string.hu">Honnan - Hova</value>
+                <value type="string.pl">Z - Do</value>
+                <value type="string.sk">Z - Do</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.page</key>
+                <type>localized.string</type>
+                <value type="string">Title page</value>
+                <value type="string.cs">Titulní stránka</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.start</key>
+                <type>localized.string</type>
+                <value type="string">Start time on title page</value>
+                <value type="string.cs">Začátek na titulní stránce</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>setup.time</key>
+                <type>localized.string</type>
+                <value type="string">Use setup time</value>
+                <value type="string.cs">Použít čas na přípravu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>limit.to.circulation</key>
+                <type>localized.string</type>
+                <value type="string">Limit route of trains to circulation</value>
+                <value type="string.cs">Omezit pouze na stanice v turnusu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>technological.time</key>
+                <type>localized.string</type>
+                <value type="string">Technolog. time for setup</value>
+                <value type="string.cs">Technolog. čas pro přípravu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>hide.weight.info</key>
+                <type>localized.string</type>
+                <value type="string">Hide weight info</value>
+                <value type="string.cs">Skrýt zátěž</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>show.circulation</key>
+                <type>localized.string</type>
+                <value type="string">Show circulation for train</value>
+                <value type="string.cs">Turnus u vlaků</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>freight</key>
+                <type>localized.string</type>
+                <value type="string">Show freight for first station</value>
+                <value type="string.cs">Zobrazit náklad. dopravu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>always.show.hours</key>
+                <type>localized.string</type>
+                <value type="string">Always show hours</value>
+                <value type="string.cs">Vždy zobrazovat hodiny</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>freight.capacity</key>
+                <type>localized.string</type>
+                <value type="string">Show freight capacity</value>
+                <value type="string.cs">Zobrazit kapacity náklad. dopravy</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <type>localized.string</type>
+                <value type="string">Engine on the left side</value>
+                <value type="string.cs">Lokomotiva vlevo</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>highlight.circulation</key>
+                <type>localized.string</type>
+                <value type="string">Highlight instead of limit</value>
+                <value type="string.cs">Zvýraznit místo omezit</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>freight.end</key>
+                <type>localized.string</type>
+                <value type="string">Freight from the end of train</value>
+                <value type="string.cs">Zátěž od konce vlaku</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.page</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>title.start</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>setup.time</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>limit.to.circulation</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>technological.time</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>hide.weight.info</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>show.circulation</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>freight</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>always.show.hours</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>freight.capacity</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>highlight.circulation</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>freight.end</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

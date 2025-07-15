@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>c2df3b57-a22d-40c1-8dbf-0cca6eef6144</id>
+    <color>0x0000FF</color>
+    <category_id>6aa57e7c-4e8d-47a9-9da2-c4e6b08a7000</category_id>
+    <platform>false</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">Sv</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">Vehicle train</value>
+            <value type="string.cs">Soupravový vlak</value>
+            <value type="string.sk">Súpravový vlak</value>
+        </attribute>
+    </attributes>
+</train_type>

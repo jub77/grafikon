@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<engine_class version="1">
+    <id>a7956acb-4256-4816-b3c4-75d358836f78</id>
+    <attributes>
+        <attribute>
+            <key>name</key>
+            <value type="string">DR VT18.16</value>
+        </attribute>
+    </attributes>
+    <weight_table>
+        <row>
+            <speed>130</speed>
+        </row>
+    </weight_table>
+</engine_class>

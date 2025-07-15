@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.library.LibraryItem;
  *
  * @author jub
  */
-public interface LSLibrary extends LSVersions, LSConfigurable {
+public interface LSLibrary extends LSVersions, LSConfigurable, LS<Library> {
 
     String METADATA_KEY_LIBRARY_VERSION = "library.version";
     String METADATA = "metadata.properties";
@@ -19,8 +19,4 @@ public interface LSLibrary extends LSVersions, LSConfigurable {
     void saveItem(LibraryItem item, OutputStream os) throws LSException;
 
     LibraryItem loadItem(InputStream is, LSFeature... features) throws LSException;
-
-    void save(Library library, LSSink sink) throws LSException;
-
-    Library load(LSSource source, LSFeature... features) throws LSException;
 }

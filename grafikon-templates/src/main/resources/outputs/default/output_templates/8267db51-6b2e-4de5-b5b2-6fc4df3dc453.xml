@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>8267db51-6b2e-4de5-b5b2-6fc4df3dc453</id>
+        <template>
+            <template>&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+    &lt;title&gt;${localization['title'].translate()}&lt;/title&gt;
+    &lt;style type="text/css" media="all"&gt;
+        table.station {page-break-after: always; font-family: arial, sans-serif; font-size: 3mm; width: 270mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+        td {padding: .1mm .8mm .1mm .8mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+        tr.row td {vertical-align: top; font-size: 3.4mm;}
+        tr.header {height: 5mm;}
+        tr.header td {font-weight:bold ;font-size: 3.4mm;}
+        tr.header_station {height: 8mm;}
+        tr.header_station td {font-weight:bold ; font-size: 5mm; text-align: center;}
+        span.no {visibility: hidden;}
+        td.time {text-align: right; padding-left: 1mm; padding-right: 0mm;}
+        span.emph {font-style: italic;}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+    engineLeft = settings['engine.left']
+
+    def convertTime(time, includePart) {
+        if (time == "" || time == null)
+            return "";
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace("${END}", includePart ? "&lt;span class=\"no\"&gt;${END}&lt;/span&gt;" : "")
+        }
+        return result
+    }
+    
+    def highlight(str) {
+        return "&lt;b&gt;${str}&lt;/b&gt;"
+    }
+    
+    def highlightHelper(str) {
+        return "&lt;span class=\"emph\"&gt;${str}&lt;/span&gt;";
+    }
+    
+    def comment(separator, str) {
+        return (str == null || str =="") ? "" : "${separator}(${str})"
+    }
+    
+    def getLocale(station) {
+        def loc = locale
+        for (region in station.regions) {
+            loc = region.locale ?: loc
+        }
+        loc = station.company?.locale ?: loc
+        return loc
+    }
+    
+    def textForCycle(text, cycle_t, loc) {
+      def str = ""
+      def name = cycle_t.name
+      if (cycle_t.adjacent &amp;&amp; !cycle_t.in) {
+        name = cycle_t.in ? "${cycle_t.adjacent}&amp;rarr;${name}" : "${name}&amp;rarr;${cycle_t.adjacent}"
+      }
+      if (cycle_t.in) {
+        str = "${text}: ${name}${comment(' ', cycle_t.desc)}"
+      } else {
+        if (cycle_t.trainName == null) {
+          str = "${text}: ${name} ${localization['ends'].translate(loc)}"
+        } else {
+          str = "${text}: ${name} ${localization['move.to'].translate(loc)} ${cycle_t.trainName.translate(loc)} (${convertTime(cycle_t.time, false)})"
+        }
+      }
+      return str
+    }
+%&gt;
+
+&lt;%
+  def print_out(str, variant) {
+    print get_out(str, variant)
+  }
+
+  def get_out(str, variant) {
+    if (str == null || str == "")
+      return variant
+    else
+      return str
+  }
+
+  def get_note(row, loc) {
+    if (row.technologicalTime) {
+      return localization["technological.time"].translate(loc)
+    }
+
+    note_parts = []
+    // length
+    if (row.length != null) {
+      length_unit_s = row.length.lengthInAxles ? " ${localization['length.axles'].translate(loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
+      note_parts &lt;&lt; "[${row.length.length}${length_unit_s}]"
+    }
+    // engine
+    def engineText = localization["engine"].translate(loc)
+    if (row.engine != null)
+      for (engine_t in row.engine) {
+        def str = textForCycle(engineText, engine_t, loc)
+        str = engine_t.start ? highlight(str) : str
+        str = engine_t.helper == true ? highlightHelper(str) : str
+        note_parts &lt;&lt; str
+      }
+    // train unit
+    def trainUnitText = localization["train.unit"].translate(loc)
+    if (row.trainUnit != null)
+      for (train_unit_t in row.trainUnit) {
+        def str = textForCycle(trainUnitText, train_unit_t, loc)
+        note_parts &lt;&lt; (train_unit_t.start ? highlight(str) : str)
+      }
+    // other
+    if (row.cycle != null)
+      for (cycle_t in row.cycle) {
+        def cycleTypeText = cycle_t.typeName.translate(loc)
+        def str = textForCycle(cycleTypeText, cycle_t, loc)
+        note_parts &lt;&lt; (cycle_t.start ? highlight(str) : str)
+      }
+    // comment
+    if (row.comment != null) {
+      note_parts &lt;&lt; row.comment.translate(loc)
+    }
+    if (row.freightTo != null) {
+      if (engineLeft) {
+        note_parts &lt;&lt; "&amp;larr; &lt;i&gt;${convert_freight(row.freightTo)}&lt;/i&gt;"
+      } else {
+        note_parts &lt;&lt; "&lt;i&gt;${convert_freight(row.freightTo)}&lt;/i&gt; &amp;rarr;"
+      }
+    }
+    if (row.freightToTrain != null) {
+      note_parts &lt;&lt; "&lt;i&gt;${row.freightToTrain.collect{i -&gt; '(&amp;rarr; ' + i.train.translate(loc) + ': ' + (convert_freight(i.freightTo)) + ')'}.join(', ')}&lt;/i&gt;"
+    }
+    if (row.freightFromTrain != null) {
+      note_parts &lt;&lt; "&lt;i&gt;(${row.freightFromTrain.collect{i -&gt; i.translate(loc) + ' &amp;rarr;'}.join(', ')})&lt;/i&gt;"
+    }
+    // occupied track
+    if (row.occupied) {
+      note_parts &lt;&lt; localization["occupied"].translate(loc)
+    }
+
+    return create_note_str(note_parts)
+  }
+
+  def convert_freight(freightDest) {
+      if (engineLeft) freightDest = freightDest.reverse()
+      return freightDest.collect{i -&gt; convert_freight_dest(i)}.join(', ')
+  }
+  
+  def convert_freight_dest(i) {
+      def str = "${i.toString(locale, true)}${i.center ? '(' + i.regions.join(', ') + ')' : ''}"
+      return i.center ? highlight(str) : str
+  }
+
+  def create_note_str(note_parts) {
+    return note_parts.collect{i -&gt; i}.join(", ");
+  }
+%&gt;
+&lt;body&gt;
+&lt;%
+  for (station in stations) {
+      def loc = getLocale(station)
+%&gt;
+&lt;table class="station" align="center" cellspacing=0 cellpadding=0&gt;
+&lt;thead&gt;
+&lt;tr class="header_station"&gt;
+    &lt;td colspan="9"&gt;${station.name}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="header"&gt;
+    &lt;td style="width: 5mm; text-align: center"&gt;X&lt;/td&gt;
+    &lt;td style="width: 22mm"&gt;${localization["column.train"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 10mm"&gt;${localization["column.from"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 10mm"&gt;${localization["column.arrival"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 5mm"&gt;${localization["column.track"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 10mm"&gt;${localization["column.departure"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 10mm"&gt;${localization["column.to"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 10mm"&gt;${localization["column.end"].translate(loc)}&lt;/td&gt;
+    &lt;td style="width: 188mm"&gt;${localization["column.notes"].translate(loc)}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;% for (row in station.rows) { %&gt;
+&lt;tr class="row"&gt;
+    &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td&gt;${row.trainName.translate(loc)}&lt;/td&gt;
+    &lt;td&gt;&lt;% print_out(row.from,"&amp;nbsp;") %&gt;&lt;/td&gt;
+    &lt;td class="time"&gt;&lt;% print_out(convertTime(row.arrival, true),"&amp;nbsp;") %&gt;&lt;/td&gt;
+    &lt;td align="center"&gt;${row.track}&lt;/td&gt;
+    &lt;td class="time"&gt;&lt;% print_out(convertTime(row.departure, true),"&amp;nbsp;") %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;% print_out(row.to,"&amp;nbsp;") %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;% print_out(row.end,"&amp;nbsp;") %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;% note = get_note(row, loc); note != "" ? print(note) : print("&amp;nbsp;") %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% } %&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;% } %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>def stations = selection != null ? selection : diagram.net.nodes
+if (!settings['one.file']) {
+    for (station in stations) {
+        def type = station.type
+        if (type.stop || type.station) {
+            outputs.create()
+                .setName("${station.name}.html")
+                .setParams([
+                    "stations":[station],
+                    "tech.time":settings["technological.time"],
+                    "adjacent.sessions":settings['adjacent.sessions']])
+                .setDirectory(key)
+                .setEncoding("utf-8")
+        }
+    }
+} else {
+    outputs.create()
+        .setName("${key}.html")
+        .setParams([
+            "adjacent.sessions":settings['adjacent.sessions'],
+            "tech.time":settings["technological.time"],
+            "stations":stations])
+        .setEncoding("utf-8")
+}
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Station timetables</value>
+                <value type="string.cs">Staniční seznamy</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">stations_html</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">stations</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Station timetables</value>
+                <value type="string.cs">Staniční seznamy</value>
+            </attribute>
+            <attribute>
+                <key>selection.type</key>
+                <value type="string">node</value>
+            </attribute>
+            <attribute>
+                <key>column.arrival</key>
+                <type>localized.string</type>
+                <value type="string">Arr</value>
+                <value type="string.bg">Пристига</value>
+                <value type="string.cs">Příjezd</value>
+                <value type="string.de">An.</value>
+                <value type="string.hu">Érkez.</value>
+                <value type="string.pl">Przyjazd</value>
+                <value type="string.sk">Príjazd</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.departure</key>
+                <type>localized.string</type>
+                <value type="string">Dep</value>
+                <value type="string.bg">Заминава</value>
+                <value type="string.cs">Odjezd</value>
+                <value type="string.de">Ab.</value>
+                <value type="string.hu">Ind.</value>
+                <value type="string.pl">Odjazd</value>
+                <value type="string.sk">Odjazd</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.end</key>
+                <type>localized.string</type>
+                <value type="string">End</value>
+                <value type="string.bg">Последна гара</value>
+                <value type="string.cs">Konec</value>
+                <value type="string.de">Ende</value>
+                <value type="string.hu">Végáll</value>
+                <value type="string.pl">Koniec</value>
+                <value type="string.sk">Koniec</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.from</key>
+                <type>localized.string</type>
+                <value type="string">From</value>
+                <value type="string.bg">От</value>
+                <value type="string.cs">Z</value>
+                <value type="string.de">Aus</value>
+                <value type="string.hu">Honn.</value>
+                <value type="string.pl">Z</value>
+                <value type="string.sk">Z</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.notes</key>
+                <type>localized.string</type>
+                <value type="string">Notes</value>
+                <value type="string.bg">Бележки</value>
+                <value type="string.cs">Poznámky</value>
+                <value type="string.de">Bemerkungen</value>
+                <value type="string.hu">Megjegyzés</value>
+                <value type="string.pl">Uwagi</value>
+                <value type="string.sk">Poznámky</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.to</key>
+                <type>localized.string</type>
+                <value type="string">To</value>
+                <value type="string.bg">За</value>
+                <value type="string.cs">Do</value>
+                <value type="string.de">Nach</value>
+                <value type="string.hu">Hova</value>
+                <value type="string.pl">Do</value>
+                <value type="string.sk">Do</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.track</key>
+                <type>localized.string</type>
+                <value type="string">Trk</value>
+                <value type="string.bg">Коловоз</value>
+                <value type="string.cs">Kol.</value>
+                <value type="string.de">Gl.</value>
+                <value type="string.hu">Vg</value>
+                <value type="string.pl">tor</value>
+                <value type="string.sk">Kol.</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>ends</key>
+                <type>localized.string</type>
+                <value type="string">ends</value>
+                <value type="string.bg">свършва</value>
+                <value type="string.cs">končí</value>
+                <value type="string.de">endet</value>
+                <value type="string.hu">végez</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine</key>
+                <type>localized.string</type>
+                <value type="string">Engine</value>
+                <value type="string.bg">Локомотив</value>
+                <value type="string.cs">HV</value>
+                <value type="string.de">Tfz</value>
+                <value type="string.hu">Mozd</value>
+                <value type="string.pl">Lok.</value>
+                <value type="string.sk">HV</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>length.axles</key>
+                <type>localized.string</type>
+                <value type="string">axles</value>
+                <value type="string.bg">оси</value>
+                <value type="string.cs">náprav</value>
+                <value type="string.de">Achsen</value>
+                <value type="string.hu">tengelyszám</value>
+                <value type="string.pl">osi</value>
+                <value type="string.sk">náprav</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>move.to</key>
+                <type>localized.string</type>
+                <value type="string">to</value>
+                <value type="string.bg">за</value>
+                <value type="string.cs">na</value>
+                <value type="string.de">auf</value>
+                <value type="string.hu">-ra</value>
+                <value type="string.pl">do</value>
+                <value type="string.sk">na</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>occupied</key>
+                <type>localized.string</type>
+                <value type="string">regular arrival to occupied track</value>
+                <value type="string.bg">нормално пристигане в зает коловоз</value>
+                <value type="string.cs">pravidelný vjezd na obsazenou kolej</value>
+                <value type="string.de">Regelmäßige Eingang auf das besetzte Gleis</value>
+                <value type="string.hu">menetrend szerint foglaltra jár</value>
+                <value type="string.pl">możliwy wjazd na tor zajęty przez inny pociąg</value>
+                <value type="string.sk">pravidelný vjazd na obsadenú koľaj</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>technological.time</key>
+                <type>localized.string</type>
+                <value type="string">Technological time</value>
+                <value type="string.bg">Технологично време</value>
+                <value type="string.cs">Technologický čas</value>
+                <value type="string.de">Technologische Zeit</value>
+                <value type="string.hu">állomási technológiai idő</value>
+                <value type="string.pl">Obsł. na st. techn.</value>
+                <value type="string.sk">Technologický čas</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Station timetable</value>
+                <value type="string.bg">Гарово разписание</value>
+                <value type="string.cs">Staniční jízdní řád</value>
+                <value type="string.de">Bahnhof Zeitplan</value>
+                <value type="string.hu">Állomási menetrend</value>
+                <value type="string.pl">Stacyjny rozkład jazdy pociągów</value>
+                <value type="string.sk">Staničný cestovný poriadok</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.unit</key>
+                <type>localized.string</type>
+                <value type="string">Train unit</value>
+                <value type="string.bg">Мотриса</value>
+                <value type="string.cs">Souprava</value>
+                <value type="string.de">Zug Garnitur</value>
+                <value type="string.hu">Készlet</value>
+                <value type="string.pl">skład</value>
+                <value type="string.sk">Súprava</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.train</key>
+                <type>localized.string</type>
+                <value type="string">Train</value>
+                <value type="string.bg">Влак</value>
+                <value type="string.cs">Vlak</value>
+                <value type="string.de">Zug</value>
+                <value type="string.hu">Vonat</value>
+                <value type="string.pl">Pociąg</value>
+                <value type="string.sk">Vlak</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>adjacent.sessions</key>
+                <type>localized.string</type>
+                <value type="string">Show adjacent sessions</value>
+                <value type="string.cs">Zobraz navazující session</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>one.file</key>
+                <type>localized.string</type>
+                <value type="string">In one file</value>
+                <value type="string.cs">V jednom souboru</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <type>localized.string</type>
+                <value type="string">Engine on the left side</value>
+                <value type="string.cs">Lokomotiva vlevo</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>adjacent.sessions</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>one.file</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>technological.time</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

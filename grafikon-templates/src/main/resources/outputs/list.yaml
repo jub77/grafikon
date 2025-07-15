@@ -1,6 +1,6 @@
 items:
 - id: outputs
-  filename: output_templates.gtml
+  filename: default
   name:
     default: Outputs
     cs: Výstupy

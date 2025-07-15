@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>dd82eac8-af43-4040-975d-dea9c3817c1b</id>
+        <script>
+            <source_code>outputs.create()
+    .setName("net.${settings['output.type']}")
+    .setParams([
+        "output.type": settings['output.type'],
+        "zoom" : settings['zoom'],
+        "length.unit" : settings['length.unit'],
+        "speed.unit": settings['speed.unit'],
+        // default text for nodes
+        // "node.to.text": { node -&gt; node.name },
+        // no text for lines
+        "line.to.text": { line -&gt; "" }
+    ])
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Net (layout)</value>
+                <value type="string.cs">Síť moduliště</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">net</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">net</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">draw</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">The schema of the layout</value>
+                <value type="string.cs">Schéma moduliště</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <type>localized.string</type>
+                <value type="string">Output type (svg, png, pdf)</value>
+                <value type="string.cs">Typ výstupu (svg, png, pdf)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <type>localized.string</type>
+                <value type="string">Zoom</value>
+                <value type="string.cs">Zvětšení</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>length.unit</key>
+                <type>localized.string</type>
+                <value type="string">Length (cm, mm, m, ...)</value>
+                <value type="string.cs">Délka (cm, mm, m, ...)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>speed.unit</key>
+                <type>localized.string</type>
+                <value type="string">Speed (kmph, mph, mps)</value>
+                <value type="string.cs">Rychlost (kmph, mph, mps)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">svg</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <value type="double">1.5</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>length.unit</key>
+                <value type="string">cm</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>speed.unit</key>
+                <value type="string">kmph</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

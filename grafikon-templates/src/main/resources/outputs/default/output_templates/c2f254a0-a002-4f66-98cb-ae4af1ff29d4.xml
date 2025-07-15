@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>c2f254a0-a002-4f66-98cb-ae4af1ff29d4</id>
+        <template>
+            <template>&lt;html&gt;
+&lt;head&gt;
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+  &lt;title&gt;Trains from hidden stations&lt;/title&gt;
+  &lt;style type="text/css" media="all"&gt;
+    table.trains {width: 150mm; border-color: black; border-style: solid; border-width: 0mm;}
+    tr.trains {height: 85mm;}
+    .break {page-break-before: always; font-size: 1mm;}
+    td.train {border-color: black; border-style: solid; border-width: 0.4mm; vertical-align: top;}
+    td.train table {font-family: arial, sans-serif; font-size: 3mm; width: 48mm; border-color: black; border-style: solid; border-width: 0mm; padding-left: 1mm; padding-right: 1mm;}
+    tr.back {height: 42mm;}
+    tr.back td {width: 100%; border-width: 0 0 0.05mm 0; border-color: black; border-style: solid;}
+    td.tinfo {font-size: 4.5mm; text-align: left; font-weight: bold; padding-top: 2mm; border-width: 0 0 0.05mm 0; border-color: black; border-style: solid;}
+    td.tft {text-align: left; font-size: 3.5mm; padding-bottom: 1mm;}
+    td.tc {text-align: left; font-size: 3mm;}
+    tr.row {height: 4mm; text-align: center;}
+    td.trow {text-align: left;}
+    td.drow {font-weight: bold; text-align: right; padding-right: 1mm;}
+    td.ftrow {}
+    tr.delim {height: .5mm;}
+    tr.delim td {font-size: 0.2mm; border-color: black; border-style: solid; border-width: 0.35mm 0mm 0mm 0mm; width: 21mm;}
+    span.no {visibility: hidden;}
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;%
+  def getCycles(interval, type) {
+    def cycles = interval.train.getCycleItemsForInterval(type, interval)
+    return cycles.collect{i -&gt; "${i.cycle.name}${getCycleDescription(i.cycle)}&lt;br&gt;\n"}.join('')
+  }
+
+  def getCycleDescription(cycle) {
+    def desc = null
+    if (cycle.type == diagram.engineCycleType) {
+      desc = net.parostroj.timetable.utils.TransformUtil.getEngineCycleDescription(cycle)
+    } else {
+      desc = cycle.description
+    }
+    return desc == null ? "" : " (${desc})"
+  }
+
+  def getFreight(interval) {
+    def fl = []
+    if (interval.first &amp;&amp; interval.freight) {
+      def freightDests = diagram.freightNet.connectionStrategy.getFreightToNodes(interval)
+      fl = util.freight.freightListToString(freightDests, locale)
+    }
+    return fl.empty ? "&amp;nbsp;" : fl.join(", ")
+  }
+
+  def trains = []
+  for (node in diagram.net.nodes) {
+    if (node.type == net.parostroj.timetable.model.NodeType.STATION_HIDDEN) {
+      def list = new net.parostroj.timetable.model.TimeIntervalList()
+      for (interval in node) {
+        if (interval.first) {
+          list.addIntervalForRouteSegmentWithoutCheck(interval)
+        }
+      }
+      for (i in list) {
+        trains &lt;&lt; i
+      }
+    }
+  }
+  
+  def iterator = trains.iterator()
+  count = 0;
+  while(true) {
+%&gt;
+&lt;table class="trains" align="center" cellspacing=0 cellpadding=0&gt;
+  &lt;tr class="trains"&gt;&lt;%
+      countInRow = 0
+      train = null
+      interval = null
+      while (true) {
+        if (iterator.hasNext()) {
+          interval = iterator.next()
+          train = interval.train
+        } else {
+          train = null
+          interval = null
+        }
+
+        if (train != null) {
+          %&gt;
+    &lt;td class="train"&gt;
+      &lt;table align="center" cellspacing=0&gt;
+        &lt;tr class="back"&gt;
+          &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="tinfo"&gt;${train.name} (${diagram.timeConverter.convertIntToText(train.startTime)})&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="tft"&gt;${train.startNode} - ${train.endNode}&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="tc"&gt;${getCycles(interval, diagram.engineCycleType)}${getCycles(interval, diagram.trainUnitCycleType)}&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="tc"&gt;${getFreight(interval)}&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;&lt;%
+        } else {
+          %&gt;
+    &lt;td class="train"&gt;
+      &lt;table align="center" cellspacing=0&gt;
+        &lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;&lt;%
+        }
+
+        countInRow++;
+        if (countInRow == 3)
+          break;
+      }
+    %&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;%
+    if (!iterator.hasNext())
+      break;
+    count++;
+    if (count % 3 == 0) {
+      %&gt;&lt;div class="break"&gt;&amp;nbsp;&lt;/div&gt;
+&lt;%
+    }
+  }
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Cards for starting trains in hidden stations</value>
+                <value type="string.cs">Kartičky pro vlaky začínající ve skrytých stanicích</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">trains_hidden_html</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">diagram</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Cards for starting trains in hidden stations
+Can be folded and put on train</value>
+                <value type="string.cs">Kartičky pro vlaky začínající ve skrytých stanicích
+Dají se přehnout a umístit na vlak</value>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

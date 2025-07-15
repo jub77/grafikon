@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_diagram>
+    <id>4313af36-9c9a-41d4-a8a4-3ef90826835b</id>
+    <trains_data>
+        <name_template>
+            <template>${type.abbr}${train.number}</template>
+            <language>SIMPLE</language>
+        </name_template>
+        <complete_name_template>
+            <template>${type.abbr}${train.number}${prefix:train.description: }</template>
+            <language>SIMPLE</language>
+        </complete_name_template>
+        <sort_pattern>
+            <pattern>(\d*)(.*)</pattern>
+            <rules>
+                <rule>
+                    <group>1</group>
+                    <type>number</type>
+                </rule>
+                <rule>
+                    <group>2</group>
+                    <type>string</type>
+                </rule>
+            </rules>
+        </sort_pattern>
+    </trains_data>
+    <attributes>
+        <attribute>
+            <key>scale</key>
+            <value type="scale">H0</value>
+        </attribute>
+        <attribute>
+            <key>time.scale</key>
+            <value type="double">5.0</value>
+        </attribute>
+        <attribute>
+            <key>station.transfer.time</key>
+            <value type="integer">10</value>
+        </attribute>
+        <attribute>
+            <key>length.per.axle</key>
+            <value type="integer">4500</value>
+        </attribute>
+        <attribute>
+            <key>weight.per.axle</key>
+            <value type="integer">14000</value>
+        </attribute>
+        <attribute>
+            <key>weight.per.axle.empty</key>
+            <value type="integer">6000</value>
+        </attribute>
+        <attribute>
+            <key>length.unit</key>
+            <value type="length.unit">axle</value>
+        </attribute>
+        <attribute>
+            <key>change.direction.stop</key>
+            <value type="integer">1200</value>
+        </attribute>
+        <attribute>
+            <key>save.user</key>
+            <value type="string">jub</value>
+        </attribute>
+        <attribute>
+            <key>save.version</key>
+            <value type="integer">2</value>
+        </attribute>
+        <attribute>
+            <key>save.timestamp</key>
+            <value type="long">1752581045948</value>
+        </attribute>
+    </attributes>
+    <changesTracking>false</changesTracking>
+    <cycle_type>
+        <id>fc66a150-ca4e-4bd4-8031-279f8be0d094</id>
+        <key>TRAIN_UNIT_CYCLE</key>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Train units</value>
+                <value type="string.cs">Soupravy</value>
+                <value type="string.de">Zug Garnituren</value>
+                <value type="string.sk">Súpravy</value>
+            </attribute>
+        </attributes>
+    </cycle_type>
+    <cycle_type>
+        <id>bc53ae05-2dfa-44d1-a81a-34c132b3457d</id>
+        <key>DRIVER_CYCLE</key>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Engineers</value>
+                <value type="string.cs">Turnusy</value>
+                <value type="string.de">Turnuse</value>
+                <value type="string.sk">Turnusy</value>
+            </attribute>
+        </attributes>
+    </cycle_type>
+    <cycle_type>
+        <id>c8a77294-c024-40be-a9a0-a0f36122fb2c</id>
+        <key>ENGINE_CYCLE</key>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Engines</value>
+                <value type="string.cs">Hnací vozidla</value>
+                <value type="string.de">Triebfahrzeuge</value>
+                <value type="string.sk">Hnacie vozidlá</value>
+            </attribute>
+        </attributes>
+    </cycle_type>
+</train_diagram>

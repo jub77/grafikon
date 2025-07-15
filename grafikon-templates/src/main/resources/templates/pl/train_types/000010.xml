@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>f1277e3e-7dd7-452d-a28c-c7cec4b26fde</id>
+    <color>0x000000</color>
+    <category_id>89bb592d-4d97-49c9-ad46-7c53df9c7a52</category_id>
+    <platform>false</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">L</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">pojazdy trakcyjne luzem</value>
+        </attribute>
+        <attribute>
+            <key>weight.info</key>
+            <value type="boolean">true</value>
+        </attribute>
+    </attributes>
+</train_type>

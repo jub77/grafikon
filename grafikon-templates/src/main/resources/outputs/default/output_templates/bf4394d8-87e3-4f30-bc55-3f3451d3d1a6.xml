@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>bf4394d8-87e3-4f30-bc55-3f3451d3d1a6</id>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Stations</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">xml-stations</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">stations</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">xml</value>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

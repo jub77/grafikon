@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>a82ac4d6-9771-4713-a424-60d0d381b59c</id>
+        <template>
+            <template>&lt;%
+import net.parostroj.timetable.model.*
+import net.parostroj.timetable.utils.*
+import net.parostroj.timetable.actions.*
+import java.io.*
+
+def convert(ci, i) {
+    def before = i == ci.fromInterval ? "" : (i == ci.toInterval ? "-&gt;" : "-")
+    def after = i == ci.fromInterval ? "-&gt;" : (i == ci.toInterval ? "" : "-")
+    before + ci.cycle.name + after
+}
+
+def loc = util.getLocaleForNode(node, locale)
+def station = node
+%&gt;Bahnhofsfahrordnung ${station.name}
+
+&lt;% def list = new TimeIntervalList()
+for (track in station.tracks) {
+    for (interval in track.timeIntervalList) {
+        if (!interval.technological) {
+            list.addIntervalByNormalizedStartTime(interval);
+        }
+    }
+}
+for (interval in list) {
+    def from = interval.train.getIntervalBefore(interval);
+    def to = interval.train.getIntervalAfter(interval);
+    def fromNode = TransformUtil.getFromAbbr(interval);
+    def toNode = TransformUtil.getToAbbr(interval);
+    def fromTime = from == null ? "" : diagram.timeConverter.convertIntToText(interval.start).replace(":", ".");
+    def toTime = to == null ? "" : diagram.timeConverter.convertIntToText(interval.end).replace(":", ".");
+    def track = interval.track.number
+    def ec = []
+    def tuc = []
+    for (ci in interval.train.getCycles(diagram.engineCycleType)) {
+        if (ci.containsInterval(interval)) {
+            ec &lt;&lt; ci
+        }
+    }
+    for (ci in interval.train.getCycles(diagram.trainUnitCycleType)) {
+        if (ci.containsInterval(interval)) {
+            tuc &lt;&lt; ci
+        }
+    }
+    def engines = ec.collect{i -&gt; convert(i, interval)}.join(', ')
+    def units = tuc.collect{i -&gt; convert(i, interval)}.join(', ')
+%&gt;${fromTime}\t${toTime}\t${interval.train.name.translate(loc)}\t\t\t${track}\t${fromNode == null ? "" : fromNode}\t${toNode == null ? "" : toNode}\t${units}\t${engines}\t${interval.attributes['comment'] != null ? interval.attributes['comment'].translate(loc) : ""}
+&lt;%
+}
+%&gt;</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>for (node in diagram.net.nodes) {
+    outputs.create().setName(node.name + ".txt").setContext(["node":node]).setDirectory("rgzm")
+}</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">RGZM output</value>
+                <value type="string.cs">Výstup pro RGZM</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">RGZM</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">diagram</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">RGZM output</value>
+                <value type="string.cs">Výstup pro RGZM</value>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

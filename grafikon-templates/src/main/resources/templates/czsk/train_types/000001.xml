@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>0b4e3ded-44f9-4690-8c9a-fd86cbbdc739</id>
+    <color>0xFF0000</color>
+    <category_id>6aa57e7c-4e8d-47a9-9da2-c4e6b08a7000</category_id>
+    <platform>true</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">R</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">Fast train</value>
+            <value type="string.cs">Rychlík</value>
+            <value type="string.sk">Rýchlik</value>
+        </attribute>
+    </attributes>
+</train_type>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>7cb5ebed-293d-4b9b-9768-78d0e907c333</id>
+        <script>
+            <source_code>import net.parostroj.timetable.output2.gt.*
+import java.awt.Color
+
+def start = diagram.attributes["from.time"]
+def end = diagram.attributes["to.time"]
+if (start == null) start = 0
+if (end == null) end = 24 * 3600
+def ps = new CirculationDrawParams(null)
+ps.widthInChars = settings['text.width']
+ps.from = start
+ps.to = end
+ps.zoom = settings['zoom']
+
+def outputType = settings['output.type']
+
+// set params
+for (type in diagram.cycleTypes) {
+    def name = type.name.translate(locale)
+    if (type == diagram.engineCycleType) name = localization["engines"].translate(locale)
+    if (type == diagram.trainUnitCycleType) name = localization["train.units"].translate(locale)
+    if (type == diagram.driverCycleType) name = localization["drivers"].translate(locale)
+    def out = outputs.create()
+    def cdp = new CirculationDrawParams(type.cycles, ps)
+    cdp.setColors({location, item -&gt;
+        switch (location) {
+            case "color_fill":
+                if (settings['train.colors']) {
+                    def fillColor = Color.RED
+                    if (item != null) {
+                        fillColor = item.train.type.getColor()
+                    }
+                    return fillColor
+                } else {
+                    return Color.YELLOW
+                }
+            case "color_outline": return Color.BLACK
+            case "color_column_1": return Color.WHITE
+            case "color_column_2": return Color.WHITE
+            //case "color_line": return Color.LIGHT_GRAY
+        }
+        return null})
+    out.name = "${name}.${outputType}"
+    out.params = ["cd.params": [cdp], "output.type": outputType]
+    out.directory ="${key}"
+}
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Graphical output of cicrulations</value>
+                <value type="string.cs">Grafický výstup oběhů</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">circulations</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">circulations</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">draw</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Graphical output of cicrulations to SVG</value>
+                <value type="string.cs">Grafický výstup oběhů do SVG</value>
+            </attribute>
+            <attribute>
+                <key>engines</key>
+                <type>localized.string</type>
+                <value type="string">engines</value>
+                <value type="string.cs">hv</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>drivers</key>
+                <type>localized.string</type>
+                <value type="string">drivers</value>
+                <value type="string.cs">turnusy</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.units</key>
+                <type>localized.string</type>
+                <value type="string">train_units</value>
+                <value type="string.cs">soupravy</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <type>localized.string</type>
+                <value type="string">File type (svg, png, pdf)</value>
+                <value type="string.cs">Typ souboru (svg, png, pdf)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.colors</key>
+                <type>localized.string</type>
+                <value type="string">Use colors of trains</value>
+                <value type="string.cs">Použít barvy vlaků</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <type>localized.string</type>
+                <value type="string">Zoom</value>
+                <value type="string.cs">Zvětšení</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>text.width</key>
+                <type>localized.string</type>
+                <value type="string">Text width</value>
+                <value type="string.cs">Šířka textu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.colors</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <value type="double">1.0</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>text.width</key>
+                <value type="integer">10</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">svg</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

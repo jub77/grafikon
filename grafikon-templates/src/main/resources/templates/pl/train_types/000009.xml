@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>c4278f0a-5234-483f-b569-8c278b56f311</id>
+    <color>0x000000</color>
+    <category_id>89bb592d-4d97-49c9-ad46-7c53df9c7a52</category_id>
+    <platform>false</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">TG</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">gospodarczy, roboczy</value>
+        </attribute>
+        <attribute>
+            <key>weight.info</key>
+            <value type="boolean">true</value>
+        </attribute>
+        <attribute>
+            <key>managed.freight</key>
+            <value type="enum.managed.freight">ENDS</value>
+        </attribute>
+    </attributes>
+</train_type>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>fbc0ed66-16df-43e5-8577-25c7ce44878f</id>
+        <script>
+            <source_code>import net.parostroj.timetable.output2.gt.*
+import net.parostroj.timetable.model.*
+
+def routes = selection != null ? selection : diagram.routes
+
+def start = diagram.attributes["from.time"]
+def end = diagram.attributes["to.time"]
+if (start == null) start = 0
+if (end == null) end = 24 * 3600
+
+// set params
+def params = new GTDrawParams(GTDraw.Type.fromKey(settings['type'] ?: GTDraw.TYPE.CLASSIC), null)
+params.zoom = settings['zoom']
+params.start = start
+params.end = end
+
+params.extendedLines = settings['extended.lines']
+params.arrivalDepartureDigits = settings['arrival.departure.digits']
+params.stationNamesWidthFixed = settings['station.names.width.fixed']
+params.stationNamesWidth = settings['station.names.width']
+params.title = settings['title']
+params.trainEnds = settings['train.ends']
+params.verticalOrientation = settings['vertical']
+
+def type = settings['output.type']
+def maxHeight = settings['max.height']
+def segmentHeight = settings['height']
+
+def routeMap = getRouteMap(routes)
+
+// add outputs
+for (route in routes) {
+    lParams = new GTDrawParams(params,route)
+
+    def width = settings['width']
+    def height = routeMap[route][0] * segmentHeight
+    if (height &gt; maxHeight) height = maxHeight
+
+    if (settings['vertical']) {
+        lParams.setSize(height, width)
+    } else {
+        lParams.setSize(width, height)
+    }
+    outputs.create().setName("${route.name}.${type}")
+        .setParams(["gt.params":[lParams], "output.type":type])
+        .setDirectory(key)
+}
+
+def getRouteLength(route) {
+    return route.segments.findAll{ r -&gt; r instanceof Line }.collect{ r -&gt; r.length }.inject(0L) { sum, length -&gt; sum + length }
+}
+
+def getRouteParts(route) {
+    return route.segments.findAll { r -&gt; r instanceof Node &amp;&amp; r.type != NodeType.SIGNAL }.size() - 1
+}
+
+def getRouteMap(routes) {
+    def map = [:]
+    for (route in routes) {
+        map[route] = [getRouteParts(route), getRouteLength(route)]
+    }
+    return map
+}
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Graphical timetables</value>
+                <value type="string.cs">Nákresné jízdní řády</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">graphs_by_one</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">diagram</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">draw</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Graphical timetables (all routes) to SVG</value>
+                <value type="string.cs">Nákresné jízdní řády (všechny trasy) do SVG</value>
+            </attribute>
+            <attribute>
+                <key>selection.type</key>
+                <value type="string">route</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <type>localized.string</type>
+                <value type="string">File type (svg, png, pdf)</value>
+                <value type="string.cs">Typ souboru (svg, png, pdf)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>type</key>
+                <type>localized.string</type>
+                <value type="string">Type (classic, tracks, stops)</value>
+                <value type="string.cs">Typ (classic, tracks, stops)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>width</key>
+                <type>localized.string</type>
+                <value type="string">Width</value>
+                <value type="string.cs">Šířka</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>height</key>
+                <type>localized.string</type>
+                <value type="string">Height</value>
+                <value type="string.cs">Výška</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <type>localized.string</type>
+                <value type="string">Zoom</value>
+                <value type="string.cs">Zvětšení</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>extended.lines</key>
+                <type>localized.string</type>
+                <value type="string">Extended lines</value>
+                <value type="string.cs">Rozšířené zobrazení čar</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>arrival.departure.digits</key>
+                <type>localized.string</type>
+                <value type="string">Digits for arrivals/departures</value>
+                <value type="string.cs">Číslice příjezdu/odjezdu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width.fixed</key>
+                <type>localized.string</type>
+                <value type="string">Fixed width of station names</value>
+                <value type="string.cs">Pevná šířka názvů stanic</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width</key>
+                <type>localized.string</type>
+                <value type="string">Width of station names</value>
+                <value type="string.cs">Šířka názvů stanic</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Title</value>
+                <value type="string.cs">Nadpis</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>train.ends</key>
+                <type>localized.string</type>
+                <value type="string">Show ends of trains</value>
+                <value type="string.cs">Zobrazit konce vlaků</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>vertical</key>
+                <type>localized.string</type>
+                <value type="string">Vertical orientation</value>
+                <value type="string.cs">Zobrazit vertikálně</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>max.height</key>
+                <type>localized.string</type>
+                <value type="string">Max height</value>
+                <value type="string.cs">Maximální výška</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>width</key>
+                <value type="integer">2000</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>height</key>
+                <value type="integer">150</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <value type="double">1.5</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>extended.lines</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>arrival.departure.digits</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width.fixed</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width</key>
+                <value type="integer">10</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>train.ends</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>type</key>
+                <value type="string">classic</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">svg</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>vertical</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>max.height</key>
+                <value type="integer">2000</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

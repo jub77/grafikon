@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<net>
+    <nodes/>
+    <lines/>
+    <line_classes>
+        <line_class version="1">
+            <id>364f2050-d892-4d14-b926-84f08d21bc98</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">II</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>8e99a460-30de-4df5-ad20-629b663cce3f</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">IV</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>778b7744-97bd-4f88-8638-b484d202db07</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">VI</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>561d972e-78e3-4b0a-a5ca-6b795c6c9833</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">VIII</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>d43c9038-bf86-453f-aeb1-6cb952f0f87c</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">X</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>bc63d62f-f0b3-4028-af24-738842ba6da0</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">XII</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>88599c3a-b2d6-483a-a013-b7b4f6391b5f</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">XIV</value>
+                </attribute>
+            </attributes>
+        </line_class>
+        <line_class version="1">
+            <id>fba0a6cc-85f6-49a4-9aac-2a32005ee8e6</id>
+            <attributes>
+                <attribute>
+                    <key>name</key>
+                    <value type="string">XVI</value>
+                </attribute>
+            </attributes>
+        </line_class>
+    </line_classes>
+    <regions/>
+</net>

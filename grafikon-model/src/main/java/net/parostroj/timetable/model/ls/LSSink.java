@@ -2,8 +2,9 @@ package net.parostroj.timetable.model.ls;
 
 import net.parostroj.timetable.model.TrainDiagram;
 
-import java.io.*;
-import java.nio.file.Path;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.zip.ZipOutputStream;
 
 public interface LSSink extends AutoCloseable {
@@ -24,18 +25,14 @@ public interface LSSink extends AutoCloseable {
     }
 
     static LSSink create(File file) throws LSException {
-        if (file.exists() && file.isDirectory()) {
-            return new DirectorySink(file);
-        } else {
-            try {
-                return new ZipFileSink(file);
-            } catch (FileNotFoundException e) {
-                throw new LSException(e);
-            }
+        try {
+            return new ZipFileSink(file);
+        } catch (FileNotFoundException e) {
+            throw new LSException(e);
         }
     }
 
-    static LSSink create(Path path) throws LSException {
-        return create(path.toFile());
+    static LSSink createForDir(File file) {
+        return new DirectorySink(file);
     }
 }

@@ -1,0 +1,17 @@
+metadata.properties
+train_diagram.xml
+net.xml
+train_type_categories/000000.xml
+train_type_categories/000001.xml
+train_types/000000.xml
+train_types/000001.xml
+train_types/000002.xml
+train_types/000003.xml
+train_types/000004.xml
+train_types/000005.xml
+train_types/000006.xml
+train_types/000007.xml
+train_types/000008.xml
+train_types/000009.xml
+train_types/000010.xml
+freight_net.xml

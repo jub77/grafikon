@@ -7,9 +7,9 @@ import java.io.InputStream;
  *
  * @author jub
  */
-class ResourceLoader<T> extends AbstractLoader<T> {
+class ResourceLoader<T> extends AbstractLoader<T, InputStream> {
 
-    public ResourceLoader(LoadDelegate<T> loadDelegate, String listFile, String itemLocation) {
+    public ResourceLoader(LoadDelegate<T, InputStream> loadDelegate, String listFile, String itemLocation) {
         super(loadDelegate);
         this.itemListFile = listFile;
         this.itemLocation = itemLocation;
@@ -29,7 +29,7 @@ class ResourceLoader<T> extends AbstractLoader<T> {
     }
 
     @Override
-    protected InputStream getItemStream(DataItem item) {
+    protected InputStream getItemSource(DataItem item) {
         return ResourceLoader.class.getResourceAsStream(itemLocation + "/" + item.filename());
     }
 }

@@ -63,6 +63,11 @@ class LSCache<T extends LSVersions> {
         return latestVersion != null ? this.createInstanceForSave(latestVersion) : null;
     }
 
+    public T createLatestForLoad() throws LSException {
+        ModelVersion latestVersion = this.getLatestSaveVersion();
+        return latestVersion != null ? this.createInstanceForLoad(latestVersion) : null;
+    }
+
     public T createForLoad(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = is.getNextEntry();

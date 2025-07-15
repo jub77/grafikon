@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>cbedbde7-8b50-4d30-bde3-00670ecf371f</id>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Starting positions</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">xml-spositions</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">starts</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">xml</value>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

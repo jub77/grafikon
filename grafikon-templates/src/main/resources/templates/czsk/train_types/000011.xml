@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>0ef7844c-6af9-4079-a746-e7342c2ce59c</id>
+    <color>0x727272</color>
+    <category_id>98c581fa-4a9b-49a9-9a4e-7c1b8d9f26f7</category_id>
+    <platform>false</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">Pv</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">Freight train</value>
+            <value type="string.cs">Přestavovací vlak</value>
+            <value type="string.sk">Prestavovací vlak</value>
+        </attribute>
+        <attribute>
+            <key>weight.info</key>
+            <value type="boolean">true</value>
+        </attribute>
+        <attribute>
+            <key>managed.freight</key>
+            <value type="enum.managed.freight">ENDS</value>
+        </attribute>
+    </attributes>
+</train_type>

@@ -1,7 +1,9 @@
 package net.parostroj.timetable.loader;
 
 import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSSource;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.function.Function;
 
@@ -25,15 +27,19 @@ public interface DataItemLoader<T> {
         };
     }
 
-    static <T> DataItemLoader<T> getFromResources(String itemsLocation, String itemListFile, LoadDelegate<T> delegate) {
+    static <T> DataItemLoader<T> getFromResourcesDirs(String itemsLocation, String itemListFile, LoadDelegate<T, LSSource> delegate) {
+        return new ResourceDirLoader<>(delegate, itemListFile, itemsLocation);
+    }
+
+    static <T> DataItemLoader<T> getFromResources(String itemsLocation, String itemListFile, LoadDelegate<T, InputStream> delegate) {
         return new ResourceLoader<>(delegate, itemListFile, itemsLocation);
     }
 
-    static <T> DataItemLoader<T> getFromFiles(String itemsLocation, String itemListFile, LoadDelegate<T> delegate) {
+    static <T> DataItemLoader<T> getFromFiles(String itemsLocation, String itemListFile, LoadDelegate<T, InputStream> delegate) {
         return new FileLoader<>(delegate, itemListFile, itemsLocation);
     }
 
-    static <T> DataItemLoader<T> getFromUrl(URL url, String itemListFile, LoadDelegate<T> delegate) {
+    static <T> DataItemLoader<T> getFromUrl(URL url, String itemListFile, LoadDelegate<T, InputStream> delegate) {
         return new UrlLoader<>(url, itemListFile, delegate);
     }
 }

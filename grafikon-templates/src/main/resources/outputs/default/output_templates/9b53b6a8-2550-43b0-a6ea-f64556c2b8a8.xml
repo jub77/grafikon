@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>9b53b6a8-2550-43b0-a6ea-f64556c2b8a8</id>
+        <script>
+            <source_code>import net.parostroj.timetable.output2.gt.*
+import net.parostroj.timetable.model.*
+
+def start = diagram.attributes["from.time"]
+def end = diagram.attributes["to.time"]
+def maxHeight = settings['max.height']
+def segmentHeight = settings['height']
+def width = settings['width']
+
+// set params
+def params = new GTDrawParams(GTDraw.Type.fromKey(settings['type'] ?: GTDraw.TYPE.CLASSIC), null)
+def type = settings['output.type']
+params.zoom = settings['zoom']
+if (start != null) params.start = start
+if (end != null) params.end = end
+params.extendedLines = settings['extended.lines']
+params.arrivalDepartureDigits = settings['arrival.departure.digits']
+params.stationNamesWidthFixed = settings['station.names.width.fixed']
+params.stationNamesWidth = settings['station.names.width']
+params.title = settings['title']
+params.trainEnds = settings['train.ends']
+
+def routeMap = getRouteMap(diagram.routes)
+
+// add outputs
+def cps = []
+def cHeight = 0
+for (route in diagram.routes) {
+    def cp = new GTDrawParams(params, route)
+    def height = routeMap[route][0] * segmentHeight
+    if (height &gt;= maxHeight) height = maxHeight
+    cp.setSize(width, height)
+    cp.titleText = route as String
+    cHeight += height
+    if (cHeight &gt;= maxHeight) {
+        if (cps.empty) {
+            write([cp], type)
+            cHeight = 0
+            cps = []
+        } else {
+            write(cps, type)
+            cps = [cp]
+            cHeight = height
+        }
+    } else {
+        cps &lt;&lt; cp
+    }
+}
+if (!cps.empty) {
+    write(cps, type)
+}
+
+def write(cps, type) {
+    outputs.create().setName(name(cps, type)).setParams(["gt.params":cps, "output.type":type]).setDirectory("g_grouped")
+}
+
+def name(list, type) {
+    return "l_${list.collect{i-&gt;i.route.name}.join("_")}.${type}"
+}
+
+def getRouteLength(route) {
+    return route.segments.findAll{ r -&gt; r instanceof Line }.collect{ r -&gt; r.length }.inject(0L) { sum, length -&gt; sum + length }
+}
+
+def getRouteParts(route) {
+    return route.segments.findAll { r -&gt; r instanceof Node &amp;&amp; r.type != NodeType.SIGNAL }.size() - 1
+}
+
+def getRouteMap(routes) {
+    def map = [:]
+    for (route in routes) {
+        map[route] = [getRouteParts(route), getRouteLength(route)]
+    }
+    return map
+}
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Graphical timetables (all routes, combined)</value>
+                <value type="string.cs">Nákresné jízdní řády (všechny trasy, spojené)</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">graphs_grouped</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">diagram</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">draw</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Graphical timetables (all routes) to SVG (combined)
+Combined together until height reaches 2000 pixels</value>
+                <value type="string.cs">Nákresné jízdní řády (všechny trasy, spojené) do SVG
+Spojené dohromady pokud je výška nepřesahuje 2000 pixelů</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <type>localized.string</type>
+                <value type="string">File type (svg, png, pdf)</value>
+                <value type="string.cs">File type (svg, png, pdf)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>type</key>
+                <type>localized.string</type>
+                <value type="string">Type (classic, tracks, stops)</value>
+                <value type="string.cs">Typ (classic, tracks, stops)</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>width</key>
+                <value type="integer">2500</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>max.height</key>
+                <value type="integer">2000</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>zoom</key>
+                <value type="double">1.5</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>extended.lines</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>arrival.departure.digits</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width.fixed</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>station.names.width</key>
+                <value type="integer">10</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>train.ends</key>
+                <value type="boolean">false</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>type</key>
+                <value type="string">classic</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>height</key>
+                <value type="integer">150</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">svg</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

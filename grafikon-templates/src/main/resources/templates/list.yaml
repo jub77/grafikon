@@ -1,17 +1,17 @@
 items:
 - id: czsk
-  filename: czsk.gtm
+  filename: czsk
   name:
     default: Czech/Slovak (ČSD)
     cs: Česká/Slovenská (ČSD)
 - id: pl
-  filename: pl.gtm
+  filename: pl
   name:
     default: Polish (PKP)
     cs: Polská (PKP)
     pl: Polski (PKP)
 - id: empty
-  filename: empty.gtm
+  filename: empty
   name:
     default: Empty
     cs: Prázdná

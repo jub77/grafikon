@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>d3106451-bfb5-499f-a8d1-be80e8ea26a5</id>
+        <template>
+            <template>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;%
+    // definition of constants
+    HEIGHT = 90
+    ROW_COUNT = 3
+    COLUMN_COUNT = 4
+
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        return result
+    }
+
+    def padding() {'margin=".4mm .5mm .1mm .5mm"'}
+    def paddingTime() {'margin=".4mm 1mm .1mm .5mm"'}
+    def border() {"border=${borderValue()}"}
+    def borderCirc() {'border="solid .3mm black"'}
+    def borderValue() {'"solid .3mm black"'}
+    def rarr() { return "&amp;#8594;" }
+
+    // counter of sequences
+    seqId = 1
+
+    def getSequence(cycle) {
+        if (!cycle.next) {
+            return [new CycleWrapper(cycle)]
+        } else {
+            def sequence = []
+            def current = cycle
+            def cnt = 0
+            while (true) {
+                sequence &lt;&lt; new CycleWrapper(current, ++cnt, seqId)
+                current = current.next
+                if (current == cycle) break
+            }
+            for (w in sequence) {
+                w.cnt = cnt
+            }
+            seqId++
+            return sequence
+        }
+    }
+
+    def getFirstFreeSequence(sequences, freeColumns) {
+        if (sequences.empty) {
+            return null
+        } else {
+            def selected = [null]
+            for (sequence in sequences) {
+                if (sequence.size() &lt;= freeColumns || sequence.size() &gt; COLUMN_COUNT) {
+                    selected = sequence
+                    sequences.remove(selected)
+                    break
+                }
+            }
+            return selected
+        }
+    }
+
+    class CycleWrapper {
+        def cycle
+        def cnt
+        def seq
+        def id
+
+        CycleWrapper(cycle, seq, id) {
+            this.cycle = cycle
+            this.seq = seq
+            this.id = id
+        }
+
+        CycleWrapper(cycle) {
+            this.cycle = cycle
+        }
+    }
+
+    // prepare cycles - duplicate the ones needed in sequences
+    def sequences = []
+    for (cycle in cycles) {
+        sequences &lt;&lt; getSequence(cycle)
+    }
+    def wrappers = []
+    def currentColumn = 0
+    while (true) {
+        if (sequences.empty) break;
+        def freeColumns = COLUMN_COUNT - currentColumn
+        def sequence = getFirstFreeSequence(sequences, freeColumns)
+        for (w in sequence) {
+            ++currentColumn
+            wrappers &lt;&lt; w
+            if (currentColumn == COLUMN_COUNT) currentColumn = 0
+        }
+    }
+%&gt;
+
+&lt;root xmlns="http://www.w3.org/1999/XSL/Format"&gt;
+&lt;layout-master-set&gt;
+  &lt;simple-page-master master-name="simpleA4" page-height="29.7cm" page-width="21cm" margin="1cm 1cm 1cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
+    &lt;region-body /&gt;
+  &lt;/simple-page-master&gt;
+&lt;/layout-master-set&gt;
+&lt;page-sequence master-reference="simpleA4" font-family="SansCondensed"&gt;
+  &lt;flow flow-name="xsl-region-body"&gt;
+  &lt;% printWrappers(wrappers) %&gt;
+  &lt;/flow&gt;
+&lt;/page-sequence&gt;
+&lt;/root&gt;
+&lt;%
+def printWrappers(wrappers) {
+  Iterator iterator = wrappers.iterator();
+  count = 0;
+  while(true) {
+%&gt;
+&lt;block font-size="3mm"&gt;
+&lt;table border-collapse="separate" border-separation=".2mm" table-layout="fixed" width="100%"&gt;
+&lt;% for (ind in 1..COLUMN_COUNT) { %&gt;
+    &lt;table-column column-width="${100/COLUMN_COUNT}%"/&gt;
+&lt;% } %&gt;
+    &lt;table-body&gt;
+        &lt;table-row height="${HEIGHT}mm"&gt;&lt;%
+      countInRow = 0;
+      c = null;
+      while (true) {
+        if (iterator.hasNext()) {
+          c = iterator.next();
+        } else {
+          c = null;
+        }
+        if (c != null) {
+          %&gt;
+    &lt;table-cell ${borderCirc()}&gt;
+      &lt;% print_cycle(c) %&gt;
+    &lt;/table-cell&gt;&lt;%
+        } else {
+          %&gt;
+    &lt;table-cell&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;%
+        }
+        countInRow++;
+        if (countInRow == COLUMN_COUNT)
+          break;
+      }
+    %&gt;
+    &lt;/table-row&gt;
+    &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;/block&gt;
+&lt;%
+    if (!iterator.hasNext())
+      break;
+    count++;
+    if (count % ROW_COUNT == 0) {
+      // page break if needed
+    }
+  }
+}
+
+def backgroundSequence(c) {
+    return c.next ? 'background-image="arrow_seq_pdf.svg" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center"' : "";
+}
+
+def print_cycle(w) {
+    def c = w.cycle
+    def loc = getLocale(c)
+    def company = getCompany(c)
+%&gt;
+&lt;block&gt;
+&lt;table border-collapse="collapse" table-layout="fixed" width="100%" ${backgroundSequence(c)}&gt;
+&lt;table-body&gt;
+&lt;table-row height="${HEIGHT-4}mm"&gt;&lt;table-cell number-columns-spanned="2"&gt;&lt;block&gt;
+&lt;table border-collapse="collapse" table-layout="fixed" width="100%"&gt;
+    &lt;table-column column-width="38%" /&gt;
+    &lt;table-column column-width="22%" /&gt;
+    &lt;table-column column-width="40%" /&gt;
+    &lt;table-body&gt;
+        &lt;table-row font-size="2mm"&gt;
+          &lt;table-cell number-columns-spanned="3"&gt;&lt;block ${padding()}&gt;${localization["cycle"].translate(loc)}:${company ? " " + company : ""}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;table-row&gt;
+          &lt;table-cell font-size="4.5mm" font-weight="bold"&gt;&lt;block margin-left=".2mm"&gt;${c.name}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell font-size="3.5mm" font-weight="bold" number-columns-spanned="2"&gt;&lt;block&gt;${c.description ?: ""}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;
+        &lt;table-row font-size="2mm" text-align="center" border-top=${borderValue()}&gt;
+          &lt;table-cell&gt;&lt;block margin-top=".2mm"&gt;${localization["column.train"].translate(loc)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block margin-top=".2mm"&gt;${localization["column.departure"].translate(loc)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block margin-top=".2mm"&gt;${localization["column.from.to"].translate(loc)}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;&lt;% for (row in c.rows) {
+                  if (row.wait &gt; 25*60) {
+                    %&gt;
+        &lt;table-row border-top="solid .2mm black"&gt;
+          &lt;table-cell number-columns-spanned="3"&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;&lt;%
+                  }
+              %&gt;
+        &lt;table-row${row.helper ? ' font-style="italic"' : ""}&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${row.trainName.translate(loc)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block ${paddingTime()} text-align="right" font-weight="bold"&gt;${convertTime(row.fromTime)}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${row.fromAbbr} - ${row.toAbbr}&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;&lt;% } %&gt;&lt;/table-body&gt;&lt;/table&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;/table-row&gt;
+&lt;% if (c.next) { %&gt;
+        &lt;table-row height="4mm" border-top=${borderValue()}&gt;
+          &lt;table-cell&gt;&lt;block ${padding()}&gt;${rarr()} ${c.next.name}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell text-align="right"&gt;&lt;block ${padding()}&gt;${w.id}[${w.seq}/${w.cnt}]&lt;/block&gt;&lt;/table-cell&gt;
+        &lt;/table-row&gt;&lt;% } else {%&gt;
+            &lt;table-row height="4.3mm"&gt;&lt;table-cell number-columns-spanned="2"&gt;&lt;block&gt;&lt;/block&gt;&lt;/table-cell&gt;&lt;/table-row&gt;
+        &lt;% } %&gt;
+    &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;/block&gt;&lt;%
+}
+
+def getCompany(cycle) {
+    def company = cycle?.company?.abbr
+}
+
+def getLocale(cycle) {
+    def l = cycle?.company?.locale
+    return l ?: locale
+}
+%&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <attachment name="arrow_seq_pdf.svg" type="BINARY">
+            <binaryData>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQoNCjxzdmcNCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHZlcnNpb249IjEuMSINCiAgIHdpZHRoPSIxMDYuMjk5MjEiDQogICBoZWlnaHQ9IjIxMi41OTg0MiINCiAgIGlkPSJjYXJkLWFycm93Ij4NCiAgPGRlZnMNCiAgICAgaWQ9ImRlZnMzMDAwIiAvPg0KICA8Zw0KICAgICB0cmFuc2Zvcm09Im1hdHJpeCgwLjczNzA5ODcyLDAsMCwwLjczNzA5ODcyLC04LjE1OTQwMDQsLTU2MC40OTc5NCkiDQogICAgIGlkPSJsYXllcjEiDQogICAgIHN0eWxlPSJzdHJva2U6I2JiYmJiYjtzdHJva2Utb3BhY2l0eToxIj4NCiAgICA8cGF0aA0KICAgICAgIGQ9Ik0gMTQyLjA2LDkxOS4yNSBDIDEzOC4xOSw4NjcuNjggOTUuMDM1LDgyOC4xMyAyNC40OSw4MjYuMTkgbCAtMC4yMzU2LC01Mi41NCBjIDM4LjA4MiwtMC4wMTU2IDExNi42NywxOS44MDUgMTE3LjgsOTMuMjk5IHYgNDguNzcgYyAwLjMxMzkzLDU3LjM1OSAtNDIuNTI0LDc5LjM2NSAtNzguOTI3LDk0LjAwNiB2IDI1LjY4MSBsIC0zOS4xMSwtNDcuNTkyIDM5LjExLC02Mi42NzQgdiAzMC4xNiBjIDM0LjgzMiwtMTEuNzY4IDYwLjEsLTI3LjI1IDczLjc0NCwtNjAuNTUiDQogICAgICAgaWQ9InBhdGg0Ig0KICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNiYmJiYmI7c3Ryb2tlLXdpZHRoOjMuMzEzNDQ5Mzg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2Utb3BhY2l0eToxO3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgLz4NCiAgPC9nPg0KPC9zdmc+DQo=</binaryData>
+        </attachment>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Cards for circulations of engines</value>
+                <value type="string.cs">Lístky pro oběhy hnacích vozidel</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">engines</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">engine_cycles</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">pdf.groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">PDF: Cards for circulations of engines</value>
+                <value type="string.cs">PDF: Lístky pro oběhy hnacích vozidel</value>
+            </attribute>
+            <attribute>
+                <key>cycle</key>
+                <type>localized.string</type>
+                <value type="string">Circulation of engine</value>
+                <value type="string.bg">Циркулация на локомотив</value>
+                <value type="string.cs">Oběh hnacího vozidla</value>
+                <value type="string.de">Umlauf für Triebfahrzeug</value>
+                <value type="string.hu">Mozdony forduló</value>
+                <value type="string.pl">Obieg lokomotywy</value>
+                <value type="string.sk">Obeh hnacieho vozidla</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.train</key>
+                <type>localized.string</type>
+                <value type="string">Train</value>
+                <value type="string.bg">Влак</value>
+                <value type="string.cs">Vlak</value>
+                <value type="string.de">Zug</value>
+                <value type="string.hu">Vonat</value>
+                <value type="string.pl">Pociąg</value>
+                <value type="string.sk">Vlak</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.departure</key>
+                <type>localized.string</type>
+                <value type="string">Departure</value>
+                <value type="string.bg">Заминава</value>
+                <value type="string.cs">Odjezd</value>
+                <value type="string.de">Abfahrt</value>
+                <value type="string.hu">Indulás</value>
+                <value type="string.pl">Odjazd</value>
+                <value type="string.sk">Odjazd</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.from.to</key>
+                <type>localized.string</type>
+                <value type="string">From-To</value>
+                <value type="string.bg">От - До</value>
+                <value type="string.cs">Z-Do</value>
+                <value type="string.de">Aus-Nach</value>
+                <value type="string.hu">Honnan-Hova</value>
+                <value type="string.pl">Z-Do</value>
+                <value type="string.sk">Z-Do</value>
+                <category>localization</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

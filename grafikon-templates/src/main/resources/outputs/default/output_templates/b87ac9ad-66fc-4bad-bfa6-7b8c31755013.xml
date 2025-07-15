@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>b87ac9ad-66fc-4bad-bfa6-7b8c31755013</id>
+        <template>
+            <template>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;%
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
+    
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        return result
+    }
+    
+    def getStartTimeTitle() {
+        return start_time ? " (${diagram.timeConverter.convertIntToText(start_time)})" : "";
+    }
+%&gt;
+
+&lt;root xmlns="http://www.w3.org/1999/XSL/Format"&gt;
+  &lt;layout-master-set&gt;
+    &lt;simple-page-master master-name="simpleA4" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-bottom="1.5cm" margin-left="1.5cm" margin-right="1.5cm"&gt;
+      &lt;region-body/&gt;
+    &lt;/simple-page-master&gt;
+  &lt;/layout-master-set&gt;
+  &lt;page-sequence master-reference="simpleA4" font-family="Sans"&gt;
+    &lt;flow flow-name="xsl-region-body"&gt;
+      &lt;block font-size="5mm" font-weight="bold" space-after="3mm"&gt;${localization["title"].translate(locale)}${getStartTimeTitle()}&lt;/block&gt;
+      &lt;% printTitle(localization["title.engines"].translate(locale)) %&gt;
+      &lt;% printPositions(engines) %&gt;
+      &lt;% printTitle(localization["title.train.units"].translate(locale)) %&gt;
+      &lt;% printPositions(train_units) %&gt;
+      &lt;% for (cycles in custom_cycles) { %&gt;
+      &lt;% printTitle(cycles.name.translate(locale)) %&gt;
+      &lt;% printPositions(cycles.positions) %&gt;
+      &lt;% } %&gt;
+    &lt;/flow&gt;
+  &lt;/page-sequence&gt;
+&lt;/root&gt;
+
+&lt;% def printTitle(title) { %&gt;
+&lt;block font-size="4mm" font-weight="bold" space-after="0.5mm"&gt;${title}&lt;/block&gt;
+&lt;% } %&gt;
+
+&lt;% def printPositions(positions) { 
+     if (!positions) return %&gt;
+&lt;block font-size="3mm" space-after="3mm"&gt;
+&lt;table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" font-family="SansCondensed"&gt;
+  &lt;table-column column-width="2cm" ${border()} /&gt;
+  &lt;table-column column-width="7cm" ${border()} /&gt;
+  &lt;table-column column-width="3.5cm" ${border()} /&gt;
+  &lt;table-column column-width="1cm" ${border()} /&gt;
+  &lt;table-column column-width="1.5cm" ${border()} /&gt;
+  &lt;table-column column-width="3cm" ${border()} /&gt;
+  &lt;table-body&gt;
+&lt;%
+  for (position in positions) {
+      printPosition(position)
+  } %&gt;
+  &lt;/table-body&gt;
+&lt;/table&gt;
+&lt;/block&gt;
+&lt;% } %&gt;
+
+&lt;% def printPosition(position) { %&gt;
+    &lt;table-row ${border()}&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block&gt;${position.cycleName}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block&gt;${position.cycleDescription?:""}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block&gt;${position.stationName}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block text-align="right"&gt;${position.track}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block text-align="right"&gt;${convertTime(position.time)}&lt;/block&gt;&lt;/table-cell&gt;
+      &lt;table-cell ${padding()}&gt;&lt;block&gt;${position.trainName.translate(locale)}&lt;/block&gt;&lt;/table-cell&gt;
+    &lt;/table-row&gt;
+&lt;% } %&gt;
+    
+&lt;% def padding() {"padding=\".4mm .8mm .3mm 0.8mm\""} %&gt;
+&lt;% def border() {"border=\"solid .3mm\""} %&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>def directory = key
+outputs.create().setName("00.pdf").setParams(["start.time":0]).setDirectory(key)
+outputs.create().setName("06.pdf").setParams(["start.time":6 * 3600]).setDirectory(key)
+outputs.create().setName("12.pdf").setParams(["start.time":12 * 3600]).setDirectory(key)
+outputs.create().setName("18.pdf").setParams(["start.time":18 * 3600]).setDirectory(key)
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Starting positions at 0, 6, 12 and 18 hours</value>
+                <value type="string.cs">Výchozí postavení v 0, 6, 12 a 18 hodin</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">starts</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">starts</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">pdf.groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">PDF: Starting positions at 0, 6, 12 and 18 hours
+All circulations</value>
+                <value type="string.cs">PDF: Výchozí postavení v 0, 6, 12 a 18 hodin
+Všechny oběhy</value>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Start position</value>
+                <value type="string.bg">Начални позиции</value>
+                <value type="string.cs">Výchozí postavení</value>
+                <value type="string.de">Ausgangsposition</value>
+                <value type="string.hu">Kiinduló pozició</value>
+                <value type="string.pl">Rozmieszczenie taboru w chwili rozpoczęcia sesji</value>
+                <value type="string.sk">Východzie postavenie</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.engines</key>
+                <type>localized.string</type>
+                <value type="string">Engines</value>
+                <value type="string.bg">Локомотиви</value>
+                <value type="string.cs">Hnací vozidla</value>
+                <value type="string.de">Triebfahrzeuge</value>
+                <value type="string.hu">Mozdonyok</value>
+                <value type="string.pl">Lokomotywy</value>
+                <value type="string.sk">Hnacie vozidlá</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.train.units</key>
+                <type>localized.string</type>
+                <value type="string">Train units</value>
+                <value type="string.bg">Мотриси</value>
+                <value type="string.cs">Soupravy</value>
+                <value type="string.de">Zug Garnituren</value>
+                <value type="string.hu">Szerelvények</value>
+                <value type="string.pl">Składy</value>
+                <value type="string.sk">Súpravy</value>
+                <category>localization</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

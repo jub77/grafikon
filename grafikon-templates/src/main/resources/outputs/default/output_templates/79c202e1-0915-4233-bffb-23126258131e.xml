@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>79c202e1-0915-4233-bffb-23126258131e</id>
+        <template>
+            <template>&lt;%
+    // definition of constants
+    ROW_COUNT = 2
+    COLUMN_COUNT = 2
+    HEIGHT = 93
+    WIDTH = 136
+
+%&gt;&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+  &lt;title&gt;${localization['title'].translate(locale)}&lt;/title&gt;
+  &lt;style type="text/css" media="all"&gt;
+    @page {margin: 5mm; size: A4 landscape;}
+    body {margin: 0; padding: 0; border: 0; width: 282mm;}
+    td {padding: 0.5mm .5mm 0.5mm .5mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+    table.card {font-family: arial, sans-serif; font-size: 3mm; height: ${HEIGHT}mm; width: ${WIDTH}mm; border-color: black; border-style: solid; border-width: 0.2mm; page-break-inside: avoid; border-collapse: separate; border-spacing: 0;}
+    table.title {border-collapse: separate; border-spacing: 0; border: 0; margin: 0; padding: 0;}
+    .break {page-break-after: always;}
+    .separator {height: 4mm;}
+    .hseparator {margin-left: 4mm;}
+    td.company {width: 25mm; font-size: 7mm; font-weight: bold;}
+    td.description {border-width: 0mm; font-size:3mm;}
+    td.value {border-width: 0mm; font-size:5mm; font-weight: bold;}
+    div.spacer {height: 10mm;}
+    tr.header {height: 12mm;}
+    td.headerw1 {width: 24mm;}
+    td.headerw2 {width: 89mm;}
+    td.ctrain {width: 20mm; text-align: center; vertical-align: top;}
+    td.cdepartureh {width: 12mm; text-align: center; vertical-align: top; font-weight: bold; padding-right: 1mm;}
+    td.cdeparture {text-align: right; vertical-align: top; font-weight: bold;}
+    td.cfromto {width: 17mm; text-align: center; vertical-align: top;}
+    td.cnote {width: 85mm; text-align: center; vertical-align: top; font-weight: bold;}
+    tr.listheader {height: 6mm; font-weight: bold ;font-size: 3mm; height: 5mm;}
+    table.list {font-family: arial, sans-serif; font-size: 3mm;  border-color: black; border-style: solid; border-width: 0.2mm; border-collapse: separate; border-spacing: 0;}
+    tr.listitem {}
+    td.listwrap {padding: 1mm 1mm 1mm 1mm; vertical-align: top;}
+    span.no {visibility: hidden;}
+
+    div.row {display: flex; display: -ms-flexbox;}
+    div.item {}
+    div.seqf {display: flex; display: -ms-flexbox;}
+    div.seql {margin-left: 1mm;}
+    div.seqr {text-align: right; flex-grow: 1; margin-right: 1mm; -ms-flex: 1;}
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace("${END}", "&lt;span class=\"no\"&gt;${END}&lt;/span&gt;")
+        }
+        return result
+    }
+
+    // counter of sequences
+    seqId = 1
+
+    def getSequence(cycle) {
+        if (!cycle.next) {
+            return [new CycleWrapper(cycle)]
+        } else {
+            def sequence = []
+            def current = cycle
+            def cnt = 0
+            while (true) {
+                sequence &lt;&lt; new CycleWrapper(current, ++cnt, seqId)
+                current = current.next
+                if (current == cycle) break
+            }
+            for (w in sequence) {
+                w.cnt = cnt
+            }
+            seqId++
+            return sequence
+        }
+    }
+
+    def getFirstFreeSequence(sequences, freeColumns) {
+        if (sequences.empty) {
+            return null
+        } else {
+            def selected = [null]
+            for (sequence in sequences) {
+                if (sequence.size() &lt;= freeColumns || sequence.size() &gt; COLUMN_COUNT) {
+                    selected = sequence
+                    sequences.remove(selected)
+                    break
+                }
+            }
+            return selected
+        }
+    }
+
+    class CycleWrapper {
+        def cycle
+        def cnt
+        def seq
+        def id
+
+        CycleWrapper(cycle, seq, id) {
+            this.cycle = cycle
+            this.seq = seq
+            this.id = id
+        }
+
+        CycleWrapper(cycle) {
+            this.cycle = cycle
+        }
+    }
+
+    // prepare cycles - duplicate the ones needed in sequences
+    def sequences = []
+    for (cycle in cycles) {
+        sequences &lt;&lt; getSequence(cycle)
+    }
+    def wrappers = []
+    def currentColumn = 0
+    while (true) {
+        if (sequences.empty) break;
+        def freeColumns = COLUMN_COUNT - currentColumn
+        def sequence = getFirstFreeSequence(sequences, freeColumns)
+        for (w in sequence) {
+            ++currentColumn
+            wrappers &lt;&lt; w
+            if (currentColumn == COLUMN_COUNT) currentColumn = 0
+        }
+    }
+    def notAligned = wrappers.size() % COLUMN_COUNT
+    if (notAligned != 0) {
+        (COLUMN_COUNT - notAligned).times {wrappers &lt;&lt; null}
+    }
+%&gt;
+&lt;body&gt;
+&lt;%
+  boolean pageBreak = true;
+  def rowCnt = 0
+  def columnCnt = 0
+  for (w in wrappers) {
+      if (columnCnt == 0) {
+          if ((rowCnt % ROW_COUNT) == 0) {
+              if (rowCnt != 0) generatePageBreak()
+          } else {
+              generateSeparator()
+          }
+      }
+      switch (columnCnt) {
+          case 0:
+              rowPrologue()
+              break;
+          default:
+              rowDivide()
+              break;
+      }
+      if (w == null) {
+          generateEmpty();
+      } else {
+          generateCirculation(w)
+      }
+      columnCnt++
+      switch (columnCnt) {
+          case COLUMN_COUNT:
+              rowEpilogue()
+              break;
+      }
+      if (columnCnt == COLUMN_COUNT) {
+          columnCnt = 0
+          rowCnt++
+      }
+  }
+
+  def generateEmpty() {
+  }
+
+  def rowPrologue() {
+      %&gt;&lt;div class="row"&gt;&lt;div class="item"&gt;&lt;%
+  }
+
+  def rowEpilogue() {
+      %&gt;&lt;/div&gt;&lt;/div&gt;&lt;%
+  }
+
+  def rowDivide() {
+      %&gt;&lt;/div&gt;&lt;div class="item hseparator"&gt;&lt;%
+  }
+
+  def generatePageBreak() {
+      %&gt;&lt;div class="break"&gt;&lt;/div&gt;&lt;%
+  }
+
+  def generateSeparator() {
+      %&gt;&lt;div class="separator"&gt;&lt;/div&gt;&lt;%
+  }
+
+  def generateCirculation(w) {
+      def c = w.cycle
+      def lLoc = getLocale(c) %&gt;
+&lt;table class="card"&gt;
+  &lt;tr class="header"&gt;
+    &lt;td align="center" class="company"&gt;${getCompany(c, lLoc)}&lt;/td&gt;
+    &lt;td class="headerw1"&gt;
+      &lt;table class="title"&gt;
+        &lt;tr&gt;
+          &lt;td class="description"&gt;${localization['cycle'].translate(lLoc)}:&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="value"&gt;${c.name}&lt;/td&gt;&lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;
+    &lt;td class="headerw2"&gt;
+      &lt;table class="title"&gt;
+        &lt;tr&gt;
+          &lt;td class="description"&gt;${localization["composition"].translate(lLoc)}:&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td class="value"&gt;${c.description == null ? "&amp;nbsp;" : c.description}&lt;/td&gt;&lt;/tr&gt;
+      &lt;/table&gt;
+     &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr style="height: 100%;"&gt;
+    &lt;td colspan="3" class="listwrap"&gt;
+      &lt;table align="center" class="list"&gt;
+        &lt;tr class="listheader"&gt;
+          &lt;td class="ctrain"&gt;${localization['column.train'].translate(lLoc)}&lt;/td&gt;
+          &lt;td class="cdepartureh"&gt;${localization['column.departure'].translate(lLoc)}&lt;/td&gt;
+          &lt;td class="cfromto"&gt;${localization["column.from.to"].translate(lLoc)}&lt;/td&gt;
+          &lt;td class="cnote"&gt;${localization["column.note"].translate(lLoc)}&lt;/td&gt;
+        &lt;/tr&gt;&lt;% for (row in c.rows) { %&gt;
+        &lt;tr class="listitem"&gt;
+          &lt;td class="ctrain"&gt;${row.trainName.translate(lLoc)}&lt;/td&gt;
+          &lt;td class="cdeparture"&gt;${convertTime(row.fromTime)}&lt;/td&gt;
+          &lt;td class="cfromto"&gt;${row.fromAbbr} - ${row.toAbbr}&lt;/td&gt;
+          &lt;td&gt;${createComment(row, lLoc)}&lt;/td&gt;
+        &lt;/tr&gt;&lt;% } %&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;&lt;%
+  if (c.next) { %&gt;
+  &lt;tr&gt;
+    &lt;td colspan="3"&gt;&lt;div class="seqf"&gt;
+      &lt;div class="seql"&gt;&amp;rarr; ${c.next.name}&lt;/div&gt;
+      &lt;div class="seqr"&gt;${w.id}[${w.seq}/${w.cnt}]&lt;/div&gt;
+    &lt;div&gt;&lt;/td&gt;
+  &lt;/tr&gt;&lt;%
+  } %&gt;
+&lt;/table&gt;&lt;%
+  }
+
+  def createComment(row, loc) {
+    def result = row.cycle.inject(row.comment ? row.comment.translate(loc) : null) {
+      str, item -&gt;
+        if (str == null)
+          str = ""
+        if (str != "")
+          str += ", "
+        def value = "${item.type.translate(loc)}: ${item.name}"
+        if (item.fromAbbr != null)
+          value = "${value} (${item.fromAbbr} - ${item.toAbbr})"
+        str + value
+    }
+    return result == null ? "&amp;nbsp;" : result
+  }
+
+  def getCompany(cycle, loc) {
+      def company = cycle?.company?.abbr
+      return company ?: localization["company"].translate(loc)
+  }
+
+  def getLocale(cycle) {
+      def l = cycle?.company?.locale
+      return l ?: locale
+  }
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Cards for train units</value>
+                <value type="string.cs">Karty pro soupravy</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">train_units_html</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">train_unit_cycles</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Cards for train units</value>
+                <value type="string.cs">Karty pro soupravy</value>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Cards for train units</value>
+                <value type="string.bg">Карти за мотриси</value>
+                <value type="string.cs">Karty souprav</value>
+                <value type="string.de">Karten Zug Garnitur</value>
+                <value type="string.hu">Szerelvény fordulók</value>
+                <value type="string.pl">Zestawienie składów</value>
+                <value type="string.sk">Karty súprav</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>company</key>
+                <type>localized.string</type>
+                <value type="string">ČSD</value>
+                <value type="string.bg">БДЖ</value>
+                <value type="string.cs">ČSD</value>
+                <value type="string.de">ÖBB</value>
+                <value type="string.hu">MÁV</value>
+                <value type="string.pl">PKP</value>
+                <value type="string.sk">ČSD</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>cycle</key>
+                <type>localized.string</type>
+                <value type="string">Circulation</value>
+                <value type="string.bg">Циркулация</value>
+                <value type="string.cs">Oběh</value>
+                <value type="string.de">Umlauf</value>
+                <value type="string.hu">Szerelvény forduló</value>
+                <value type="string.pl">Obieg</value>
+                <value type="string.sk">Obeh</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>composition</key>
+                <type>localized.string</type>
+                <value type="string">Train unit structure</value>
+                <value type="string.bg">Състав на влака</value>
+                <value type="string.cs">Složení soupravy</value>
+                <value type="string.de">Zug Garnitur</value>
+                <value type="string.hu">Szerelvény összeállítás</value>
+                <value type="string.pl">Zestawienie składu</value>
+                <value type="string.sk">Zloženie súpravy</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.train</key>
+                <type>localized.string</type>
+                <value type="string">Train</value>
+                <value type="string.bg">Влак</value>
+                <value type="string.cs">Vlak</value>
+                <value type="string.de">Zug</value>
+                <value type="string.hu">Vonat</value>
+                <value type="string.pl">Pociąg</value>
+                <value type="string.sk">Vlak</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.departure</key>
+                <type>localized.string</type>
+                <value type="string">Dep</value>
+                <value type="string.bg">Заминава</value>
+                <value type="string.cs">Odjezd</value>
+                <value type="string.de">Abfahrt</value>
+                <value type="string.hu">Indulás</value>
+                <value type="string.pl">Odjazd</value>
+                <value type="string.sk">Odjazd</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.from.to</key>
+                <type>localized.string</type>
+                <value type="string">From - To</value>
+                <value type="string.bg">От - До</value>
+                <value type="string.cs">Z - Do</value>
+                <value type="string.de">Aus - Nach</value>
+                <value type="string.hu">Honnan - Hova</value>
+                <value type="string.pl">Z - Do</value>
+                <value type="string.sk">Z - Do</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>column.note</key>
+                <type>localized.string</type>
+                <value type="string">Note</value>
+                <value type="string.bg">Бележка</value>
+                <value type="string.cs">Poznámka</value>
+                <value type="string.de">Bemerkung</value>
+                <value type="string.hu">Megjegyzés</value>
+                <value type="string.pl">Uwagi</value>
+                <value type="string.sk">Poznámka</value>
+                <category>localization</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

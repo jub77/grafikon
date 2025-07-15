@@ -7,12 +7,8 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public interface LSFile extends LSVersions, LSConfigurable {
+public interface LSFile extends LSVersions, LSConfigurable, LS<TrainDiagram> {
 
     String METADATA_KEY_MODEL_VERSION = "model.version";
     String METADATA = "metadata.properties";
-
-    TrainDiagram load(LSSource source, LSFeature... features) throws LSException;
-
-    void save(TrainDiagram diagram, LSSink sink) throws LSException;
 }

@@ -1,11 +1,13 @@
 package net.parostroj.timetable.model.ls;
 
+import net.parostroj.timetable.model.TrainDiagram;
+
 /**
  * Factory for loading/saving train diagram.
  *
  * @author jub
  */
-public class LSFileFactory extends AbstractLSFactory<LSFile> {
+public class LSFileFactory extends AbstractLSFactory<LSFile, TrainDiagram> {
 
     private static LSFileFactory instance;
 

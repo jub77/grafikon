@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.templates;
 import net.parostroj.timetable.loader.DataItem;
 import net.parostroj.timetable.loader.DataItemList;
 import net.parostroj.timetable.loader.DataItemLoader;
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
@@ -25,6 +26,8 @@ public class DataOutputTemplateStorage implements OutputTemplateStorage {
     private final DataOutputTemplateStorage wrapped;
     private final String source;
     private Map<String, OutputTemplate> outputTemplates;
+
+    private static final Category DEFAULT_CATEGORY = new Category("default", LocalizedString.fromString("Default"));
 
     public DataOutputTemplateStorage(DataItemLoader<Library> loader, String source) {
         this.loader = loader;
@@ -75,6 +78,11 @@ public class DataOutputTemplateStorage implements OutputTemplateStorage {
     @Override
     public Collection<OutputTemplate> getTemplates() {
         return outputTemplates.values();
+    }
+
+    @Override
+    public Map<Category, Collection<OutputTemplate>> getTemplatesByCategory() {
+        return Map.of(DEFAULT_CATEGORY, outputTemplates.values());
     }
 
     @Override

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>d4b84b7c-e85a-4de7-9691-bfd6f3634a41</id>
+        <template>
+            <template>&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+    &lt;title&gt;${localization['title'].translate(locale)}&lt;/title&gt;
+    &lt;style type="text/css" media="all"&gt;
+        div.caption1 {
+            font-family: arial, sans-serif;
+            font-size: 5mm;
+            font-weight: bold;
+            padding: 1mm 0 0.5mm 0;
+        }
+        div.caption2 {
+            font-family: arial, sans-serif;
+            font-size: 4.5mm;
+            font-weight: bold;
+            padding: 1.5mm 0 0.5mm 0;
+        }
+        table.list {
+            font-family: arial, sans-serif;
+            font-size: 3mm;
+            border-color: black;
+            border-style: solid;
+            border-width: 0.3mm;
+        }
+        table.list tr td {
+            border-color: black;
+            border-style: solid;
+            border-width: 0.3mm;
+            padding: 0.5mm 4mm 0.5mm 1mm;
+        }
+        span.no {
+            visibility: hidden;
+        }
+        table.list tr td.right {
+            text-align: right;
+            padding-right: 1mm;
+            padding-left: 4mm;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;&lt;%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace("${END}", "&lt;span class=\"no\"&gt;${END}&lt;/span&gt;")
+        }
+        return result
+    }
+    
+    def getStartTimeTitle() {
+        return start_time ? " (${diagram.timeConverter.convertIntToText(start_time)})" : "";
+    }
+%&gt;
+&lt;div class="caption1"&gt;${localization['title'].translate(locale)}${getStartTimeTitle()}&lt;/div&gt;
+&lt;div class="caption2"&gt;${localization['title.engines'].translate(locale)}&lt;/div&gt;
+&lt;% printPositions(engines) %&gt;
+
+&lt;div class="caption2"&gt;${localization['title.train.units'].translate(locale)}&lt;/div&gt;
+&lt;% printPositions(train_units) %&gt;
+
+&lt;% for (cycles in custom_cycles) { %&gt;
+&lt;div class="caption2"&gt;${cycles.name.translate(locale)}&lt;/div&gt;
+&lt;% printPositions(cycles.positions) %&gt;
+&lt;% } %&gt;
+    
+&lt;% def printPositions(positions) {
+%&gt;&lt;table class="list" border="0" cellspacing="0" cellpadding="0"&gt;&lt;%
+  for (position in positions) { %&gt;
+    &lt;tr&gt;
+        &lt;td&gt;${position.cycleName}&lt;/td&gt;
+        &lt;td&gt;${position.cycleDescription?:""}&amp;nbsp;&lt;/td&gt;
+        &lt;td&gt;${position.stationName}&lt;/td&gt;
+        &lt;td&gt;${position.track}&lt;/td&gt;
+        &lt;td class="right"&gt;${convertTime(position.time)}&lt;/td&gt;
+        &lt;td&gt;${position.trainName.translate(locale)}&lt;/td&gt;
+    &lt;/tr&gt;&lt;% 
+  } %&gt;
+&lt;/table&gt;&lt;% 
+   } %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>outputs.create().setName("00.html").setParams(["start.time":0]).setDirectory("starts_default")
+outputs.create().setName("06.html").setParams(["start.time":6 * 3600]).setDirectory("starts_default")
+outputs.create().setName("12.html").setParams(["start.time":12 * 3600]).setDirectory("starts_default")
+outputs.create().setName("18.html").setParams(["start.time":18 * 3600]).setDirectory("starts_default")</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Starting positions at 0, 6, 12 and 18 hours</value>
+                <value type="string.cs">Výchozí postavení v 0, 6, 12 a 18 hodin</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">starts_html</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">starts</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Starting positions at 0, 6, 12 and 18 hours
+All circulations</value>
+                <value type="string.cs">Výchozí postavení v 0, 6, 12 a 18 hodin
+Všechny oběhy</value>
+            </attribute>
+            <attribute>
+                <key>title</key>
+                <type>localized.string</type>
+                <value type="string">Start position</value>
+                <value type="string.bg">Начални позиции</value>
+                <value type="string.cs">Výchozí postavení</value>
+                <value type="string.de">Ausgangsposition</value>
+                <value type="string.hu">Kiinduló pozició</value>
+                <value type="string.pl">Rozmieszczenie taboru w chwili rozpoczęcia sesji</value>
+                <value type="string.sk">Východzie postavenie</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.engines</key>
+                <type>localized.string</type>
+                <value type="string">Engines</value>
+                <value type="string.bg">Локомотиви</value>
+                <value type="string.cs">Hnací vozidla</value>
+                <value type="string.de">Triebfahrzeuge</value>
+                <value type="string.hu">Mozdonyok</value>
+                <value type="string.pl">Lokomotywy</value>
+                <value type="string.sk">Hnacie vozidlá</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>title.train.units</key>
+                <type>localized.string</type>
+                <value type="string">Train units</value>
+                <value type="string.bg">Мотриси</value>
+                <value type="string.cs">Soupravy</value>
+                <value type="string.de">Zug Garnituren</value>
+                <value type="string.hu">Szerelvények</value>
+                <value type="string.pl">Składy</value>
+                <value type="string.sk">Súpravy</value>
+                <category>localization</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>

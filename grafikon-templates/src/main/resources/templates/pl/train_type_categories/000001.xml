@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type_category>
+    <id>89bb592d-4d97-49c9-ad46-7c53df9c7a52</id>
+    <penalty_rows>
+        <row>
+            <speed>19</speed>
+            <acceleration>69</acceleration>
+            <deceleration>15</deceleration>
+        </row>
+        <row>
+            <speed>29</speed>
+            <acceleration>87</acceleration>
+            <deceleration>21</deceleration>
+        </row>
+        <row>
+            <speed>39</speed>
+            <acceleration>105</acceleration>
+            <deceleration>27</deceleration>
+        </row>
+        <row>
+            <speed>49</speed>
+            <acceleration>120</acceleration>
+            <deceleration>36</deceleration>
+        </row>
+        <row>
+            <speed>59</speed>
+            <acceleration>138</acceleration>
+            <deceleration>43</deceleration>
+        </row>
+        <row>
+            <speed>69</speed>
+            <acceleration>147</acceleration>
+            <deceleration>51</deceleration>
+        </row>
+        <row>
+            <speed>998</speed>
+            <acceleration>153</acceleration>
+            <deceleration>57</deceleration>
+        </row>
+    </penalty_rows>
+    <attributes>
+        <attribute>
+            <key>name</key>
+            <type>localized.string</type>
+            <value type="string">freight</value>
+        </attribute>
+        <attribute>
+            <key>key</key>
+            <value type="string">freight</value>
+        </attribute>
+    </attributes>
+</train_type_category>

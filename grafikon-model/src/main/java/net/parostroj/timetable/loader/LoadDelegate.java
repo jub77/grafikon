@@ -5,7 +5,7 @@ import net.parostroj.timetable.model.ls.LSException;
 import java.io.InputStream;
 
 @FunctionalInterface
-public interface LoadDelegate<T> {
+public interface LoadDelegate<T, I> {
 
-    T load(InputStream is, DataItem dataItem) throws LSException;
+    T load(I is, DataItem dataItem) throws LSException;
 }

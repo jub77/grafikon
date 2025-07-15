@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<train_type>
+    <id>76c16fa4-a7ac-442e-9a99-bfb5fee8f09b</id>
+    <color>0x000000</color>
+    <category_id>de8a8f89-1378-4849-a9f3-a07f600caf83</category_id>
+    <platform>false</platform>
+    <attributes>
+        <attribute>
+            <key>abbr</key>
+            <type>localized.string</type>
+            <value type="string">O</value>
+        </attribute>
+        <attribute>
+            <key>desc</key>
+            <type>localized.string</type>
+            <value type="string">osobowo-towarowy</value>
+        </attribute>
+    </attributes>
+</train_type>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<library_item type="OUTPUT_TEMPLATE">
+    <attributes/>
+    <output_template>
+        <id>3369c68d-1084-4c09-ae7b-07e13b0d8fee</id>
+        <template>
+            <template>&lt;%
+SPACE = "&amp;nbsp;"
+TRAIN_RIGHT = "&amp;rarr;"
+TRAIN_LEFT = "&amp;larr;"
+ENGINE_LEFT = settings['engine.left']
+
+def evaluateString(str) {
+    evaluate '"' + str + '"'
+}
+
+%&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+    &lt;title&gt;${localization["stations"].translate(locale)}&lt;/title&gt;
+    &lt;style type="text/css" media="all"&gt;
+        body {font-family: arial, sans-serif; font-size: 3mm;}
+        table {border-collapse: collapse; font-size: 3mm;}
+        table.dests {width: 180mm; border-color: black; border-style: solid; border-width: 0.2mm; margin-bottom: 1mm;}
+        table.trains {width: 180mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+        table.cycles {width: 180mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+        div.station {width: 180mm; font-weight: bold; font-size: 5mm; text-align: center; margin-bottom: 1.5mm;}
+        div.station_colors {width: 180mm; font-weight: bold; font-size: 3mm; text-align: center; margin-bottom: 1.5mm;}
+        td.trains {width: 100%;}
+        td.dests {width: 100%;}
+        td.time {text-align: right; padding-left: 1mm; padding-right: 1mm;}
+        td {padding: .1mm .8mm .1mm .8mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+        div.note {margin-top: 1mm; margin-bottom: 1mm;}
+        div.separator {font-size: 1mm;}
+        div.page_end {page-break-after: always; font-size: 1mm;}
+        div.title {font-size: 4mm; font-weight: bold;}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;&lt;%
+    for (node in nodes) {
+        def loc = util.getLocaleForNode(node, locale)
+        def collator = util.getCollator(loc)
+        def analyser = util.freight.createAnalyser(diagram)
+        def freightResult = analyser.getNodeFreightFrom(node)
+        def freightColors = node.freightColors
+        if (!freightResult.connections) continue %&gt;
+
+    &lt;div class="station"&gt;${node.name}&lt;/div&gt;&lt;%
+    if (freightColors) {%&gt;
+    &lt;div class="station_colors"&gt;[${util.freight.sortFreightColors(freightColors).collect{c -&gt; c.getName(loc).replaceAll(' ',SPACE)}.join(', ')}]&lt;/div&gt;&lt;%
+    }%&gt;
+    &lt;div class="title"&gt;${localization["stations"].translate(loc)}&lt;/div&gt;
+    &lt;table class="dests"&gt;&lt;%
+        def sortedDirect = freightResult.nodeConnections.findAll{fc -&gt; fc.to.visible}.sort{a,b -&gt; collator.compare(a.to.node.toString(), b.to.node.toString())}
+        for (freight in sortedDirect) { %&gt;
+        &lt;tr&gt;&lt;%
+            def trains = util.freight.intervalsToString(diagram, freight.transport.trains, loc) %&gt;
+            &lt;td&gt;${util.freight.freightNodeToString(freight.to, loc, false).replaceAll(' ',SPACE)}&lt;/td&gt;
+            &lt;td class="trains"&gt;${trains.collect{s -&gt; s.replaceAll(' ',SPACE)}.join(', ')}&lt;/td&gt;
+        &lt;/tr&gt;&lt;%
+        }
+        def sortedRegions = freightResult.regionConnections.sort{a,b -&gt;
+                collator.compare(util.freight.freightRegionsToString(a.to, loc).join(","), util.freight.freightRegionsToString(b.to, loc).join(","))}
+        for (freight in sortedRegions) { %&gt;
+        &lt;tr&gt;&lt;%
+            def transport = freight.transport
+            def transportList = util.freight.transportToString(diagram, transport, loc) %&gt;
+            &lt;td&gt;&lt;i&gt;${util.freight.regionsToString(freight.to.regions, loc).join(', ').replaceAll(' ',SPACE)}&lt;/i&gt;&lt;/td&gt;
+            &lt;td class="trains"&gt;${transportList.collect{s -&gt; s.replaceAll(' ',SPACE)}.join(', ')}&lt;/td&gt;
+        &lt;/tr&gt;&lt;%
+        }
+        def colors = freightResult.freightColorConnections
+        for (freight in colors) { %&gt;
+        &lt;tr&gt;&lt;%
+            def transport = freight.transport
+            def transportList = util.freight.transportToString(diagram, transport, loc) %&gt;
+            &lt;td&gt;&lt;i&gt;${util.freight.freightColorsToString(freight.to, loc).join(",").replaceAll(' ',SPACE)}&lt;/i&gt;&lt;/td&gt;
+            &lt;td class="trains"&gt;${transportList.collect{s -&gt; s.replaceAll(' ',SPACE)}.join(', ')}&lt;/td&gt;
+        &lt;/tr&gt;&lt;%
+        } %&gt;
+    &lt;/table&gt;
+    &lt;div class="title"&gt;${localization["sorting"].translate(loc)}&lt;/div&gt;
+    &lt;table class="trains"&gt;&lt;%
+        def intervals = analyser.getFreightIntervalsFrom(node)
+        for (i in intervals) { %&gt;
+            &lt;tr&gt;&lt;%
+            def dests = diagram.freightNet.connectionStrategy.getFreightToNodes(i) %&gt;
+            &lt;td&gt;${i.train.name.translate(loc).replaceAll(' ', SPACE)}&lt;/td&gt;
+            &lt;td class="time"&gt;${diagram.timeConverter.convertIntToText(i.end)}&lt;/td&gt;
+            &lt;% if (ENGINE_LEFT) { %&gt;
+            &lt;td class="dests"&gt;${TRAIN_LEFT} ${util.freight.freightListToString(dests.reverse(), loc).collect{s -&gt; s.replaceAll(' ', SPACE)}.join(', ')}&lt;/td&gt;
+            &lt;% } else { %&gt;
+            &lt;td class="dests"&gt;${util.freight.freightListToString(dests, loc).collect{s -&gt; s.replaceAll(' ', SPACE)}.join(', ')} ${TRAIN_RIGHT}&lt;/td&gt;
+            &lt;% } %&gt;
+        &lt;/tr&gt;&lt;%
+        }
+        def tuIntervals = analyser.getFreightTrainUnitIntervals(node)
+        for (tu in tuIntervals) { %&gt;
+            &lt;tr&gt;&lt;%
+            def tus = util.freight.intervalFreightTrainUnitToString(diagram, tu) %&gt;
+            &lt;td&gt;${tu.train.name.translate(loc).replaceAll(' ', SPACE)}&lt;/td&gt;
+            &lt;td class="time"&gt;${diagram.timeConverter.convertIntToText(tu.end)}&lt;/td&gt;
+            &lt;td class="dests"&gt;${tus.collect{s -&gt; s.replaceAll(' ', SPACE)}.join(', ')}&lt;/td&gt;
+        &lt;/tr&gt;&lt;%
+        } %&gt;
+    &lt;/table&gt;
+    &lt;div class="note"&gt;&lt;b&gt;${localization["note"].translate(loc)}:&lt;/b&gt; ${evaluateString(localization[ENGINE_LEFT ? "note.text.left" : "note.text"].translate(loc))}&lt;/div&gt;
+    &lt;div class="page_end"&gt;&amp;nbsp&lt;/div&gt;
+    &lt;% } %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+            <language>GROOVY</language>
+        </template>
+        <script>
+            <source_code>import net.parostroj.timetable.actions.*
+import net.parostroj.timetable.model.*
+
+def nodes = selection == null ? diagram.net.nodes : selection
+nodes = nodes.findAll{n -&gt; n.type.freight}
+
+nodes = ElementSort.sort(nodes, new NodeComparator())
+outputs.create().setName("${key}.html").setContext(["nodes" : nodes]);
+</source_code>
+            <language>GROOVY</language>
+        </script>
+        <attributes>
+            <attribute>
+                <key>name</key>
+                <type>localized.string</type>
+                <value type="string">Freight information, train sorting</value>
+                <value type="string.cs">Výpis do stanice s informacemi o nákladní dopravě, řazení vlaků</value>
+            </attribute>
+            <attribute>
+                <key>key</key>
+                <value type="string">freight_html</value>
+            </attribute>
+            <attribute>
+                <key>output.type</key>
+                <value type="string">diagram</value>
+            </attribute>
+            <attribute>
+                <key>output</key>
+                <value type="string">groovy</value>
+            </attribute>
+            <attribute>
+                <key>description</key>
+                <type>localized.string</type>
+                <value type="string">Freight information, train sorting</value>
+                <value type="string.cs">Výpis do stanice s informacemi o nákladní dopravě
+Řazení vlaků</value>
+            </attribute>
+            <attribute>
+                <key>selection.type</key>
+                <value type="string">node</value>
+            </attribute>
+            <attribute>
+                <key>note</key>
+                <type>localized.string</type>
+                <value type="string">Note</value>
+                <value type="string.cs">Poznámka</value>
+                <value type="string.hu">Megjegyzés</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>note.text</key>
+                <type>localized.string</type>
+                <value type="string">[end of train] the nearest station,...,the most distant station ${TRAIN_RIGHT} [engine]</value>
+                <value type="string.cs">[konec vlaku] nejbližší stanice,...,nejvzdálenější stanice ${TRAIN_RIGHT} [lokomotiva]</value>
+                <value type="string.hu">[vonat vége] a legközelebbi állomáson,..., a legtávolabbi ${TRAIN_RIGHT} [gép]</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>sorting</key>
+                <type>localized.string</type>
+                <value type="string">Sorting of freight trains</value>
+                <value type="string.cs">Řazení nákladních vlaků</value>
+                <value type="string.hu">Tehervonat iránycsoportok</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>stations</key>
+                <type>localized.string</type>
+                <value type="string">List of stations with freight trains</value>
+                <value type="string.cs">Seznam stanic s vlaky pro přepravu nákladů</value>
+                <value type="string.hu">Áruforgalomra megnyitott szolgálati helyek listája</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <type>localized.string</type>
+                <value type="string">Engine on the left side</value>
+                <value type="string.cs">Lokomotiva vlevo</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>note.text.left</key>
+                <type>localized.string</type>
+                <value type="string">[engine] ${TRAIN_LEFT} the most distant station,...,the nearest station [end of train]</value>
+                <value type="string.cs">[lokomotiva] ${TRAIN_LEFT} nejvzdálenější stanice,...,nejbližší stanice [konec vlaku]</value>
+                <value type="string.hu">[gép] ${TRAIN_LEFT}  a legtávolabbi,...,a legközelebbi állomáson [vonat vége]</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>engine.left</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+        </attributes>
+    </output_template>
+</library_item>
