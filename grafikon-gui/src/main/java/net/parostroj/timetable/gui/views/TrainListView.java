@@ -514,6 +514,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     @Override
     public void valueChanged(TreeSelectionEvent e) {
         selecting = true;
+        Train selectedTrain = null;
         if (e.isAddedPath()) {
             Object selected = e.getPath().getLastPathComponent();
             TrainTreeNode node = (TrainTreeNode) selected;
@@ -523,6 +524,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     model.setSelectedTrain(null);
                 }
             } else {
+                selectedTrain = train;
                 if (!processing && model.getSelectedTrain() != train) {
                     model.setSelectedTrain(train);
                 }
@@ -531,12 +533,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         boolean selectionEmpty = trainTree.isSelectionEmpty() || (trainTree.getSelectionCount() == 1
                 && Objects.requireNonNull(trainTree.getSelectionPath()).getParentPath() == null);
         deleteButton.setEnabled(!selectionEmpty);
-        copyButton.setEnabled(model.getSelectedTrain() != null);
-        editButton.setEnabled(model.getSelectedTrain() != null);
+        copyButton.setEnabled(selectedTrain != null);
+        editButton.setEnabled(selectedTrain != null);
         moveToGroupMenuItem.setEnabled(!selectionEmpty);
-        changeRouteMenuItem.setEnabled(model.getSelectedTrain() != null);
+        changeRouteMenuItem.setEnabled(selectedTrain != null);
         deleteMenuItem.setEnabled(!selectionEmpty);
-        editMenuItem.setEnabled(model.getSelectedTrain() != null);
+        editMenuItem.setEnabled(selectedTrain != null);
         selecting = false;
     }
 
