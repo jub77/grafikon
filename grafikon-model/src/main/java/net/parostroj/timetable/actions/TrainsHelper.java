@@ -458,9 +458,19 @@ public final class TrainsHelper {
      * @return if the length should be taken into account
      */
     public static boolean shouldCheckLength(Node node, Train train, TimeInterval interval) {
-        boolean ignore = interval.getAttributes().getBool(TimeInterval.ATTR_IGNORE_LENGTH);
-        TrainType type = train.getType();
-        return (node.getType().isStation() || (node.getType().isStop() && (type != null && type.isPlatform()))) && !ignore;
+        if (interval.getAttributes().getBool(TimeInterval.ATTR_IGNORE_LENGTH)) {
+            return false;
+        } else if (node.getType().isStation()) {
+            return true;
+        } else if (node.getType().isStop()) {
+            TrainType trainType = train.getType();
+            return trainType != null
+                    && trainType.isPlatform()
+                    && interval.isStop()
+                    && ((NodeTrack) interval.getTrack()).isPlatform();
+        } else {
+            return false;
+        }
     }
 
     /**
