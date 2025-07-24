@@ -298,7 +298,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      */
     public boolean isPlatformOk() {
         if (this.isStop()) {
-            return !(train.getType().isPlatform() && !((NodeTrack) track).isPlatform());
+            return !(train.getType() != null && train.getType().isPlatform() && !((NodeTrack) track).isPlatform());
         } else {
             // otherwise ok
             return true;
