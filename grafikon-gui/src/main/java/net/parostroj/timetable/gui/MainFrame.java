@@ -52,6 +52,7 @@ import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.model.ls.LSLibraryFactory;
+import net.parostroj.timetable.model.templates.OutputTemplateStorage;
 import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.output2.gt.TrainColors;
@@ -190,6 +191,19 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActionsMap().values()) {
             addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX, scriptsMenuGui);
         }
+
+        // add create outputs
+        for (OutputTemplateStorage.Category category : model.getTemplateStorage().getTemplatesByCategory().keySet()) {
+            addCreateOutputAction(new CreateOutputsResourcesAction(model, category), category);
+        }
+    }
+
+    private void addCreateOutputAction(CreateOutputsResourcesAction createOutputsResourcesAction,
+            OutputTemplateStorage.Category category) {
+        JMenuItem item = new JMenuItem();
+        item.setAction(createOutputsResourcesAction);
+        item.setText(category.name().translate());
+        createOutputsMenu.add(item);
     }
 
     private void addScriptAction(ScriptAction sd, String type, JMenu sMenu) {
@@ -299,6 +313,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         scriptsMenuModel = new javax.swing.JMenu();
         scriptsMenuGui = new javax.swing.JMenu();
+        createOutputsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
 
@@ -387,7 +402,8 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", this::ouputTemplatesMenuItemActionPerformed, EnableType.RAW_TYPE); // NOI18N
         this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", this::ouputMenuItemActionPerformed, EnableType.DIAGRAM); // NOI18N
         actionMenu.add(new javax.swing.JSeparator());
-        this.addMenuItem(actionMenu, "menu.file.outputs.create.resources", new CreateOutputsResourcesAction(model), null); // NOI18N
+        createOutputsMenu.setText(ResourceLoader.getString("menu.file.outputs.create.resources")); // NOI18N
+        actionMenu.add(createOutputsMenu);
 
         menuBar.add(actionMenu);
 
@@ -435,6 +451,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         enabledComponents.add(tabbedPane);
         enabledComponents.add(scriptsMenuModel);
         enabledComponents.add(scriptsMenuGui);
+        enabledComponents.add(createOutputsMenu);
 
         setMinimumSize(new java.awt.Dimension(800, 600));
         setSize(getMinimumSize());
@@ -847,6 +864,7 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu scriptsMenuModel;
     private javax.swing.JMenu scriptsMenuGui;
+    private javax.swing.JMenu createOutputsMenu;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
 }

@@ -359,6 +359,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         return startTime;
     }
 
+    public OutputTemplateStorage getTemplateStorage() {
+        return templateStorage;
+    }
+
     private String getMajorMinorString(Version version) {
         return String.format("%d.%d", version.majorVersion(), version.minorVersion());
     }
