@@ -193,8 +193,12 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         }
 
         // add create outputs
-        for (OutputTemplateStorage.Category category : model.getTemplateStorage().getTemplatesByCategory().keySet()) {
-            addCreateOutputAction(new CreateOutputsResourcesAction(model, category), category);
+        Set<OutputTemplateStorage.Category> categories = model.getTemplateStorage().getTemplatesByCategory().keySet();
+        if (categories.size() > 1) {
+            createOutputsMenu.add(new javax.swing.JSeparator());
+            for (OutputTemplateStorage.Category category : categories) {
+                addCreateOutputAction(new CreateOutputsResourcesAction(model, category, null), category);
+            }
         }
     }
 
@@ -404,6 +408,8 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
         actionMenu.add(new javax.swing.JSeparator());
         createOutputsMenu.setText(ResourceLoader.getString("menu.file.outputs.create.resources")); // NOI18N
         actionMenu.add(createOutputsMenu);
+        this.addMenuItem(createOutputsMenu, "menu.file.outputs.create.resources.all", new CreateOutputsResourcesAction(model, null, null), null); // NOI18N
+        this.addMenuItemWithListener(createOutputsMenu, "menu.file.outputs.create.resources.select", this::createOutputSelectionMenuItemActionPerformed, null); // NOI18N
 
         menuBar.add(actionMenu);
 
@@ -751,6 +757,20 @@ public class MainFrame extends javax.swing.JFrame implements StorableGuiData {
             dialog.showDialog(model.getDiagram());
             dialog.dispose();
             pm.writeBack();
+        }
+    }
+
+    private void createOutputSelectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        ElementSelectionDialog<OutputTemplate> dialog = new ElementSelectionDialog<>(GuiComponentUtils
+                .getWindow(this), true);
+        dialog.setLocationRelativeTo(this);
+
+        Collection<OutputTemplate> allTemplates = model.getDiagram().getRuntimeInfo()
+                .getTemplateStorage().getTemplates();
+        List<OutputTemplate> selectedTemplates = dialog.selectElements(allTemplates, List.of());
+        if (selectedTemplates != null) {
+            CreateOutputsResourcesAction action = new CreateOutputsResourcesAction(model, null, selectedTemplates);
+            action.actionPerformed(evt);
         }
     }
 

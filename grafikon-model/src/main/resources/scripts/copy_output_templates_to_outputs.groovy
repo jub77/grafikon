@@ -7,7 +7,9 @@ def storage = diagram.runtimeInfo.templateStorage
 if (storage != null) {
     def outputTemplates = binding.hasVariable("category")
             ? storage.templatesByCategory[binding.getVariable("category")]
-            : storage.templates
+            : binding.hasVariable("templates")
+                    ? binding.getVariable("templates")
+                    : storage.templates
     for (template in outputTemplates) {
         def output = diagram.partFactory.createOutput(IdGenerator.instance.id)
         def name = template.name
