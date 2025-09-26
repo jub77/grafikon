@@ -2,9 +2,22 @@
 
 Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo etc...).
 
+![Grafikon](https://jub.parostroj.net/grafikon/grafikon.png)
+
 ## Examples
 
 Examples of gtm files with timetables can be found here: [gtm_examples.zip](https://jub.parostroj.net/grafikon/gtm_examples.zip)
+
+## Outputs
+
+Outputs can be added from menu (output templates bundled with program as default):
+*Outputs > Create default outputs*. The outputs can be then generated from *Outputs > Outputs...*
+by pressing *Generate all* button.
+
+In order to use Groovy string templates as well as output templates directly in the gtm,
+the type of the diagram in *Settings > Settings...* has to be set to *raw*. All Groovy
+scripts and templates are stripped from loaded gtm otherwise. The type can be changed
+only before opening any gtm file.
 
 ## Zip Archive
 
@@ -15,16 +28,6 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
     * using `java -jar grafikon.jar` from command line
     * or double-click on `grafikon.jar`
     * or use `grafikon.cmd` (`grafikon.sh`)
-
-Outputs can be added from menu (output templates bundled with program as default):
-*Outputs > Create default outputs*. The outputs can be then generated from *Outputs > Outputs...*
-by pressing *Generate all* button.
-
-In order to use Groovy string templates as well as output templates directly in the gtm,
-the type of the diagram in *Settings > Settings...* has to be set to *raw*. All Groovy
-scripts and templates are stripped from loaded gtm otherwise.
-
-![Grafikon](https://jub.parostroj.net/grafikon/grafikon.png)
 
 ## Binaries with Bundled Java
 
