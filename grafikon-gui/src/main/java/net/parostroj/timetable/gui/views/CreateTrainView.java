@@ -23,6 +23,8 @@ import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -40,11 +42,6 @@ public class CreateTrainView extends javax.swing.JPanel {
     private static final Logger log = LoggerFactory.getLogger(CreateTrainView.class);
 
     private static final long serialVersionUID = 1L;
-
-	public static final TrainType NO_TYPE = new TrainType(null, null) {
-        @Override
-        public String toString() {return "-";}
-    };
 
     private transient TrainDiagram diagram;
     private final ThroughNodesDialog tnDialog;
@@ -81,8 +78,10 @@ public class CreateTrainView extends javax.swing.JPanel {
         toComboBox.setModel(toModel);
 
         // model for train types
-        typeComboBox.setModel(new DefaultComboBoxModel<>(diagram.getTrainTypes().toArray(new TrainType[0])));
-        typeComboBox.addItem(NO_TYPE);
+        typeComboBoxModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getTrainTypes()));
+        typeComboBoxModel.addWrapper(Wrapper.getEmptyWrapper("-"));
+        typeComboBox.setModel(typeComboBoxModel);
+        typeComboBoxModel.setSelectedObject(null);
 
         // reset through nodes
         throughNodes = new ArrayList<>();
@@ -314,11 +313,11 @@ public class CreateTrainView extends javax.swing.JPanel {
         Group group = groupComboBox.getGroupSelection().getGroup();
 
         // create command ...
-        TrainType tType = (TrainType) typeComboBox.getSelectedItem();
+        TrainType tType = typeComboBoxModel.getSelectedObject();
         try {
             this.createTrain(
                     ObjectsUtil.checkAndTrim(nameTextField.getText()),
-                    tType != NO_TYPE ? tType : null,
+                    tType,
                     speed,
                     route,
                     start,
@@ -387,6 +386,7 @@ public class CreateTrainView extends javax.swing.JPanel {
     private javax.swing.JTextField stopTextField;
     private javax.swing.JTextField throughTextField;
     private javax.swing.JComboBox<Node> toComboBox;
-    private javax.swing.JComboBox<TrainType> typeComboBox;
+    private javax.swing.JComboBox<Wrapper<TrainType>> typeComboBox;
+    private WrapperListModel<TrainType> typeComboBoxModel;
     private GroupsComboBox groupComboBox;
 }

@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 
 import net.parostroj.timetable.gui.components.GroupsComboBox;
-import net.parostroj.timetable.gui.views.CreateTrainView;
 import net.parostroj.timetable.gui.wrappers.ManagedFreightWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
@@ -98,9 +96,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
         if (train != null)  {
             routeEditBox.setLanguages(train.getDiagram().getRuntimeInfo().getPermissions().getAllowedTemplate());
             // model for train types
-            typeComboBox.setModel(new DefaultComboBoxModel<>(train.getDiagram().getTrainTypes().toArray(new TrainType[0])));
-            typeComboBox.addItem(CreateTrainView.NO_TYPE);
-            typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
+            typeComboBoxModel = new WrapperListModel<>(Wrapper.getWrapperList(train.getDiagram().getTrainTypes()));
+            typeComboBoxModel.addWrapper(Wrapper.getEmptyWrapper("-"));
+            typeComboBox.setModel(typeComboBoxModel);
+            typeComboBoxModel.setSelectedObject(train.getType() != null ? train.getType() : null);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
             electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
             managedFreightComboBox.setSelectedItem(Wrapper.getWrapper(train.getAttribute(Train.ATTR_MANAGED_FREIGHT_OVERRIDE, ManagedFreight.class)));
@@ -584,8 +583,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // set values to train ...
-        TrainType type = (TrainType) typeComboBox.getSelectedItem();
-        train.setType(type != CreateTrainView.NO_TYPE ? type : null);
+        train.setType(typeComboBoxModel.getSelectedObject());
         train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
         train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
@@ -707,7 +705,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JTextField timeAfterTextField;
     private javax.swing.JTextField timeBeforeTextField;
     private javax.swing.JButton toNodeButton;
-    private javax.swing.JComboBox<TrainType> typeComboBox;
+    private javax.swing.JComboBox<Wrapper<TrainType>> typeComboBox;
+    private WrapperListModel<TrainType> typeComboBoxModel;
     private javax.swing.JTextField weightTextField;
     private GroupsComboBox groupsComboBox;
     private JCheckBox weightLimitCheckBox;
