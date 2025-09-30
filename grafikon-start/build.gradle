@@ -1,5 +1,5 @@
 plugins {
-	id 'com.datavitec.runtime'
+	id 'org.beryx.runtime'
 	id 'com.google.osdetector'
 }
 

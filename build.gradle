@@ -24,8 +24,8 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:5.0.1'
-			dependency 'org.apache.groovy:groovy-jsr223:5.0.1'
+			dependency 'org.apache.groovy:groovy-templates:5.0.2'
+			dependency 'org.apache.groovy:groovy-jsr223:5.0.2'
 			dependency 'org.slf4j:slf4j-api:2.0.17'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.17'
 			dependency 'joda-time:joda-time:2.14.0'
@@ -62,7 +62,7 @@ subprojects { prj ->
 				exclude 'org.eclipse.angus:angus-activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
-			dependency 'org.junit.jupiter:junit-jupiter:5.13.4'
+			dependency 'org.junit.jupiter:junit-jupiter:6.0.0'
 			dependency 'org.hamcrest:hamcrest:3.0'
 			dependency 'io.smallrye.reactive:mutiny:3.0.0'
 			dependency 'com.fasterxml.jackson:jackson-bom:2.20.0'
