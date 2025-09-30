@@ -62,7 +62,7 @@ subprojects { prj ->
 				exclude 'org.eclipse.angus:angus-activation'
 			}
 			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
-			dependency 'org.junit.jupiter:junit-jupiter:5.13.4'
+			dependency 'org.junit.jupiter:junit-jupiter:6.0.0'
 			dependency 'org.hamcrest:hamcrest:3.0'
 			dependency 'io.smallrye.reactive:mutiny:3.0.0'
 			dependency 'com.fasterxml.jackson:jackson-bom:2.20.0'
