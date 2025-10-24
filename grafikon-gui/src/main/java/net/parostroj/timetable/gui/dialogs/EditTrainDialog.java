@@ -102,7 +102,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             typeComboBoxModel.setSelectedObject(train.getType() != null ? train.getType() : null);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
             electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
-            managedFreightComboBox.setSelectedItem(Wrapper.getWrapper(train.getAttribute(Train.ATTR_MANAGED_FREIGHT_OVERRIDE, ManagedFreight.class)));
+            managedFreightComboBox.setSelectedItem(Wrapper.getWrapper(train.getManagedFreight()));
             showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
             emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
             optionalCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_OPTIONAL));
