@@ -24,8 +24,8 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.2', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:5.0.2'
-			dependency 'org.apache.groovy:groovy-jsr223:5.0.2'
+			dependency 'org.apache.groovy:groovy-templates:5.0.4'
+			dependency 'org.apache.groovy:groovy-jsr223:5.0.4'
 			dependency 'org.slf4j:slf4j-api:2.0.17'
 			dependency 'org.slf4j:jcl-over-slf4j:2.0.17'
 			dependency 'joda-time:joda-time:2.14.0'
@@ -53,21 +53,21 @@ subprojects { prj ->
 			dependency 'org.beanfabrics:beanfabrics-core:1.5.0'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.5.0'
 			dependency 'org.swinglabs:jxlayer:3.0.4'
-			dependency 'com.fifesoft:rsyntaxtextarea:3.6.0'
+			dependency 'com.fifesoft:rsyntaxtextarea:3.6.1'
 			dependency 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
-			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
-			dependency 'org.apache.logging.log4j:log4j-core:2.25.2'
+			dependency 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
+			dependency 'org.apache.logging.log4j:log4j-core:2.25.3'
 			dependency 'com.github.zafarkhaja:java-semver:0.10.2'
 			dependency 'org.glassfish.jaxb:jaxb-runtime:4.0.6', {
 				exclude 'org.glassfish.jaxb:txw2'
 				exclude 'org.eclipse.angus:angus-activation'
 			}
-			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
-			dependency 'org.junit.jupiter:junit-jupiter:6.0.0'
+			dependency 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.5'
+			dependency 'org.junit.jupiter:junit-jupiter:6.0.2'
 			dependency 'org.hamcrest:hamcrest:3.0'
-			dependency 'io.smallrye.reactive:mutiny:3.0.0'
-			dependency 'com.fasterxml.jackson:jackson-bom:2.20.0'
-			dependency 'org.apache.commons:commons-configuration2:2.12.0', {
+			dependency 'io.smallrye.reactive:mutiny:3.1.0'
+			dependency 'com.fasterxml.jackson:jackson-bom:2.21.0'
+			dependency 'org.apache.commons:commons-configuration2:2.13.0', {
 				exclude 'commons-logging:commons-logging'
 			}
 			dependency 'xalan:xalan:2.7.3'
