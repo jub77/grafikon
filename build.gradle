@@ -48,6 +48,7 @@ subprojects { prj ->
 				exclude 'org.apache.ant:ant'
 				exclude 'javax.media:jai-core'
 				exclude 'com.sun.media:jai-codec'
+				exclude 'com.thoughtworks.qdox:qdox'
 			}
 			dependency 'org.beanfabrics:beanfabrics-core:1.5.0'
 			dependency 'org.beanfabrics:beanfabrics-swing:1.5.0'
@@ -69,6 +70,8 @@ subprojects { prj ->
 			dependency 'org.apache.commons:commons-configuration2:2.12.0', {
 				exclude 'commons-logging:commons-logging'
 			}
+			dependency 'xalan:xalan:2.7.3'
+			dependency 'xalan:serializer:2.7.3'
 		}
 	}
 
