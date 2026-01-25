@@ -122,40 +122,58 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         gbc_routeInfoCheckBox.anchor = GridBagConstraints.WEST;
         gbc_routeInfoCheckBox.insets = new Insets(0, 0, 3, 0);
         gbc_routeInfoCheckBox.gridx = 0;
-        gbc_routeInfoCheckBox.gridy = 4;
+        gbc_routeInfoCheckBox.gridy = 6;
         dataPanel.add(routeInfoCheckBox, gbc_routeInfoCheckBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 3, 5);
         dataPanel.add(new javax.swing.JLabel(ResourceLoader.getString("info.validity")), gridBagConstraints);
         BnTextField validityTextField = new BnTextField();
 
         validityTextField.setColumns(25);
-        java.awt.GridBagConstraints gridBagConstraints_4 = new java.awt.GridBagConstraints();
-        gridBagConstraints_4.weightx = 1.0;
-        gridBagConstraints_4.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints_4.gridx = 0;
-        gridBagConstraints_4.gridy = 3;
-        gridBagConstraints_4.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints_4.insets = new Insets(0, 5, 5, 5);
-        dataPanel.add(validityTextField, gridBagConstraints_4);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+        dataPanel.add(validityTextField, gridBagConstraints);
         infoTextArea.setFont(validityTextField.getFont());
 
-        java.awt.GridBagConstraints gridBagConstraints_5 = new java.awt.GridBagConstraints();
-        gridBagConstraints_5.weightx = 1.0;
-        gridBagConstraints_5.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints_5.gridx = 0;
-        gridBagConstraints_5.gridy = 5;
-        gridBagConstraints_5.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints_5.insets = new Insets(0, 3, 5, 5);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new Insets(0, 5, 3, 5);
+        dataPanel.add(new javax.swing.JLabel(ResourceLoader.getString("info.output.id")), gridBagConstraints);
+        BnTextField outputIdTextField = new BnTextField();
+
+        outputIdTextField.setColumns(25);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+        dataPanel.add(outputIdTextField, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new Insets(0, 3, 5, 5);
         BnTextAreaGrey versionLabel = new BnTextAreaGrey();
         versionLabel.setFont(validityTextField.getFont());
         versionLabel.setBorder(scrollPane.getBorder());
         versionLabel.setRows(3);
-        dataPanel.add(versionLabel, gridBagConstraints_5);
+        dataPanel.add(versionLabel, gridBagConstraints);
 
         infoTextArea.setModelProvider(provider);
         infoTextArea.setPath(new Path("info"));
@@ -165,6 +183,8 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         validityTextField.setPath(new Path("validity"));
         versionLabel.setModelProvider(provider);
         versionLabel.setPath(new Path("version"));
+        outputIdTextField.setModelProvider(provider);
+        outputIdTextField.setPath(new Path("outputId"));
         return dataPanel;
     }
 

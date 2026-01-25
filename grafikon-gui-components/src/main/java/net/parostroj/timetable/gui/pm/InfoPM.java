@@ -28,6 +28,7 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
     final TextPM validity = new TextPM();
     final BooleanPM isRouteInfo = new BooleanPM();
     final TextPM version = new TextPM();
+    final TextPM outputId = new TextPM();
 
     final OperationPM ok = new OperationPM();
 
@@ -52,6 +53,8 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         this.info.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
         this.version.setText(this.createVersionText(diagram));
         this.version.setEditable(false);
+        this.outputId.setText(diagram.getAttributes().get(TrainDiagram.ATTR_OUTPUT_ID, String.class));
+        this.outputId.setEditable(true);
         this.checkRouteInfo();
     }
 
@@ -86,11 +89,13 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
             String lNodes = ObjectsUtil.checkAndTrim(this.routeNodes.getText());
             String lValidity = ObjectsUtil.checkAndTrim(this.validity.getText());
             String lInfo = ObjectsUtil.checkAndTrim(this.info.getText());
+            String lOutputId = ObjectsUtil.checkAndTrim(this.outputId.getText());
 
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, lNumber);
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, lNodes);
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_VALIDITY, lValidity);
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_INFO, lInfo);
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_OUTPUT_ID, lOutputId);
         }
     }
 

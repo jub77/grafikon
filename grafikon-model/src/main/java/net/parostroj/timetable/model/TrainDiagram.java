@@ -50,6 +50,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public static final String ATTR_SAVE_USER = "save.user";
     public static final String ATTR_CHANGE_DIRECTION_STOP = "change.direction.stop";
     public static final String ATTR_VERSION = "version";
+    public static final String ATTR_OUTPUT_ID = "output.id";
 
     /** Id. */
     private final String id;
