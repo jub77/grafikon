@@ -8,13 +8,15 @@
 &lt;%
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
-    
+
+    outputId = settings['output.id']
+
     def convertTime(time) {
         def parsed = FORMATTER.parseLocalTime(time)
         def result = PRINT_FORMATTER.print(parsed)
         return result
     }
-    
+
     def getStartTimeTitle() {
         return start_time ? " (${diagram.timeConverter.convertIntToText(start_time)})" : "";
     }
@@ -28,7 +30,8 @@
   &lt;/layout-master-set&gt;
   &lt;page-sequence master-reference="simpleA4" font-family="Sans"&gt;
     &lt;flow flow-name="xsl-region-body"&gt;
-      &lt;block font-size="5mm" font-weight="bold" space-after="3mm"&gt;${localization["title"].translate(locale)}${getStartTimeTitle()}&lt;/block&gt;
+      &lt;block font-size="5mm" font-weight="bold" space-after="${(outputId &amp;&amp; output_id) ? '0' : '3'}mm"&gt;${localization["title"].translate(locale)}${getStartTimeTitle()}&lt;/block&gt;
+      &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block font-size="2mm" space-after="3mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
       &lt;% printTitle(localization["title.engines"].translate(locale)) %&gt;
       &lt;% printPositions(engines) %&gt;
       &lt;% printTitle(localization["title.train.units"].translate(locale)) %&gt;
@@ -152,6 +155,18 @@ Všechny oběhy</value>
                 <value type="string.pl">Składy</value>
                 <value type="string.sk">Súpravy</value>
                 <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
             </attribute>
         </attributes>
     </output_template>

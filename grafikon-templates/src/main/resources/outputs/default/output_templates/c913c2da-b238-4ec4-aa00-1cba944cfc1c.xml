@@ -35,6 +35,7 @@
   freightCapacity = settings['freight.capacity']
   engineLeft = settings['engine.left']
   freightEnd = settings['freight.end']
+  outputId = settings['output.id']
 %&gt;
 
 &lt;root xmlns="http://www.w3.org/1999/XSL/Format"&gt;
@@ -42,7 +43,7 @@
   &lt;simple-page-master master-name="A5-Title" page-height="21cm" page-width="14.8cm" margin="1cm 1cm 1cm 1cm"
       line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
     &lt;region-body /&gt;
-    &lt;region-after region-name="footer" precedence="true" extent="2.5cm"/&gt;
+    &lt;region-after region-name="footer" precedence="true" extent="2.8cm"/&gt;
   &lt;/simple-page-master&gt;
   &lt;simple-page-master master-name="A5-Pages-Even" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
       line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts"&gt;
@@ -100,6 +101,7 @@ def printTitlePage() {
 &lt;static-content flow-name="footer"&gt;
   &lt;block text-align="center" font-size="3.5mm" space-after="15mm"&gt;${localization["internal.use"].translate(locale)}&lt;/block&gt;
   &lt;block text-align="center" font-size="3mm"&gt;${localization["publisher"].translate(locale)}&lt;/block&gt;
+  &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block text-align="center" font-size="2mm" space-before="1mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
 &lt;/static-content&gt;
 &lt;flow flow-name="xsl-region-body"&gt;
   &lt;block-container text-align="center" font-weight="bold" height="35mm"&gt;
@@ -1271,6 +1273,13 @@ for (cycle in cycles) {
                 <category>localization</category>
             </attribute>
             <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
                 <key>title.page</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
@@ -1332,6 +1341,11 @@ for (cycle in cycles) {
             </attribute>
             <attribute>
                 <key>freight.end</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
             </attribute>

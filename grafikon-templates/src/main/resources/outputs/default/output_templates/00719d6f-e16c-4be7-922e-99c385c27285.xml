@@ -18,6 +18,8 @@
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
 
+    outputId = settings['output.id']
+
     def convertTime(time) {
         def parsed = FORMATTER.parseLocalTime(time)
         def result = PRINT_FORMATTER.print(parsed)
@@ -182,7 +184,7 @@ def printWrappers(wrappers) {
       &lt;block margin="${MARGIN}" font-size="4.5mm" font-weight="bold"&gt;${c.name}&lt;/block&gt;
     &lt;/table-cell&gt;
     &lt;table-cell&gt;
-      &lt;block margin="${MARGIN}" font-size="2.5mm"&gt;${localization["composition"].translate(lLoc)}:&lt;/block&gt;
+      &lt;block margin="${MARGIN}" font-size="2.5mm" text-align-last="justify"&gt;${localization["composition"].translate(lLoc)}:&lt;leader leader-pattern="space" /&gt;&lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;inline font-size="2mm" vertical-align="text-top"&gt;${output_id}&lt;/inline&gt;&lt;% } %&gt;&lt;/block&gt;
       &lt;block margin="${MARGIN}" font-size="4mm" font-weight="bold"&gt;${c.description ?: ""}&lt;/block&gt;
      &lt;/table-cell&gt;
   &lt;/table-row&gt;
@@ -384,6 +386,18 @@ outputs.create().setName("${key}.pdf").setParams(["cycles":circulations])
                 <value type="string.pl">Uwagi</value>
                 <value type="string.sk">Poznámka</value>
                 <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
             </attribute>
         </attributes>
     </output_template>

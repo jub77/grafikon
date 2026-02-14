@@ -15,6 +15,8 @@ FC_WIDTH = settings["first.column.width"]
 ENGINE_LEFT = settings['engine.left']
 FREIGHT_END = settings['freight.end']
 
+outputId = settings['output.id']
+
 def border() {"border=\"solid .3mm black\""}
 def padding() {"padding=\".4mm .6mm .1mm 0.6mm\""}
 
@@ -71,10 +73,11 @@ def generate(nodes) {
     def freightColors = node.freightColors
     if (!freightResult.connections) continue %&gt;
     generated = true
-    &lt;block break-before="page" font-size="5.5mm" font-weight="bold" text-align="center" space-after="${freightColors ? '0.0' : '2.5'}mm" font-family="Sans"&gt;${node.name}&lt;/block&gt;
+    &lt;block break-before="page" font-size="5.5mm" font-weight="bold" text-align="center" space-after="${(freightColors || (outputId &amp;&amp; output_id)) ? '0.0' : '2.5'}mm" font-family="Sans"&gt;${node.name}&lt;/block&gt;
     &lt;% if (freightColors) { %&gt;
-    &lt;block font-size="3.5mm" font-weight="bold" text-align="center" space-after="2.5mm" font-family="Sans"&gt;[${util.freight.sortFreightColors(freightColors).collect{c -&gt; c.getName(loc).replaceAll(' ',SPACE)}.join(', ')}]&lt;/block&gt;
+    &lt;block font-size="3.5mm" font-weight="bold" text-align="center" space-after="${(outputId &amp;&amp; output_id) ? '0.5' : '2.5'}mm" font-family="Sans"&gt;[${util.freight.sortFreightColors(freightColors).collect{c -&gt; c.getName(loc).replaceAll(' ',SPACE)}.join(', ')}]&lt;/block&gt;
     &lt;% } %&gt;
+    &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block text-align="center" font-size="2mm" space-after="2.5mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
     &lt;% if (freightResult.connections) { %&gt;
     &lt;block font-size="3.75mm" font-weight="bold" space-after=".25mm"&gt;${localization["stations"].translate(loc)}&lt;/block&gt;
     &lt;table ${border()} border-collapse="collapse" table-layout="fixed" width="100%"&gt;
@@ -355,6 +358,13 @@ if (settings['one.file']) {
                 <category>localization</category>
             </attribute>
             <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
                 <key>one.file</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
@@ -376,6 +386,11 @@ if (settings['one.file']) {
             </attribute>
             <attribute>
                 <key>freight.end</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
             </attribute>

@@ -13,6 +13,7 @@
     engineLeft = settings['engine.left']
     columnsCheck = settings['columns.check']
     freightEnd = settings ['freight.end']
+    outputId = settings['output.id']
 
     // columns check 1 &lt;= number &lt;= 8
     if (columnsCheck &lt; 1) columnsCheck = 1
@@ -194,7 +195,10 @@
   &lt;table-column column-width="${197 - columnsCheck * 5}mm" ${border()} /&gt;
   &lt;table-header&gt;
       &lt;table-row ${border()}&gt;
-          &lt;table-cell number-columns-spanned="${8 + columnsCheck}" padding="1mm .6mm .1mm 0.6mm"&gt;&lt;block font-size="5mm" text-align="center" font-weight="bold" font-family="Sans"&gt;${station.name}&lt;/block&gt;&lt;/table-cell&gt;
+          &lt;table-cell number-columns-spanned="${8 + columnsCheck}" padding="1mm .6mm .1mm .6mm"&gt;
+              &lt;block font-size="5mm" text-align="center" font-weight="bold" font-family="Sans"&gt;${station.name}&lt;/block&gt;
+              &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block font-size="2mm" text-align="center" font-family="Sans"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
+          &lt;/table-cell&gt;
       &lt;/table-row&gt;
       &lt;table-row ${border()} font-size="2.3mm" font-weight="bold" text-align="center"&gt;
           &lt;% for (i in 1..columnsCheck) { %&gt;
@@ -523,6 +527,13 @@ if (!settings['one.file']) {
                 <category>localization</category>
             </attribute>
             <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
                 <key>one.file</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
@@ -554,6 +565,11 @@ if (!settings['one.file']) {
             </attribute>
             <attribute>
                 <key>freight.end</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
             </attribute>

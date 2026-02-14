@@ -15,6 +15,8 @@ import net.parostroj.timetable.actions.*
 SPACE = "&amp;#160;"
 TRAIN_RIGHT = "&amp;#10704;"
 
+outputId = settings['output.id']
+
 def border() {"border=\"solid .3mm black\""}
 def padding() {"padding=\".4mm .6mm .1mm 0.6mm\""}
 
@@ -68,7 +70,8 @@ def generate(nodes) {
     def cItems = getCycleItems(diagram, node)
     if (!cItems) continue %&gt;
     generated = true
-    &lt;block break-before="page" font-size="5.5mm" font-weight="bold" text-align="center" space-after="2.5mm" font-family="Sans"&gt;${node.name}&lt;/block&gt;
+    &lt;block break-before="page" font-size="5.5mm" font-weight="bold" text-align="center" space-after="${(outputId &amp;&amp; output_id) ? '0' : '2.5'}mm" font-family="Sans"&gt;${node.name}&lt;/block&gt;
+    &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block font-size="2mm" text-align="center" space-after="2.5mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
     &lt;%
     if (cItems) { %&gt;
     &lt;block font-size="3.75mm" font-weight="bold" space-after=".25mm" space-before="2.5mm"&gt;${localization["start"].translate(loc)}&lt;/block&gt;
@@ -188,7 +191,19 @@ if (settings['one.file']) {
                 <category>localization</category>
             </attribute>
             <attribute>
+                <key>output.id</key>
+                <type>localized.string</type>
+                <value type="string">Output identification</value>
+                <value type="string.cs">Identifikace výstupu</value>
+                <category>localization</category>
+            </attribute>
+            <attribute>
                 <key>one.file</key>
+                <value type="boolean">true</value>
+                <category>settings</category>
+            </attribute>
+            <attribute>
+                <key>output.id</key>
                 <value type="boolean">true</value>
                 <category>settings</category>
             </attribute>
