@@ -8,6 +8,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TimeInterval;
@@ -20,6 +22,7 @@ import net.parostroj.timetable.model.TimeInterval;
 public class OutputUtil {
 
     private OutputFreightUtil freight;
+    private final Escaper escaper = HtmlEscapers.htmlEscaper();
 
     public List<TimeInterval> sortIntervals(Collection<TimeInterval> intervals) {
         return intervals.stream()
@@ -51,6 +54,10 @@ public class OutputUtil {
                     .orElse(null);
         }
         return locale == null ? defaultLocale : locale;
+    }
+
+    public String escape(String string) {
+        return escaper.escape(string);
     }
 
     public OutputFreightUtil getFreight() {
