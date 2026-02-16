@@ -19,6 +19,12 @@
 
 ## Library
 
+### 1.2
+
+- managed freight changed to enum
+- managed freight defined in train type and overriden in train and interval
+- simple string substitution templates (train name, route, ...)
+
 ### 1.1.1
 
 - string type of image output (png, svg, pdf) in templates
