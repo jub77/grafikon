@@ -21,7 +21,6 @@ public abstract class GroovyTemplateBinding {
         binding.put("diagram", diagram);
         binding.put("images", new HashSet<String>());
         binding.put("log", templateLog);
-        binding.put("output_id", diagram.getAttributes().get(TrainDiagram.ATTR_OUTPUT_ID, String.class));
         this.addContext(params, binding);
         this.addLocale(locale, binding);
         return binding;

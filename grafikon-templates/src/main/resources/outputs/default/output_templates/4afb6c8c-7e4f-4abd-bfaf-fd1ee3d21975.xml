@@ -17,7 +17,7 @@
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
 
-    outputId = settings['output.id']
+    outputId = settings['output.id'] ? diagram.attributes['output.id'] : ""
 
     def convertTime(time) {
         def parsed = FORMATTER.parseLocalTime(time)
@@ -182,7 +182,7 @@ def print_cycle(w) {
     &lt;table-cell number-columns-spanned="2" border-bottom="double .6mm black"&gt;
         &lt;block-container reference-orientation="180" height="${FOLDED_HEIGHT}mm"&gt;
             &lt;block font-size="3mm" font-weight="bold" margin-left=".7mm" margin-top=".7mm"&gt;${c.name}&lt;/block&gt;
-            &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block font-size="1.75mm" margin-left=".7mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
+            &lt;% if (outputId) { %&gt;&lt;block font-size="1.75mm" margin-left=".7mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
             &lt;block font-size="2mm" font-weight="bold" margin-left=".7mm"&gt;${c.description ?: ""}&lt;/block&gt;
             &lt;% if (company) { %&gt;
             &lt;block font-size="2mm" margin-left=".7mm" margin-top=".3mm"&gt;${company}&lt;/block&gt;
@@ -200,7 +200,7 @@ def print_cycle(w) {
         &lt;table-row&gt;
           &lt;table-cell font-size="3mm" number-columns-spanned="3"&gt;
             &lt;block font-weight="bold" margin-left=".7mm" margin-top=".7mm"&gt;${c.name}&lt;/block&gt;
-            &lt;% if (outputId &amp;&amp; output_id) { %&gt;&lt;block font-size="1.75mm" margin-left=".7mm"&gt;${output_id}&lt;/block&gt;&lt;% } %&gt;
+            &lt;% if (outputId) { %&gt;&lt;block font-size="1.75mm" margin-left=".7mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
           &lt;/table-cell&gt;
         &lt;/table-row&gt;
         &lt;table-row&gt;
