@@ -186,7 +186,7 @@ def print_cycle(w) {
     &lt;table-body&gt;
         &lt;table-row font-size="2mm"&gt;
           &lt;table-cell number-columns-spanned="3"&gt;
-            &lt;block ${padding()} text-align-last="justify"&gt;${localization["cycle"].translate(loc)}:${company ? " " + company : ""}&lt;leader leader-pattern="space" /&gt;&lt;% if (outputId) { %&gt;${outputId}&lt;% } %&gt;&lt;/block&gt;
+            &lt;block ${padding()} text-align-last="justify"&gt;${localization["cycle"].translate(loc)}:${company ? " " + company : ""}&lt;leader leader-pattern="space" /&gt;&lt;% if (outputId) { %&gt;${util.escape(outputId)}&lt;% } %&gt;&lt;/block&gt;
           &lt;/table-cell&gt;
         &lt;/table-row&gt;
         &lt;table-row&gt;

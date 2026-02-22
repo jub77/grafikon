@@ -71,7 +71,7 @@ def generate(nodes) {
     if (!cItems) continue %&gt;
     generated = true
     &lt;block break-before="page" font-size="5.5mm" font-weight="bold" text-align="center" space-after="${outputId ? '0' : '2.5'}mm" font-family="Sans"&gt;${node.name}&lt;/block&gt;
-    &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" text-align="center" space-after="2.5mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
+    &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" text-align="center" space-after="2.5mm"&gt;${util.escape(outputId)}&lt;/block&gt;&lt;% } %&gt;
     &lt;%
     if (cItems) { %&gt;
     &lt;block font-size="3.75mm" font-weight="bold" space-after=".25mm" space-before="2.5mm"&gt;${localization["start"].translate(loc)}&lt;/block&gt;

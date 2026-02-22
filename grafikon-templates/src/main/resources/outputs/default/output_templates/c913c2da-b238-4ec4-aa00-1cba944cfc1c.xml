@@ -101,7 +101,7 @@ def printTitlePage() {
 &lt;static-content flow-name="footer"&gt;
   &lt;block text-align="center" font-size="3.5mm" space-after="15mm"&gt;${localization["internal.use"].translate(locale)}&lt;/block&gt;
   &lt;block text-align="center" font-size="3mm"&gt;${localization["publisher"].translate(locale)}&lt;/block&gt;
-  &lt;% if (outputId) { %&gt;&lt;block text-align="center" font-size="2mm" space-before="1mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
+  &lt;% if (outputId) { %&gt;&lt;block text-align="center" font-size="2mm" space-before="1mm"&gt;${util.escape(outputId)}&lt;/block&gt;&lt;% } %&gt;
 &lt;/static-content&gt;
 &lt;flow flow-name="xsl-region-body"&gt;
   &lt;block-container text-align="center" font-weight="bold" height="35mm"&gt;

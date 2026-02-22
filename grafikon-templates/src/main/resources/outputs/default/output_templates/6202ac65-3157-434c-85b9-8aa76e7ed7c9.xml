@@ -160,7 +160,7 @@ def print_train(nt) {
 %&gt;
 &lt;block-container height="45mm" border-bottom="${delimiter()}"&gt;
 &lt;block-container margin=".8mm" height="43mm" reference-orientation="180"&gt;
-&lt;block margin-top=".5mm" text-align-last="justify" font-size="2.5mm"&gt;&lt;% if (outputId) { %&gt;&lt;inline vertical-align="text-top" font-size="2mm"&gt;${outputId}&lt;/inline&gt;&lt;% } %&gt;&lt;leader leader-pattern="space" /&gt;${nt.ind}/${nt.cnt}&lt;/block&gt;
+&lt;block margin-top=".5mm" text-align-last="justify" font-size="2.5mm"&gt;&lt;% if (outputId) { %&gt;&lt;inline vertical-align="text-top" font-size="2mm"&gt;${util.escape(outputId)}&lt;/inline&gt;&lt;% } %&gt;&lt;leader leader-pattern="space" /&gt;${nt.ind}/${nt.cnt}&lt;/block&gt;
 &lt;block font-size="4.5mm" border-bottom="${delimiter()}" space-after=".8mm" space-before=".5mm"&gt;${train.name.translate(loc)} (${diagram.timeConverter.convertIntToText(train.startTime)})&lt;/block&gt;
 &lt;block font-size="3.7mm" space-after=".7mm" border-bottom="${delimiterThin()}"&gt;${train.startNode} - ${train.endNode}&lt;/block&gt;
 &lt;block&gt;${getCycles(interval, diagram.engineCycleType)}&lt;/block&gt;
@@ -171,7 +171,7 @@ def print_train(nt) {
 &lt;/block-container&gt;
 &lt;/block-container&gt;
 &lt;block-container margin=".8mm" height="43mm"&gt;
-&lt;block margin-top=".5mm" text-align-last="justify" font-size="2.5mm"&gt;&lt;% if (outputId) { %&gt;&lt;inline vertical-align="text-top" font-size="2mm"&gt;${outputId}&lt;/inline&gt;&lt;% } %&gt;&lt;leader leader-pattern="space" /&gt;${nt.ind}/${nt.cnt}&lt;/block&gt;
+&lt;block margin-top=".5mm" text-align-last="justify" font-size="2.5mm"&gt;&lt;% if (outputId) { %&gt;&lt;inline vertical-align="text-top" font-size="2mm"&gt;${util.escape(outputId)}&lt;/inline&gt;&lt;% } %&gt;&lt;leader leader-pattern="space" /&gt;${nt.ind}/${nt.cnt}&lt;/block&gt;
 &lt;block font-size="4.5mm" border-bottom="${delimiter()}" space-after=".8mm" space-before=".5mm"&gt;${train.name.translate(loc)} (${diagram.timeConverter.convertIntToText(train.startTime)})&lt;/block&gt;
 &lt;block font-size="3.7mm" space-after=".7mm" border-bottom="${delimiterThin()}"&gt;${train.startNode} - ${train.endNode}&lt;/block&gt;
 &lt;block&gt;${getCycles(interval, diagram.engineCycleType)}&lt;/block&gt;

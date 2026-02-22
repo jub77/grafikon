@@ -77,7 +77,7 @@ def generate(nodes) {
     &lt;% if (freightColors) { %&gt;
     &lt;block font-size="3.5mm" font-weight="bold" text-align="center" space-after="${outputId ? '0.5' : '2.5'}mm" font-family="Sans"&gt;[${util.freight.sortFreightColors(freightColors).collect{c -&gt; c.getName(loc).replaceAll(' ',SPACE)}.join(', ')}]&lt;/block&gt;
     &lt;% } %&gt;
-    &lt;% if (outputId) { %&gt;&lt;block text-align="center" font-size="2mm" space-after="2.5mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
+    &lt;% if (outputId) { %&gt;&lt;block text-align="center" font-size="2mm" space-after="2.5mm"&gt;${util.escape(outputId)}&lt;/block&gt;&lt;% } %&gt;
     &lt;% if (freightResult.connections) { %&gt;
     &lt;block font-size="3.75mm" font-weight="bold" space-after=".25mm"&gt;${localization["stations"].translate(loc)}&lt;/block&gt;
     &lt;table ${border()} border-collapse="collapse" table-layout="fixed" width="100%"&gt;

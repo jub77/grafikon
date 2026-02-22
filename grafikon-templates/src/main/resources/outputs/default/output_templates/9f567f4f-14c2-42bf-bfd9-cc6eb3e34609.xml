@@ -197,7 +197,7 @@
       &lt;table-row ${border()}&gt;
           &lt;table-cell number-columns-spanned="${8 + columnsCheck}" padding="1mm .6mm .1mm .6mm"&gt;
               &lt;block font-size="5mm" text-align="center" font-weight="bold" font-family="Sans"&gt;${station.name}&lt;/block&gt;
-              &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" text-align="center" font-family="Sans"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
+              &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" text-align="center" font-family="Sans"&gt;${util.escape(outputId)}&lt;/block&gt;&lt;% } %&gt;
           &lt;/table-cell&gt;
       &lt;/table-row&gt;
       &lt;table-row ${border()} font-size="2.3mm" font-weight="bold" text-align="center"&gt;

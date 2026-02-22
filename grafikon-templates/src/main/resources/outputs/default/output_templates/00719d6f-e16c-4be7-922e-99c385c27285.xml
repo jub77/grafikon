@@ -184,7 +184,7 @@ def printWrappers(wrappers) {
       &lt;block margin="${MARGIN}" font-size="4.5mm" font-weight="bold"&gt;${c.name}&lt;/block&gt;
     &lt;/table-cell&gt;
     &lt;table-cell&gt;
-      &lt;block margin="${MARGIN}" font-size="2.5mm" text-align-last="justify"&gt;${localization["composition"].translate(lLoc)}:&lt;leader leader-pattern="space" /&gt;&lt;% if (outputId) { %&gt;&lt;inline font-size="2mm" vertical-align="text-top"&gt;${outputId}&lt;/inline&gt;&lt;% } %&gt;&lt;/block&gt;
+      &lt;block margin="${MARGIN}" font-size="2.5mm" text-align-last="justify"&gt;${localization["composition"].translate(lLoc)}:&lt;leader leader-pattern="space" /&gt;&lt;% if (outputId) { %&gt;&lt;inline font-size="2mm" vertical-align="text-top"&gt;${util.escape(outputId)}&lt;/inline&gt;&lt;% } %&gt;&lt;/block&gt;
       &lt;block margin="${MARGIN}" font-size="4mm" font-weight="bold"&gt;${c.description ?: ""}&lt;/block&gt;
      &lt;/table-cell&gt;
   &lt;/table-row&gt;

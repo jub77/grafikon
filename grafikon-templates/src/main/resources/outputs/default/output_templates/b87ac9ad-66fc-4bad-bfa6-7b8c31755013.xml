@@ -31,7 +31,7 @@
   &lt;page-sequence master-reference="simpleA4" font-family="Sans"&gt;
     &lt;flow flow-name="xsl-region-body"&gt;
       &lt;block font-size="5mm" font-weight="bold" space-after="${outputId ? '0' : '3'}mm"&gt;${localization["title"].translate(locale)}${getStartTimeTitle()}&lt;/block&gt;
-      &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" space-after="3mm"&gt;${outputId}&lt;/block&gt;&lt;% } %&gt;
+      &lt;% if (outputId) { %&gt;&lt;block font-size="2mm" space-after="3mm"&gt;${util.escape(outputId)}&lt;/block&gt;&lt;% } %&gt;
       &lt;% printTitle(localization["title.engines"].translate(locale)) %&gt;
       &lt;% printPositions(engines) %&gt;
       &lt;% printTitle(localization["title.train.units"].translate(locale)) %&gt;

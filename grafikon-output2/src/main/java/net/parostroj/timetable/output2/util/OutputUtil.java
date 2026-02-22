@@ -57,7 +57,7 @@ public class OutputUtil {
     }
 
     public String escape(String string) {
-        return escaper.escape(string);
+        return string == null ? null : escaper.escape(string);
     }
 
     public OutputFreightUtil getFreight() {
