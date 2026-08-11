@@ -1,10 +1,9 @@
 package net.parostroj.timetable.loader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.parostroj.timetable.model.ls.LSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,7 @@ abstract class AbstractLoader<T, I extends AutoCloseable> implements DataItemLoa
     public DataItemList loadList() throws LSException {
         if (itemList == null) {
             // load item list
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            YAMLMapper mapper = YAMLMapper.builder().build();
             try (InputStream is = getItemListStream()) {
                 itemList = mapper.readValue(is, DataItemList.class);
                 log.debug("Loaded list of items: {}", this);

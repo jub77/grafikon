@@ -1,26 +1,22 @@
 package net.parostroj.timetable.loader;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import net.parostroj.timetable.model.LocalizedString;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 public class LStringSerializer extends StdSerializer<LocalizedString> {
-
-    private static final long serialVersionUID = 1L;
 
     public LStringSerializer() {
         super(LocalizedString.class);
     }
 
     @Override
-    public void serialize(LocalizedString localizedString, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(LocalizedString localizedString, JsonGenerator jsonGenerator, SerializationContext serializationContext) {
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("default", localizedString.getDefaultString());
+        jsonGenerator.writeStringProperty("default", localizedString.getDefaultString());
         for (LocalizedString.StringWithLocale stringWithLocale : localizedString.getLocalizedStrings()) {
-            jsonGenerator.writeStringField(stringWithLocale.getLocale().toLanguageTag(), stringWithLocale.getString());
+            jsonGenerator.writeStringProperty(stringWithLocale.getLocale().toLanguageTag(), stringWithLocale.getString());
         }
         jsonGenerator.writeEndObject();
     }

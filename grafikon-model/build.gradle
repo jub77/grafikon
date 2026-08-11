@@ -4,13 +4,12 @@ dependencies {
 	api 'joda-time:joda-time'
 	api 'com.google.guava:guava'
 	api 'com.github.zafarkhaja:java-semver'
-	api platform('com.fasterxml.jackson:jackson-bom')
+	api platform('tools.jackson:jackson-bom')
 	api 'com.fasterxml.jackson.core:jackson-annotations'
 
 	implementation 'org.slf4j:slf4j-api'
 	implementation 'org.apache.groovy:groovy-templates'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+	implementation 'tools.jackson.dataformat:jackson-dataformat-yaml'
 
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.hamcrest:hamcrest'
