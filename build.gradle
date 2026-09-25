@@ -10,6 +10,7 @@ def outputJavaVersion = (project.findProperty('javaVersion') ?: 21) as int
 
 subprojects { prj ->
 	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'net.parostroj.versioning'
 
 	group = 'net.parostroj'
 	version = scmVersion.projectVersion

@@ -20,7 +20,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        publishFile {
+        register('versionPlugin') {
             id = 'net.parostroj.versioning'
             implementationClass = 'net.parostroj.plugin.version.VersionPlugin'
         }

@@ -47,7 +47,7 @@ tasks.register('runMain', JavaExec) {
 }
 
 dependencies {
-	assembly project
+	assembly project()
 
 	implementation project(':grafikon-gui')
 	implementation project(':grafikon-save')
