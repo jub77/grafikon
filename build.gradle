@@ -23,12 +23,12 @@ subprojects { prj ->
 			dependency 'org.jgrapht:jgrapht-core:1.5.3', {
 				exclude 'org.apfloat:apfloat'
 			}
-			dependency 'org.apache.groovy:groovy-templates:5.0.8'
-			dependency 'org.apache.groovy:groovy-jsr223:5.0.8'
-			dependency 'org.slf4j:slf4j-api:2.0.18'
-			dependency 'org.slf4j:jcl-over-slf4j:2.0.18'
-			dependency 'joda-time:joda-time:2.14.3'
-			dependency 'com.google.guava:guava:33.6.0-jre', {
+			dependency 'org.apache.groovy:groovy-templates:6.0.0'
+			dependency 'org.apache.groovy:groovy-jsr223:6.0.0'
+			dependency 'org.slf4j:slf4j-api:2.0.20'
+			dependency 'org.slf4j:jcl-over-slf4j:2.0.20'
+			dependency 'joda-time:joda-time:2.15.0'
+			dependency 'com.google.guava:guava:33.7.2-jre', {
 				exclude 'com.google.code.findbugs:jsr305'
 				exclude 'com.google.j2objc:j2objc-annotations'
 				exclude 'com.google.errorprone:error_prone_annotations'
@@ -65,7 +65,7 @@ subprojects { prj ->
 			dependency 'org.junit.jupiter:junit-jupiter:6.1.3'
 			dependency 'org.hamcrest:hamcrest:3.0'
 			dependency 'io.smallrye.reactive:mutiny:3.3.0'
-			dependency 'tools.jackson:jackson-bom:3.2.1'
+			dependency 'tools.jackson:jackson-bom:3.2.3'
 			dependency 'com.fasterxml.jackson.core:jackson-annotations:2.22'
 			dependency 'org.apache.commons:commons-configuration2:2.15.1', {
 				exclude 'commons-logging:commons-logging'
