@@ -364,7 +364,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     private void setIntervalImpl(int start, int end) {
         this.interval = IntervalFactory.createInterval(start, end);
-        if (this.getLength() == 0) {
+        if (this.getLength() == 0 && !isLast() && !isFirst()) {
             this.removeAttribute(TimeInterval.ATTR_MANAGED_FREIGHT_OVERRIDE);
         }
     }
@@ -636,7 +636,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
                 if (this.isFirst() || this.isLast()) {
                     this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? null : Boolean.FALSE);
                 } else if (this.isInnerStop()) {
-                    this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? Boolean.TRUE : false);
+                    this.setRemoveAttribute(ATTR_MANAGED_FREIGHT_OVERRIDE, freight ? Boolean.TRUE : null);
                 }
             }
         }
